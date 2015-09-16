@@ -1,0 +1,137 @@
+package CA;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import FSA.FSA;
+import FSA.Simulator;
+import FSA.Transition;
+
+
+
+/**
+ * @author Davide Basile
+ *
+ */
+@SuppressWarnings("serial")
+public class CA  extends FSA implements java.io.Serializable
+{
+	private int rank;
+	private int[] states;
+	private int[][] finalstates; 
+	private Transition[] tra;
+	private static String message = "*** CA simulator ***\n";
+	
+	/**
+	 * Invoke the super constructor and take in input the added new parameters of the automaton
+	 */
+	public CA()
+	{
+		super(message);
+		this.rank = 1;
+		this.states = new int[1];
+		this.states[0] = super.getStates();
+	    finalstates = new int[1][super.getFinalStates().length];
+		finalstates[0]= super.getFinalStates();
+	}
+
+	
+	
+	
+	/**
+	 * Print in output a description of the automaton
+	 */
+	public void print()
+	{
+		super.print();
+	}
+	
+	
+	
+	/**
+	 * Create an instance of the simulator for an FMA
+	 */
+	protected Simulator createSim()
+	{
+		//return new FMASimulator(this);
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param i		the index of the transition to be showed as a message to the user
+	 * @return		a new Transition for this automaton
+	 */
+	protected Transition createTransition(int i)
+	{
+		return new CATransition(i);
+	}
+	
+	
+	/**
+	 * 
+	 * @return	the array of final states
+	 */
+	public int[][] getFinalStatesCA()
+	{
+		return finalstates;
+	}
+	
+	/**
+	 * 
+	 * @return	the number of states
+	 */
+	public int[] getStatesCA()
+	{
+		return states;
+	}
+	
+	/**
+	 * 
+	 * @return the rank of the Contract Automaton
+	 */
+	public int getRank()
+	{
+		return rank;
+	}
+	
+	
+	public static CA product(CA[] aut)
+	{
+		int prodrank =0;
+		for (int i=0;i<aut.length;i++)
+		{
+			prodrank = prodrank+(aut[i].getRank()); // rank
+		}
+		int[] statesprod = new int[prodrank];
+		for (int i=0;i<prodrank;i++)
+		{
+			for (int j=0;j<aut[i].getRank();j++)
+				statesprod[i]= aut[i].getStatesCA()[j];			
+		}
+		return null;
+	}
+	
+	public CA proj(int i)
+	{
+		if ((i<0)||(i>rank)) //check if the parameter i is in the rank of the CA
+			return null;
+		
+		
+		return null;
+	}
+	
+	public static CA aproduct(CA[] automata)
+	{
+		return null;
+	}
+	
+	public boolean branchingCondition()
+	{
+		return false;
+	}
+	
+	public boolean mixedChoice()
+	{
+		return false;
+	}
+}

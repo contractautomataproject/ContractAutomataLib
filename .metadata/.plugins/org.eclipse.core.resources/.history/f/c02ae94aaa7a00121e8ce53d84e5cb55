@@ -1,0 +1,121 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+
+@SuppressWarnings("serial")
+/**
+ * A tuple representing a Transition
+ * @author Davide Basile
+ *
+ */
+public class Transition implements java.io.Serializable {
+	private int initial;
+	private int label;
+	private int fina;
+	
+	public Transition(int initial, int label, int fina){
+		this.initial=initial;
+		this.label=label;
+		this.fina=fina;
+	}
+	
+	public Transition(int i)
+	{
+		InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader myInput = new BufferedReader (reader);
+		System.out.println("Insert start state of the transition "+i);
+		try {
+			int s = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert label of the transition "+i);
+			int l = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert arrival state of the transition "+i);
+			int f = Integer.parseInt(myInput.readLine());
+			this.initial=s;
+			this.label=l;
+			this.fina=f;
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		};
+	}
+	
+	public int getInitial()
+	{
+		return initial;
+	}
+	
+	public int getLabel()
+	{
+		return label;
+	}
+	public int getFinal()
+	{
+		return fina;
+	}
+	public String toString()
+	{
+		return "("+initial+","+label+","+fina+")";
+	}
+	
+	/**
+	 * 
+	 * @param n
+	 * @param tr
+	 * @return the transitions of tr starting from state n
+	 */
+	public static Transition[] getTransitionFrom(int n, Transition[] tr)
+	{
+		if (tr==null)
+			return null;
+		Transition[] t = new Transition[tr.length];
+		int j=0;
+		for (int i=0;i<tr.length;i++)
+		{
+			if (tr[i].getInitial()==n)
+			{
+				t[j]=tr[i];
+				j++;
+			}
+		}
+		if (j==0)
+			return null;
+		Transition[] tt = new Transition[j];
+		for (int i=0;i<j;i++)
+		{
+			tt[i]=t[i];
+		}
+		return tt;
+	}
+	
+	/**
+	 * 
+	 * @param l
+	 * @param tr
+	 * @return the transitions of tr with the label equals to l
+	 */
+	public static Transition[] getTransitionByLabel(int l, Transition[] tr)
+	{
+		if (tr==null)
+			return null;
+		Transition[] t = new Transition[tr.length];
+		int j=0;
+		for (int i=0;i<tr.length;i++)
+		{
+			if (tr[i].getLabel()==l)
+			{
+				t[j]=tr[i];
+				j++;
+			}
+		}
+
+		if (j==0)
+			return null;
+		Transition[] tt = new Transition[j];
+		for (int i=0;i<j;i++)
+		{
+			tt[i]=t[i];
+		}
+		return tt;
+	}
+	
+}

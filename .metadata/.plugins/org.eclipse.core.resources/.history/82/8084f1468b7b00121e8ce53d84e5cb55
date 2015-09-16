@@ -1,0 +1,30 @@
+import java.util.Vector;
+
+import FSA.Continuation;
+
+
+/**
+ * non so se va bene vector transition
+ * @author basile
+ *
+ */
+@SuppressWarnings("rawtypes")
+public class PFSAContinuation extends Continuation {
+
+	private Vector[] streg;
+	public PFSAContinuation(int pe, int pg, Vector<Transition> tr, Vector[] streg)
+	{
+		super(pe, pg ,tr);
+		this.streg= streg;
+	}
+	
+	public boolean check(int pe, int pg, Vector[] r)
+	{
+		return super.check(pe,pg)&&(r.equals(streg));
+	}
+	
+	public Vector[] getStReg()
+	{
+		return streg;
+	}
+}

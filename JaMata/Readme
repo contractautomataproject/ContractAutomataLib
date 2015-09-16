@@ -1,0 +1,16 @@
+JaMaTa (Java Automata) is a framework that permits to create Automata.
+The base package is FSA (Finite State Automata). These classes are extended for representing FMA (Finite Memory Automata)
+and PFSA (Push-down Finite Scope Automata).
+
+In the workspace there are different automaton to load:
+	- FMAexample1       it is the first example presented in the paper "Finite Memory Automata". This automaton recognize
+						strings where a character appears at least two times. An example of a string recognized by the 
+						automaton is "123145".
+	- FSAexample		a simple FSA that recognize the strings "12" and "123"
+	- PFSAaut3			a PFSA automaton that recognize strings representing balanced parenthesis. An example 
+						of a string recognized is: "12234431"
+
+There are other PFSA example used for testing the software.
+
+
+Software developed with Eclipse Juno e JavaSE-1.7

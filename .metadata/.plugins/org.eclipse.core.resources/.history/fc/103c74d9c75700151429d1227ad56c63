@@ -1,0 +1,60 @@
+package CA;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+import FSA.FSA;
+import FSA.Simulator;
+
+
+
+/**
+ * @author Davide Basile
+ *
+ */
+@SuppressWarnings("serial")
+public class CA  extends FSA implements java.io.Serializable
+{
+	private static String message = "*** CA simulator ***\n";
+	
+	/**
+	 * Invoke the super constructor and take in input the added new parameters of the automaton
+	 */
+	public CA()
+	{
+		super(message);
+		try{
+			System.out.println(); 
+			
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        
+			
+			super.write(this);
+		}
+		catch (Exception e){e.printStackTrace();}
+	}
+	
+	
+	
+	
+	/**
+	 * Print in output a description of the automaton
+	 */
+	public void print()
+	{
+		super.print();
+	}
+	
+	
+	
+	/**
+	 * Create an instance of the simulator for an FMA
+	 */
+	protected Simulator createSim()
+	{
+		//return new FMASimulator(this);
+		return null;
+	}
+	
+}

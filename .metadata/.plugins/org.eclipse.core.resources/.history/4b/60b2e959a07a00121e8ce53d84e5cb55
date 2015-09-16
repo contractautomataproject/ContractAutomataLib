@@ -1,0 +1,41 @@
+
+import java.io.*;
+
+/**
+ * Stand-alone class with the main methods
+ */
+import java.util.Arrays;
+public class Main {
+	public static void main (String [] args){
+		int[] srec=null;
+		FMA automa = null;
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        System.out.println("Press 1 for FMA and 2 for PFSA");
+	        if (Integer.parseInt(myInput.readLine())==1)
+	        System.out.println("Insert the name of the automaton to load or leave empty for create a new one");
+	        String s = myInput.readLine();
+	        if (!s.isEmpty())
+	        {
+	        	automa = (FMA) Automata.load(s);
+	        }
+	        else
+	        	{
+	        		automa = new FMA();
+	        	}
+	        
+	        automa.print();
+			
+			}
+			
+			
+		}
+		catch (Exception e){System.out.println("Errore inserimento");return;}
+		FMASimulator sim = new FMASimulator(automa);
+		if (sim.run(srec))
+			System.out.println("The string "+Arrays.toString(srec)+" is accepted by the automaton");
+		else
+			System.out.println("The string "+Arrays.toString(srec)+" is not accepted by the automaton");
+	}
+}

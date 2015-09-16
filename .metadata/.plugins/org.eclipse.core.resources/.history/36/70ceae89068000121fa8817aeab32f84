@@ -1,0 +1,62 @@
+package PFSA;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Vector;
+import FSA.FSA;
+import FSA.Simulator;
+import FSA.Transition;
+
+
+
+@SuppressWarnings({"serial","rawtypes"})
+public class PFSA  extends FSA implements java.io.Serializable{
+	private Vector[] streg;
+	private static String message = "*** PFSA simulator ***\n" +
+			"The infinite alphabet is represented by the set of natural numbers\n" +
+			"The symbol T is denoted with -1  \n" +
+			"The square symbol is denoted with -2  \n" +
+			"The symbol ? is denoted with -3  \n" +
+			"Pay attention: all the indexes start from zero";
+	
+	public PFSA()
+	{
+		super(message);
+		try{
+			System.out.println(); 
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+			System.out.println("Insert the number of registers");
+			int length = Integer.parseInt(myInput.readLine());
+			streg = new Vector[length+1];
+			for (int i=0;i<streg.length;i++)
+				streg[i]=new Vector();
+			super.write(this);
+		}
+		catch (Exception e){System.out.println("Errore inserimento");}
+	}
+	
+	public void print()
+	{
+		super.print();
+		System.out.println("Number of Registers: "+ (streg.length-1));
+	}
+	
+	public Vector[] getStreg()
+	{
+		return this.streg;
+	}
+	
+	public void updateStreg( Vector[] streg)
+	{
+		this.streg = streg;
+	}
+	protected Transition createTransition(int i)
+	{
+		return new PFSATransition(i);
+	}
+	
+	protected Simulator createSim()
+	{
+		return new PFSASimulator(this);
+	}
+}

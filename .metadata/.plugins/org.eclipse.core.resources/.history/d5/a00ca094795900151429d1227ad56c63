@@ -1,0 +1,365 @@
+package CA;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import FSA.FSA;
+import FSA.Simulator;
+import FSA.Transition;
+
+
+/**
+ * @author Davide Basile
+ *
+ */
+@SuppressWarnings("serial")
+public class CA  extends FSA implements java.io.Serializable
+{
+	private int rank;
+	private int[] initial;
+	private int[] states;
+	private int[][] finalstates; 
+	private Transition[] tra;
+	private static String message = "*** CA simulator ***\n";
+	
+	/**
+	 * Invoke the super constructor and take in input the added new parameters of the automaton
+	 */
+	public CA()
+	{
+		super(message);
+		this.rank = 1;
+		this.states = new int[1];
+		this.states[0] = super.getStates();
+		this.initial = new int[1];
+		initial[0] = super.getInitial();
+		finalstates = new int[1][super.getFinalStates().length];
+		finalstates[0]= super.getFinalStates();
+	}
+	
+	
+	/**
+	 * Print in output a description of the automaton
+	 */
+	public void print()
+	{
+		super.print();
+	}
+	
+	
+	
+	/**
+	 * Create an instance of the simulator for an FMA
+	 */
+	protected Simulator createSim()
+	{
+		//return new FMASimulator(this);
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param i		the index of the transition to be showed as a message to the user
+	 * @return		a new Transition for this automaton
+	 */
+	protected Transition createTransition(int i)
+	{
+		return new CATransition(i);
+	}
+	
+	
+	/**
+	 * 
+	 * @return	the array of final states
+	 */
+	public int[][] getFinalStatesCA()
+	{
+		return finalstates;
+	}
+	
+	/**
+	 * 
+	 * @return	the number of states
+	 */
+	public int[] getStatesCA()
+	{
+		return states;
+	}
+	
+	/**
+	 * 
+	 * @return the rank of the Contract Automaton
+	 */
+	public int getRank()
+	{
+		return rank;
+	}
+	
+	/**
+	 * compute the product automaton of the CA given in aut
+	 * @param aut the operands of the product
+	 * @return the composition of aut
+	 */
+	public static CA product(CA[] aut)
+	{
+		/**
+		 * compute rank, states, initial states, final states
+		 */
+		int prodrank =0;
+		for (int i=0;i<aut.length;i++)
+		{
+			prodrank = prodrank+(aut[i].getRank()); 
+		}
+		int[] statesprod = new int[prodrank];
+		int[][] finalstatesprod = new int[prodrank][];
+		int[] initialprod = new int[prodrank];
+		for (int i=0;i<prodrank;i++)
+		{
+			for (int j=0;j<aut[i].getRank();j++)
+			{
+				statesprod[i]= aut[i].getStatesCA()[j];			
+				finalstatesprod[i] = aut[i].getFinalStates();
+				initialprod[i] = aut[i].getInitial();
+			}
+		}
+		/**
+		 * compute transitions, non associative
+		 * 
+		 * scan all pair of transitions, if there is a match
+		 * then the new match is added, otherwise interleaving		 * 
+		 */
+		Transition[][] prodtr = new CATransition[aut.length][];
+		int trlength = 0;
+		for(int i=0;i<aut.length;i++)
+		{
+			prodtr[i]=  aut[i].getTransition();
+			trlength += prodtr[i].length;
+		}
+		Transition[] transprod = new CATransition[trlength]; //there will be less then these in case of matches
+		int pointer = 0;
+		boolean match = false;
+		for (int i=0;i<prodtr.length;i++)
+		{
+			Transition[] t = prodtr[i];
+			for (int j=0;j<t.length;j++)
+			{
+				for (int ii=i+1;ii<prodtr.length;ii++)
+				{
+					Transition[] tt = prodtr[ii];
+					for (int jj=0;jj<tt.length;jj++)
+					{
+						if (t[j].getLabel() + tt[jj].getLabel() == 0) //match found <-- wrong!
+						{
+							match = true;
+							Transition[] gen = generateTransitions(t[j],tt[jj],i,ii,aut);
+							//transprod[pointer] 
+						}
+					}
+				}
+				if (!match) //if t[j] it is not matched then interleaving
+				{
+					
+				}
+			}
+		}
+		
+			
+		return null;
+	}
+	
+	private static boolean match(int[] l,int[] ll)
+	{
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param t  first transition made by one principal
+	 * @param tt second transition if it is a match, otherwise null
+	 * @param i  the index of the principal whose transition is t
+	 * @param ii the index of the principal whose transition is tt or -1
+	 * @param aut all the principals to be in the transition
+	 * @return an array of transitions where i (and ii) moves and the other stays idle in each possible state 
+	 */
+	private static CATransition[] generateTransitions(Transition t, Transition tt, int i, int ii, CA[] aut)
+	{
+		if (tt!= null)
+		{
+			int prodrank =0;
+			int firstprinci=-1;
+			int firstprincii=-1;
+			for (int ind=0;i<aut.length;i++)
+			{
+				if ((ind!=i)&&(ind!=ii))
+					prodrank = prodrank+(aut[ind].getRank()); 
+				else if (ind==i)
+					firstprinci=prodrank;
+				else 
+					firstprincii=prodrank;
+					
+			}
+			int[] states = new int[prodrank]; //the number of states of each principal, -1 for principals of i and ii
+			int numtransitions=1;
+			int ind3=0;
+			
+			//filling the array states
+			for (int ind=0;i<aut.length;i++)
+			{
+				if ((ind!=i)&&(ind!=ii))
+				{
+					for(int ind2=0;ind2<aut[ind].getRank();ind2++)
+						{						
+							states[ind3]=aut[ind].getStatesCA()[ind2];
+							numtransitions*=states[ind3];
+							ind3++;
+						}
+				}
+			}			
+			Transition[] tr = new CATransition[numtransitions];
+			int[] counter = new int[prodrank];
+			for (int ind=0;i<prodrank;ind++)
+			{
+				counter[ind]=0;
+			}
+			for (int ind=0;i<prodrank;ind++)
+			{
+				if (counter[ind]==states[ind])
+				{
+					
+				}
+			}
+				
+			return (CATransition[]) tr;
+		}
+		else
+			return null;
+	}
+	
+	/**
+	 * 
+	 * se sono in fondo,
+	 * 		
+	 * 		se non ho raggiunto il max stati inserisco la combinazione e richiamo+1  FLAG ON
+	 * 		se ho raggiunto il max O SE E' -1, faccio un passo indietro e richiamo
+	 * se non sono in fondo
+	 * 		se è -1 
+	 * 				se FLAG ON torno indietro
+	 * 				se FLAG OFF vado avanti
+	 * 		se non ho raggiunto il max, aumento di 1 e chiamo un passo avanti e FLAG OFF
+	 * 		se ho raggiunto il max, faccio un passo indietro
+	 * se sono all'inizio
+	 * 		come prima, solo se raggiungo il max, termino
+	 * 
+	 * parametri, l'array di transizioni, side effect ne inserisce una, ha bisogno
+	 * anche delle transizioni che muovono e i due principal, indice nell'array di transizioni per inserire la nuova, 
+	 * l'array con gli stati di ogni principale
+	 * 
+	 * l'array è un oggetto, alla fine del metodo, l'oggetto è stato modificato, quindi ritorna void
+	 */
+	private void recGen(Transition t, Transition tt, int i, int ii, CATransition[] cat,  int[] states, int indcat, int indstates, int[] insert)
+	{
+		if (indstates==states.length-1)
+		{
+			cat[indcat]=generateATransition(t,tt,i,ii,insert);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param t				first transition to move
+	 * @param tt			second transition to move only in case of match
+	 * @param firstprinci  the index to start to copy the principals in t
+	 * @param firstprincii the index to start to copy the principals in tt
+	 * @param insert		the states of all other principals who stays idle
+	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
+	 */
+	private CATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
+	{
+		if (tt!=null)
+		{
+			int[] s=((CATransition) t).getInitialP();
+			int[] l=((CATransition) t).getLabelP();
+			int[] d=((CATransition) t).getFinalP();
+			int[] ss = ((CATransition) tt).getInitialP();
+			int[] ll=((CATransition) tt).getLabelP();
+			int[] dd =((CATransition) tt).getFinalP();
+			int[] initial = new int[insert.length+s.length+ss.length];
+			int[] dest = new int[insert.length+s.length+ss.length];
+			int[] label = new int[insert.length+s.length+ss.length];
+			firstprincii+=s.length;
+			for (int i=0;i<initial.length;i++)
+			{
+				if (i==firstprinci)
+					for (int j=0;i<s.length;j++)
+					{
+						initial[i+j]=s[j];
+						label[i+j]=l[j];
+						dest[i+j]=d[j];
+					}
+				else if (i==firstprincii)
+					for (int j=0;i<ss.length;j++)
+					{
+						initial[i+j]=ss[j];
+						label[i+j]=ll[j];
+						dest[i+j]=dd[j];
+					}
+				else 
+				{
+					initial[i]=insert[i];
+					dest[i]=insert[i];
+					label[i]=0;
+				}
+			}
+			return new CATransition(initial,label,dest);	
+		}
+		else
+		{
+			int[] s=((CATransition) t).getInitialP();
+			int[] l=((CATransition) t).getLabelP();
+			int[] d=((CATransition) t).getFinalP();
+			int[] initial = new int[insert.length+s.length];
+			int[] dest = new int[insert.length+s.length];
+			int[] label = new int[insert.length+s.length];
+			for (int i=0;i<initial.length;i++)
+			{
+				if (i==firstprinci)
+					for (int j=0;i<s.length;j++)
+					{
+						initial[i+j]=s[j];
+						label[i+j]=l[j];
+						dest[i+j]=d[j];
+					}
+				else
+				{
+					initial[i]=insert[i];
+					dest[i]=insert[i];
+					label[i]=0;
+				}
+			}
+			return new CATransition(initial,label,dest);	
+		}
+	}
+	
+	public CA proj(int i)
+	{
+		if ((i<0)||(i>rank)) //check if the parameter i is in the rank of the CA
+			return null;
+		
+		
+		return null;
+	}
+	
+	public static CA aproduct(CA[] automata)
+	{
+		return null;
+	}
+	
+	public boolean branchingCondition()
+	{
+		return false;
+	}
+	
+	public boolean mixedChoice()
+	{
+		return false;
+	}
+}

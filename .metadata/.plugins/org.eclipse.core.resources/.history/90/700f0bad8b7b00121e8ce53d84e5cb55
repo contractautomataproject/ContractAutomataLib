@@ -1,0 +1,33 @@
+
+import java.io.*;
+
+public class Main {
+	public static void main (String [] args){
+		Automata automa = null;
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        System.out.println("Press 1 for FMA and 2 for PFSA");
+	        int type= Integer.parseInt(myInput.readLine());
+	        System.out.println("Insert the name of the automaton to load or leave empty for create a new one");
+	        String s = myInput.readLine();
+	        if (!s.isEmpty())
+	        {
+	        	if (type == 1)
+	        		automa =  (FMA) Automata.load(s);
+	        	else if (type == 2)
+	        		automa = (PFSA) Automata.load(s);
+	        }
+	        else
+	        	{
+		        	if (type == 1)
+		        		automa =  new FMA();
+		        	else if (type == 2)
+		        		automa = new PFSA();
+	        	}
+	        automa.print();
+	        automa.run();
+		}
+		catch (Exception e){e.printStackTrace();}
+	}
+}
