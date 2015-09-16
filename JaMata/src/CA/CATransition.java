@@ -146,4 +146,34 @@ public class CATransition extends Transition implements java.io.Serializable{
 		int[] dp=tr.getFinalP();
 		return ( Arrays.equals(ip,initial))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,fina));
 	}	
+	
+	/**
+	 * check if labels l and ll are in match
+	 * @param l
+	 * @param ll
+	 * @return true if there is a match, false otherwise
+	 */
+	public static boolean match(int[] l,int[] ll)
+	{
+		int m=-1000; int mm=-1000;
+		for (int i=0;i<l.length;i++)
+		{
+			if (l[i]!=0)
+			{
+				if (m==-1000)
+					m=l[i];
+				else
+					return false; //l is a match
+			}
+		}
+		for (int i=0;i<ll.length;i++)
+			if (ll[i]!=0)
+			{
+				if(mm==-1000)
+					mm=ll[i];
+				else
+					return false; // ll is a match
+			}
+		return ((m+mm) == 0)&&(m!=-1000)&&(mm!=-1000); 
+	}
 }

@@ -2,6 +2,7 @@
 import java.io.*;
 
 import CA.CA;
+import CA.CAUtil;
 import FMA.FMA;
 import FSA.FSA;
 import PFSA.PFSA;
@@ -25,7 +26,11 @@ public class Main {
 	        BufferedReader myInput = new BufferedReader (reader);
 	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA and 4 for CA ");
 	        int type = Integer.parseInt(myInput.readLine());
-	        //int type= 4;
+	        if (type== 4)
+	        {
+	        	CATest();
+	        	return;
+	        }
 	        System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for creating a new one");
 	        String s = myInput.readLine(); 
 	        //String s ="CA1";
@@ -37,8 +42,6 @@ public class Main {
 	        		automa = (PFSA) FSA.load(s);
 	        	else if (type == 3)
 	        		automa = FSA.load(s);
-	        	else if (type == 4)
-	        		automa = (CA) FSA.load(s);
 	        }
 	        else
 	        	{
@@ -48,21 +51,14 @@ public class Main {
 		        		automa = new PFSA();
 		        	else if (type == 3)
 		        		automa = new FSA();
-		        	else if (type == 4)
-		        		automa = new CA();
 	        	}
 	        automa.print();
-	        if (type!=4)
-	        	automa.run();
-	        else
-	        {
-	        	CATest((CA)automa);
-	        }
+	        automa.run();
 		}
 		catch (Exception e){e.printStackTrace();}
 	}
 	
-	private static void CATest(CA automa)
+	private static void CATest()
 	{
 
 		try{
@@ -73,11 +69,12 @@ public class Main {
 			s = myInput.readLine();
 			while(!s.equals("4"))
 			{
-				CA[] aut=load(automa);
+				System.out.println("Reset stored automaton...");
+				CA[] aut=load();
 				if(s.equals("1"))
 				{
 					System.out.println("Computing the product automaton ... ");
-					CA prod = CA.product(aut);
+					CA prod = CAUtil.product(aut);
 					prod.print();
 			        FSA.write(prod);
 				}
@@ -93,25 +90,25 @@ public class Main {
 				else if(s.equals("3"))
 				{
 					System.out.println("Computing the associative product automaton ... ");
-					CA prod = CA.aproduct(aut);
+					CA prod = CAUtil.aproduct(aut);
 					prod.print();
 			        FSA.write(prod);
 				}
-				System.out.println("1 : product automata\n2 : projection \n3 : exit ");
+				System.out.println("1 : product automata\n2 : projection \n3 : aproduct \n4: exit ");
 				s = myInput.readLine();
 
 			}
 
 		}catch(Exception e){e.printStackTrace();}
 	} 
-	private static CA[] load(CA automa)
+	
+	private static CA[] load()
 	{
 		try
 		{
 			CA[] a = new CA[10];
 			int i=0;
-			a[i]=automa;
-			i++;
+			CA automa;
 			String s="";
 			InputStreamReader reader = new InputStreamReader (System.in);
 			BufferedReader myInput = new BufferedReader (reader);
