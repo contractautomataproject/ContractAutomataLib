@@ -335,103 +335,14 @@ public class CA  extends FSA implements java.io.Serializable
 		return (a.getTransition().length==0);
     }
 	
-	/**
-	 * 
-	 * @return true if the automaton enjoys the branching condition, false otherwise
-	 */
+	
 	public boolean branchingCondition()
 	{
-		/**
-		 * for all transitions:
-		 * 		if t is a match select the state s of the sender and the label l
-		 * 			for all reachable states
-		 * 				if the sender is in state s
-		 * 					if there is no transition from the selected state with label l
-		 * 						return false
-		 */
-		CATransition[] t = this.getTransition();
-		int[][] reach = this.reachableStates();
-		for (int i=0;i<t.length;i++)
-		{
-			if (t[i].match())
-			{
-				int[] l=t[i].getLabelP();
-				int s = t[i].sender();
-				for (int j=0;j<reach.length;j++)
-				{
-					if (reach[i][s]==t[i].getInitialP()[s])
-					{
-						int z=0;
-						boolean found = false;
-						while ((!found)&&(z<t.length))
-						{
-							found=Arrays.equals(t[z].getInitialP(), reach[i])&&Arrays.equals(t[z].getLabelP(), l);
-							z++;
-						}
-						if (!found)
-							return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * 
-	 * @return true if there are mixed choice, false otherwise
-	 */
-	public boolean mixedChoice()
-	{
-		/**
-		 * for all transitions
-		 * 		for all transitions
-		 * 			if the two transitions have the same initial state and different sender return false
-		 */
-		CATransition[] t = this.getTransition();
-		for (int i=0;i<t.length;i++)
-		{
-			for(int j=i+1;j<t.length;j++)
-			{
-				if (Arrays.equals(t[i].getInitialP(), t[j].getInitialP())&&t[i].sender()!=t[j].sender())
-					return true;
-			}
-		}
 		return false;
 	}
 	
-	/**
-	 * 
-	 * @return all the reachable states 
-	 */
-	private int[][] reachableStates()
+	public boolean mixedChoice()
 	{
-		CA aut=this.clone();
-		aut = CAUtil.removeUnreachable(aut);
-		aut = CAUtil.removeHangedTransitions(aut);
-		int[][] s = new int[this.prodStates()][];
-		s[0]=aut.getInitialCA();
-		CATransition[] t = aut.getTransition();
-		int pointer=1;
-		for (int i=0;i<t.length;i++)
-		{
-			int[] p = t[i].getFinalP();
-			boolean found=false;
-			int j=0;
-			while((!found)&&(s[j]!=null))
-			{
-				found = Arrays.equals(p, s[j]);
-				j++;
-			}
-			if (!found)
-			{
-				s[pointer]=p;
-				pointer++;
-			}
-		}
-	    int[][] f = new int[pointer][];
-	    for (int i=0;i<pointer;i++)
-	    	f[i]=s[i];
-		return f;
+		return false;
 	}
 }

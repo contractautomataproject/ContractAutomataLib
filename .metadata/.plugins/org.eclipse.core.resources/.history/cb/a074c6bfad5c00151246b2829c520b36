@@ -131,34 +131,6 @@ public class CATransition extends Transition implements java.io.Serializable{
 	}
 	
 	/**
-	 * 
-	 * @return the index of the sender or -1 
-	 */
-	public int sender()
-	{
-		for (int i=0;i<label.length;i++)
-		{
-			if (label[i]>0)
-				return i;
-		}
-		return -1;
-	}
-	
-	/**
-	 * 
-	 * @return the index of the receiver or -1 
-	 */
-	public int receiver()
-	{
-		for (int i=0;i<label.length;i++)
-		{
-			if (label[i]<0)
-				return i;
-		}
-		return -1;
-	}
-	
-	/**
 	 * override of toString
 	 */
 	public String toString()

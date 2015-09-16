@@ -335,10 +335,7 @@ public class CA  extends FSA implements java.io.Serializable
 		return (a.getTransition().length==0);
     }
 	
-	/**
-	 * 
-	 * @return true if the automaton enjoys the branching condition, false otherwise
-	 */
+	
 	public boolean branchingCondition()
 	{
 		/**
@@ -349,54 +346,11 @@ public class CA  extends FSA implements java.io.Serializable
 		 * 					if there is no transition from the selected state with label l
 		 * 						return false
 		 */
-		CATransition[] t = this.getTransition();
-		int[][] reach = this.reachableStates();
-		for (int i=0;i<t.length;i++)
-		{
-			if (t[i].match())
-			{
-				int[] l=t[i].getLabelP();
-				int s = t[i].sender();
-				for (int j=0;j<reach.length;j++)
-				{
-					if (reach[i][s]==t[i].getInitialP()[s])
-					{
-						int z=0;
-						boolean found = false;
-						while ((!found)&&(z<t.length))
-						{
-							found=Arrays.equals(t[z].getInitialP(), reach[i])&&Arrays.equals(t[z].getLabelP(), l);
-							z++;
-						}
-						if (!found)
-							return false;
-					}
-				}
-			}
-		}
-		return true;
+		return false;
 	}
 	
-	/**
-	 * 
-	 * @return true if there are mixed choice, false otherwise
-	 */
 	public boolean mixedChoice()
 	{
-		/**
-		 * for all transitions
-		 * 		for all transitions
-		 * 			if the two transitions have the same initial state and different sender return false
-		 */
-		CATransition[] t = this.getTransition();
-		for (int i=0;i<t.length;i++)
-		{
-			for(int j=i+1;j<t.length;j++)
-			{
-				if (Arrays.equals(t[i].getInitialP(), t[j].getInitialP())&&t[i].sender()!=t[j].sender())
-					return true;
-			}
-		}
 		return false;
 	}
 	
