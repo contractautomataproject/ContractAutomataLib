@@ -145,10 +145,6 @@ public class CA  extends FSA implements java.io.Serializable
 		return t;
 	}
 	
-	/**
-	 * The sum all states of all principals
-	 * @return The sum all states of all principals
-	 */
 	public int sumStates()
 	{
 		int numstates=0;
@@ -159,10 +155,6 @@ public class CA  extends FSA implements java.io.Serializable
 		return numstates;
 	}
 	
-	/**
-	 * The product of the states of all principals
-	 * @return The product of the states of all principals
-	 */
 	public int prodStates()
 	{
 		int prodstates=1;

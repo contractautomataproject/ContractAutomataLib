@@ -161,7 +161,7 @@ public class Main {
 					a = aut[aut.length-1];
 					CA mpc = a.mpc();
 					mpc.print();
-					FSA.write(mpc);
+					FSA.write(a);
 					break;
 
 				case "10":

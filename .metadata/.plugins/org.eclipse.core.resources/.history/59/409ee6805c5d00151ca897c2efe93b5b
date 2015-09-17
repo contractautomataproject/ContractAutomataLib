@@ -61,9 +61,6 @@ public class Main {
 		catch (Exception e){e.printStackTrace();}
 	}
 	
-	/**
-	 * Testing the CA
-	 */
 	private static void CATest()
 	{
 		try{
@@ -153,7 +150,7 @@ public class Main {
 					a = aut[aut.length-1];
 					CA smpc = a.smpc();
 					smpc.print();
-					FSA.write(smpc);
+					FSA.write(a);
 					break;
 
 				case "9":
@@ -161,7 +158,7 @@ public class Main {
 					a = aut[aut.length-1];
 					CA mpc = a.mpc();
 					mpc.print();
-					FSA.write(mpc);
+					FSA.write(a);
 					break;
 
 				case "10":

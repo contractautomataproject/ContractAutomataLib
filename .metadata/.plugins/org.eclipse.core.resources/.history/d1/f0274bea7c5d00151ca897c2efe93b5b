@@ -235,7 +235,7 @@ public class CAUtil
 		{
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getInitialP();
-			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],0))
+			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.sumStates()][],0))
 			{
 				finalTr[ind]=null;
 				removed++;

@@ -235,7 +235,7 @@ public class CAUtil
 		{
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getInitialP();
-			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],0))
+			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.sumStates()][],0))
 			{
 				finalTr[ind]=null;
 				removed++;
@@ -279,7 +279,7 @@ public class CAUtil
 			int[][] fs = aut.allFinalStates();
 			for (int i=0;i<fs.length;i++)
 			{
-				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],0)) //if final state fs[i] is reachable from arrival state arr
+				if(amIReachable(fs[i],aut,arr,new int[aut.sumStates()][],0)) //if final state fs[i] is reachable from arrival state arr
 					remove = false;
 			}
 			//if t does not reach any final state then remove
@@ -326,8 +326,7 @@ public class CAUtil
 				return false;
 			}
 		}
-		if (pointervisited>=visited.length)
-			System.out.println("d");
+		
 		visited[pointervisited]=state;
 		pointervisited++;
 		CATransition[] t = aut.getTransition();

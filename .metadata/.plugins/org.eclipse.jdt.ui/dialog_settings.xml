@@ -67,12 +67,12 @@
 		<item value="true" key="splitindex"/>
 		<item value="true" key="fromStandard"/>
 		<item value="false" key="notree"/>
-		<item value="C:\Users\basile\doc" key="destdir"/>
+		<item value="C:\Users\Davide\workspace\JaMata\doc" key="destdir"/>
 		<item value="false" key="openinbrowser"/>
 		<section name="projects">
 			<section name="JaMata">
 				<item value="C:\Users\Davide\Desktop\workspace\JaMata\javadoc.xml" key="antpath"/>
-				<item value="C:\Users\basile\doc" key="destdir"/>
+				<item value="C:\Users\Davide\workspace\JaMata\doc" key="destdir"/>
 				<item value="" key="href"/>
 			</section>
 		</section>
