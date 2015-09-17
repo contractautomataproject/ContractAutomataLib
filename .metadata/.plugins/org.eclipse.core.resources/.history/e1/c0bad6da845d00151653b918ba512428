@@ -19,12 +19,23 @@ Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
 From Orchestration to Choreography through Contract Automata. ICE 2014: 67-85
 
 CA
-In the workspace it is possible to load the "2 buyers protocol" example, more informations
-are available on the file 2BP.
-
+In the workspace it is possible to load the "2 buyers protocol" example
+	- B1 the buyer 1
+	- B2 the buyer 2
+	- S the seller
+	- B1xB2xS  	the product computed by the tool
+	- KS(B1xB2xS) the most permissive controller for strong agreement computed by the tool
+				  this CA has mixed choice states and does not enjoy branching condition
+				  
+there are also modified versions called B1R,B2R,SR , B1R',B2R',SR'  where
+	-  KS(B1RxB2RxSR) does not enjoys branching condition and has mixed choice states
+	-  KS(B1RxB2RxSR') enjoys branching condition and has mixed choice states
+	-  KS(B1R'xB2R'xSR') enjoys branching condition and has no mixed choice states
 
 
 FMA - PFSA - FSA
+
+
 In the workspace there are different automaton to load:
 	- FMAexample1       it is the first example presented in the paper "Finite Memory Automata". This automaton recognize 
 						strings where a character appears at least two times. An example of a string recognized by the 
