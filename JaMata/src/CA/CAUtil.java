@@ -5,7 +5,6 @@ import java.util.Arrays;
 import FSA.Transition;
 
 /**
- * 
  * Utilities for CA: product, aproduct
  * 
  * @author Davide Basile
@@ -314,7 +313,7 @@ public class CAUtil
 	 * @param aut
 	 * @param visited
 	 * @param pointervisited
-	 * @return
+	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
 	private static boolean amIReachable(int[] state, CA aut,int[] from, int[][] visited, int pointervisited)
 	{

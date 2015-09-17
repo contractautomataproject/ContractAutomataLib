@@ -1,4 +1,4 @@
-command=C\:\\Program Files (x86)\\Java\\jdk1.5.0_22\\bin\\javadoc.exe
+command=C\:\\Program Files\\Java\\jdk1.7.0_21\\bin\\javadoc.exe
 content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"/>
 content_assist_number_of_computers=13
 content_assist_proposals_background=255,255,255

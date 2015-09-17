@@ -9,4 +9,6 @@
 <fullyQualifiedTypeName name="java.util.Vector"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="CA.CAUtil"/>
+<fullyQualifiedTypeName name="CA.CATransition"/>
 </qualifiedTypeNameHistroy>

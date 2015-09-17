@@ -55,11 +55,11 @@
 		<item value="C:\Users\Davide\Desktop\workspace\JaMata\javadoc.xml" key="antpath"/>
 		<item value="false" key="nodeprecatedlist"/>
 		<item value="true" key="use"/>
-		<item value="false" key="nodeprecated"/>
 		<item value="true" key="author"/>
+		<item value="false" key="nodeprecated"/>
 		<item value="false" key="nonavbar"/>
 		<item value="" key="docletpath"/>
-		<item value="C:\Program Files (x86)\Java\jdk1.5.0_22\bin\javadoc.exe;C:\Program Files\Java\jdk1.5.0_22\bin\javadoc.exe" key="javadoc_command_history"/>
+		<item value="C:\Program Files\Java\jdk1.7.0_21\bin\javadoc.exe;C:\Program Files (x86)\Java\jdk1.5.0_22\bin\javadoc.exe;C:\Program Files\Java\jdk1.5.0_22\bin\javadoc.exe" key="javadoc_command_history"/>
 		<item value="1.7" key="source"/>
 		<item value="true" key="version"/>
 		<item value="JaMaTa Doc" key="doctitle"/>
@@ -67,12 +67,12 @@
 		<item value="true" key="splitindex"/>
 		<item value="true" key="fromStandard"/>
 		<item value="false" key="notree"/>
-		<item value="C:\Users\basile\workspace\JaMata\doc" key="destdir"/>
+		<item value="C:\Users\basile\doc" key="destdir"/>
 		<item value="false" key="openinbrowser"/>
 		<section name="projects">
 			<section name="JaMata">
 				<item value="C:\Users\Davide\Desktop\workspace\JaMata\javadoc.xml" key="antpath"/>
-				<item value="C:\Users\basile\workspace\JaMata\doc" key="destdir"/>
+				<item value="C:\Users\basile\doc" key="destdir"/>
 				<item value="" key="href"/>
 			</section>
 		</section>

@@ -1,4 +1,5 @@
 JaMaTa is a tool that manages different automata models. 
+The full documentation is under the folder JaMaTA/doc.
 
 The base package is FSA (Finite State Automata). 
 These classes are extended for representing
@@ -17,10 +18,16 @@ Automata for Analysing Service Contracts. TGC 2014: 34-50
 Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
 From Orchestration to Choreography through Contract Automata. ICE 2014: 67-85
 
+CA
+
+
+
+
+FMA - PFSA - FSA
 
 
 In the workspace there are different automaton to load:
-	- FMAexample1       it is the first example presented in the paper "Finite Memory Automata". This automaton recognize
+	- FMAexample1       it is the first example presented in the paper "Finite Memory Automata". This automaton recognize 
 						strings where a character appears at least two times. An example of a string recognized by the 
 						automaton is "123145".
 	- FSAexample		a simple FSA that recognize the strings "12" and "123"
@@ -28,6 +35,11 @@ In the workspace there are different automaton to load:
 						of a string recognized is: "12234431"
 
 There are other PFSA example used for testing the software.
+
+
+
+
+
 
 
 Software developed with Eclipse Juno and JavaSE-1.7

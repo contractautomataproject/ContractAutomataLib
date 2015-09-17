@@ -6,8 +6,7 @@ import FSA.Simulator;
 import FSA.Transition;
 
 
-/**
- * 
+/** 
  * Class implementing a Contract Automaton and its functionalities
  * @author Davide Basile
  *
@@ -283,7 +282,7 @@ public class CA  extends FSA implements java.io.Serializable
 	
 	/**
 	 * compute the most permissive controller for agreement
-	 * @return
+	 * @return the most permissive controller for agreement
 	 */
 	public CA mpc()
 	{
