@@ -1,0 +1,238 @@
+
+import java.io.*;
+
+import CA.CA;
+import CA.CAUtil;
+import FMA.FMA;
+import FSA.FSA;
+import PFSA.PFSA;
+
+/**
+ * 
+ * Main Class, contains the method main
+ * @author Davide	Basile
+ *
+ */
+public class Main {
+	/**
+	 * Select the kind of automaton and choose to create a new automaton or loading a stored automaton, then run 
+	 * the simulator
+	 * @param args
+	 */
+	public static void main (String [] args){
+		FSA automa = null;
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        System.out.println("  ****   JAMATA ****");
+	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA and 4 for CA ");
+	        int type = Integer.parseInt(myInput.readLine());
+	        if (type== 4)
+	        {
+	        	CATest();
+	        	return;
+	        }
+	        System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for creating a new one");
+	        String s = myInput.readLine(); 
+	        //String s ="CA1";
+	        if (!s.isEmpty())
+	        {
+	        	if (type == 1)
+	        		automa =  (FMA) FSA.load(s);
+	        	else if (type == 2)
+	        		automa = (PFSA) FSA.load(s);
+	        	else if (type == 3)
+	        		automa = FSA.load(s);
+	        }
+	        else
+	        	{
+		        	if (type == 1)
+		        		automa =  new FMA();
+		        	else if (type == 2)
+		        		automa = new PFSA();
+		        	else if (type == 3)
+		        		automa = new FSA();
+	        	}
+	        automa.print();
+	        automa.run();
+		}
+		catch (Exception e){e.printStackTrace();}
+	}
+	
+	private static void CATest()
+	{
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+			BufferedReader myInput = new BufferedReader (reader);
+			CA prod;
+			CA[] aut=null;
+			CA a;
+			String s="";
+			do
+			{
+				System.out.println("Select an operation");
+				System.out.println("1 : product \n2 : projection \n3 : aproduct \n4 : strongly safe \n5 : strong agreement \n6 : safe \n7 : agreement \n8 : strong most permissive controller \n9 : most permissive controller \n10 : branching condition \n11 : mixed choice  \n12 : exit ");
+				s = myInput.readLine();
+				if(!s.equals("12"))
+				{
+					System.out.println("Reset stored automaton...");
+					aut=load();
+				}
+				switch (s)
+				{
+				case "1":
+					System.out.println("Computing the product automaton ... ");
+					prod = CAUtil.product(aut);
+					prod.print();
+			        FSA.write(prod);
+					break;
+
+				case "2":
+					System.out.println("Computing the projection of the last CA loaded, insert the index of the principal:");
+					s=myInput.readLine();
+					int ind = Integer.parseInt(s);
+					CA projected = aut[aut.length-1].proj(ind);
+					projected.print();
+					FSA.write(projected);
+					break;
+
+				case "3":
+					System.out.println("Computing the associative product automaton ... ");
+					prod = CAUtil.aproduct(aut);
+					prod.print();
+			        FSA.write(prod);
+					break;
+
+				case "4":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.strongSafe())
+						System.out.println("The CA is strongly safe");
+					else
+						System.out.println("The CA is not strongly safe");
+			        FSA.write(a);
+					break;
+
+				case "5":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.agreement())
+						System.out.println("The CA admits strong agreement");
+					else
+						System.out.println("The CA does not admit strong agreement");
+			        FSA.write(a);
+					break;
+
+				case "6":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.safe())
+						System.out.println("The CA is safe");
+					else
+						System.out.println("The CA is not safe");
+			        FSA.write(a);
+					break;
+
+				case "7":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.agreement())
+						System.out.println("The CA admits agreement");
+					else
+						System.out.println("The CA does not admit agreement");
+			        FSA.write(a);
+					break;
+
+				case "8":
+					System.out.println("The most permissive controller of strong agreement for the last CA loaded is");
+					a = aut[aut.length-1];
+					CA smpc = a.smpc();
+					smpc.print();
+					FSA.write(a);
+					break;
+
+				case "9":
+					System.out.println("The most permissive controller of agreement for the last CA loaded is");
+					a = aut[aut.length-1];
+					CA mpc = a.mpc();
+					mpc.print();
+					FSA.write(a);
+					break;
+
+				case "10":
+					a = aut[aut.length-1];
+					a.print();
+					int[][] bc = a.branchingCondition();
+					if (bc==null)
+						System.out.println("The CA enjoys the branching condition");
+					else
+					{
+						System.out.println("The CA does not enjoy the branching condition ");
+						System.out.println("In state "+bc[3]+" there is no transition labeled by "+bc[1]+" while it is present in state "+bc[0]);
+					}
+			        FSA.write(a);
+					break;
+
+				case "11":
+					a = aut[aut.length-1];
+					a.print();
+					int[] st = a.mixedChoice();
+					if (st!=null)
+						System.out.println("The CA has a mixed choice state  "+st.toString());
+					else
+						System.out.println("The CA has no mixed choice states");
+			        FSA.write(a);
+					break;
+				}				
+			}while(!s.equals("12"));
+
+		}catch(Exception e){e.printStackTrace();}
+	} 
+	
+	private static CA[] load()
+	{
+		try
+		{
+			CA[] a = new CA[10];
+			int i=0;
+			CA automa;
+			String s="";
+			InputStreamReader reader = new InputStreamReader (System.in);
+			BufferedReader myInput = new BufferedReader (reader);
+			while (!s.equals("no")&&i<10)
+			{
+				System.out.println("Do you want to create/load other contract automata? (yes/no)");
+				s = myInput.readLine();
+				//s = "yes";
+				if(!s.equals("no"))
+				{
+					System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for create a new one");
+					s = myInput.readLine();
+					//s = "CA1";
+			        if (!s.isEmpty())
+			        {
+			        	automa = (CA) FSA.load(s);
+			        }
+			        else
+			        	{
+				        automa = new CA();
+			        	}
+			        automa.print();
+			        a[i] = automa;
+			        //s="no";
+			        i++;
+				}
+			}
+			CA[] aut;
+			if (i<10)
+			{
+				aut=new CA[i];
+				for (int ind=0;ind<i;ind++)
+					aut[ind]=a[ind];
+			}
+			else
+				aut=a;
+			return aut;
+		}catch(Exception e){e.printStackTrace();return null;}
+	}
+}

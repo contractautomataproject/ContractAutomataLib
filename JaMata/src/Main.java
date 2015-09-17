@@ -1,7 +1,9 @@
 
 import java.io.*;
+import java.util.Arrays;
 
 import CA.CA;
+import CA.CATransition;
 import CA.CAUtil;
 import FMA.FMA;
 import FSA.FSA;
@@ -24,6 +26,7 @@ public class Main {
 		try{
 			InputStreamReader reader = new InputStreamReader (System.in);
 	        BufferedReader myInput = new BufferedReader (reader);
+	        System.out.println("  ****	JAMATA	****");
 	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA and 4 for CA ");
 	        int type = Integer.parseInt(myInput.readLine());
 	        if (type== 4)
@@ -60,44 +63,162 @@ public class Main {
 	
 	private static void CATest()
 	{
-
 		try{
-			System.out.println("1 : product automata\n2 : projection \n3 : aproduct \n4: exit ");
-			String s="";
 			InputStreamReader reader = new InputStreamReader (System.in);
 			BufferedReader myInput = new BufferedReader (reader);
-			s = myInput.readLine();
-			while(!s.equals("4"))
+			CA prod;
+			CA[] aut=null;
+			CA a;
+			String s="";
+			do
 			{
-				System.out.println("Reset stored automaton...");
-				CA[] aut=load();
-				if(s.equals("1"))
+				System.out.println("Select an operation");
+				System.out.println("1 : product \n2 : projection \n3 : aproduct \n4 : strongly safe \n5 : strong agreement \n6 : safe \n7 : agreement \n8 : strong most permissive controller \n9 : most permissive controller \n10 : branching condition \n11 : mixed choice  \n12 : extended branching condition \n13 : liable \n14 : strongly liable \n15 : exit ");
+				s = myInput.readLine();
+				if(!s.equals("15"))
 				{
+					System.out.println("Reset stored automaton...");
+					aut=load();
+				}
+				switch (s)
+				{
+				case "1":
 					System.out.println("Computing the product automaton ... ");
-					CA prod = CAUtil.product(aut);
+					prod = CAUtil.product(aut);
 					prod.print();
 			        FSA.write(prod);
-				}
-				else if(s.equals("2"))
-				{
+					break;
+
+				case "2":
 					System.out.println("Computing the projection of the last CA loaded, insert the index of the principal:");
 					s=myInput.readLine();
 					int ind = Integer.parseInt(s);
 					CA projected = aut[aut.length-1].proj(ind);
 					projected.print();
 					FSA.write(projected);
-				}
-				else if(s.equals("3"))
-				{
+					break;
+
+				case "3":
 					System.out.println("Computing the associative product automaton ... ");
-					CA prod = CAUtil.aproduct(aut);
+					prod = CAUtil.aproduct(aut);
 					prod.print();
 			        FSA.write(prod);
-				}
-				System.out.println("1 : product automata\n2 : projection \n3 : aproduct \n4: exit ");
-				s = myInput.readLine();
+					break;
 
-			}
+				case "4":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.strongSafe())
+						System.out.println("The CA is strongly safe");
+					else
+						System.out.println("The CA is not strongly safe");
+			        FSA.write(a);
+					break;
+
+				case "5":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.strongAgreement())
+						System.out.println("The CA admits strong agreement");
+					else
+						System.out.println("The CA does not admit strong agreement");
+			        FSA.write(a);
+					break;
+
+				case "6":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.safe())
+						System.out.println("The CA is safe");
+					else
+						System.out.println("The CA is not safe");
+			        FSA.write(a);
+					break;
+
+				case "7":
+					a = aut[aut.length-1];
+					a.print();
+					if (a.agreement())
+						System.out.println("The CA admits agreement");
+					else
+						System.out.println("The CA does not admit agreement");
+			        FSA.write(a);
+					break;
+
+				case "8":
+					System.out.println("The most permissive controller of strong agreement for the last CA loaded is");
+					a = aut[aut.length-1];
+					CA smpc = a.smpc();
+					smpc.print();
+					FSA.write(a);
+					break;
+
+				case "9":
+					System.out.println("The most permissive controller of agreement for the last CA loaded is");
+					a = aut[aut.length-1];
+					CA mpc = a.mpc();
+					mpc.print();
+					FSA.write(a);
+					break;
+
+				case "10":
+					a = aut[aut.length-1];
+					a.print();
+					int[][] bc = a.branchingCondition();
+					if (bc==null)
+						System.out.println("The CA enjoys the branching condition");
+					else
+					{
+						System.out.println("The CA does not enjoy the branching condition ");
+						System.out.println("In state "+Arrays.toString(bc[2])+" there is no transition labeled by "+Arrays.toString(bc[1])+" while it is the case for state "+Arrays.toString(bc[0]));
+					}
+			        FSA.write(a);
+					break;
+
+				case "11":
+					a = aut[aut.length-1];
+					a.print();
+					int[] st = a.mixedChoice();
+					if (st!=null)
+						System.out.println("The CA has a mixed choice state  "+Arrays.toString(st));
+					else
+						System.out.println("The CA has no mixed choice states");
+			        FSA.write(a);
+					break;
+
+				case "12":
+					a = aut[aut.length-1];
+					a.print();
+					int[][] ebc = a.extendedBranchingCondition();
+					if (ebc==null)
+						System.out.println("The CA enjoys the extended branching condition");
+					else
+					{
+						System.out.println("The CA does not enjoy the extended branching condition ");
+						System.out.println("In state "+Arrays.toString(ebc[2])+" there is no transition labeled by "+Arrays.toString(ebc[1])+" while it is the case for state "+Arrays.toString(ebc[0]));
+					}
+			        FSA.write(a);
+					break;
+				case"13":
+					a = aut[aut.length-1];
+					a.print();
+					CATransition[] l = a.liable();
+					System.out.println("The liable transitions are:");
+					for(int i=0;i<l.length;i++)
+						System.out.println(l[i].toString());
+					FSA.write(a);
+					break;
+				case"14":
+					a = aut[aut.length-1];
+					a.print();
+					CATransition[] sl = a.strongLiable();
+					System.out.println("The strongly liable transitions are:");
+					for(int i=0;i<sl.length;i++)
+						System.out.println(sl[i].toString());
+					FSA.write(a);
+					break;
+				}				
+			}while(!s.equals("15"));
 
 		}catch(Exception e){e.printStackTrace();}
 	} 

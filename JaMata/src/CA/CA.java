@@ -7,6 +7,8 @@ import FSA.Transition;
 
 
 /**
+ * 
+ * Class implementing a Contract Automaton and its functionalities
  * @author Davide Basile
  *
  */
@@ -18,7 +20,8 @@ public class CA  extends FSA implements java.io.Serializable
 	private int[] states;
 	private int[][] finalstates; 
 	//private CATransition[] tra;
-	private static String message = "*** CA simulator ***\n";
+	private static String message = "*** contract automata ***\n The alphabet is represented by integers: " +
+			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
@@ -55,7 +58,6 @@ public class CA  extends FSA implements java.io.Serializable
 	 */
 	public void print()
 	{
-		//super.print();
 		/**
 		 * Print in output a description of the automaton
 		 */
@@ -67,7 +69,6 @@ public class CA  extends FSA implements java.io.Serializable
 		for (int i=0;i<finalstates.length;i++)
 			System.out.print(Arrays.toString(finalstates[i]));
 		System.out.print("]\n");
-		//System.out.println("Transitions: "+Arrays.toString(this.getTransition()));		
 		System.out.println("Transitions: \n");
 		Transition[] t = this.getTransition();
 		for (int i=0;i<t.length;i++)
@@ -251,14 +252,30 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		CA a = this.clone();
 		CATransition[] t = a.getTransition();
+		int removed=0;
 		for (int i=0;i<t.length;i++)
 		{
 			if (!t[i].match())
 			{
 				t[i] = null;
+				removed++;
 			}
 		}
-		a.setTransition(t);
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		CATransition[] finalTr2 = new CATransition[t.length-removed];
+		for (int ind=0;ind<t.length;ind++)
+		{
+			if (t[ind]!=null)
+			{
+				finalTr2[pointer]=t[ind];
+				pointer++;
+			}
+		}
+
+		a.setTransition(finalTr2);
 		a = CAUtil.removeHangedTransitions(a);
 		a = CAUtil.removeUnreachable(a);
 		return a;
@@ -272,14 +289,29 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		CA a = this.clone();
 		CATransition[] t = a.getTransition();
+		int removed=0;
 		for (int i=0;i<t.length;i++)
 		{
 			if (t[i].request())
 			{
 				t[i] = null;
+				removed++;
 			}
 		}
-		a.setTransition(t);
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		CATransition[] finalTr2 = new CATransition[t.length-removed];
+		for (int ind=0;ind<t.length;ind++)
+		{
+			if (t[ind]!=null)
+			{
+				finalTr2[pointer]=t[ind];
+				pointer++;
+			}
+		}
+		a.setTransition(finalTr2);
 		a = CAUtil.removeHangedTransitions(a);
 		a = CAUtil.removeUnreachable(a);
 		return a;
@@ -307,7 +339,7 @@ public class CA  extends FSA implements java.io.Serializable
 		if (this.strongSafe())
 			return true;
 		CA a = this.smpc();
-		return (a.getTransition().length==0);
+		return (a.getTransition().length!=0);
 	}
 	
 	/**
@@ -332,14 +364,15 @@ public class CA  extends FSA implements java.io.Serializable
     	if (this.safe())
 			return true;
 		CA a = this.mpc();
-		return (a.getTransition().length==0);
+		return (a.getTransition().length!=0);
     }
 	
 	/**
 	 * 
-	 * @return true if the automaton enjoys the branching condition, false otherwise
+	 * @return null if the branching condition holds, otherwise the initial state and label of the
+	 * 				match transition together with the state where the transition is not present
 	 */
-	public boolean branchingCondition()
+	public int[][] branchingCondition()
 	{
 		/**
 		 * for all transitions:
@@ -359,29 +392,84 @@ public class CA  extends FSA implements java.io.Serializable
 				int s = t[i].sender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if (reach[i][s]==t[i].getInitialP()[s])
+					if ((reach[j][s]==t[i].getInitialP()[s])&&(!Arrays.equals(reach[j],t[i].getInitialP())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getInitialP(), reach[i])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getInitialP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
-							return false;
+						{
+							int[][] re = new int[3][];
+							re[0]=t[i].getInitialP();
+							re[1]=t[i].getLabelP();
+							re[2]=reach[j];
+							return re;
+						}
 					}
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 	
 	/**
 	 * 
-	 * @return true if there are mixed choice, false otherwise
+	 * @return null if the ext. branching condition holds, otherwise the initial state and label of the
+	 * 				transition together with the state where the transition is not present
 	 */
-	public boolean mixedChoice()
+	public int[][] extendedBranchingCondition()
+	{
+		/**
+		 * for all transitions:
+		 * 		if t is a match select the state s of the sender and the label l
+		 * 			for all reachable states
+		 * 				if the sender is in state s
+		 * 					if there is no transition from the selected state with label l
+		 * 						return false
+		 */
+		CATransition[] t = this.getTransition();
+		int[][] reach = this.reachableStates();
+		for (int i=0;i<t.length;i++)
+		{
+			if (!t[i].request())
+			{
+				int[] l=t[i].getLabelP();
+				int s = t[i].sender();
+				for (int j=0;j<reach.length;j++)
+				{
+					if ((reach[j][s]==t[i].getInitialP()[s])&&(!Arrays.equals(reach[j],t[i].getInitialP())))
+					{
+						int z=0;
+						boolean found = false;
+						while ((!found)&&(z<t.length))
+						{
+							found=Arrays.equals(t[z].getInitialP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							z++;
+						}
+						if (!found)
+						{
+							int[][] re = new int[3][];
+							re[0]=t[i].getInitialP();
+							re[1]=t[i].getLabelP();
+							re[2]=reach[j];
+							return re;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @return the state if there are mixed choice, null otherwise
+	 */
+	public int[] mixedChoice()
 	{
 		/**
 		 * for all transitions
@@ -394,10 +482,10 @@ public class CA  extends FSA implements java.io.Serializable
 			for(int j=i+1;j<t.length;j++)
 			{
 				if (Arrays.equals(t[i].getInitialP(), t[j].getInitialP())&&t[i].sender()!=t[j].sender())
-					return true;
+					return t[i].getInitialP();
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	/**
@@ -433,5 +521,101 @@ public class CA  extends FSA implements java.io.Serializable
 	    for (int i=0;i<pointer;i++)
 	    	f[i]=s[i];
 		return f;
+	}
+	
+	/**
+	 * 
+	 * @return all the final states of the CA
+	 */
+	public  int[][] allFinalStates()
+	{
+		if (rank==1)
+			return finalstates;
+		int[] states=new int[finalstates.length];
+		int comb=1;
+		int[] insert= new int[states.length];
+		for (int i=0;i<states.length;i++)
+		{
+			states[i]=finalstates[i].length;
+			comb*=states[i];
+			insert[i]=0;
+		}
+		int[][] modif = new int[comb][];
+		CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
+		return modif;
+	}
+	
+	/**
+	 * 
+	 * @return the liable transitions
+	 */
+	public CATransition[] liable()
+	{
+		CA aut = this.clone();
+		aut = this.mpc();
+		int[][] ms = aut.reachableStates();
+		CATransition[] t = this.getTransition();
+		CATransition[] liable = new CATransition[t.length];
+		int pointliable=0;
+		for (int i=0;i<t.length;i++)
+		{
+			int[] s = t[i].getInitialP();
+			int[] d = t[i].getFinalP();
+			boolean founds=false;
+			boolean foundd=false;
+			for(int j=0;j<ms.length;j++)
+			{
+				if (Arrays.equals(s,ms[j]))
+					founds=true;
+				else if (Arrays.equals(d, ms[j]))
+					foundd=true;
+			}
+			if (founds&&!foundd)
+			{
+				liable[pointliable]=t[i];
+				pointliable++;
+			}
+		}
+		CATransition[] ret = new CATransition[pointliable];
+		for(int i=0;i<pointliable;i++)
+			ret[i]=liable[i];
+		return ret;
+	}
+	
+	/**
+	 * 
+	 * @return the strongly liable transitions
+	 */
+	public CATransition[] strongLiable()
+	{
+		CA aut = this.clone();
+		aut = this.smpc();
+		int[][] ms = aut.reachableStates();
+		CATransition[] t = this.getTransition();
+		CATransition[] liable = new CATransition[t.length];
+		int pointliable=0;
+		for (int i=0;i<t.length;i++)
+		{
+			int[] s = t[i].getInitialP();
+			int[] d = t[i].getFinalP();
+			boolean founds=false;
+			boolean foundd=false;
+			for(int j=0;j<ms.length;j++)
+			{
+				if (Arrays.equals(s,ms[j]))
+					founds=true;
+				else if (Arrays.equals(d, ms[j]))
+					foundd=true;
+			}
+			if (founds&&!foundd)
+			{
+				liable[pointliable]=t[i];
+				pointliable++;
+			}
+		}
+		CATransition[] ret = new CATransition[pointliable];
+		for(int i=0;i<pointliable;i++)
+			ret[i]=liable[i];
+		return ret;
 	}
 }

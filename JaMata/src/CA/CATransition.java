@@ -9,7 +9,7 @@ import FSA.Transition;
 
 
 /**
- * A tuple representing a Transition
+ * Transition of a contract automaton
  * 
  * @author Davide Basile
  *
@@ -46,7 +46,13 @@ public class CATransition extends Transition implements java.io.Serializable{
 		this.label = new int[1];
 		initial[0]=super.getInitial();
 		fina[0]=super.getFinal();
-		label[0]=super.getLabel();
+		if (super.getLabel()==0)
+		{
+			System.out.println("Error, principals do not have silent transitions, the label is automatically set to 1");
+			label[0]=1;
+		}
+		else
+			label[0]=super.getLabel();
 	}
 	
 	/**
