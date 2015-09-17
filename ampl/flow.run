@@ -1,0 +1,11 @@
+#reset;
+option solver cplex;
+model weakagreement.mod;
+data flow.dat;
+solve;
+display a;
+display t;
+display x_t;
+display z_t;
+display gamma;
+display p;

@@ -7,7 +7,7 @@
 				  this CA has mixed choice states and does not enjoy branching condition
 				  
 there are also modified versions called B1R,B2R,SR , B1R',B2R',SR'  where
-	-  KS(B1RxB2RxSR) does not enjoy branching condition and has mixed choice states
+	-  KS(B1RxB2RxSR) does not enjoys branching condition and has mixed choice states
 	-  KS(B1RxB2RxSR') enjoys branching condition and has mixed choice states
 	-  KS(B1R'xB2R'xSR') enjoys branching condition and has no mixed choice states
 	
