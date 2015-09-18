@@ -222,7 +222,7 @@ public class CAUtil
 	 * @param at	the CA
 	 * @return	a new CA clone of aut with only reachable transitions
 	 */
-	protected static CA removeUnreachable(CA at)
+	public static CA removeUnreachable(CA at)
 	{
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
@@ -264,7 +264,7 @@ public class CAUtil
 	 * @param at	the CA
 	 * @return	CA without hanged transitions
 	 */
-	protected static CA removeHangedTransitions(CA at)
+	public static CA removeHangedTransitions(CA at)
 	{
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
