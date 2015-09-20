@@ -8,4 +8,3 @@ display t;
 display x_t;
 display z_t;
 display gamma;
-display p;

@@ -2050,3 +2050,21 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.ui 4 4 2015-09-18 17:40:28.663
 !MESSAGE Unable to find Action Set: org.eclipse.wb.core.ui.actionset
+!SESSION 2015-09-19 21:25:38.273 -----------------------------------------------
+eclipse.buildId=M20130204-1200
+java.version=1.8.0_31
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=it_IT
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2015-09-19 21:26:01.826
+!MESSAGE Unable to find Action Set: org.eclipse.mylyn.context.ui.actionSet
+
+!ENTRY org.eclipse.ui 4 4 2015-09-19 21:26:01.860
+!MESSAGE Unable to find Action Set: org.eclipse.mylyn.doc.actionSet
+
+!ENTRY org.eclipse.ui 4 4 2015-09-19 21:26:01.861
+!MESSAGE Unable to find Action Set: org.eclipse.mylyn.tasks.ui.navigation
+
+!ENTRY org.eclipse.ui 4 4 2015-09-19 21:26:01.863
+!MESSAGE Unable to find Action Set: org.eclipse.wb.core.ui.actionset

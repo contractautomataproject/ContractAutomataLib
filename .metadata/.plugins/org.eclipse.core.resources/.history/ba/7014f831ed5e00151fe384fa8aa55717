@@ -198,7 +198,7 @@ public class Main {
 					else
 					{
 						System.out.println("The CA does not enjoy the extended branching condition ");
-						System.out.println("In state "+Arrays.toString(ebc[2])+" there is no transition labelled by "+Arrays.toString(ebc[1])+" while it is the case for state "+Arrays.toString(ebc[0]));
+						System.out.println("In state "+Arrays.toString(ebc[2])+" there is no transition labeled by "+Arrays.toString(ebc[1])+" while it is the case for state "+Arrays.toString(ebc[0]));
 					}
 			        FSA.write(a);
 					break;
