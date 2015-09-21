@@ -89,7 +89,8 @@ public class Main {
 					System.out.println("Computing the product automaton ... ");
 					prod = CAUtil.product(aut);
 					prod.print();
-			        FSA.write(prod);
+			        //FSA.write(prod);
+					prod.printToFile();
 					break;
 
 				case "2":
@@ -173,7 +174,7 @@ public class Main {
 					else
 					{
 						System.out.println("The CA does not enjoy the branching condition ");
-						System.out.println("In state "+Arrays.toString(bc[2])+" there is no transition labeled by "+Arrays.toString(bc[1])+" while it is the case for state "+Arrays.toString(bc[0]));
+						System.out.println("State "+Arrays.toString(bc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(bc[1])+" which is instead enabled in state "+Arrays.toString(bc[0]));
 					}
 			        FSA.write(a);
 					break;
@@ -198,7 +199,7 @@ public class Main {
 					else
 					{
 						System.out.println("The CA does not enjoy the extended branching condition ");
-						System.out.println("In state "+Arrays.toString(ebc[2])+" there is no transition labelled by "+Arrays.toString(ebc[1])+" while it is the case for state "+Arrays.toString(ebc[0]));
+						System.out.println("State "+Arrays.toString(ebc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(ebc[1])+" which is instead enabled in state "+Arrays.toString(ebc[0]));
 					}
 			        FSA.write(a);
 					break;
@@ -248,7 +249,7 @@ public class Main {
 					//s = "CA1";
 			        if (!s.isEmpty())
 			        {
-			        	automa = (CA) FSA.load(s);
+			        	automa = CA.load(s);
 			        }
 			        else
 			        	{

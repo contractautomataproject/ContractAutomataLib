@@ -1,5 +1,10 @@
 package CA;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import FSA.FSA;
 import FSA.Simulator;
@@ -38,7 +43,8 @@ public class CA  extends FSA implements java.io.Serializable
 	        finalstates = new int[1][super.getFinalStates().length];
 	        finalstates[0]= super.getFinalStates();
 	       // this.tra=(CATransition[])super.getTransition();
-	        super.write(this);
+	        //super.write(this);
+	        this.printToFile();
 		}
 		catch (Exception e){System.out.println("Errore inserimento");}
 	}
@@ -74,6 +80,201 @@ public class CA  extends FSA implements java.io.Serializable
 			System.out.println(t[i].toString());		
 	}
 	
+	/**
+	 * print the description of the CA to a file
+	 */
+	public void printToFile()
+	{
+		String name=null;
+		InputStreamReader reader = new InputStreamReader(System.in);
+        BufferedReader myInput = new BufferedReader(reader);
+		try {
+			System.out.println("Do you want to save this automaton? (write yes or no)");
+			if (myInput.readLine().equals("yes"))
+			{	
+				System.out.println("Write the name of this automaton");
+				name= myInput.readLine();
+			}
+			else return;
+			 PrintWriter pr = new PrintWriter(name+".data"); 
+			 pr.println("Rank: "+this.rank);
+			 pr.println("Number of states: "+Arrays.toString(this.getStatesCA()));
+			 pr.println("Initial state: " +Arrays.toString(this.getInitialCA()));
+			 pr.print("Final states: [");
+			 for (int i=0;i<finalstates.length;i++)
+				 pr.print(Arrays.toString(finalstates[i]));
+			 pr.print("]\n");
+			 pr.println("Transitions: \n");
+			 Transition[] t = this.getTransition();
+			 for (int i=0;i<t.length;i++)
+				pr.println(t[i].toString());
+			 pr.close();
+		}catch(Exception e){e.printStackTrace();}
+	}
+	
+	/**
+	 * load a CA described in a text file
+	 * @param the name of the file
+	 * @return	the CA loaded
+	 */
+	public static CA load(String fileName)
+	{
+		try
+		{
+			// Open the file
+			FileInputStream fstream = new FileInputStream(fileName+".data");
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+			String strLine;
+			int rank=0;
+			int[] initial = new int[1];
+			int[] states = new int[1];
+			int[][] fin = new int[1][];
+			CATransition[] t = new CATransition[1];
+			CATransition[] fintr = new CATransition[1];
+			int pointert=0;
+			
+			//Read File Line By Line
+			while ((strLine = br.readLine()) != null)   
+			{
+				  // Print the content on the console
+				  if (strLine.length()>0)
+				  {
+					  switch(strLine.substring(0,1))
+					  {
+						  case "R":
+						  {
+							  Scanner s = new Scanner(strLine);
+							  s.useDelimiter("");
+							  while (s.hasNext())
+							  {
+								  if (s.hasNextInt())
+								  {
+									  rank = s.nextInt();
+								  }
+								  else
+								  {
+									  s.next();
+								  }
+							  }
+							  initial = new int[rank];
+							  states = new int[rank];
+							  fin = new int[rank][];
+							  s.close();
+							  break;
+						  }
+						  case "N":
+						  {
+							  Scanner s = new Scanner(strLine);
+							  s.useDelimiter("");
+							  int i=0;
+							  int lengthT=1;
+							  while (s.hasNext())
+							  {
+								  if (s.hasNextInt())
+								  {
+									  states[i] = s.nextInt();
+									  lengthT*=states[i];
+									  i++;
+								  }
+								  else
+									  s.next();
+							  }
+							  t = new CATransition[lengthT*(lengthT-1)];
+							  s.close();
+							  break;
+						  }
+						  case "I":
+						  {
+							  Scanner s = new Scanner(strLine);
+							  s.useDelimiter("");
+							  int i=0;
+							  while (s.hasNext())
+							  {
+								  if (s.hasNextInt())
+								  {
+									  initial[i] = s.nextInt();
+									  i++;
+								  }
+								  else
+									  s.next();
+							  }
+							  s.close();
+							  break;
+						  }
+						  case "F":
+						  {
+							  String[] ss=strLine.split("]");
+							  for (int ind=0;ind<ss.length;ind++)
+							  {
+								  Scanner s = new Scanner(ss[ind]);
+								  s.useDelimiter("");
+								  int i=0;
+								  int[] tf = new int[states[i]]; //upper bound
+								  while (s.hasNext())
+								  {
+									  if (s.hasNextInt())
+									  {
+										  tf[i] = s.nextInt();
+										  i++;
+									  }
+									  else
+										  s.next();
+								  }
+								  fin[ind]= new int[i];
+								  for (int ii=0;ii<i;ii++)
+									  fin[ind][ii]=tf[ii];
+								  s.close();
+							  }
+							  break;
+						  }
+						  case "(":
+						  {
+							  String[] ss=strLine.split("]");
+							  int what=0;
+							  int[][] store=new int[2][];
+							  for (int i=0;i<ss.length;i++)
+							  {
+								  int[] arr = new int[rank];
+								  Scanner s = new Scanner(ss[i]);
+								  s.useDelimiter(",|\\[| ");
+								  int j=0;
+								  while (s.hasNext())
+								  {
+									  if (s.hasNextInt())
+									  {
+										 arr[j]=s.nextInt();
+										 j++;
+									  }
+									  else {
+										   s.next();
+									  }
+								  }
+								  s.close();
+								  if (what==2)
+								  {
+									  t[pointert]=new CATransition(store[0],store[1],arr);
+									  what=0;
+									  pointert++;
+								  }
+								  else
+									  store[what]=arr;
+								  what++;
+							  }						 
+							  break;
+						  }
+					  }
+				  }
+			}
+			br.close();	
+			fintr = new CATransition[pointert];
+			  for (int i=0;i<pointert;i++)
+			  {
+				  fintr[i]=t[i];
+			  }
+			return new CA(rank,initial,states,fin,fintr);
+		} catch (Exception e) {e.printStackTrace();}
+		return null;
+	}
 	
 	
 	/**
@@ -182,9 +383,9 @@ public class CA  extends FSA implements java.io.Serializable
 		CATransition[] finalTr = new CATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
 		{
-			int[] in=at[i].getInitialP();
+			int[] in=at[i].getSource();
 			int[] l=at[i].getLabelP();
-			int[] f= at[i].getFinalP();
+			int[] f= at[i].getArrival();
 			finalTr[i] = new CATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
 		}
 		
@@ -219,8 +420,8 @@ public class CA  extends FSA implements java.io.Serializable
 			int label = tt.getLabelP()[i];
 			if(label!=0)
 			{
-				int source =  tt.getInitialP()[i];
-				int dest = tt.getFinalP()[i];
+				int source =  tt.getSource()[i];
+				int dest = tt.getArrival()[i];
 				int[] sou = new int[1];
 				sou[0]=source;
 				int[] des = new int[1];
@@ -399,19 +600,19 @@ public class CA  extends FSA implements java.io.Serializable
 				int s = t[i].sender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getInitialP()[s])&&(!Arrays.equals(reach[j],t[i].getInitialP())))
+					if ((reach[j][s]==t[i].getSource()[s])&&(!Arrays.equals(reach[j],t[i].getSource())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getInitialP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSource(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
 						{
 							int[][] re = new int[3][];
-							re[0]=t[i].getInitialP();
+							re[0]=t[i].getSource();
 							re[1]=t[i].getLabelP();
 							re[2]=reach[j];
 							return re;
@@ -448,19 +649,19 @@ public class CA  extends FSA implements java.io.Serializable
 				int s = t[i].sender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getInitialP()[s])&&(!Arrays.equals(reach[j],t[i].getInitialP())))
+					if ((reach[j][s]==t[i].getSource()[s])&&(!Arrays.equals(reach[j],t[i].getSource())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getInitialP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSource(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
 						{
 							int[][] re = new int[3][];
-							re[0]=t[i].getInitialP();
+							re[0]=t[i].getSource();
 							re[1]=t[i].getLabelP();
 							re[2]=reach[j];
 							return re;
@@ -488,8 +689,8 @@ public class CA  extends FSA implements java.io.Serializable
 		{
 			for(int j=i+1;j<t.length;j++)
 			{
-				if (Arrays.equals(t[i].getInitialP(), t[j].getInitialP())&&t[i].sender()!=t[j].sender())
-					return t[i].getInitialP();
+				if (Arrays.equals(t[i].getSource(), t[j].getSource())&&t[i].sender()!=t[j].sender())
+					return t[i].getSource();
 			}
 		}
 		return null;
@@ -510,7 +711,7 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointer=1;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] p = t[i].getFinalP();
+			int[] p = t[i].getArrival();
 			boolean found=false;
 			int j=0;
 			while((!found)&&(s[j]!=null))
@@ -566,8 +767,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getInitialP();
-			int[] d = t[i].getFinalP();
+			int[] s = t[i].getSource();
+			int[] d = t[i].getArrival();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)
@@ -603,8 +804,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getInitialP();
-			int[] d = t[i].getFinalP();
+			int[] s = t[i].getSource();
+			int[] d = t[i].getArrival();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)

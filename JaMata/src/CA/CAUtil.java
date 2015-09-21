@@ -141,7 +141,7 @@ public class CAUtil
 							{	
 								if(gen[ind3]!=null)
 								{
-									if (Arrays.equals(gen[ind3].getInitialP(),temp[ind][ind2].getInitialP()) &&  //the state is the same
+									if (Arrays.equals(gen[ind3].getSource(),temp[ind][ind2].getSource()) &&  //the state is the same
 											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
 									{
 										gen[ind3]=null;
@@ -234,7 +234,7 @@ public class CAUtil
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
 			CATransition t=(CATransition)finalTr[ind];
-			int[] s = t.getInitialP();
+			int[] s = t.getSource();
 			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],0))
 			{
 				finalTr[ind]=null;
@@ -272,7 +272,7 @@ public class CAUtil
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
 			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getFinalP();
+			int[] arr = t.getArrival();
 
 			boolean remove=true;
 			
@@ -335,9 +335,9 @@ public class CAUtil
 		{
 			if (t[i]!=null)
 			{
-				if (Arrays.equals(state,t[i].getFinalP()))
+				if (Arrays.equals(state,t[i].getArrival()))
 				{
-					if (amIReachable(t[i].getInitialP(),aut,from,visited,pointervisited))
+					if (amIReachable(t[i].getSource(),aut,from,visited,pointervisited))
 						return true;
 				}
 			}
@@ -550,12 +550,12 @@ public class CAUtil
 	{
 		if (tt!=null)
 		{
-			int[] s=((CATransition) t).getInitialP();
+			int[] s=((CATransition) t).getSource();
 			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getFinalP();
-			int[] ss = ((CATransition) tt).getInitialP();
+			int[] d=((CATransition) t).getArrival();
+			int[] ss = ((CATransition) tt).getSource();
 			int[] ll=((CATransition) tt).getLabelP();
-			int[] dd =((CATransition) tt).getFinalP();
+			int[] dd =((CATransition) tt).getArrival();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			int[] label = new int[insert.length+s.length+ss.length];
@@ -619,9 +619,9 @@ public class CAUtil
 		}
 		else
 		{
-			int[] s=((CATransition) t).getInitialP();
+			int[] s=((CATransition) t).getSource();
 			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getFinalP();
+			int[] d=((CATransition) t).getArrival();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			int[] label = new int[insert.length+s.length];
