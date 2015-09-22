@@ -26,7 +26,7 @@ public class Main {
 		try{
 			InputStreamReader reader = new InputStreamReader (System.in);
 	        BufferedReader myInput = new BufferedReader (reader);
-	        System.out.println("  ****	JA	****");
+	        System.out.println("  ****	JAMATA	****");
 	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA and 4 for CA ");
 	        int type = Integer.parseInt(myInput.readLine());
 	        if (type== 4)
@@ -99,16 +99,14 @@ public class Main {
 					int ind = Integer.parseInt(s);
 					CA projected = aut[aut.length-1].proj(ind);
 					projected.print();
-					//FSA.write(projected);
-					projected.printToFile();
+					FSA.write(projected);
 					break;
 
 				case "3":
 					System.out.println("Computing the associative product automaton ... ");
 					prod = CAUtil.aproduct(aut);
 					prod.print();
-			        //FSA.write(prod);
-					prod.printToFile();
+			        FSA.write(prod);
 					break;
 
 				case "4":
@@ -118,8 +116,7 @@ public class Main {
 						System.out.println("The CA is strongly safe");
 					else
 						System.out.println("The CA is not strongly safe");
-			        //FSA.write(a);
-					a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "5":
@@ -129,8 +126,7 @@ public class Main {
 						System.out.println("The CA admits strong agreement");
 					else
 						System.out.println("The CA does not admit strong agreement");
-			        //FSA.write(a);
-					a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "6":
@@ -140,8 +136,7 @@ public class Main {
 						System.out.println("The CA is safe");
 					else
 						System.out.println("The CA is not safe");
-			        //FSA.write(a);
-					a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "7":
@@ -151,8 +146,7 @@ public class Main {
 						System.out.println("The CA admits agreement");
 					else
 						System.out.println("The CA does not admit agreement");
-			        //FSA.write(a);
-					a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "8":
@@ -160,8 +154,7 @@ public class Main {
 					a = aut[aut.length-1];
 					CA smpc = a.smpc();
 					smpc.print();
-					//FSA.write(smpc);
-					smpc.printToFile();
+					FSA.write(smpc);
 					break;
 
 				case "9":
@@ -169,8 +162,7 @@ public class Main {
 					a = aut[aut.length-1];
 					CA mpc = a.mpc();
 					mpc.print();
-					//FSA.write(mpc);
-					mpc.printToFile();
+					FSA.write(mpc);
 					break;
 
 				case "10":
@@ -184,8 +176,7 @@ public class Main {
 						System.out.println("The CA does not enjoy the branching condition ");
 						System.out.println("State "+Arrays.toString(bc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(bc[1])+" which is instead enabled in state "+Arrays.toString(bc[0]));
 					}
-			        //FSA.write(a);
-			        a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "11":
@@ -196,8 +187,7 @@ public class Main {
 						System.out.println("The CA has a mixed choice state  "+Arrays.toString(st));
 					else
 						System.out.println("The CA has no mixed choice states");
-			        //FSA.write(a);
-			        a.printToFile();
+			        FSA.write(a);
 					break;
 
 				case "12":
@@ -211,8 +201,7 @@ public class Main {
 						System.out.println("The CA does not enjoy the extended branching condition ");
 						System.out.println("State "+Arrays.toString(ebc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(ebc[1])+" which is instead enabled in state "+Arrays.toString(ebc[0]));
 					}
-			        //FSA.write(a);
-			        a.printToFile();
+			        FSA.write(a);
 					break;
 				case"13":
 					a = aut[aut.length-1];
@@ -221,8 +210,7 @@ public class Main {
 					System.out.println("The liable transitions are:");
 					for(int i=0;i<l.length;i++)
 						System.out.println(l[i].toString());
-					//FSA.write(a);
-					a.printToFile();
+					FSA.write(a);
 					break;
 				case"14":
 					a = aut[aut.length-1];
@@ -231,8 +219,7 @@ public class Main {
 					System.out.println("The strongly liable transitions are:");
 					for(int i=0;i<sl.length;i++)
 						System.out.println(sl[i].toString());
-					//FSA.write(a);
-					a.printToFile();
+					FSA.write(a);
 					break;
 				}				
 			}while(!s.equals("15"));

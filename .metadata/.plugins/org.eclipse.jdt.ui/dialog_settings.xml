@@ -80,10 +80,11 @@
 	<section name="FatJarPackageWizard">
 		<item value="C:\Users\Davide\workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="main - JaMata" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
-		<item value="C:\Users\Davide\workspace\jav.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="C:\Users\Davide\workspace\ja.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="C:\Users\Davide\workspace\ja.jar"/>
 			<item value="C:\Users\Davide\workspace\jav.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">

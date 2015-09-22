@@ -24,7 +24,7 @@ public class CA  extends FSA implements java.io.Serializable
 	private int[] states;
 	private int[][] finalstates; 
 	//private CATransition[] tra;
-	private static String message = "*** contract automata ***\n The alphabet is represented by integers: " +
+	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
 			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
 	/**
