@@ -17,6 +17,7 @@ public class CAUtil
 	 * @param aut the operands of the product
 	 * @return the composition of aut
 	 */
+	static boolean debug = false;
 	public static CA product(CA[] aut)
 	{
 
@@ -51,8 +52,8 @@ public class CAUtil
 		 * compute transitions, non associative
 		 * 
 		 * scan all pair of transitions, if there is a match
-		 * then generate the match in all possible context		 
-		 * it generates also the independent move, then clean from invalid transitions 
+		 * then generate the match in all possible contexts		 
+		 * it also generates the independent moves, then clean from invalid transitions 
 		 */
 		Transition[][] prodtr = new CATransition[aut.length][];
 		int trlength = 0;
@@ -105,6 +106,8 @@ public class CAUtil
 									if(copy)
 									{
 										transprod[pointertransprod]=gen[ind]; 
+										if (debug)
+											System.out.println(gen[ind].toString());
 										//copy all the matches in the transition of the product automaton, if not already in !
 										pointertransprod++;
 									}
@@ -198,6 +201,8 @@ public class CAUtil
 					if (gen[ind]!=null)
 					{
 						transprod[pointertransprod]=gen[ind];
+						if (debug)
+							System.out.println(gen[ind].toString());
 						pointertransprod++;
 					}
 				}
@@ -212,6 +217,8 @@ public class CAUtil
 		
 		CA prod =  new CA(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
 		
+		if (debug)
+			System.out.println("Remove unreachable ...");
 		prod = removeUnreachable(prod);
 		
 		return prod;
@@ -235,7 +242,11 @@ public class CAUtil
 		{
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getSource();
-			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],0))
+			int[] pointervisited = new int[1];
+			pointervisited[0]=0;
+			if (debug)
+				System.out.println("Checking Reachability state "+Arrays.toString(s));
+			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],pointervisited))
 			{
 				finalTr[ind]=null;
 				removed++;
@@ -279,7 +290,9 @@ public class CAUtil
 			int[][] fs = aut.allFinalStates();
 			for (int i=0;i<fs.length;i++)
 			{
-				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],0)) //if final state fs[i] is reachable from arrival state arr
+				int[] pointervisited = new int[1];
+				pointervisited[0]=0;
+				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited)) //if final state fs[i] is reachable from arrival state arr
 					remove = false;
 			}
 			//if t does not reach any final state then remove
@@ -312,24 +325,25 @@ public class CAUtil
 	 * @param state
 	 * @param aut
 	 * @param visited
-	 * @param pointervisited
+	 * @param pointervisited[]
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
-	private static boolean amIReachable(int[] state, CA aut,int[] from, int[][] visited, int pointervisited)
+	private static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited )
 	{
 		if (Arrays.equals(state,from))
 			return true;
-		for (int j=0;j<pointervisited;j++)
+		for (int j=0;j<pointervisited[0];j++)
 		{
 			if (Arrays.equals(visited[j],state))
 			{
 				return false;
 			}
-		}
-		if (pointervisited>=visited.length)
-			System.out.println("d");
-		visited[pointervisited]=state;
-		pointervisited++;
+		}		
+		visited[pointervisited[0]]=state;
+		pointervisited[0]++;
+		
+		//if (debug)
+		//	System.out.println("Visited "+pointervisited[0]+" "+Arrays.toString(visited[pointervisited[0]-1]));
 		CATransition[] t = aut.getTransition();
 		for (int i=0;i<t.length;i++)
 		{
@@ -500,38 +514,38 @@ public class CAUtil
 	 * @param fin	the array of final states of each principal
 	 * @param modif		the array of final states of the composition, modified by side effect
 	 * @param states	states[i] = fin[i].length
-	 * @param indmod	index in modif, the first call must be 0
-	 * @param indstates		the index in states, the first call must be states.length-1
+	 * @param indmod[]	index in modif, the first call must be 0
+	 * @param indstates[]		the index in states, the first call must be states.length-1
 	 * @param insert	it is used to generate all the combinations of final states, the first call must be all zero
 	 */
-	protected static void recGen(int[][] fin, int[][] modif,  int[] states, int indmod, int indstates, int[] insert)
+	protected static void recGen(int[][] fin, int[][] modif,  int[] states, int indmod[], int indstates[], int[] insert)
 	{
-		if (indstates==-1)
+		if (indstates[0]==-1)
 			return;
-		if (insert[indstates]==states[indstates])
+		if (insert[indstates[0]]==states[indstates[0]])
 		{
-			insert[indstates]=0;
-			indstates--;
+			insert[indstates[0]]=0;
+			indstates[0]--;
 			recGen(fin,modif,states,indmod,indstates,insert);
 		}
 		else
 		{
-			if (indstates==states.length-1)
+			if (indstates[0]==states.length-1)
 			{
-				modif[indmod]=new int[insert.length];
+				modif[indmod[0]]=new int[insert.length];
 				for(int i=0;i<insert.length;i++)
 				{
-					modif[indmod][i]=fin[i][insert[i]];
+					modif[indmod[0]][i]=fin[i][insert[i]];
 				}
-				indmod++;
-				insert[indstates]++;
+				indmod[0]++;
+				insert[indstates[0]]++;
 				recGen(fin,modif,states,indmod,indstates,insert);
 			}
 			else
 			{
-				insert[indstates]++; 
-				if (insert[indstates]!=states[indstates])
-					indstates=states.length-1;
+				insert[indstates[0]]++; 
+				if (insert[indstates[0]]!=states[indstates[0]])
+					indstates[0]=states.length-1;
 				recGen(fin,modif,states,indmod,indstates,insert);				
 			}
 		}

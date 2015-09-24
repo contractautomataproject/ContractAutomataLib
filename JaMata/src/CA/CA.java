@@ -66,7 +66,7 @@ public class CA  extends FSA implements java.io.Serializable
 		/**
 		 * Print in output a description of the automaton
 		 */
-		System.out.println("Contract automaton:");
+		System.out.println("CA:");
 		System.out.println("Rank: "+this.rank);
 		System.out.println("Number of states: "+Arrays.toString(this.getStatesCA()));
 		System.out.println("Initial state: " +Arrays.toString(this.getInitialCA()));
@@ -179,7 +179,7 @@ public class CA  extends FSA implements java.io.Serializable
 								  else
 									  s.next();
 							  }
-							  t = new CATransition[lengthT*(lengthT-1)];
+							  t = new CATransition[lengthT*lengthT*10];//upper bound WARNING
 							  s.close();
 							  break;
 						  }
@@ -749,7 +749,12 @@ public class CA  extends FSA implements java.io.Serializable
 			insert[i]=0;
 		}
 		int[][] modif = new int[comb][];
-		CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
+		int[] indstates = new int[1];
+		indstates[0]= states.length-1;
+		int[] indmod = new int[1];
+		indmod[0]= 0; 
+		//CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
+		CAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);
 		return modif;
 	}
 	

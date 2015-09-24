@@ -1,4 +1,4 @@
-This is a prototype implementation of the verification techniques for the properties of weak agreement and weak safety of a Contract Automata.
+This is a prototype implementation of the verification techniques for the properties of weak agreement and weak safety of a CA.
 The linear problems are specified using AMPL. (http://www.ampl.com/DOWNLOADS/)
 
 The main files are:
