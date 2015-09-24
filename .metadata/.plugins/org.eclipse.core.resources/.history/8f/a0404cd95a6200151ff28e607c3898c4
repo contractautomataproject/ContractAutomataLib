@@ -21,6 +21,7 @@ public class CAUtil
 	 */
 	public static CA product(CA[] aut)
 	{
+
 		if (aut.length==1)
 			return aut[0];
 		/**
