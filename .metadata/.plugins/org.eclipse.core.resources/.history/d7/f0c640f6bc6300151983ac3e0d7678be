@@ -13,7 +13,7 @@ import FSA.Transition;
 public class CAUtil 
 {
 
-	static boolean debug = false;
+	static boolean debug = true;
 	/**
 	 * compute the product automaton of the CA given in aut
 	 * @param aut the operands of the product
@@ -248,10 +248,6 @@ public class CAUtil
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getSource();
-			/**
-			int[] debugg = {0,0,1};
-			if (Arrays.equals(s,debugg))
-				System.out.println("debug");*/
 			int[] pointervisited = new int[1];
 			pointervisited[0]=0;
 			if (debug)
@@ -266,11 +262,12 @@ public class CAUtil
 					if (Arrays.equals(unreachable[i],s))
 					{
 						found=true;
+						break;
 					}
 				}
 				if (!found)
 				{
-					unreachable[pointerunreachable]=s;
+					reachable[pointerunreachable]=s;
 					pointerunreachable++;
 				}
 			}
@@ -282,6 +279,7 @@ public class CAUtil
 					if (Arrays.equals(reachable[i],s))
 					{
 						found=true;
+						break;
 					}
 				}
 				if (!found)
@@ -333,6 +331,7 @@ public class CAUtil
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
 			// for each transition checks if the arrival state s is reachable from one of the final states of the ca
+			
 			CATransition t=(CATransition)finalTr[ind];
 			int[] arr = t.getArrival();
 

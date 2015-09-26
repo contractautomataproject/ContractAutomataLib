@@ -238,57 +238,18 @@ public class CAUtil
 		 * remove unreachable transitions
 		 */
 		int removed=0;
-		int pointerreachable=1;
-		int pointerunreachable=0;
-		int[][] reachable = new int[at.prodStates()][]; 
-		int[][] unreachable = new int[at.prodStates()][];
-		reachable[0]=aut.getInitialCA();
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
-			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getSource();
-			/**
-			int[] debugg = {0,0,1};
-			if (Arrays.equals(s,debugg))
-				System.out.println("debug");*/
 			int[] pointervisited = new int[1];
 			pointervisited[0]=0;
 			if (debug)
 				System.out.println("Checking Reachability state "+Arrays.toString(s));
-			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],pointervisited))
 			{
 				finalTr[ind]=null;
 				removed++;
-				boolean found=false;
-				for (int i=0;i<pointerunreachable;i++)
-				{
-					if (Arrays.equals(unreachable[i],s))
-					{
-						found=true;
-					}
-				}
-				if (!found)
-				{
-					unreachable[pointerunreachable]=s;
-					pointerunreachable++;
-				}
-			}
-			else
-			{
-				boolean found=false;
-				for (int i=0;i<pointerreachable;i++)
-				{
-					if (Arrays.equals(reachable[i],s))
-					{
-						found=true;
-					}
-				}
-				if (!found)
-				{
-					reachable[pointerreachable]=s;
-					pointerreachable++;
-				}
 			}
 		}
 		
@@ -319,30 +280,19 @@ public class CAUtil
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
 		int removed=0;
-		int pointerreachable=0;
-		int pointerunreachable=0;
-		int[][] reachable = new int[at.prodStates()][]; 
-		int[][] unreachable = new int[at.prodStates()][];
-		int[][] fs = aut.allFinalStates();
-		/**for (int i=0;i<fs.length;i++)
-		{
-			reachable[i] = fs[i];
-			pointerreachable++;
-		}*/
-		
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
-			// for each transition checks if the arrival state s is reachable from one of the final states of the ca
 			CATransition t=(CATransition)finalTr[ind];
 			int[] arr = t.getArrival();
 
 			boolean remove=true;
 			
+			int[][] fs = aut.allFinalStates();
 			for (int i=0;i<fs.length;i++)
 			{
 				int[] pointervisited = new int[1];
 				pointervisited[0]=0;
-				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) //if final state fs[i] is reachable from arrival state arr
+				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited)) //if final state fs[i] is reachable from arrival state arr
 					remove = false;
 			}
 			//if t does not reach any final state then remove
@@ -351,30 +301,8 @@ public class CAUtil
 				finalTr[ind]=null;
 				removed++;
 			}
-			
-			/**
-			 * 		
-			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getArrival();	
-			int[] pointervisited = new int[1];
-			pointervisited[0]=0;
-			if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
-				//if final state fs[i] is reachable from arrival state arr
-			{	
-				finalTr[ind]=null;
-				removed++;
-				unreachable[pointerunreachable]=arr;
-				pointerunreachable++;  //note that pointerunreachable == removed
-			}
-			else
-			{
-				reachable[pointerreachable]=arr;
-				pointerreachable++;
-			}	
-			*/					
 		}
-			
-			
+		
 		/**
 		 * remove holes (null) in finalTr2
 		 */
@@ -405,15 +333,11 @@ public class CAUtil
 		if (Arrays.equals(state,from))
 			return true;
 		for (int i=0;i<pointerunreachable;i++)
-		{
 			if (Arrays.equals(unreachable[i],state))
 				return false;
-		}
 		for (int i=0;i<pointerreachable;i++)
-		{
 			if (Arrays.equals(reachable[i],state))
 				return true;
-		}
 		
 		for (int j=0;j<pointervisited[0];j++)
 		{
@@ -434,7 +358,7 @@ public class CAUtil
 			{
 				if (Arrays.equals(state,t[i].getArrival()))
 				{
-					if (amIReachable(t[i].getSource(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+					if (amIReachable(t[i].getSource(),aut,from,visited,pointervisited))
 						return true;
 				}
 			}

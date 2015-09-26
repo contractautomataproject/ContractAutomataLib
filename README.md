@@ -2,8 +2,8 @@
 
 The directory JaMaTa contains the java tool, see JaMaTa/README.
 
-The archive ampl.zip contains a tool implemented in AMPL for deciding if a CA is weakly safe and admits weak agreement.
-see README inside ampl.zip
+The folder ampl contains a tool implemented in AMPL for deciding if a CA is weakly safe and admits weak agreement.
+see README inside ampl
 
 Download JDK 7 from: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
 
