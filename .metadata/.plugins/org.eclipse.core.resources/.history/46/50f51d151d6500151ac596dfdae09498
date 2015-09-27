@@ -13,7 +13,7 @@ import FSA.Transition;
 public class CAUtil 
 {
 
-	static boolean debug = false;
+	static boolean debug = true;
 	/**
 	 * compute the product automaton of the CA given in aut
 	 * @param aut the operands of the product

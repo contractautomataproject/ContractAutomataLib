@@ -780,7 +780,7 @@ public class CA  extends FSA implements java.io.Serializable
 			{
 				if (Arrays.equals(s,ms[j]))
 					founds=true;
-				if (Arrays.equals(d, ms[j]))
+				else if (Arrays.equals(d, ms[j]))
 					foundd=true;
 			}
 			if (founds&&!foundd)
@@ -801,9 +801,9 @@ public class CA  extends FSA implements java.io.Serializable
 	 */
 	public CATransition[] strongLiable()
 	{
-		CA k = this.clone();
-		k = k.smpc();
-		int[][] ms = k.reachableStates();
+		CA aut = this.clone();
+		aut = this.smpc();
+		int[][] ms = aut.reachableStates();
 		CATransition[] t = this.getTransition();
 		CATransition[] liable = new CATransition[t.length];
 		int pointliable=0;
@@ -816,13 +816,9 @@ public class CA  extends FSA implements java.io.Serializable
 			for(int j=0;j<ms.length;j++)
 			{
 				if (Arrays.equals(s,ms[j]))
-				{
 					founds=true;
-				}
-				if (Arrays.equals(d, ms[j]))
-				{
+				else if (Arrays.equals(d, ms[j]))
 					foundd=true;
-				}
 			}
 			if (founds&&!foundd)
 			{

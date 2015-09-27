@@ -85,6 +85,7 @@
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
 			<item value="C:\Users\Davide\workspace\ja.jar"/>
+			<item value="C:\Users\Davide\Google Drive\CNR\jar\ja.jar"/>
 			<item value="C:\Users\Davide\workspace\jav.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">

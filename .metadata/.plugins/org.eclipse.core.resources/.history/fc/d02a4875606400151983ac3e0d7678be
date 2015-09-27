@@ -34,14 +34,14 @@ public class CAUtil
 		int[] statesprod = new int[prodrank];
 		int[][] finalstatesprod = new int[prodrank][];
 		int[] initialprod = new int[prodrank];
-		int totnumstates=1;
+		int totnumstates=0;
 		int pointerprodrank=0;
 		for (int i=0;i<aut.length;i++)
 		{
 			for (int j=0;j<aut[i].getRank();j++)
 			{
 				statesprod[pointerprodrank]= aut[i].getStatesCA()[j];		
-				totnumstates *= statesprod[pointerprodrank];
+				totnumstates += statesprod[pointerprodrank];
 				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesCA()[j];
 				initialprod[pointerprodrank] = aut[i].getInitialCA()[j];
 				pointerprodrank++;
@@ -62,7 +62,7 @@ public class CAUtil
 			prodtr[i]= aut[i].getTransition();
 			trlength += prodtr[i].length;
 		}
-		Transition[] transprod = new CATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
+		Transition[] transprod = new CATransition[Integer.MAX_VALUE]; //[(trlength*(trlength-1)*totnumstates)]; //upper bound to the total transitions
 		int pointertemp = 0;
 		int pointertransprod = 0;
 		boolean match=false;
@@ -200,11 +200,7 @@ public class CAUtil
 				{
 					if (gen[ind]!=null)
 					{
-						try{
 						transprod[pointertransprod]=gen[ind];
-						}catch(ArrayIndexOutOfBoundsException e){
-							e.printStackTrace();
-							}
 						if (debug)
 							System.out.println(gen[ind].toString());
 						pointertransprod++;

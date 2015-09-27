@@ -780,7 +780,7 @@ public class CA  extends FSA implements java.io.Serializable
 			{
 				if (Arrays.equals(s,ms[j]))
 					founds=true;
-				if (Arrays.equals(d, ms[j]))
+				else if (Arrays.equals(d, ms[j]))
 					foundd=true;
 			}
 			if (founds&&!foundd)
@@ -819,7 +819,7 @@ public class CA  extends FSA implements java.io.Serializable
 				{
 					founds=true;
 				}
-				if (Arrays.equals(d, ms[j]))
+				else if (Arrays.equals(d, ms[j]))
 				{
 					foundd=true;
 				}

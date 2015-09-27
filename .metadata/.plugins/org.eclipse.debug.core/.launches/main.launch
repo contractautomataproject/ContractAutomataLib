@@ -8,4 +8,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JaMata"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx5000m"/>
 </launchConfiguration>
