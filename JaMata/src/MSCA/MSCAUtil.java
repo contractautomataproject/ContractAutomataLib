@@ -469,7 +469,7 @@ public class MSCAUtil
 	}
 			
 	/**
-	 * remove transitions who do not reach a final state
+	 * return states who do not reach a final state
 	 * @param at	the CA
 	 * @return	CA without hanged transitions
 	 */
