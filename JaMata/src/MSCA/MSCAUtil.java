@@ -7,7 +7,7 @@ import java.util.Arrays;
 import FSA.Transition;
 
 /**
- * Utilities for CA: product, aproduct
+ * Utilities for MSCA: product, aproduct
  * 
  * @author Davide Basile
  *
