@@ -14,4 +14,5 @@
 <fullyQualifiedTypeName name="java.io.FileInputStream"/>
 <fullyQualifiedTypeName name="java.util.Scanner"/>
 <fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="MSCA.MSCAUtil"/>
 </qualifiedTypeNameHistroy>

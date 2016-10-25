@@ -29,7 +29,6 @@ public class MSCA  extends FSA implements java.io.Serializable
 	private int[] initial;
 	private int[] states;
 	private int[][] finalstates; 
-	private MSCATransition[] musttra;
 	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
 			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
@@ -55,14 +54,13 @@ public class MSCA  extends FSA implements java.io.Serializable
 		catch (Exception e){System.out.println("Errore inserimento");}
 	}
 	
-	public MSCA(int rank, int[] initial, int[] states, int[][] finalstates,MSCATransition[] maytra, MSCATransition[] musttra)
+	public MSCA(int rank, int[] initial, int[] states, int[][] finalstates,MSCATransition[] maytra)
 	{
 		super(maytra);
 		this.rank=rank;
 		this.initial=initial;
 		this.states=states;
 		this.finalstates=finalstates;
-		this.musttra=musttra;
 	}
 	
 	/**
@@ -88,13 +86,13 @@ public class MSCA  extends FSA implements java.io.Serializable
 			for (int i=0;i<t.length;i++)
 				System.out.println(t[i].toString());
 		}
-		System.out.println("Must Transitions: \n");
-		Transition[] mt = this.getMustTransition();
-		if (mt!=null)
-		{
-			for (int i=0;i<mt.length;i++)
-				System.out.println(mt[i].toString());
-		}
+//		System.out.println("Must Transitions: \n");
+//		Transition[] mt = this.getMustTransition();
+//		if (mt!=null)
+//		{
+//			for (int i=0;i<mt.length;i++)
+//				System.out.println(mt[i].toString());
+//		}
 	}
 	
 	/**
@@ -125,6 +123,9 @@ public class MSCA  extends FSA implements java.io.Serializable
 			 Transition[] t = this.getTransition();
 			 for (int i=0;i<t.length;i++)
 				pr.println(t[i].toString());
+//			 Transition[] mt = this.getMustTransition();
+//			 for (int i=0;i<mt.length;i++)
+//				pr.println("!"+mt[i].toString());
 			 pr.close();
 		}catch(Exception e){e.printStackTrace();}
 	}
@@ -147,9 +148,9 @@ public class MSCA  extends FSA implements java.io.Serializable
 			int[] states = new int[1];
 			int[][] fin = new int[1][];
 			MSCATransition[] t = new MSCATransition[1];
-			MSCATransition[] mustt = new MSCATransition[1];
+		//	MSCATransition[] mustt = new MSCATransition[1];
 			int pointert=0;
-			int pointermust=0;
+	//		int pointermust=0;
 			
 			//Read File Line By Line
 			while ((strLine = br.readLine()) != null)   
@@ -245,7 +246,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 							  }
 							  break;
 						  }
-						  case "(": //a transition
+						  case "(": //a may transition
 						  {
 							  String[] ss=strLine.split("]");
 							  int what=0;
@@ -270,7 +271,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  t[pointert]=new MSCATransition(store[0],store[1],arr);
+									  t[pointert]=new MSCATransition(store[0],store[1],arr,false);
 									  what=0;
 									  pointert++;
 								  }
@@ -305,9 +306,9 @@ public class MSCA  extends FSA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  mustt[pointermust]=new MSCATransition(store[0],store[1],arr);
+									  t[pointert]=new MSCATransition(store[0],store[1],arr,true);
 									  what=0;
-									  pointermust++;
+									  pointert++;
 								  }
 								  else
 									  store[what]=arr;
@@ -324,12 +325,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 			  {
 				  fintr[i]=t[i];
 			  }
-			  MSCATransition[] fintrmust = new MSCATransition[pointermust]; //the length of the array is exactly the number of transitions
-			  for (int i=0;i<pointermust;i++)
-			  {
-				  fintrmust[i]=mustt[i];
-			  }
-			return new MSCA(rank,initial,states,fin,fintr,fintrmust);
+			 
+			return new MSCA(rank,initial,states,fin,fintr);
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
@@ -348,11 +345,11 @@ public class MSCA  extends FSA implements java.io.Serializable
 	 * 
 	 * @param i		the index of the transition to be showed as a message to the user
 	 * @return		a new Transition for this automaton
-	 */
+	 *
 	protected Transition createTransition(int i)
 	{
 		return new MSCATransition(i);
-	}
+	}*/
 	
 	
 	/**
@@ -404,10 +401,16 @@ public class MSCA  extends FSA implements java.io.Serializable
 		return t;
 	}
 	
-	public MSCATransition[] getMustTransition()
-	{
-		return musttra;
-	}
+//	public MSCATransition[] getMustTransition()
+//	{
+//		return musttra;
+//	}
+//	
+//	public void setMustTransition(MSCATransition[] tra)
+//	{
+//		this.musttra=tra;
+//	}
+	
 	/**
 	 * The sum all states of all principals
 	 * @return The sum all states of all principals
@@ -448,24 +451,25 @@ public class MSCA  extends FSA implements java.io.Serializable
 			int[] in=at[i].getSource();
 			int[] l=at[i].getLabelP();
 			int[] f= at[i].getArrival();
-			finalTr[i] = new MSCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
+			boolean must=at[i].isMust();
+			finalTr[i] = new MSCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),must);
 		}	
 		
-		// non so se sia necessario o se basta usare getMustTransition
-		MSCATransition[] mustat = this.getMustTransition();
-		MSCATransition[] mustfinalTr = new MSCATransition[mustat.length];
-		for(int i=0;i<mustfinalTr.length;i++)
-		{
-			int[] in=mustat[i].getSource();
-			int[] l=mustat[i].getLabelP();
-			int[] f= mustat[i].getArrival();
-			mustfinalTr[i] = new MSCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
-		}
+//		
+//		MSCATransition[] mustat = this.getMustTransition();
+//		MSCATransition[] mustfinalTr = new MSCATransition[mustat.length];
+//		for(int i=0;i<mustfinalTr.length;i++)
+//		{
+//			int[] in=mustat[i].getSource();
+//			int[] l=mustat[i].getLabelP();
+//			int[] f= mustat[i].getArrival();
+//			mustfinalTr[i] = new MSCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
+//		}
 		int[][] nf = new int[finalstates.length][];
 		for (int i=0;i<finalstates.length;i++)
 			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 		
-		return new MSCA(rank,Arrays.copyOf(initial, initial.length),Arrays.copyOf(states, states.length),finalstates,finalTr,mustfinalTr);
+		return new MSCA(rank,Arrays.copyOf(initial, initial.length),Arrays.copyOf(states, states.length),finalstates,finalTr);
 	}
 	
 	/**
@@ -558,7 +562,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 		}
 
 		a.setTransition(finalTr2);
-		a = MSCAUtil.removeHangedTransitions(a);
+		a = MSCAUtil.removeRedundantTransitions(a);
 		a = MSCAUtil.removeUnreachable(a);
 		return a;
 	}
@@ -574,7 +578,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 		int removed=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (t[i].request())
+			if ((t[i].request())&&(!t[i].isMust()))
 			{
 				t[i] = null;
 				removed++;
@@ -594,7 +598,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 			}
 		}
 		a.setTransition(finalTr2);
-		a = MSCAUtil.removeHangedTransitions(a);
+		a = MSCAUtil.removeRedundantTransitions(a);
 		a = MSCAUtil.removeUnreachable(a);
 		return a;
 	}
@@ -606,7 +610,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 	public boolean strongSafe()
 	{
 		MSCA at = this.clone();
-		at = MSCAUtil.removeHangedTransitions(at);
+		at = MSCAUtil.removeRedundantTransitions(at);
 		at = MSCAUtil.removeUnreachable(at);
 		MSCA a = this.smpc();
 		return (a.getTransition().length == at.getTransition().length);
@@ -631,7 +635,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 	public boolean safe()
 	{
 		MSCA at = this.clone();
-		at = MSCAUtil.removeHangedTransitions(at);
+		at = MSCAUtil.removeRedundantTransitions(at);
 		at = MSCAUtil.removeUnreachable(at);
 		MSCA a = this.mpc();
 		return (a.getTransition().length == at.getTransition().length);
@@ -778,7 +782,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 	{
 		MSCA aut=this.clone();
 		aut = MSCAUtil.removeUnreachable(aut);
-		aut = MSCAUtil.removeHangedTransitions(aut);
+		aut = MSCAUtil.removeRedundantTransitions(aut);
 		int[][] s = new int[this.prodStates()][];
 		s[0]=aut.getInitialCA();
 		MSCATransition[] t = aut.getTransition();

@@ -19,6 +19,7 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 	private int[] source;
 	private int[] target;
 	private int[] label;
+	private boolean must;  
 	
 	/**
 	 * 
@@ -26,18 +27,19 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public MSCATransition(int[] initial, int[] label2, int[] fina){
+	public MSCATransition(int[] initial, int[] label2, int[] fina,boolean must){
 		super(0,0,0);
 		this.source=initial;
 		this.target=fina;
 		this.label =label2;
+		this.must=must;
 	}
 	
 	
 	/**
 	 * Take in input a transition
 	 * @param i			the index of the transition to be showed as a message to the user
-	 */
+	 *
 	public MSCATransition(int i)
 	{
 		super(i,true);
@@ -53,7 +55,7 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 		}
 		else
 			label[0]=super.getLabel();
-	}
+	}*/
 	
 	/**
 	 * 
@@ -164,12 +166,20 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 		return -1;
 	}
 	
+	public boolean isMust()
+	{
+		return this.must;
+	}
+	
 	/**
 	 * override of toString
 	 */
 	public String toString()
 	{
-		return "("+Arrays.toString(source)+","+Arrays.toString(label)+","+Arrays.toString(target)+")";
+		if (this.must)
+			return "!("+Arrays.toString(source)+","+Arrays.toString(label)+","+Arrays.toString(target)+")";
+		else
+			return "("+Arrays.toString(source)+","+Arrays.toString(label)+","+Arrays.toString(target)+")";
 	}
 
 	public boolean equals(Object t)
@@ -178,7 +188,8 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 		int[] ip =tr.getSource();
 		int[] lp=tr.getLabelP();
 		int[] dp=tr.getArrival();
-		return ( Arrays.equals(ip,source))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target));
+		boolean must=tr.isMust();
+		return ( Arrays.equals(ip,source))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target)&&(this.must==must));
 	}	
 	
 	/**
