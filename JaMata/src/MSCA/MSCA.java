@@ -547,19 +547,20 @@ public class MSCA  extends FSA implements java.io.Serializable
 				removed++;
 			}
 		}
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		MSCATransition[] finalTr2 = new MSCATransition[t.length-removed];
-		for (int ind=0;ind<t.length;ind++)
-		{
-			if (t[ind]!=null)
-			{
-				finalTr2[pointer]=t[ind];
-				pointer++;
-			}
-		}
+//		/**
+//		 * remove holes (null) in t
+//		 */
+//		int pointer=0;
+//		MSCATransition[] finalTr2 = new MSCATransition[t.length-removed];
+//		for (int ind=0;ind<t.length;ind++)
+//		{
+//			if (t[ind]!=null)
+//			{
+//				finalTr2[pointer]=t[ind];
+//				pointer++;
+//			}
+//		}
+		MSCATransition[] finalTr2 = (MSCATransition[]) MSCAUtil.removeHoles(t, removed);
 
 		a.setTransition(finalTr2);
 		a = MSCAUtil.removeRedundantTransitions(a);
@@ -574,31 +575,88 @@ public class MSCA  extends FSA implements java.io.Serializable
 	public MSCA mpc()
 	{
 		MSCA a = this.clone();
-		MSCATransition[] t = a.getTransition();
+		MSCATransition[] tr = a.getTransition();
 		int removed=0;
-		for (int i=0;i<t.length;i++)
+		for (int i=0;i<tr.length;i++)
 		{
-			if ((t[i].request())&&(!t[i].isMust()))
+			if ((tr[i].request())&&(!tr[i].isMust()))
 			{
-				t[i] = null;
+				tr[i] = null;
 				removed++;
 			}
 		}
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		MSCATransition[] finalTr2 = new MSCATransition[t.length-removed];
-		for (int ind=0;ind<t.length;ind++)
-		{
-			if (t[ind]!=null)
+//		/**
+//		 * remove holes (null) in t
+//		 */
+//		int pointer=0;
+//		MSCATransition[] finalTr2 = new MSCATransition[t.length-removed];
+//		for (int ind=0;ind<t.length;ind++)
+//		{
+//			if (t[ind]!=null)
+//			{
+//				finalTr2[pointer]=t[ind];
+//				pointer++;
+//			}
+//		}
+		tr=  MSCAUtil.removeHoles(tr, removed);
+		
+		//a.setTransition(finalTr2);
+		int[][] R= MSCAUtil.getRedundantStates(a);
+		boolean update=false;
+		do{
+			MSCATransition[] trcheck= new MSCATransition[tr.length];
+			int[] index=new int[tr.length];
+			int pointer2=0;
+			for (int i=0;i<tr.length;i++)
 			{
-				finalTr2[pointer]=t[ind];
-				pointer++;
+				for (int j=0;j<R.length;j++)
+				{
+					if (!(tr[i]==null))
+					{
+						if (tr[i].isMust())
+						{   
+							if (Arrays.equals(tr[i].getSource(), R[j]))
+								tr[i]=null;
+							else
+							{
+								trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
+								index[pointer2]=i;
+								pointer2++;
+							}
+						}
+						else if (!tr[i].isMust()&&(Arrays.equals(tr[i].getArrival(), R[j])))	
+							tr[i]=null;
+					}
+				}
+			} 
+			//update R
+			int[][] newR=new int[pointer2][];
+			int pointer3=0;
+			for (int i=0;i<pointer2;i++)//for all must transitions without redundant source state
+			{
+				for (int j=0;j<R.length;j++)//for all redundant states
+				{
+					if (Arrays.equals(trcheck[i].getArrival(), R[j])) //if arrival state is redundant add source state to R
+					{
+						if ((!MSCAUtil.contains(trcheck[i].getSource(),R))&&(!MSCAUtil.contains(trcheck[index[i]].getSource(),newR)))
+						{
+							newR[pointer3]=trcheck[index[i]].getSource();
+							pointer3++;
+						}
+					}
+				}
 			}
-		}
-		a.setTransition(finalTr2);
-		a = MSCAUtil.removeRedundantTransitions(a);
+			update=(pointer3>0);
+			if (update)
+			{
+				R=MSCAUtil.merge(R, MSCAUtil.removeTailsNull(newR, pointer3));
+			}
+		}while(update);
+		
+		if (MSCAUtil.contains(a.getInitialCA(), R))
+			return null;
+
+		a.setTransition(tr);
 		a = MSCAUtil.removeUnreachable(a);
 		return a;
 	}

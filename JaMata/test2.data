@@ -1,7 +1,7 @@
 Rank: 1
-Number of states: [4]
+Number of states: [3]
 Initial state: [0]
-Final states: [[3]]
+Final states: [[2]]
 Transitions:
 
 ([0],[-1],[1])

@@ -178,127 +178,7 @@ public class MSCAUtil
 				}
 			}
 		}
-		
-//		//*********************************************************************
-//		// REDO the iterations for the must transitions, they are all requests!
-//		//*********************************************************************
-//		Transition[] musttransprod = new MSCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
-//		//int pointertemp;
-//		int mustpointertransprod = 0;
-//		
-//		for (int i=0;i<mustprodtr.length;i++) // for all the automaton in the product
-//		{
-//			Transition[] t = mustprodtr[i];
-//			for (int j=0;j<t.length;j++)  // for all must transitions of automaton i
-//			{
-//				MSCATransition[][] temp = new MSCATransition[trlength*(trlength-1)][];
-//				//Transition[] trtemp = new MSCATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
-//				int pointertemp=0; //reinitialize for each new transition
-//				boolean match=false;
-//				
-//				for (int ii=0;ii<prodtr.length;ii++)   //a must transition can only match a may
-//				{
-//					if (ii!=i)
-//					{
-//						Transition[] tt = prodtr[ii];
-//						for (int jj=0;jj<tt.length;jj++)
-//						{
-//							if (MSCATransition.match( ((MSCATransition)t[j]).getLabelP() ,((MSCATransition) tt[jj]).getLabelP() )) //match found
-//							{
-//								match=true;
-//								MSCATransition[] gen;
-//								if (i<ii)
-//									 gen = generateTransitions(t[j],tt[jj],i,ii,aut);
-//								else
-//									gen = generateTransitions(tt[jj],t[j],ii,i,aut);
-//								temp[pointertemp]=gen; //temp is temporarily used for comparing matches and offers/requests
-//								//trtemp[pointertemp]=tt[jj];
-//								pointertemp++;
-//								for (int ind=0;ind<gen.length;ind++)
-//									//copy all the matches in the transition of the product automaton, if not already in !
-//								{
-//									boolean copy=true;
-//									for (int ind2=0;ind2<mustpointertransprod;ind2++)
-//									{
-//										if (musttransprod[ind2].equals(gen[ind]))
-//										{
-//											copy=false;
-//											break;
-//										}
-//									}
-//									if(copy) 
-//									{
-//										musttransprod[mustpointertransprod]=gen[ind]; 
-//										if (debug)
-//											System.out.println(gen[ind].toString());
-//										mustpointertransprod++;
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//				
-//				/*insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
-//				  in matches. The idea is  that firstly all the independent moves are generated, and then we remove the invalid ones.  
-//				  */
-//				MSCATransition[] gen = generateTransitions(t[j],null,i,-1,aut);	
-//				if ((match)&&(gen!=null))		
-//				{
-//					/**
-//					 * extract the first transition of gen to check the principal who moves 
-//					 * and its state 
-//					 */
-//					MSCATransition tra = gen[0];
-//					int[] lab = tra.getLabelP(); 
-//					int pr1=-1;
-//					for (int ind2=0;ind2<lab.length;ind2++)
-//					{
-//						if (lab[ind2]!=0)
-//						{
-//							pr1=ind2; //principal
-//						}
-//					}
-//					int label = tra.getLabelP()[pr1];  //the action of the principal who moves
-//					for (int ind3=0;ind3<gen.length;ind3++)
-//					{
-//						for (int ind=0;ind<pointertemp;ind++)
-//							for(int ind2=0;ind2<temp[ind].length;ind2++)
-//							{	
-//								if(gen[ind3]!=null)
-//								{
-//									if (Arrays.equals(gen[ind3].getSource(),temp[ind][ind2].getSource()) &&  //the state is the same
-//											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
-//									{
-//										gen[ind3]=null;
-//									}
-//								}
-//							}
-//					}
-//								
-//				}
-//				/**
-//				 * finally insert only valid independent moves in musttransprod
-//				 */
-//				for (int ind=0;ind<gen.length;ind++)
-//				{
-//					if (gen[ind]!=null)
-//					{
-//						try{
-//						musttransprod[mustpointertransprod]=gen[ind];
-//						}catch(ArrayIndexOutOfBoundsException e){
-//							e.printStackTrace();
-//							}
-//						if (debug)
-//							System.out.println(gen[ind].toString());
-//						mustpointertransprod++;
-//					}
-//				}
-//			}
-//		}
-//
-//		//*********************************************************************
-		
+			
 		/**
 		 * remove all unused space in transProd (null at the end of the array)
 		 */
@@ -306,13 +186,7 @@ public class MSCAUtil
 		for (int ind=0;ind<pointertransprod;ind++)
 			finalTr[ind]= (MSCATransition)transprod[ind];
 		
-//		/**
-//		 * remove all unused space in musttransProd (null at the end of the array)
-//		 */
-//		MSCATransition[] mustfinalTr = new MSCATransition[mustpointertransprod];
-//		for (int ind=0;ind<mustpointertransprod;ind++)
-//			mustfinalTr[ind]= (MSCATransition)musttransprod[ind];
-//		
+	
 		MSCA prod =  new MSCA(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
 		
 		if (debug)
@@ -469,64 +343,67 @@ public class MSCAUtil
 	}
 			
 	/**
-	 * return states who do not reach a final state
-	 * @param at	the CA
-	 * @return	CA without hanged transitions
+	 * return redundant states who do not reach a final state
+	 * @param at	the MSCA
+	 * @return	redundant states of at
 	 */
-	protected static MSCATransition[] returnRedundantStates(MSCA at)
+	protected static int[][] getRedundantStates(MSCA at)
 	{
 		MSCA aut = at.clone();
 		MSCATransition[] finalTr=aut.getTransition();
-		int removed=0;
 		int pointerreachable=0;
 		int pointerunreachable=0;
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
 		int[][] fs = aut.allFinalStates();
-		
-		
+		int[][] redundantStates = new int[aut.prodStates()][];
+		int pointer=0;
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
-			//if (!finalTr[ind].isMust()) //must transitions cannot be removed
-				//{
 				// for each transition checks if the arrival state s is reachable from one of the final states of the ca
 				MSCATransition t=(MSCATransition)finalTr[ind];
-				int[] arr = t.getArrival();
-	
-				boolean remove=true;
-				
+				int[] start = t.getSource();
+				int[] arr = t.getArrival();		
 				for (int i=0;i<fs.length;i++)
 				{
 					int[] pointervisited = new int[1];
 					pointervisited[0]=0;
-					if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) //if final state fs[i] is reachable from arrival state arr
-						remove = false;
+					if(!amIReachable(fs[i],aut,start,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
+						//if final state fs[i] is not reachable from source state start 
+					{
+						if (!contains(start,redundantStates))
+						{
+							redundantStates[pointer]=start;
+							pointer++;
+							redundantStates[pointer]=arr; // if start is redundant then arr is redundant
+							pointer++;
+						}
+						else if (!contains(arr,redundantStates))
+						{
+							redundantStates[pointer]=arr;
+							pointer++;
+						}
+					}
+					else if(!amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
+					//if final state fs[i] is not reachable from target state arr
+					{
+						if (!contains(arr,redundantStates))
+						{
+							redundantStates[pointer]=arr;
+							pointer++;
+						}
+					}
+					
 				}
-				//if t does not reach any final state then remove
-				if(remove)
-				{
-					finalTr[ind]=null;
-					removed++;
-				}
-			//}											
+													
 		}
-			
-			
-		/**
-		 * remove holes (null) in finalTr2
-		 */
-		int pointer=0;
-		MSCATransition[] finalTr2 = new MSCATransition[finalTr.length-removed];
-		for (int ind=0;ind<finalTr.length;ind++)
+		//remove null space in array redundantStates
+		int[][] fin= new int[pointer][];
+		for (int i=0;i<pointer;i++)
 		{
-			if (finalTr[ind]!=null)
-			{
-				finalTr2[pointer]=finalTr[ind];
-				pointer++;
-			}
+			fin[i]=redundantStates[i];
 		}
-		
-		return finalTr2;
+		return fin;
 	}
 		
 	
@@ -1041,9 +918,11 @@ public class MSCAUtil
 					System.out.println("The most permissive controller of agreement for the last CA loaded is");
 					a = aut[aut.length-1];
 					MSCA mpc = a.mpc();
-					mpc.print();
-					//FSA.write(mpc);
-					mpc.printToFile();
+					if (mpc!=null)
+					{
+						mpc.print();
+						mpc.printToFile();
+					}
 					break;
 
 				case "10":
@@ -1160,4 +1039,66 @@ public class MSCAUtil
 		}catch(Exception e){e.printStackTrace();return null;}
 	}
 
+	protected static boolean contains(int[] q, int[][] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (Arrays.equals(q, listq[i]))
+					return true;
+		}
+		return false;
+	}
+	protected static int[][] merge(int[][] q1, int[][] q2)
+	{
+		int[][] m= new int[q1.length+q2.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		return m;
+	}
+	protected static int[][] removeTailsNull(int[][] q,int length)
+	{
+		int[][] r=new int[length][];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	protected static Object[][] removeHoles(Object[][] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		Object[][] fin = new Object[l.length-holes][];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
+	}
+	protected static MSCATransition[] removeHoles(MSCATransition[] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		MSCATransition[] fin = new MSCATransition[l.length-holes];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
+	}
 }
