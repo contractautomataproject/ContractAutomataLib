@@ -384,13 +384,18 @@ public class MSCAUtil
 							pointer++;
 						}
 					}
-					else if(!amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
-					//if final state fs[i] is not reachable from target state arr
+					else 
 					{
-						if (!contains(arr,redundantStates))
+						pointervisited = new int[1];
+						pointervisited[0]=0;
+						if(!amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
+						//if final state fs[i] is not reachable from target state arr
 						{
-							redundantStates[pointer]=arr;
-							pointer++;
+							if (!contains(arr,redundantStates))
+							{
+								redundantStates[pointer]=arr;
+								pointer++;
+							}
 						}
 					}
 					

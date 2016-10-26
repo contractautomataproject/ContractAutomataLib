@@ -79,7 +79,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 		for (int i=0;i<finalstates.length;i++)
 			System.out.print(Arrays.toString(finalstates[i]));
 		System.out.print("]\n");
-		System.out.println("May Transitions: \n");
+		System.out.println("Transitions: \n");
 		Transition[] t = this.getTransition();
 		if (t!=null)
 		{
@@ -585,27 +585,16 @@ public class MSCA  extends FSA implements java.io.Serializable
 				removed++;
 			}
 		}
-//		/**
-//		 * remove holes (null) in t
-//		 */
-//		int pointer=0;
-//		MSCATransition[] finalTr2 = new MSCATransition[t.length-removed];
-//		for (int ind=0;ind<t.length;ind++)
-//		{
-//			if (t[ind]!=null)
-//			{
-//				finalTr2[pointer]=t[ind];
-//				pointer++;
-//			}
-//		}
+
 		tr=  MSCAUtil.removeHoles(tr, removed);
 		
-		//a.setTransition(finalTr2);
+		a.setTransition(tr);
+		removed=0;
 		int[][] R= MSCAUtil.getRedundantStates(a);
 		boolean update=false;
 		do{
-			MSCATransition[] trcheck= new MSCATransition[tr.length];
-			int[] index=new int[tr.length];
+			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];
+			int[] index=new int[tr.length*R.length];
 			int pointer2=0;
 			for (int i=0;i<tr.length;i++)
 			{
@@ -616,7 +605,10 @@ public class MSCA  extends FSA implements java.io.Serializable
 						if (tr[i].isMust())
 						{   
 							if (Arrays.equals(tr[i].getSource(), R[j]))
+							{
 								tr[i]=null;
+								removed++;
+							}
 							else
 							{
 								trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
@@ -625,7 +617,10 @@ public class MSCA  extends FSA implements java.io.Serializable
 							}
 						}
 						else if (!tr[i].isMust()&&(Arrays.equals(tr[i].getArrival(), R[j])))	
+						{
 							tr[i]=null;
+							removed++;
+						}
 					}
 				}
 			} 
@@ -655,7 +650,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 		
 		if (MSCAUtil.contains(a.getInitialCA(), R))
 			return null;
-
+		
+		tr=  MSCAUtil.removeHoles(tr, removed);
 		a.setTransition(tr);
 		a = MSCAUtil.removeUnreachable(a);
 		return a;
