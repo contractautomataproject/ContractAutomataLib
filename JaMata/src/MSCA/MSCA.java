@@ -576,25 +576,37 @@ public class MSCA  extends FSA implements java.io.Serializable
 	{
 		MSCA a = this.clone();
 		MSCATransition[] tr = a.getTransition();
+		int[][] R_0= new int[a.prodStates()][];
+		int pointer=0;
 		int removed=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if ((tr[i].request())&&(!tr[i].isMust()))
+			if ((tr[i].request()))
 			{
-				tr[i] = null;
-				removed++;
+				if (!tr[i].isMust())
+				{
+					tr[i] = null;
+					removed++;
+				}
+				else
+				{
+					R_0[pointer]=tr[i].getArrival();
+					pointer++;
+				}
 			}
 		}
 
 		tr=  MSCAUtil.removeHoles(tr, removed);
+		R_0 = MSCAUtil.removeTailsNull(R_0, pointer);
 		
 		a.setTransition(tr);
 		removed=0;
-		int[][] R= MSCAUtil.getRedundantStates(a);
+		int[][] R=MSCAUtil.getRedundantStates(a);
+		R=MSCAUtil.merge(R, R_0);
 		boolean update=false;
 		do{
-			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];
-			int[] index=new int[tr.length*R.length];
+			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
+			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
 			int pointer2=0;
 			for (int i=0;i<tr.length;i++)
 			{
@@ -612,7 +624,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 							else
 							{
 								trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
-								index[pointer2]=i;
+								//index[pointer2]=i;
 								pointer2++;
 							}
 						}
@@ -633,9 +645,9 @@ public class MSCA  extends FSA implements java.io.Serializable
 				{
 					if (Arrays.equals(trcheck[i].getArrival(), R[j])) //if arrival state is redundant add source state to R
 					{
-						if ((!MSCAUtil.contains(trcheck[i].getSource(),R))&&(!MSCAUtil.contains(trcheck[index[i]].getSource(),newR)))
+						if ((!MSCAUtil.contains(trcheck[i].getSource(),R))&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))
 						{
-							newR[pointer3]=trcheck[index[i]].getSource();
+							newR[pointer3]=trcheck[i].getSource();
 							pointer3++;
 						}
 					}

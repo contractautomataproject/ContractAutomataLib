@@ -1040,7 +1040,26 @@ public class MSCAUtil
 			else
 				m[i]=q2[i-q1.length];
 		}
+		m=removeDuplicates(m);
 		return m;
+	}
+	protected static int[][] removeDuplicates(int[][] m)
+	{
+		int removed=0;
+		for (int i=0;i<m.length;i++)
+		{
+			for (int j=i+1;j<m.length;j++)
+			{
+				if ((m[i]!=null)&&(Arrays.equals(m[i],m[j])))
+				{
+					m[j]=null;
+					removed++;
+				}
+			}
+		}
+		m= (int[][])removeHoles(m,removed);
+		return m;
+			
 	}
 	protected static int[][] removeTailsNull(int[][] q,int length)
 	{
@@ -1049,13 +1068,13 @@ public class MSCAUtil
 			r[i]=q[i];
 		return r;
 	}
-	protected static Object[][] removeHoles(Object[][] l, int holes )
+	protected static int[][] removeHoles(int[][] l, int holes )
 	{
 		/**
 		 * remove holes (null) in t
 		 */
 		int pointer=0;
-		Object[][] fin = new Object[l.length-holes][];
+		int[][] fin = new int[l.length-holes][];
 		for (int ind=0;ind<l.length;ind++)
 		{
 			if (l[ind]!=null)
