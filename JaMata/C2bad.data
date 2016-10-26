@@ -1,9 +1,9 @@
 Rank: 1
 Number of states: [4]
 Initial state: [0]
-Final states: [[0,3]]
+Final states: [[1,3]]
 Transitions:
 
 !([0],[-1],[1])
-([1],[3],[2])
+([1],[2],[2])
 !([2],[-5],[3])

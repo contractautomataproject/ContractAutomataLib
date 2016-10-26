@@ -577,6 +577,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 		MSCA a = this.clone();
 		MSCATransition[] tr = a.getTransition();
 		int[][] R_0= new int[a.prodStates()][];
+		int[][] fs=a.allFinalStates();
 		int pointer=0;
 		int removed=0;
 		for (int i=0;i<tr.length;i++)
@@ -590,8 +591,11 @@ public class MSCA  extends FSA implements java.io.Serializable
 				}
 				else
 				{
-					R_0[pointer]=tr[i].getArrival();
-					pointer++;
+					if (!MSCAUtil.contains(tr[i].getSource(), R_0)&&(!MSCAUtil.contains(tr[i].getArrival(), fs)))
+					{
+						R_0[pointer]=tr[i].getSource();
+						pointer++;
+					}
 				}
 			}
 		}
@@ -608,31 +612,28 @@ public class MSCA  extends FSA implements java.io.Serializable
 			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
 			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
 			int pointer2=0;
-			for (int i=0;i<tr.length;i++)
+			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
-				for (int j=0;j<R.length;j++)
+				if (!(tr[i]==null))
 				{
-					if (!(tr[i]==null))
-					{
-						if (tr[i].isMust())
-						{   
-							if (Arrays.equals(tr[i].getSource(), R[j]))
-							{
-								tr[i]=null;
-								removed++;
-							}
-							else
-							{
-								trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
-								//index[pointer2]=i;
-								pointer2++;
-							}
-						}
-						else if (!tr[i].isMust()&&(Arrays.equals(tr[i].getArrival(), R[j])))	
+					if (tr[i].isMust())
+					{   
+						if (MSCAUtil.contains(tr[i].getSource(), R))
 						{
 							tr[i]=null;
 							removed++;
 						}
+						else
+						{
+							trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
+							//index[pointer2]=i;
+							pointer2++;
+						}
+					}
+					else if (!tr[i].isMust()&&(MSCAUtil.contains(tr[i].getArrival(), R)))
+					{
+						tr[i]=null;
+						removed++;
 					}
 				}
 			} 
@@ -641,17 +642,19 @@ public class MSCA  extends FSA implements java.io.Serializable
 			int pointer3=0;
 			for (int i=0;i<pointer2;i++)//for all must transitions without redundant source state
 			{
-				for (int j=0;j<R.length;j++)//for all redundant states
-				{
-					if (Arrays.equals(trcheck[i].getArrival(), R[j])) //if arrival state is redundant add source state to R
-					{
-						if ((!MSCAUtil.contains(trcheck[i].getSource(),R))&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))
+				//for (int j=0;j<R.length;j++)//for all redundant states
+				//.{
+				//	if (Arrays.equals(trcheck[i].getArrival(), R[j])) 
+				//	{
+				//if arrival state is redundant,  add source state to R it has not been already added and it is not final, we know that source state is not in R
+				// merge removes duplicates we could skip the check
+						if ((MSCAUtil.contains(trcheck[i].getArrival(), R)&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
 						{
 							newR[pointer3]=trcheck[i].getSource();
 							pointer3++;
 						}
-					}
-				}
+				//	}
+				//}
 			}
 			update=(pointer3>0);
 			if (update)
