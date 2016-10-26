@@ -350,65 +350,42 @@ public class MSCAUtil
 	protected static int[][] getRedundantStates(MSCA at)
 	{
 		MSCA aut = at.clone();
-		MSCATransition[] finalTr=aut.getTransition();
+		//MSCATransition[] finalTr=aut.getTransition();
 		int pointerreachable=0;
 		int pointerunreachable=0;
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
 		int[][] fs = aut.allFinalStates();
 		int[][] redundantStates = new int[aut.prodStates()][];
+		int[][] allStates = aut.allStates();
 		int pointer=0;
-		for (int ind=0;ind<finalTr.length;ind++)
+		for (int ind=0;ind<allStates.length;ind++)
 		{
-				// for each transition checks if the arrival state s is reachable from one of the final states of the ca
-				MSCATransition t=(MSCATransition)finalTr[ind];
-				int[] start = t.getSource();
-				int[] arr = t.getArrival();		
+				// for each state checks if  is reachable from one of the final states of the ca
+				boolean remove=true;
 				for (int i=0;i<fs.length;i++)
 				{
 					int[] pointervisited = new int[1];
 					pointervisited[0]=0;
-					if(!amIReachable(fs[i],aut,start,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
-						//if final state fs[i] is not reachable from source state start 
-					{
-						if (!contains(start,redundantStates))
-						{
-							redundantStates[pointer]=start;
-							pointer++;
-							redundantStates[pointer]=arr; // if start is redundant then arr is redundant
-							pointer++;
-						}
-						else if (!contains(arr,redundantStates))
-						{
-							redundantStates[pointer]=arr;
-							pointer++;
-						}
-					}
-					else 
-					{
-						pointervisited = new int[1];
-						pointervisited[0]=0;
-						if(!amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
-						//if final state fs[i] is not reachable from target state arr
-						{
-							if (!contains(arr,redundantStates))
-							{
-								redundantStates[pointer]=arr;
-								pointer++;
-							}
-						}
-					}
-					
+					if(amIReachable(fs[i],aut,allStates[ind],new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+						remove=false;
+				}
+				if ((remove)&&(!contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
+				{
+					redundantStates[pointer]=allStates[ind];
+					pointer++;
 				}
 													
 		}
 		//remove null space in array redundantStates
-		int[][] fin= new int[pointer][];
-		for (int i=0;i<pointer;i++)
-		{
-			fin[i]=redundantStates[i];
-		}
-		return fin;
+		redundantStates = MSCAUtil.removeTailsNull(redundantStates, pointer);
+		
+//		int[][] fin= new int[pointer][];
+//		for (int i=0;i<pointer;i++)
+//		{
+//			fin[i]=redundantStates[i];
+//		}
+		return redundantStates;
 	}
 		
 	

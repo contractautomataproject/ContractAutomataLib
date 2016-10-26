@@ -865,12 +865,46 @@ public class MSCA  extends FSA implements java.io.Serializable
 	
 	/**
 	 * 
+	 * @return all  states that appear in at least one transition
+	 */
+	public int[][] allStates()
+	{
+		MSCA aut=this.clone();
+		int[][] s = new int[this.prodStates()][];
+		s[0]=aut.getInitialCA();
+		MSCATransition[] t = aut.getTransition();
+		int pointer=1;
+		for (int i=0;i<t.length;i++)
+		{
+			int[] start = t[i].getSource();
+			int[] arr = t[i].getArrival();
+			
+			if (!MSCAUtil.contains(arr, s))
+			{
+				s[pointer]=arr;
+				pointer++;
+			}
+			if (!MSCAUtil.contains(start, s))
+			{
+				s[pointer]=start;
+				pointer++;
+			}
+		}
+		s=MSCAUtil.removeTailsNull(s, pointer);
+//	    int[][] f = new int[pointer][];
+//	    for (int i=0;i<pointer;i++)
+//	    	f[i]=s[i];
+		return s;
+	}
+	
+	/**
+	 * 
 	 * @return all the final states of the CA
 	 */
 	public  int[][] allFinalStates()
 	{
-		if (rank==1)
-			return finalstates;
+//		if (rank==1)
+//			return finalstates;
 		int[] states=new int[finalstates.length];
 		int comb=1;
 		int[] insert= new int[states.length];

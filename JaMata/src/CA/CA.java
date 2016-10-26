@@ -737,8 +737,8 @@ public class CA  extends FSA implements java.io.Serializable
 	 */
 	public  int[][] allFinalStates()
 	{
-		if (rank==1)
-			return finalstates;
+//		if (rank==1)
+//			return finalstates;
 		int[] states=new int[finalstates.length];
 		int comb=1;
 		int[] insert= new int[states.length];
