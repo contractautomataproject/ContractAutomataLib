@@ -182,7 +182,7 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 			return "("+Arrays.toString(source)+","+Arrays.toString(label)+","+Arrays.toString(target)+")";
 	}
 
-	public boolean equals(Object t)
+	public boolean equals(MSCATransition t)
 	{
 		MSCATransition tr=(MSCATransition) t;
 		int[] ip =tr.getSource();

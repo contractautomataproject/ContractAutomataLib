@@ -576,10 +576,9 @@ public class MSCA  extends FSA implements java.io.Serializable
 	{
 		MSCA a = this.clone();
 		MSCATransition[] tr = a.getTransition();
-		int[][] R_0= new int[a.prodStates()][];
 		int[][] fs=a.allFinalStates();
-		int pointer=0;
 		int removed=0;
+		MSCATransition[] unmatch=a.getUnmatch();
 		for (int i=0;i<tr.length;i++)
 		{
 			if ((tr[i].request()))
@@ -591,22 +590,36 @@ public class MSCA  extends FSA implements java.io.Serializable
 				}
 				else
 				{
-					if (!MSCAUtil.contains(tr[i].getSource(), R_0)&&(!MSCAUtil.contains(tr[i].getArrival(), fs)))
+					if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
 					{
-						R_0[pointer]=tr[i].getSource();
-						pointer++;
+						tr[i] = null;
+						removed++;
 					}
 				}
 			}
 		}
 
-		tr=  MSCAUtil.removeHoles(tr, removed);
-		R_0 = MSCAUtil.removeTailsNull(R_0, pointer);
-		
+		tr=  MSCAUtil.removeHoles(tr, removed);		
 		a.setTransition(tr);
 		removed=0;
-		int[][] R=MSCAUtil.getRedundantStates(a);
-		R=MSCAUtil.merge(R, R_0);
+		int[][] R=a.getRedundantStates();
+		//all the source states of unmatched transitions
+		unmatch=a.getUnmatch();
+		if (unmatch!=null)
+		{
+			int pointer=0;
+			int[][] R_0= new int[unmatch.length][];
+			for (int i=0;i<unmatch.length;i++)
+			{
+				if (!MSCAUtil.contains(unmatch[i].getSource(),R_0))
+				{
+					R_0[pointer]=unmatch[i].getSource();
+					pointer++;
+				}
+			}
+			R_0=MSCAUtil.removeTailsNull(R_0, pointer);
+			R=MSCAUtil.setUnion(R, R_0);
+		}
 		boolean update=false;
 		do{
 			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
@@ -647,7 +660,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 				//	if (Arrays.equals(trcheck[i].getArrival(), R[j])) 
 				//	{
 				//if arrival state is redundant,  add source state to R it has not been already added and it is not final, we know that source state is not in R
-				// merge removes duplicates we could skip the check
+				// setUnion removes duplicates we could skip the check
 						if ((MSCAUtil.contains(trcheck[i].getArrival(), R)&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
 						{
 							newR[pointer3]=trcheck[i].getSource();
@@ -659,7 +672,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 			update=(pointer3>0);
 			if (update)
 			{
-				R=MSCAUtil.merge(R, MSCAUtil.removeTailsNull(newR, pointer3));
+				R=MSCAUtil.setUnion(R, MSCAUtil.removeTailsNull(newR, pointer3));
 			}
 		}while(update);
 		
@@ -1015,5 +1028,96 @@ public class MSCA  extends FSA implements java.io.Serializable
 		for(int i=0;i<pointliable;i++)
 			ret[i]=liable[i];
 		return ret;
+	}
+	
+	/**
+	 * return redundant states who do not reach a final state
+	 * @return	redundant states of at
+	 */
+	protected int[][] getRedundantStates()
+	{
+		//MSCA aut = at.clone();
+		//MSCATransition[] finalTr=aut.getTransition();
+		int pointerreachable=0;
+		int pointerunreachable=0;
+		int[][] reachable = new int[this.prodStates()][]; 
+		int[][] unreachable = new int[this.prodStates()][];
+		int[][] fs = this.allFinalStates();
+		int[][] redundantStates = new int[this.prodStates()][];
+		int[][] allStates = this.allStates();
+		int pointer=0;
+		for (int ind=0;ind<allStates.length;ind++)
+		{
+				// for each state checks if  is reachable from one of the final states of the ca
+				boolean remove=true;
+				for (int i=0;i<fs.length;i++)
+				{
+					int[] pointervisited = new int[1];
+					pointervisited[0]=0;
+					if(MSCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+						remove=false;
+				}
+				if ((remove)&&(!MSCAUtil.contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
+				{
+					redundantStates[pointer]=allStates[ind];
+					pointer++;
+				}
+													
+		}
+		//remove null space in array redundantStates
+		redundantStates = MSCAUtil.removeTailsNull(redundantStates, pointer);
+		
+//		int[][] fin= new int[pointer][];
+//		for (int i=0;i<pointer;i++)
+//		{
+//			fin[i]=redundantStates[i];
+//		}
+		return redundantStates;
+	}
+	
+	/**
+	 * 
+	 * @return	all the  must transitions request that are not matched 
+	 */
+	protected  MSCATransition[] getUnmatch()
+	{
+		MSCATransition[] tr = this.getTransition();
+		int[][] fs=this.allFinalStates();
+		int pointer=0;
+		int[][] R=this.getRedundantStates();
+		MSCATransition[] unmatch = new MSCATransition[tr.length];
+		for (int i=0;i<tr.length;i++)
+		{
+			if ((tr[i].request())
+				&&((tr[i].isMust())
+				&&(!MSCAUtil.contains(tr[i].getSource(), fs)))) // if source state is not final
+			{
+				boolean matched=false;
+				for (int j=0;j<tr.length;j++)	
+				{
+					if ((tr[j].match())
+						&&(tr[j].isMust())
+						&&(tr[j].receiver()==tr[i].receiver())	//the same principal
+						&&(tr[j].getSource()[tr[j].receiver()]==tr[i].getSource()[tr[i].receiver()]) //the same source state					
+						&&(tr[j].getLabelP()[tr[j].receiver()]==tr[i].getLabelP()[tr[i].receiver()]) //the same request
+						&&(!MSCAUtil.contains(tr[i].getSource(), R))) //source state is not redundant
+						{
+							matched=true; // the request is matched
+						}
+				}
+				if (!matched)
+				{
+					unmatch[pointer]=tr[i];
+					pointer++;
+				}
+			}
+		}
+		if (pointer>0)
+		{
+			unmatch = MSCAUtil.removeTailsNull(unmatch, pointer);
+			return unmatch;
+		}
+		else
+			return null;
 	}
 }

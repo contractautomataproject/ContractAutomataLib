@@ -342,52 +342,9 @@ public class MSCAUtil
 		return aut;
 	}
 			
-	/**
-	 * return redundant states who do not reach a final state
-	 * @param at	the MSCA
-	 * @return	redundant states of at
-	 */
-	protected static int[][] getRedundantStates(MSCA at)
-	{
-		MSCA aut = at.clone();
-		//MSCATransition[] finalTr=aut.getTransition();
-		int pointerreachable=0;
-		int pointerunreachable=0;
-		int[][] reachable = new int[at.prodStates()][]; 
-		int[][] unreachable = new int[at.prodStates()][];
-		int[][] fs = aut.allFinalStates();
-		int[][] redundantStates = new int[aut.prodStates()][];
-		int[][] allStates = aut.allStates();
-		int pointer=0;
-		for (int ind=0;ind<allStates.length;ind++)
-		{
-				// for each state checks if  is reachable from one of the final states of the ca
-				boolean remove=true;
-				for (int i=0;i<fs.length;i++)
-				{
-					int[] pointervisited = new int[1];
-					pointervisited[0]=0;
-					if(amIReachable(fs[i],aut,allStates[ind],new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
-						remove=false;
-				}
-				if ((remove)&&(!contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
-				{
-					redundantStates[pointer]=allStates[ind];
-					pointer++;
-				}
-													
-		}
-		//remove null space in array redundantStates
-		redundantStates = MSCAUtil.removeTailsNull(redundantStates, pointer);
+	
 		
-//		int[][] fin= new int[pointer][];
-//		for (int i=0;i<pointer;i++)
-//		{
-//			fin[i]=redundantStates[i];
-//		}
-		return redundantStates;
-	}
-		
+	
 	
 	/**
 	 * true if state[] is reachable from  from[]  in aut
@@ -397,7 +354,7 @@ public class MSCAUtil
 	 * @param pointervisited
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
-	private static boolean amIReachable( int[] state, MSCA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
+	protected static boolean amIReachable( int[] state, MSCA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
 		if (Arrays.equals(state,from))
 			return true;
@@ -1030,7 +987,16 @@ public class MSCAUtil
 		}
 		return false;
 	}
-	protected static int[][] merge(int[][] q1, int[][] q2)
+	protected static boolean contains(MSCATransition t, MSCATransition[] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (t.equals(listq))
+					return true;
+		}
+		return false;
+	}
+	protected static int[][] setUnion(int[][] q1, int[][] q2)
 	{
 		int[][] m= new int[q1.length+q2.length][];
 		for (int i=0;i<m.length;i++)
@@ -1064,6 +1030,13 @@ public class MSCAUtil
 	protected static int[][] removeTailsNull(int[][] q,int length)
 	{
 		int[][] r=new int[length][];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	protected static MSCATransition[] removeTailsNull(MSCATransition[] q,int length)
+	{
+		MSCATransition[] r=new MSCATransition[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;
