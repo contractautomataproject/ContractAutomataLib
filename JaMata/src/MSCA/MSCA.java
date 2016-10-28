@@ -578,7 +578,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 		MSCATransition[] tr = a.getTransition();
 		int[][] fs=a.allFinalStates();
 		int removed=0;
-		MSCATransition[] unmatch=a.getUnmatch();
+		MSCATransition[] mustrequest=new MSCATransition[tr.length]; //initial  transitions
+		int pointer4=0;
 		for (int i=0;i<tr.length;i++)
 		{
 			if ((tr[i].request()))
@@ -590,7 +591,10 @@ public class MSCA  extends FSA implements java.io.Serializable
 				}
 				else
 				{
-					if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
+					mustrequest[pointer4]=tr[i];
+					pointer4++;
+					//if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
+					if (tr[i].isMatched(a))
 					{
 						tr[i] = null;
 						removed++;
@@ -600,26 +604,29 @@ public class MSCA  extends FSA implements java.io.Serializable
 		}
 
 		tr=  MSCAUtil.removeHoles(tr, removed);		
-		a.setTransition(tr);
+		mustrequest=MSCAUtil.removeHoles(mustrequest, pointer4);
+		a.setTransition(tr); //K_0 
 		removed=0;
 		int[][] R=a.getRedundantStates();
-		//all the source states of unmatched transitions
-		unmatch=a.getUnmatch();
-		if (unmatch!=null)
-		{
-			int pointer=0;
-			int[][] R_0= new int[unmatch.length][];
-			for (int i=0;i<unmatch.length;i++)
-			{
-				if (!MSCAUtil.contains(unmatch[i].getSource(),R_0))
-				{
-					R_0[pointer]=unmatch[i].getSource();
-					pointer++;
-				}
-			}
-			R_0=MSCAUtil.removeTailsNull(R_0, pointer);
-			R=MSCAUtil.setUnion(R, R_0);
-		}
+//		//all the source states of unmatched transitions
+//		unmatch=a.getUnmatch();
+//		if (unmatch!=null)
+//		{
+//			int pointer=0;
+//			int[][] R_0= new int[unmatch.length][];
+//			for (int i=0;i<unmatch.length;i++)
+//			{
+//				if (!MSCAUtil.contains(unmatch[i].getSource(),R_0))
+//				{
+//					R_0[pointer]=unmatch[i].getSource();
+//					pointer++;
+//				}
+//			}
+//			R_0=MSCAUtil.removeTailsNull(R_0, pointer);
+//			R=MSCAUtil.setUnion(R, R_0);
+//		}
+		int[][] R_0=MSCATransition.sourcesUnmatched(mustrequest, a);
+		R=MSCAUtil.setUnion(R, R_0);
 		boolean update=false;
 		do{
 			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
@@ -669,6 +676,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 				//	}
 				//}
 			}
+			MSCATransition.sourcesUnmatched(mustrequest, a);
+			R=MSCAUtil.setUnion(R, R_0);
 			update=(pointer3>0);
 			if (update)
 			{

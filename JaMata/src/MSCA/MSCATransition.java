@@ -4,6 +4,7 @@ package MSCA;
 import java.util.Arrays;
 
 
+
 import FSA.Transition;
 
 
@@ -220,5 +221,59 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 					return false; // ll is a match
 			}
 		return ((m+mm) == 0)&&(m!=-1000)&&(mm!=-1000); 
+	}
+	/**
+	 * 
+	 * @return	true if the  must transition request is matched 
+	 */
+	protected  boolean isMatched(MSCA aut)
+	{
+		MSCATransition[] tr = aut.getTransition();
+		int[][] fs=aut.allFinalStates();
+		int[][] R=aut.getRedundantStates();
+		//MSCATransition[] unmatch = new MSCATransition[tr.length];
+		if ((this.request())
+			&&((this.isMust())
+			&&(!MSCAUtil.contains(this.getSource(), fs)))) // if source state is not final
+		{
+			for (int j=0;j<tr.length;j++)	
+			{
+				if ((tr[j].match())
+					&&(tr[j].isMust())
+					&&(tr[j].receiver()==this.receiver())	//the same principal
+					&&(tr[j].getSource()[tr[j].receiver()]==this.getSource()[this.receiver()]) //the same source state					
+					&&(tr[j].getLabelP()[tr[j].receiver()]==this.getLabelP()[this.receiver()]) //the same request
+					&&(!MSCAUtil.contains(this.getSource(), R))) //source state is not redundant
+					{
+						return true;
+					}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param t
+	 * @param aut
+	 * @return   source states of transitions in t that are unmatched in aut
+	 */
+	protected static int[][] sourcesUnmatched(MSCATransition[] t, MSCA aut)
+	{
+		int[][] s= new int[t.length][];
+		int pointer=0;
+		for (int i=0;i<t.length;i++)
+		{
+			if (!t[i].isMatched(aut))
+			{
+				if (!MSCAUtil.contains(t[i].getSource(), s))
+				{
+					s[pointer]=t[i].getSource();
+					pointer++;
+				}
+			}
+		}
+		MSCAUtil.removeTailsNull(s, pointer);
+		return s;
 	}
 }
