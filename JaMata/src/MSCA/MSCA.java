@@ -1048,7 +1048,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 	}
 	
 	/**
-	 * return redundant states who do not reach a final state
+	 * return redundant states who do not reach a final state or are unreachable
 	 * @return	redundant states of at
 	 */
 	protected int[][] getRedundantStates()
@@ -1065,14 +1065,17 @@ public class MSCA  extends FSA implements java.io.Serializable
 		int pointer=0;
 		for (int ind=0;ind<allStates.length;ind++)
 		{
-				// for each state checks if  is reachable from one of the final states of the ca
+				// for each state checks if  is reachable from one of the final states of the ca, and if it is reachable
 				boolean remove=true;
 				for (int i=0;i<fs.length;i++)
 				{
 					int[] pointervisited = new int[1];
 					pointervisited[0]=0;
-					if(MSCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+					if((MSCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+						&&(MSCAUtil.amIReachable(allStates[ind],this,this.initial,new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
 						remove=false;
+					pointervisited = new int[1];
+					pointervisited[0]=0;
 				}
 				if ((remove)&&(!MSCAUtil.contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
 				{

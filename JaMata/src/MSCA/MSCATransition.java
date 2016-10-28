@@ -229,13 +229,15 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 	protected  boolean isMatched(MSCA aut)
 	{
 		MSCATransition[] tr = aut.getTransition();
-		int[][] fs=aut.allFinalStates();
+//		int[][] fs=aut.allFinalStates();
 		int[][] R=aut.getRedundantStates();
 		//MSCATransition[] unmatch = new MSCATransition[tr.length];
 		if ((this.request())
-			&&((this.isMust())
-			&&(!MSCAUtil.contains(this.getSource(), fs)))) // if source state is not final
+			&&(this.isMust()))
 		{
+
+//			if (!MSCAUtil.contains(this.getSource(), fs)) // if source state is not final
+//				return true;
 			for (int j=0;j<tr.length;j++)	
 			{
 				if ((tr[j].match())
