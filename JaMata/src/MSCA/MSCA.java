@@ -601,7 +601,6 @@ public class MSCA  extends FSA implements java.io.Serializable
 
 		tr=  MSCAUtil.removeHoles(tr, removed);		
 		a.setTransition(tr);
-		removed=0;
 		int[][] R=a.getRedundantStates();
 		//all the source states of unmatched transitions
 		unmatch=a.getUnmatch();
@@ -625,6 +624,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
 			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
 			int pointer2=0;
+			removed=0;
 			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
 				if (!(tr[i]==null))
@@ -650,6 +650,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 					}
 				}
 			} 
+			tr=  MSCAUtil.removeHoles(tr, removed);
+			a.setTransition(tr);
 			//update R
 			int[][] newR=new int[pointer2][];
 			int pointer3=0;
@@ -661,7 +663,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 				//	{
 				//if arrival state is redundant,  add source state to R it has not been already added and it is not final, we know that source state is not in R
 				// setUnion removes duplicates we could skip the check
-						if ((MSCAUtil.contains(trcheck[i].getArrival(), R)&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
+						if ((MSCAUtil.contains(trcheck[i].getArrival(), a.getRedundantStates())&&(!MSCAUtil.contains(trcheck[i].getSource(),newR)))&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
 						{
 							newR[pointer3]=trcheck[i].getSource();
 							pointer3++;
@@ -679,8 +681,8 @@ public class MSCA  extends FSA implements java.io.Serializable
 		if (MSCAUtil.contains(a.getInitialCA(), R))
 			return null;
 		
-		tr=  MSCAUtil.removeHoles(tr, removed);
-		a.setTransition(tr);
+//		tr=  MSCAUtil.removeHoles(tr, removed);
+//		a.setTransition(tr);
 		a = MSCAUtil.removeUnreachable(a);
 		return a;
 	}
