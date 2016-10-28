@@ -273,7 +273,7 @@ public class MSCATransition extends Transition implements java.io.Serializable{
 				}
 			}
 		}
-		MSCAUtil.removeTailsNull(s, pointer);
+		s=MSCAUtil.removeTailsNull(s, pointer);
 		return s;
 	}
 }

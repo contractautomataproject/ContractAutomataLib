@@ -591,7 +591,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 				}
 				else
 				{
-					mustrequest[pointer4]=tr[i];
+					mustrequest[pointer4]= new MSCATransition(tr[i].getSource(),tr[i].getLabelP(),tr[i].getArrival(),true);
 					pointer4++;
 					//if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
 					if (tr[i].isMatched(a))
@@ -604,7 +604,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 		}
 
 		tr=  MSCAUtil.removeHoles(tr, removed);		
-		mustrequest=MSCAUtil.removeHoles(mustrequest, pointer4);
+		mustrequest=MSCAUtil.removeTailsNull(mustrequest, pointer4);
 		a.setTransition(tr); //K_0 
 		int[][] R=a.getRedundantStates();
 //		//all the source states of unmatched transitions
@@ -658,7 +658,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 				}
 			} 
 			tr=  MSCAUtil.removeHoles(tr, removed);
-			a.setTransition(tr);
+			a.setTransition(tr);  //K_i
 			//update R
 			int[][] newR=new int[pointer2][];
 			int pointer3=0;
@@ -678,12 +678,18 @@ public class MSCA  extends FSA implements java.io.Serializable
 				//	}
 				//}
 			}
-			MSCATransition.sourcesUnmatched(mustrequest, a);
-			R=MSCAUtil.setUnion(R, R_0);
 			update=(pointer3>0);
 			if (update)
 			{
 				R=MSCAUtil.setUnion(R, MSCAUtil.removeTailsNull(newR, pointer3));
+			}
+			int[][] su= MSCATransition.sourcesUnmatched(mustrequest, a);
+			int[][] newsources=	MSCAUtil.setUnion(R_0 ,su);
+			if (newsources.length!=R_0.length)
+			{
+				R_0=newsources;
+				R=MSCAUtil.setUnion(R, R_0);
+				update=true;
 			}
 		}while(update);
 		
