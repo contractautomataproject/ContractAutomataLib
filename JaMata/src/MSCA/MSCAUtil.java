@@ -57,7 +57,7 @@ public class MSCAUtil
 		 * then generate the match in all possible contexts		 
 		 * it also generates the independent moves, then clean from invalid transitions 
 		 */
-		Transition[][] prodtr = new MSCATransition[aut.length][];
+		MSCATransition[][] prodtr = new MSCATransition[aut.length][];
 	//	Transition[][] mustprodtr = new MSCATransition[aut.length][];
 		int trlength = 0;
 		for(int i=0;i<aut.length;i++)
@@ -66,7 +66,7 @@ public class MSCAUtil
 	//		mustprodtr[i]= aut[i].getMustTransition();
 			trlength = trlength + prodtr[i].length;// + mustprodtr[i].length;
 		}
-		Transition[] transprod = new MSCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
+		MSCATransition[] transprod = new MSCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
 		//int pointertemp;
 		int pointertransprod = 0;
 		for (int i=0;i<prodtr.length;i++) // for all the automaton in the product
@@ -82,7 +82,7 @@ public class MSCAUtil
 				{
 					if (ii!=i)
 					{
-						Transition[] tt = prodtr[ii];
+						MSCATransition[] tt = prodtr[ii];
 						for (int jj=0;jj<tt.length;jj++) //for all transitions of other automatons
 						{
 							if (MSCATransition.match( ((MSCATransition)t[j]).getLabelP() ,((MSCATransition) tt[jj]).getLabelP() )) //match found
@@ -991,7 +991,7 @@ public class MSCAUtil
 	{
 		for (int i=0;i<listq.length;i++)
 		{
-			if (t.equals(listq))
+			if (t.equals(listq[i]))
 					return true;
 		}
 		return false;
