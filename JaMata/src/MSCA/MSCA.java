@@ -576,6 +576,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 	{
 		MSCA a = this.clone();
 		MSCATransition[] tr = a.getTransition();
+		MSCATransition[] rem= new MSCATransition[tr.length];  //solo per testing
 		int[][] fs=a.allFinalStates();
 		int removed=0;
 		MSCATransition[] mustrequest=new MSCATransition[tr.length]; //initial  transitions
@@ -586,6 +587,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 			{
 				if (!tr[i].isMust())
 				{
+					rem[removed]=tr[i];
 					tr[i] = null;
 					removed++;
 				}
@@ -596,6 +598,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 					//if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
 					if (tr[i].isMatched(a))
 					{
+						rem[removed]=tr[i];
 						tr[i] = null;
 						removed++;
 					}
@@ -632,6 +635,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
 			int pointer2=0;
 			removed=0;
+			 rem= new MSCATransition[tr.length]; 
 			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
 				if (!(tr[i]==null))
@@ -640,6 +644,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 					{   
 						if (MSCAUtil.contains(tr[i].getSource(), R))
 						{
+							rem[removed]=tr[i];
 							tr[i]=null;
 							removed++;
 						}
@@ -652,6 +657,7 @@ public class MSCA  extends FSA implements java.io.Serializable
 					}
 					else if (!tr[i].isMust()&&(MSCAUtil.contains(tr[i].getArrival(), R)))
 					{
+						rem[removed]=tr[i];
 						tr[i]=null;
 						removed++;
 					}
