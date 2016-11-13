@@ -1,0 +1,11 @@
+Rank: 1
+Number of states: [6]
+Initial state: [0]
+Final states: [[1,4,5]]
+Transitions:
+
+!([0],[-1],[1])
+([1],[2],[2])
+([1],[3],[3])
+!([2],[-5],[4])
+([3],[-5],[5])
