@@ -1,9 +1,0 @@
-Rank: 2
-Number of states: [6, 8]
-Initial state: [0, 0]
-Final states: [[1, 4, 5][5, 7]]
-Transitions: 
-
-!([0, 0],[-1, 1],[1, 1])
-([1, 1],[3, -3],[3, 6])
-([3, 6],[-5, 5],[5, 7])
