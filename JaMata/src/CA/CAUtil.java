@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import FSA.Transition;
-import MSCA.MSCATransition;
-import MSCA.MSCAUtil;
 
 /**
  * Utilities for CA: product, aproduct
@@ -59,22 +56,22 @@ public class CAUtil
 		 * then generate the match in all possible contexts		 
 		 * it also generates the independent moves, then clean from invalid transitions 
 		 */
-		Transition[][] prodtr = new CATransition[aut.length][];
+		CATransition[][] prodtr = aut[0].createArrayTransition2(aut.length); //new CATransition[aut.length][];
 		int trlength = 0;
 		for(int i=0;i<aut.length;i++)
 		{
 			prodtr[i]= aut[i].getTransition();
 			trlength += prodtr[i].length;
 		}
-		Transition[] transprod = new CATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
+		CATransition[] transprod = aut[0].createArrayTransition((trlength*(trlength-1)*totnumstates)); // new CATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
 		//int pointertemp = 0;
 		int pointertransprod = 0;
 		for (int i=0;i<prodtr.length;i++)// for all the automaton in the product
 		{
-			Transition[] t = prodtr[i];
+			CATransition[] t = prodtr[i];
 			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{
-				CATransition[][] temp = new CATransition[trlength*(trlength-1)][];
+				CATransition[][] temp = aut[0].createArrayTransition2(trlength*(trlength-1)); //new CATransition[trlength*(trlength-1)][];
 				//Transition[] trtemp = new CATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
 				int pointertemp=0; //reinitialized each new transition
 				boolean match=false;
@@ -82,10 +79,10 @@ public class CAUtil
 				{
 					if (ii!=i)
 					{
-						Transition[] tt = prodtr[ii];
+						CATransition[] tt = prodtr[ii];
 						for (int jj=0;jj<tt.length;jj++)    //for all transitions of other automatons
 						{
-							if (CATransition.match( ((CATransition)t[j]).getLabelP() ,((CATransition) tt[jj]).getLabelP() )) //match found
+							if (CATransition.match(t[j].getLabelP() ,tt[jj].getLabelP())) //match found
 							{
 								match=true;
 								CATransition[] gen;
@@ -220,11 +217,11 @@ public class CAUtil
 		/**
 		 * remove all unused space in transProd (null at the end of the array)
 		 */
-		CATransition[] finalTr = new CATransition[pointertransprod];
+		CATransition[] finalTr = aut[0].createArrayTransition(pointertransprod); //new CATransition[pointertransprod];
 		for (int ind=0;ind<pointertransprod;ind++)
 			finalTr[ind]= (CATransition)transprod[ind];
 		
-		CA prod =  new CA(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
+		CA prod = aut[0].createNew(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
 		
 		if (debug)
 			System.out.println("Remove unreachable ...");
@@ -435,7 +432,7 @@ public class CAUtil
 	 * @param aut all the CA to be in the transition
 	 * @return an array of transitions where i (and ii) moves and the other stays idle in each possible state 
 	 */
-	protected static CATransition[] generateTransitions(Transition t, Transition tt, int i, int ii, CA[] aut)
+	protected static CATransition[] generateTransitions(CATransition t, CATransition tt, int i, int ii, CA[] aut)
 	{
 		/**
 		 * preprocessing to the recursive method recgen:
@@ -513,11 +510,11 @@ public class CAUtil
 				}	
 			}
 		}
-		CATransition[] tr; 
-		if (t instanceof MSCATransition )
-			tr= new MSCATransition[numtransitions];
-		else
-			tr= new CATransition[numtransitions];
+		CATransition[] tr = aut[0].createArrayTransition(numtransitions); // new CATransition[numtransitions];
+//		if (t instanceof MSCATransition )
+//			tr= new MSCATransition[numtransitions];
+//		else
+//			tr= new CATransition[numtransitions];
 		if(prodrank!=0)
 		{
 			int[] insert= new int[states.length];
@@ -527,12 +524,13 @@ public class CAUtil
 			recGen(t,tt,firstprinci, firstprincii,tr,states,0, states.length-1, insert);
 		}
 		else
-		{
-			if (t instanceof MSCATransition )
-				tr[0]=MSCAUtil.generateATransition(t,tt,0,0,new int[0]);
-			else
-				tr[0]=generateATransition(t,tt,0,0,new int[0]);
-		}
+			tr[0]=t.generateATransition(t,tt,0,0,new int[0]);
+//		{
+//			if (t instanceof MSCATransition )
+//				tr[0]=MSCAUtil.generateATransition(t,tt,0,0,new int[0]);
+//			else
+//				tr[0]=generateATransition(t,tt,0,0,new int[0]);
+//		}
 		return tr;
 	}
 	
@@ -552,7 +550,7 @@ public class CAUtil
 	 * @param indstates	pointer in the array states, the first call must be states.length-1
 	 * @param insert    it is used to generate all the combinations of states of idle principals, the first must be all zero
 	 */
-	private static void recGen(Transition t, Transition tt, int fi, int fii, CATransition[] cat,  int[] states, int indcat, int indstates, int[] insert)
+	private static void recGen(CATransition t, CATransition tt, int fi, int fii, CATransition[] cat,  int[] states, int indcat, int indstates, int[] insert)
 	{
 		if (indstates==-1)
 			return;
@@ -566,10 +564,7 @@ public class CAUtil
 		{
 			if (indstates==states.length-1)
 			{
-				if (t instanceof MSCATransition)
-					cat[indcat]=MSCAUtil.generateATransition(t,tt,fi,fii,insert);
-				else
-					cat[indcat]=generateATransition(t,tt,fi,fii,insert);
+				cat[indcat]=t.generateATransition(t,tt,fi,fii,insert);
 				indcat++;
 				insert[indstates]++;
 				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert);
@@ -629,129 +624,7 @@ public class CAUtil
 		}
 	}
 	
-	/**
-	 * 
-	 * @param t				first transition to move
-	 * @param tt			second transition to move only in case of match
-	 * @param firstprinci  the index to start to copy the principals in t
-	 * @param firstprincii the index to start to copy the principals in tt
-	 * @param insert		the states of all other principals who stays idle
-	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
-	 */
-	private static CATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
-	{
-		if (tt!=null)
-		{
-			int[] s=((CATransition) t).getSource();
-			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getArrival();
-			int[] ss = ((CATransition) tt).getSource();
-			int[] ll=((CATransition) tt).getLabelP();
-			int[] dd =((CATransition) tt).getArrival();
-			int[] initial = new int[insert.length+s.length+ss.length];
-			int[] dest = new int[insert.length+s.length+ss.length];
-			int[] label = new int[insert.length+s.length+ss.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else 
-				{
-					if (i==firstprincii)
-					{
-						for (int j=0;j<ss.length;j++)
-						{
-							initial[i+counter+j]=ss[j];
-							label[i+counter+j]=ll[j];
-							dest[i+counter+j]=dd[j];
-						}
-						counter+=ss.length;//record the shift due to the second CA 
-						i--;
-						firstprincii=-1;
-					}	
-					else 
-					{
-						initial[i+counter]=insert[i];
-						dest[i+counter]=insert[i];
-						label[i+counter]=0;
-					}
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			if (firstprincii==insert.length) //case limit, the second CA was the last of aut
-			{
-				for (int j=0;j<ss.length;j++)
-				{
-					initial[insert.length+counter+j]=ss[j];
-					label[insert.length+counter+j]=ll[j];
-					dest[insert.length+counter+j]=dd[j];
-				}
-			}
-			return new CATransition(initial,label,dest);	
-		}
-		else
-		{
-			int[] s=((CATransition) t).getSource();
-			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getArrival();
-			int[] initial = new int[insert.length+s.length];
-			int[] dest = new int[insert.length+s.length];
-			int[] label = new int[insert.length+s.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else
-				{
-					initial[i+counter]=insert[i];
-					dest[i+counter]=insert[i];
-					label[i+counter]=0;
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			return new CATransition(initial,label,dest);	
-		}
-	}
+	
 	
 	/**
 	 * compute the associative product of the CA in the array a

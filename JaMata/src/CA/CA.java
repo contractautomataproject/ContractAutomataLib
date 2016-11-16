@@ -840,4 +840,18 @@ public class CA  extends FSA implements java.io.Serializable
 			ret[i]=liable[i];
 		return ret;
 	}
+	
+	public CATransition[] createArrayTransition(int length)
+	{
+		return new CATransition[length];
+	}
+	public CATransition[][] createArrayTransition2(int length)
+	{
+		return new CATransition[length][];
+	}
+	
+	public CA createNew(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
+	{
+		return new CA(rank,initial,states,finalstates,tra);
+	}
 }

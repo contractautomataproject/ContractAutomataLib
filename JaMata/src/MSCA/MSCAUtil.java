@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import CA.CATransition;
 import CA.CAUtil;
-import FSA.Transition;
 
 /**
  * Utilities for MSCA: product, aproduct
@@ -18,184 +16,184 @@ public class MSCAUtil extends CAUtil
 {
 
 	static boolean debug = true;
-	/**
-	 * identical to the method of CAUtil,  I just substituted CA with MSCA and CATransition with MSCATransition,  TODO remove!
-	 * 
-	 * @param aut the operands of the product
-	 * @return the composition of aut
-	 */
-	public static MSCA product(MSCA[] aut)
-	{
-		if (aut.length==1)
-			return aut[0];
-		/**
-		 * compute rank, states, initial states, final states
-		 */
-		int prodrank = 0;
-		for (int i=0;i<aut.length;i++)
-		{
-			prodrank = prodrank+(aut[i].getRank()); 
-		}
-		int[] statesprod = new int[prodrank];
-		int[][] finalstatesprod = new int[prodrank][];
-		int[] initialprod = new int[prodrank];
-		int totnumstates=1;
-		int pointerprodrank=0;
-		for (int i=0;i<aut.length;i++)
-		{
-			for (int j=0;j<aut[i].getRank();j++)
-			{
-				statesprod[pointerprodrank]= aut[i].getStatesCA()[j];		
-				totnumstates *= statesprod[pointerprodrank];
-				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesCA()[j];
-				initialprod[pointerprodrank] = aut[i].getInitialCA()[j];
-				pointerprodrank++;
-			}
-		}
-		
-		/**
-		 * compute transitions, non associative
-		 * 
-		 * scan all pair of transitions, if there is a match
-		 * then generate the match in all possible contexts		 
-		 * it also generates the independent moves, then clean from invalid transitions 
-		 */
-		MSCATransition[][] prodtr = new MSCATransition[aut.length][];
-		int trlength = 0;
-		for(int i=0;i<aut.length;i++)
-		{
-			prodtr[i]= aut[i].getTransition();
-			trlength = trlength + prodtr[i].length;// + mustprodtr[i].length;
-		}
-		MSCATransition[] transprod = new MSCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
-		//int pointertemp;
-		int pointertransprod = 0;
-		for (int i=0;i<prodtr.length;i++) // for all the automaton in the product
-		{
-			Transition[] t = prodtr[i];
-			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
-			{
-				MSCATransition[][] temp = new MSCATransition[trlength*(trlength-1)][];
-				//Transition[] trtemp = new MSCATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
-				int pointertemp=0; //reinitialize for each new transition
-				boolean match=false;
-				for (int ii=0;ii<prodtr.length;ii++) //for all others automaton
-				{
-					if (ii!=i)
-					{
-						MSCATransition[] tt = prodtr[ii];
-						for (int jj=0;jj<tt.length;jj++) //for all transitions of other automatons
-						{
-							if (MSCATransition.match( ((MSCATransition)t[j]).getLabelP() ,((MSCATransition) tt[jj]).getLabelP() )) //match found
-							{
-								match=true;
-								MSCATransition[] gen;
-								if (i<ii)
-									 gen = (MSCATransition[]) generateTransitions(t[j],tt[jj],i,ii,aut);
-								else
-									gen = (MSCATransition[]) generateTransitions(tt[jj],t[j],ii,i,aut);
-								temp[pointertemp]=gen; //temp is temporarily used for comparing matches and offers/requests
-								//trtemp[pointertemp]=tt[jj];
-								pointertemp++;
-								for (int ind=0;ind<gen.length;ind++)
-									//copy all the matches in the transition of the product automaton, if not already in !
-								{
-									boolean copy=true;
-									for (int ind2=0;ind2<pointertransprod;ind2++)
-									{
-										if (transprod[ind2].equals(gen[ind]))
-										{
-											copy=false;
-											break;
-										}
-									}
-									if(copy) 
-									{
-										transprod[pointertransprod]=gen[ind]; 
-										if (debug)
-											System.out.println(gen[ind].toString());
-										pointertransprod++;
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				/*insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
-				  in matches. The idea is  that firstly all the independent moves are generated, and then we remove the invalid ones.  
-				  */
-				CATransition[] gen = generateTransitions(t[j],null,i,-1,aut);	
-				if ((match)&&(gen!=null))		
-				{
-					/**
-					 * extract the first transition of gen to check the principal who moves 
-					 * and its state 
-					 */
-					MSCATransition tra = (MSCATransition)gen[0];
-					int[] lab = tra.getLabelP(); 
-					int pr1=-1;
-					for (int ind2=0;ind2<lab.length;ind2++)
-					{
-						if (lab[ind2]!=0)
-						{
-							pr1=ind2; //principal
-						}
-					}
-					int label = tra.getLabelP()[pr1];  //the action of the principal who moves
-					for (int ind3=0;ind3<gen.length;ind3++)
-					{
-						for (int ind=0;ind<pointertemp;ind++)
-							for(int ind2=0;ind2<temp[ind].length;ind2++)
-							{	
-								if(gen[ind3]!=null)
-								{
-									if (Arrays.equals(gen[ind3].getSource(),temp[ind][ind2].getSource()) &&  //the state is the same
-											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
-									{
-										gen[ind3]=null;
-									}
-								}
-							}
-					}
-								
-				}
-				/**
-				 * finally insert only valid independent moves in transprod
-				 */
-				for (int ind=0;ind<gen.length;ind++)
-				{
-					if (gen[ind]!=null)
-					{
-						try{
-						transprod[pointertransprod]=(MSCATransition)gen[ind];
-						}catch(ArrayIndexOutOfBoundsException e){
-							e.printStackTrace();
-							}
-						if (debug)
-							System.out.println(gen[ind].toString());
-						pointertransprod++;
-					}
-				}
-			}
-		}
-			
-		/**
-		 * remove all unused space in transProd (null at the end of the array)
-		 */
-		MSCATransition[] finalTr = new MSCATransition[pointertransprod];
-		for (int ind=0;ind<pointertransprod;ind++)
-			finalTr[ind]= (MSCATransition)transprod[ind];
-		
-	
-		MSCA prod =  new MSCA(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
-		
-		if (debug)
-			System.out.println("Remove unreachable ...");
-		prod = (MSCA)removeUnreachable(prod);
-		
-		return prod;
-	}
+//	/**
+//	 * identical to the method of CAUtil,  I just substituted CA with MSCA and CATransition with MSCATransition, 
+//	 * 
+//	 * @param aut the operands of the product
+//	 * @return the composition of aut
+//	 */
+//	public static MSCA product(MSCA[] aut)
+//	{
+//		if (aut.length==1)
+//			return aut[0];
+//		/**
+//		 * compute rank, states, initial states, final states
+//		 */
+//		int prodrank = 0;
+//		for (int i=0;i<aut.length;i++)
+//		{
+//			prodrank = prodrank+(aut[i].getRank()); 
+//		}
+//		int[] statesprod = new int[prodrank];
+//		int[][] finalstatesprod = new int[prodrank][];
+//		int[] initialprod = new int[prodrank];
+//		int totnumstates=1;
+//		int pointerprodrank=0;
+//		for (int i=0;i<aut.length;i++)
+//		{
+//			for (int j=0;j<aut[i].getRank();j++)
+//			{
+//				statesprod[pointerprodrank]= aut[i].getStatesCA()[j];		
+//				totnumstates *= statesprod[pointerprodrank];
+//				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesCA()[j];
+//				initialprod[pointerprodrank] = aut[i].getInitialCA()[j];
+//				pointerprodrank++;
+//			}
+//		}
+//		
+//		/**
+//		 * compute transitions, non associative
+//		 * 
+//		 * scan all pair of transitions, if there is a match
+//		 * then generate the match in all possible contexts		 
+//		 * it also generates the independent moves, then clean from invalid transitions 
+//		 */
+//		MSCATransition[][] prodtr = new MSCATransition[aut.length][];
+//		int trlength = 0;
+//		for(int i=0;i<aut.length;i++)
+//		{
+//			prodtr[i]= aut[i].getTransition();
+//			trlength = trlength + prodtr[i].length;// + mustprodtr[i].length;
+//		}
+//		MSCATransition[] transprod = new MSCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
+//		//int pointertemp;
+//		int pointertransprod = 0;
+//		for (int i=0;i<prodtr.length;i++) // for all the automaton in the product
+//		{
+//			Transition[] t = prodtr[i];
+//			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
+//			{
+//				MSCATransition[][] temp = new MSCATransition[trlength*(trlength-1)][];
+//				//Transition[] trtemp = new MSCATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
+//				int pointertemp=0; //reinitialize for each new transition
+//				boolean match=false;
+//				for (int ii=0;ii<prodtr.length;ii++) //for all others automaton
+//				{
+//					if (ii!=i)
+//					{
+//						MSCATransition[] tt = prodtr[ii];
+//						for (int jj=0;jj<tt.length;jj++) //for all transitions of other automatons
+//						{
+//							if (MSCATransition.match( ((MSCATransition)t[j]).getLabelP() ,((MSCATransition) tt[jj]).getLabelP() )) //match found
+//							{
+//								match=true;
+//								MSCATransition[] gen;
+//								if (i<ii)
+//									 gen = (MSCATransition[]) generateTransitions(t[j],tt[jj],i,ii,aut);
+//								else
+//									gen = (MSCATransition[]) generateTransitions(tt[jj],t[j],ii,i,aut);
+//								temp[pointertemp]=gen; //temp is temporarily used for comparing matches and offers/requests
+//								//trtemp[pointertemp]=tt[jj];
+//								pointertemp++;
+//								for (int ind=0;ind<gen.length;ind++)
+//									//copy all the matches in the transition of the product automaton, if not already in !
+//								{
+//									boolean copy=true;
+//									for (int ind2=0;ind2<pointertransprod;ind2++)
+//									{
+//										if (transprod[ind2].equals(gen[ind]))
+//										{
+//											copy=false;
+//											break;
+//										}
+//									}
+//									if(copy) 
+//									{
+//										transprod[pointertransprod]=gen[ind]; 
+//										if (debug)
+//											System.out.println(gen[ind].toString());
+//										pointertransprod++;
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				
+//				/*insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
+//				  in matches. The idea is  that firstly all the independent moves are generated, and then we remove the invalid ones.  
+//				  */
+//				CATransition[] gen = generateTransitions(t[j],null,i,-1,aut);	
+//				if ((match)&&(gen!=null))		
+//				{
+//					/**
+//					 * extract the first transition of gen to check the principal who moves 
+//					 * and its state 
+//					 */
+//					MSCATransition tra = (MSCATransition)gen[0];
+//					int[] lab = tra.getLabelP(); 
+//					int pr1=-1;
+//					for (int ind2=0;ind2<lab.length;ind2++)
+//					{
+//						if (lab[ind2]!=0)
+//						{
+//							pr1=ind2; //principal
+//						}
+//					}
+//					int label = tra.getLabelP()[pr1];  //the action of the principal who moves
+//					for (int ind3=0;ind3<gen.length;ind3++)
+//					{
+//						for (int ind=0;ind<pointertemp;ind++)
+//							for(int ind2=0;ind2<temp[ind].length;ind2++)
+//							{	
+//								if(gen[ind3]!=null)
+//								{
+//									if (Arrays.equals(gen[ind3].getSource(),temp[ind][ind2].getSource()) &&  //the state is the same
+//											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
+//									{
+//										gen[ind3]=null;
+//									}
+//								}
+//							}
+//					}
+//								
+//				}
+//				/**
+//				 * finally insert only valid independent moves in transprod
+//				 */
+//				for (int ind=0;ind<gen.length;ind++)
+//				{
+//					if (gen[ind]!=null)
+//					{
+//						try{
+//						transprod[pointertransprod]=(MSCATransition)gen[ind];
+//						}catch(ArrayIndexOutOfBoundsException e){
+//							e.printStackTrace();
+//							}
+//						if (debug)
+//							System.out.println(gen[ind].toString());
+//						pointertransprod++;
+//					}
+//				}
+//			}
+//		}
+//			
+//		/**
+//		 * remove all unused space in transProd (null at the end of the array)
+//		 */
+//		MSCATransition[] finalTr = new MSCATransition[pointertransprod];
+//		for (int ind=0;ind<pointertransprod;ind++)
+//			finalTr[ind]= (MSCATransition)transprod[ind];
+//		
+//	
+//		MSCA prod =  new MSCA(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
+//		
+//		if (debug)
+//			System.out.println("Remove unreachable ...");
+//		prod = (MSCA)removeUnreachable(prod);
+//		
+//		return prod;
+//	}
 	
 //	private static MSCATransition[] cast(CATransition[] tr)
 //	{
@@ -600,133 +598,7 @@ public class MSCAUtil extends CAUtil
 //		}
 //	}
 	
-	/**
-	 * This method is different from the corresponding one in CAUtil class because it deals with must transitions
-	 * 
-	 * TODO fix CAUtil to call this method
-	 * 
-	 * @param t				first transition to move
-	 * @param tt			second transition to move only in case of match
-	 * @param firstprinci  the index to start to copy the principals in t
-	 * @param firstprincii the index to start to copy the principals in tt
-	 * @param insert		the states of all other principals who stays idle
-	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
-	 */
-	public static MSCATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
-	{
-		if (tt!=null) //if it is a match
-		{
-			int[] s=((MSCATransition) t).getSource();
-			int[] l=((MSCATransition) t).getLabelP();
-			int[] d=((MSCATransition) t).getArrival();
-			int[] ss = ((MSCATransition) tt).getSource();
-			int[] ll=((MSCATransition) tt).getLabelP();
-			int[] dd =((MSCATransition) tt).getArrival();
-			int[] initial = new int[insert.length+s.length+ss.length];
-			int[] dest = new int[insert.length+s.length+ss.length];
-			int[] label = new int[insert.length+s.length+ss.length];
-			boolean must = ((MSCATransition) t).isMust() || ((MSCATransition) tt).isMust();
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else 
-				{
-					if (i==firstprincii)
-					{
-						for (int j=0;j<ss.length;j++)
-						{
-							initial[i+counter+j]=ss[j];
-							label[i+counter+j]=ll[j];
-							dest[i+counter+j]=dd[j];
-						}
-						counter+=ss.length;//record the shift due to the second CA 
-						i--;
-						firstprincii=-1;
-					}	
-					else 
-					{
-						initial[i+counter]=insert[i];
-						dest[i+counter]=insert[i];
-						label[i+counter]=0;
-					}
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			if (firstprincii==insert.length) //case limit, the second CA was the last of aut
-			{
-				for (int j=0;j<ss.length;j++)
-				{
-					initial[insert.length+counter+j]=ss[j];
-					label[insert.length+counter+j]=ll[j];
-					dest[insert.length+counter+j]=dd[j];
-				}
-			}
-			return new MSCATransition(initial,label,dest,must);	
-		}
-		else
-		{
-			int[] s=((MSCATransition) t).getSource();
-			int[] l=((MSCATransition) t).getLabelP();
-			int[] d=((MSCATransition) t).getArrival();
-			int[] initial = new int[insert.length+s.length];
-			int[] dest = new int[insert.length+s.length];
-			int[] label = new int[insert.length+s.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else
-				{
-					initial[i+counter]=insert[i];
-					dest[i+counter]=insert[i];
-					label[i+counter]=0;
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			return new MSCATransition(initial,label,dest,((MSCATransition) t).isMust());	
-		}
-	}
+
 	
 //	/**
 //	 * 
@@ -767,6 +639,8 @@ public class MSCAUtil extends CAUtil
 //	}
 
 	/**
+	 * Similar to CATest but with only the operations implemented for MSCA
+	 * 
 	 * Testing the CA
 	 */
 	public static void MSCATest()
@@ -792,7 +666,7 @@ public class MSCAUtil extends CAUtil
 				{
 				case "1":
 					System.out.println("Computing the product automaton ... ");
-					prod = MSCAUtil.product(aut);
+					prod = (MSCA) CAUtil.product(aut);
 					prod.print();
 			        prod.printToFile();
 					break;

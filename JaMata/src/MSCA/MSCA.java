@@ -9,6 +9,7 @@ import MSCA.MSCA;
 import MSCA.MSCATransition;
 import MSCA.MSCAUtil;
 import CA.CA;
+import CA.CATransition;
 import FSA.Transition;
 
 
@@ -689,5 +690,18 @@ public class MSCA  extends CA implements java.io.Serializable
 		}
 		else
 			return null;
+	}
+	
+	public MSCATransition[] createArrayTransition(int length)
+	{
+		return new MSCATransition[length];
+	}
+	public MSCATransition[][] createArrayTransition2(int length)
+	{
+		return new MSCATransition[length][];
+	}
+	public MSCA createNew(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
+	{
+		return new MSCA(rank,initial,states,finalstates,(MSCATransition[])tra);
 	}
 }
