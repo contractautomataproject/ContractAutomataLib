@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import FSA.Transition;
+import MSCA.MSCATransition;
+import MSCA.MSCAUtil;
 
 /**
  * Utilities for CA: product, aproduct
@@ -65,23 +67,23 @@ public class CAUtil
 			trlength += prodtr[i].length;
 		}
 		Transition[] transprod = new CATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
-		int pointertemp = 0;
+		//int pointertemp = 0;
 		int pointertransprod = 0;
-		boolean match=false;
-		for (int i=0;i<prodtr.length;i++)
+		for (int i=0;i<prodtr.length;i++)// for all the automaton in the product
 		{
 			Transition[] t = prodtr[i];
-			for (int j=0;j<t.length;j++)
+			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{
 				CATransition[][] temp = new CATransition[trlength*(trlength-1)][];
-				Transition[] trtemp = new CATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
-				pointertemp=0; //reinitialized each new transition
-				for (int ii=0;ii<prodtr.length;ii++)
+				//Transition[] trtemp = new CATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
+				int pointertemp=0; //reinitialized each new transition
+				boolean match=false;
+				for (int ii=0;ii<prodtr.length;ii++)    //for all others automaton
 				{
 					if (ii!=i)
 					{
 						Transition[] tt = prodtr[ii];
-						for (int jj=0;jj<tt.length;jj++)
+						for (int jj=0;jj<tt.length;jj++)    //for all transitions of other automatons
 						{
 							if (CATransition.match( ((CATransition)t[j]).getLabelP() ,((CATransition) tt[jj]).getLabelP() )) //match found
 							{
@@ -92,9 +94,10 @@ public class CAUtil
 								else
 									gen = generateTransitions(tt[jj],t[j],ii,i,aut);
 								temp[pointertemp]=gen; //temp is temporary used for comparing matches and offers/requests
-								trtemp[pointertemp]=tt[jj];
+								//trtemp[pointertemp]=tt[jj];
 								pointertemp++;
 								for (int ind=0;ind<gen.length;ind++)
+									//copy all the matches in the transition of the product automaton, if not already in !
 								{
 									boolean copy=true;
 									for (int ind2=0;ind2<pointertransprod;ind2++)
@@ -110,7 +113,6 @@ public class CAUtil
 										transprod[pointertransprod]=gen[ind]; 
 										if (debug)
 											System.out.println(gen[ind].toString());
-										//copy all the matches in the transition of the product automaton, if not already in !
 										pointertransprod++;
 									}
 								}
@@ -118,10 +120,11 @@ public class CAUtil
 						}
 					}
 				}
+				/*insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
+				  in matches. The idea is  that firstly all the independent moves are generated, and then we remove the invalid ones.  
+				  */	
+
 				CATransition[] gen = generateTransitions(t[j],null,i,-1,aut);
-				//insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
-				// in matches
-					
 				if ((match)&&(gen!=null))		
 				{
 					/**
@@ -235,7 +238,7 @@ public class CAUtil
 	 * @param at	the CA
 	 * @return	a new CA clone of aut with only reachable transitions
 	 */
-	protected static CA removeUnreachable(CA at)
+	public static CA removeUnreachable(CA at)
 	{
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
@@ -320,7 +323,7 @@ public class CAUtil
 	 * @param at	the CA
 	 * @return	CA without hanged transitions
 	 */
-	protected static CA removeHangedTransitions(CA at)
+	public static CA removeDanglingTransitions(CA at)
 	{
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
@@ -330,11 +333,6 @@ public class CAUtil
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
 		int[][] fs = aut.allFinalStates();
-		/**for (int i=0;i<fs.length;i++)
-		{
-			reachable[i] = fs[i];
-			pointerreachable++;
-		}*/
 		
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
@@ -356,28 +354,7 @@ public class CAUtil
 			{
 				finalTr[ind]=null;
 				removed++;
-			}
-			
-			/**
-			 * 		
-			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getArrival();	
-			int[] pointervisited = new int[1];
-			pointervisited[0]=0;
-			if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) 
-				//if final state fs[i] is reachable from arrival state arr
-			{	
-				finalTr[ind]=null;
-				removed++;
-				unreachable[pointerunreachable]=arr;
-				pointerunreachable++;  //note that pointerunreachable == removed
-			}
-			else
-			{
-				reachable[pointerreachable]=arr;
-				pointerreachable++;
-			}	
-			*/					
+			}			
 		}
 			
 			
@@ -406,7 +383,7 @@ public class CAUtil
 	 * @param pointervisited
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
-	private static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
+	public static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
 		if (Arrays.equals(state,from))
 			return true;
@@ -458,7 +435,7 @@ public class CAUtil
 	 * @param aut all the CA to be in the transition
 	 * @return an array of transitions where i (and ii) moves and the other stays idle in each possible state 
 	 */
-	private static CATransition[] generateTransitions(Transition t, Transition tt, int i, int ii, CA[] aut)
+	protected static CATransition[] generateTransitions(Transition t, Transition tt, int i, int ii, CA[] aut)
 	{
 		/**
 		 * preprocessing to the recursive method recgen:
@@ -536,7 +513,11 @@ public class CAUtil
 				}	
 			}
 		}
-		CATransition[] tr = new CATransition[numtransitions];
+		CATransition[] tr; 
+		if (t instanceof MSCATransition )
+			tr= new MSCATransition[numtransitions];
+		else
+			tr= new CATransition[numtransitions];
 		if(prodrank!=0)
 		{
 			int[] insert= new int[states.length];
@@ -546,14 +527,19 @@ public class CAUtil
 			recGen(t,tt,firstprinci, firstprincii,tr,states,0, states.length-1, insert);
 		}
 		else
-			tr[0]=generateATransition(t,tt,0,0,new int[0]);
+		{
+			if (t instanceof MSCATransition )
+				tr[0]=MSCAUtil.generateATransition(t,tt,0,0,new int[0]);
+			else
+				tr[0]=generateATransition(t,tt,0,0,new int[0]);
+		}
 		return tr;
 	}
 	
 	
 	/**
 	 * 
-	 * recursive methods that generates all combinations of transitions with all possible states of principals that are idle 
+	 * recursive method that generates all combinations of transitions with all possible states of principals that are idle 
 	 * it must start from the end of array states
 	 * 
 	 * @param t		first transition who moves
@@ -580,7 +566,10 @@ public class CAUtil
 		{
 			if (indstates==states.length-1)
 			{
-				cat[indcat]=generateATransition(t,tt,fi,fii,insert);
+				if (t instanceof MSCATransition)
+					cat[indcat]=MSCAUtil.generateATransition(t,tt,fi,fii,insert);
+				else
+					cat[indcat]=generateATransition(t,tt,fi,fii,insert);
 				indcat++;
 				insert[indstates]++;
 				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert);
@@ -607,7 +596,7 @@ public class CAUtil
 	 * @param indstates		the index in states, the first call must be states.length-1
 	 * @param insert	it is used to generate all the combinations of final states, the first call must be all zero
 	 */
-	protected static void recGen(int[][] fin, int[][] modif,  int[] states, int indmod[], int indstates[], int[] insert)
+	public static void recGen(int[][] fin, int[][] modif,  int[] states, int indmod[], int indstates[], int[] insert)
 	{
 		if (indstates[0]==-1)
 			return;
@@ -980,7 +969,7 @@ public class CAUtil
 		}catch(Exception e){e.printStackTrace();}
 	} 
 	
-	private static CA[] load()
+	protected static CA[] load()
 	{
 		try
 		{

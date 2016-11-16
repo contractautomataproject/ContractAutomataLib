@@ -66,7 +66,6 @@ public class CA  extends FSA implements java.io.Serializable
 		/**
 		 * Print in output a description of the automaton
 		 */
-		System.out.println("CA:");
 		System.out.println("Rank: "+this.rank);
 		System.out.println("Number of states: "+Arrays.toString(this.getStatesCA()));
 		System.out.println("Initial state: " +Arrays.toString(this.getInitialCA()));
@@ -76,8 +75,11 @@ public class CA  extends FSA implements java.io.Serializable
 		System.out.print("]\n");
 		System.out.println("Transitions: \n");
 		Transition[] t = this.getTransition();
-		for (int i=0;i<t.length;i++)
-			System.out.println(t[i].toString());		
+		if (t!=null)
+		{
+			for (int i=0;i<t.length;i++)
+				System.out.println(t[i].toString());
+		}
 	}
 	
 	/**
@@ -106,8 +108,11 @@ public class CA  extends FSA implements java.io.Serializable
 			 pr.print("]\n");
 			 pr.println("Transitions: \n");
 			 Transition[] t = this.getTransition();
-			 for (int i=0;i<t.length;i++)
-				pr.println(t[i].toString());
+			 if (t!=null)
+			 {
+				 for (int i=0;i<t.length;i++)
+					 pr.println(t[i].toString());
+			 }
 			 pr.close();
 		}catch(Exception e){e.printStackTrace();}
 	}
@@ -484,7 +489,7 @@ public class CA  extends FSA implements java.io.Serializable
 		}
 
 		a.setTransition(finalTr2);
-		a = CAUtil.removeHangedTransitions(a);
+		a = CAUtil.removeDanglingTransitions(a);
 		a = CAUtil.removeUnreachable(a);
 		return a;
 	}
@@ -520,7 +525,7 @@ public class CA  extends FSA implements java.io.Serializable
 			}
 		}
 		a.setTransition(finalTr2);
-		a = CAUtil.removeHangedTransitions(a);
+		a = CAUtil.removeDanglingTransitions(a);
 		a = CAUtil.removeUnreachable(a);
 		return a;
 	}
@@ -532,7 +537,7 @@ public class CA  extends FSA implements java.io.Serializable
 	public boolean strongSafe()
 	{
 		CA at = this.clone();
-		at = CAUtil.removeHangedTransitions(at);
+		at = CAUtil.removeDanglingTransitions(at);
 		at = CAUtil.removeUnreachable(at);
 		CA a = this.smpc();
 		return (a.getTransition().length == at.getTransition().length);
@@ -557,7 +562,7 @@ public class CA  extends FSA implements java.io.Serializable
 	public boolean safe()
 	{
 		CA at = this.clone();
-		at = CAUtil.removeHangedTransitions(at);
+		at = CAUtil.removeDanglingTransitions(at);
 		at = CAUtil.removeUnreachable(at);
 		CA a = this.mpc();
 		return (a.getTransition().length == at.getTransition().length);
@@ -704,7 +709,7 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		CA aut=this.clone();
 		aut = CAUtil.removeUnreachable(aut);
-		aut = CAUtil.removeHangedTransitions(aut);
+		aut = CAUtil.removeDanglingTransitions(aut);
 		int[][] s = new int[this.prodStates()][];
 		s[0]=aut.getInitialCA();
 		CATransition[] t = aut.getTransition();
