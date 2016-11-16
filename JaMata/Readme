@@ -3,20 +3,21 @@ The full documentation is under the folder JaMaTA/doc.
 
 The base package is FSA (Finite State Automata). 
 These classes are extended for representing
+	- MSCA (Modal Service Contract Automata)
 	- CA (Contract Automata)
 	- FMA (Finite Memory Automata)
 	- PFSA (Push-down Nominal Automata)
 	
-The early version of the tool was realized for checking membership in FMA,PFSA and FSA.
+The early version of the tool (2012/2013) was realized for checking membership in FMA,PFSA and FSA.
+Later in 2015 the CA model was added for implementing the verification techniques
+that have been developed by the authors in  [1,2].
+In 2016 the MSCA formalism was presented as an extension of CAs in [3], and the corresponding 
+classes extend those of CAs with the new functionalities.
 
-Later the CA model was added for implementing the verification techniques
-that have been developed by the authors in
 
-Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari:
-Automata for Analysing Service Contracts. TGC 2014: 34-50
 
-Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
-From Orchestration to Choreography through Contract Automata. ICE 2014: 67-85
+MSCA
+Under the path  it is possible to load the "hotel reservation" example, more informations on [3]
 
 CA
 In the workspace it is possible to load the "2 buyers protocol" example, more informations
@@ -37,6 +38,15 @@ There are other PFSA example used for testing the software.
 
 
 
+
+[1]Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari:
+Automata for Analysing Service Contracts. TGC 2014: 34-50
+
+[2]Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
+From Orchestration to Choreography through Contract Automata. ICE 2014: 67-85
+
+[3]Davide Basile, Stefania Gnesi, Felicitia Di Giandomenico Pierpaolo Degano, Gian Luigi Ferrari,
+Specifying Variability in Services Contract, (submitted)
 
 
 
