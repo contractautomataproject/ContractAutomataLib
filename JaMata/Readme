@@ -10,8 +10,8 @@ These classes are extended for representing
 	
 The early version of the tool (2012/2013) was realized for checking membership in FMA,PFSA and FSA.
 Later in 2015 the CA model was added for implementing the verification techniques
-that have been developed by the authors in  [1,2].
-In 2016 the MSCA formalism was presented as an extension of CAs in [3], and the corresponding 
+that have been developed by the authors in  [1,2,3,4,5,6].
+In 2016 the MSCA formalism was presented as an extension of CAs in [7], and the corresponding 
 classes extend those of CAs with the new functionalities.
 
 The tool is still a prototype and it is currently under development.
@@ -23,7 +23,7 @@ it is possible to load the "hotel reservation" example, more informations are av
 
 CA
 In the workspace it is possible to load the "2 buyers protocol" example, more informations
-are available on the file 2BP.
+are available on the file 2BP and in [6].
 
 
 
@@ -39,15 +39,25 @@ In the workspace there are different automaton to load:
 There are other PFSA example used for testing the software.
 
 
+[1] Basile, D., Degano, P., Ferrari, G.L.: Automata for service contracts. 
+ In: Hot Issues in Security Principles and Trust - 2nd Workshop, HOTSPOT 2014, Grenoble, France, April 12, 2014;
 
-
-[1]Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari:
+[2] Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari:
 Automata for Analysing Service Contracts. TGC 2014: 34-50
 
-[2]Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
+[3] Davide Basile, Pierpaolo Degano, Gian Luigi Ferrari, Emilio Tuosto:
 From Orchestration to Choreography through Contract Automata. ICE 2014: 67-85
 
-[3]Davide Basile, Stefania Gnesi, Felicitia Di Giandomenico Pierpaolo Degano, Gian Luigi Ferrari,
+[4] Basile D. , Degano P. , Ferrari G.L. , Tuosto E.: Relating two automata-based models of orchestration and choreography, 
+Journal of Logical and Algebraic Methods in Programming, Volume 85, Issue 3, April 2016, Pages 425-446, ISSN 2352-2208;
+
+[5] Basile, D., Degano, P., Ferrari, G.L.: Automata for specifying and orchestrating service contracts. 
+In Journal of Logical Methods in Computer Science (2016), ISSN: 1860-5974
+
+[6] Basile, D., Degano, P., Ferrari, G.L., Tuosto, E.: Playing with our CAT and Communication-Centric Applications. 
+In Formal Techniques for Networked and Distributed Systems (FORTE) 2016.
+
+[7] Davide Basile, Stefania Gnesi, Felicitia Di Giandomenico Pierpaolo Degano, Gian Luigi Ferrari,
 Specifying Variability in Services Contract, (submitted)
 
 
