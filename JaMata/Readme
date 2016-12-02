@@ -19,7 +19,7 @@ The tool is still a prototype and it is currently under development.
 
 MSCA
 Under the path workspace/JaMata/MSCAexamples/hotel_reservation/ 
-it is possible to load the "hotel reservation" example, more informations are available in [3]
+it is possible to load the "hotel reservation" example, more informations are available in [7]
 
 CA
 In the workspace it is possible to load the "2 buyers protocol" example, more informations
@@ -58,7 +58,8 @@ In Journal of Logical Methods in Computer Science (2016), ISSN: 1860-5974
 In Formal Techniques for Networked and Distributed Systems (FORTE) 2016.
 
 [7] Davide Basile, Stefania Gnesi, Felicitia Di Giandomenico Pierpaolo Degano, Gian Luigi Ferrari,
-Specifying Variability in Services Contract, (submitted)
+Specifying Variability in Services Contract, in Proceedings of the 11th International Workshop on Variability 
+Modelling of Software-intensive Systems, Vamos 2017
 
 
 
