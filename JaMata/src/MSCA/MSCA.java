@@ -1,9 +1,31 @@
 package MSCA;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Scanner;
+
+
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+
+import java.io.File;
 
 import MSCA.MSCA;
 import MSCA.MSCATransition;
@@ -40,11 +62,16 @@ public class MSCA  extends CA implements java.io.Serializable
 		super();
 	}
 	
-	public MSCA(int rank, int[] initial, int[] states, int[][] finalstates,MSCATransition[] maytra)
+	public MSCA(int rank, int[] initial, int[] states, int[][] finalstates,MSCATransition[] trans)
 	{
-		super(rank,initial,states,finalstates,maytra);
+		super(rank,initial,states,finalstates,trans);
 	}
 	
+	public MSCA(int rank, int[] initial, int[][] states, int[][] finalstates,MSCATransition[] trans)
+	{
+		super(rank,initial,MSCA.numberOfPrincipalsStates(MSCAUtil.setUnion(states, finalstates)),
+				MSCA.principalsFinalStates(finalstates),trans);
+	}
 	
 	
 	
@@ -58,7 +85,11 @@ public class MSCA  extends CA implements java.io.Serializable
 		try
 		{
 			// Open the file
-			FileInputStream fstream = new FileInputStream(fileName+".data");
+			FileInputStream fstream;
+			if (fileName.endsWith(".data"))
+				fstream = new FileInputStream(fileName);
+			else
+				fstream = new FileInputStream(fileName+".data");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 			String strLine;
 			int rank=0;
@@ -249,8 +280,298 @@ public class MSCA  extends CA implements java.io.Serializable
 		return null;
 	}
 	
-	
+	/**
+	 * parse the XML description of graphEditor into an MSCA object
+	 * @param filename
+	 * @return
+	 */
+	public static MSCA importFromXML(String filename)
+	{
+		 try {
+	         File inputFile = new File(filename);
+	         DocumentBuilderFactory dbFactory 
+	            = DocumentBuilderFactory.newInstance();
+	         DocumentBuilder dBuilder;
 
+	         dBuilder = dbFactory.newDocumentBuilder();
+
+	         Document doc = dBuilder.parse(inputFile);
+	         doc.getDocumentElement().normalize();
+
+	         //XPath xPath =  XPathFactory.newInstance().newXPath();
+	         
+	         //NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
+	         NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
+	         int[][] states=new int[nodeList.getLength()][];
+	         int[][] finalstates=new int[nodeList.getLength()][];
+	         int[] idstate=new int[nodeList.getLength()];
+	         int[] idfinalstate=new int[nodeList.getLength()];
+	         MSCATransition[] t= new MSCATransition[nodeList.getLength()];
+	         int statec=0;
+	         int finalstatec=0;
+	         int trc=0;
+	         for (int i = 0; i < nodeList.getLength(); i++) 
+	         {
+	            Node nNode = nodeList.item(i);
+	          //  System.out.println("\nCurrent Element :" 
+	          //     + nNode.getNodeName());
+	            if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+	            {
+	               Element eElement = (Element) nNode;
+	               String prova=eElement.getAttribute("id");
+	               if (Integer.parseInt(prova)>1)
+	               {
+	            	 if (eElement.hasAttribute("edge"))//edge
+	            	 {
+	            		 int idsource=Integer.parseInt(eElement.getAttribute("source"));
+	            		 int index=MSCAUtil.getIndex(idstate, idsource);
+	            		 int[] source;
+	            		 if (index>-1)
+	            			 source=states[index];
+	            		 else
+	            		 	source=finalstates[MSCAUtil.getIndex(idfinalstate, idsource)];
+	            		 
+	            		 int idtarget=Integer.parseInt(eElement.getAttribute("target"));
+	            		 index=MSCAUtil.getIndex(idstate, idtarget);
+	            		 int[] target;
+	            		 if (index>-1)
+	            			 target=states[index];
+	            		 else
+	            		 	target=finalstates[MSCAUtil.getIndex(idfinalstate, idtarget)];
+	            		 
+	            		 
+	            		 int[] label=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            		 boolean isMust=!eElement.getAttribute("style").contains("dashed=1");
+	            		 t[trc]=new MSCATransition(source,label,target,isMust);
+	            		 trc++;
+	            	 }
+	            	 else  //state
+	            	 {
+	            		 if (eElement.getAttribute("style").contains("terminate.png"))
+	            		 { 
+	            			 idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
+	            			 finalstates[finalstatec]=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            			 finalstatec++;
+	            		 }
+	            		 else{
+	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
+	            			 states[statec]=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            			 statec++;
+	            		 }
+	            	 }
+	               }
+	            }
+	         }
+	         finalstates=MSCAUtil.removeTailsNull(finalstates, finalstatec);
+             states=MSCAUtil.removeTailsNull(states, statec);
+             t=MSCAUtil.removeTailsNull(t, trc);
+             int rank=states[0].length;
+             int[] initial = new int[rank];
+             for (int ind=0;ind<rank;ind++)
+          	   initial[ind]=0;
+             MSCA aut= new MSCA(rank, initial,states,finalstates, t);
+             return aut;
+	      } catch (ParserConfigurationException e) {
+	         e.printStackTrace();
+	      } catch (SAXException e) {
+	         e.printStackTrace();
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      } 
+		return null;
+	}
+	
+	/**
+	 * write the MSCA as a mxGraphModel for the GUI
+	 * @param fileName
+	 * @return
+	 */
+	public String exportToXML(String fileName)
+	{
+		try{
+			DocumentBuilderFactory dbFactory =
+					DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = 
+					dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.newDocument();
+			// root element
+			Element rootElement = doc.createElement("mxGraphModel");
+			doc.appendChild(rootElement);
+				
+			Element root = doc.createElement("root");
+			rootElement.appendChild(root);
+			
+			
+			Element mxcell0 = doc.createElement("mxCell");
+			mxcell0.setAttribute("id", "0");
+			root.appendChild(mxcell0);
+			Element mxcell1 = doc.createElement("mxCell");
+			mxcell1.setAttribute("id", "1");
+			mxcell1.setAttribute("parent", "0");
+			root.appendChild(mxcell1);
+			int[][][] all=this.allNonFinalAndFinalStates();
+			int[][] states=all[0];
+			Element[] statese=new Element[states.length];
+			
+			for (int i=0;i<states.length;i++)
+				statese[i]=createElementState(doc, root,Integer.toString(i+2), Integer.toString(i*60),"60",states[i]);
+			
+			int[][] statesf=all[1];
+			Element[] statesef=new Element[statesf.length];
+			for (int i=0;i<statesf.length;i++)
+				statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*50),"130",statesf[i]);
+			
+			MSCATransition t[]= this.getTransition();
+			for (int i=0;i<t.length;i++)
+			{
+				Element s; Element ta;
+				int source;
+				source=MSCAUtil.indexContains(t[i].getSource(), states);
+				if (source==-1)
+				{
+					source=MSCAUtil.indexContains(t[i].getSource(), statesf);
+					s=statesef[source];
+				}
+				else
+					s=statese[source];
+				int target;
+				target=MSCAUtil.indexContains(t[i].getArrival(), states);
+				if (target==-1)
+				{
+					target=MSCAUtil.indexContains(t[i].getArrival(), statesf);
+					ta=statesef[target];
+				}
+				else
+					ta=statese[target];
+				createElementEdge(doc,root,Integer.toString(i+2+states.length+statesf.length),s,ta,Arrays.toString(t[i].getLabelP()),!t[i].isMust());
+			}
+			//edges
+			/* createElementEdge(doc,root,"4",state1,state2,"a!");
+			 createElementEdge(doc,root,"5",state2,state2,"a?");
+	*/
+			// write the content into xml file
+			TransformerFactory transformerFactory =
+					TransformerFactory.newInstance();
+			Transformer transformer =
+					transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			String s=fileName.substring(0,fileName.indexOf("."));
+			StreamResult result =
+					new StreamResult(new File(s+".mxe"));
+			transformer.transform(source, result);
+			/*// Output to console for testing
+			StreamResult consoleResult =
+					new StreamResult(System.out);
+			transformer.transform(source, consoleResult);*/
+			return s+".mxe";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,boolean may)
+	{
+		Attr parent=doc.createAttribute("parent");
+		parent.setValue("1");
+		Attr style=doc.createAttribute("style");
+		if (may)
+			style.setValue("straight;dashed=1");
+		else
+			style.setValue("straight");
+		Attr id1=doc.createAttribute("id");
+		Attr as=doc.createAttribute("as");
+		as.setValue("geometry");
+		id1.setValue(id);
+		
+		Element mxcell1 = doc.createElement("mxCell");
+		mxcell1.setAttribute("edge","1");
+		mxcell1.setAttributeNode(id1);
+		mxcell1.setAttributeNode(parent);
+		mxcell1.setAttributeNode(style);
+		mxcell1.setAttribute("source", source.getAttribute("id"));
+		mxcell1.setAttribute("target", target.getAttribute("id"));
+		mxcell1.setAttribute("value", label);
+		
+		Element mxGeometry1=doc.createElement("mxGeometry");
+		mxGeometry1.setAttributeNode(as);
+		mxGeometry1.setAttribute("relative","1");
+		
+		Element mxPointSource=doc.createElement("mxPoint");
+		mxPointSource.setAttribute("as","sourcePoint");
+		mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
+		mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
+		mxGeometry1.appendChild(mxPointSource);
+		Element mxPointTarget=doc.createElement("mxPoint");
+		mxPointTarget.setAttribute("as","targetPoint");
+		mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		mxGeometry1.appendChild(mxPointTarget);
+		
+		mxcell1.appendChild(mxGeometry1);
+		root.appendChild(mxcell1);
+		return mxcell1;		
+	}
+	private static Element createElementState(Document doc, Element root,String id, String x,String y,int[] state)
+	{
+		Attr parent=doc.createAttribute("parent");
+		parent.setValue("1");
+		Attr style=doc.createAttribute("style");
+		style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/event.png");
+		Attr value=doc.createAttribute("value");
+		value.setValue(Arrays.toString(state));
+		Element mxcell1 = doc.createElement("mxCell");
+		Attr id1=doc.createAttribute("id");
+		Attr as=doc.createAttribute("as");
+		Attr vertex=doc.createAttribute("vertex");
+		vertex.setNodeValue("1");		
+		as.setValue("geometry");
+		id1.setValue(id);
+		mxcell1.setAttributeNode(id1);
+		mxcell1.setAttributeNode(parent);
+		mxcell1.setAttributeNode(style);
+		mxcell1.setAttributeNode(value);
+		mxcell1.setAttributeNode(vertex);
+		Element mxGeometry1=doc.createElement("mxGeometry");
+		mxGeometry1.setAttributeNode(as);
+		mxGeometry1.setAttribute("height", "50.0");
+		mxGeometry1.setAttribute("width", "50.0");
+		mxGeometry1.setAttribute("x", x);
+		mxGeometry1.setAttribute("y", y);
+		mxcell1.appendChild(mxGeometry1);
+		root.appendChild(mxcell1);
+		return mxcell1;		
+	}
+	
+	private static Element createElementFinalState(Document doc, Element root,String id, String x,String y,int[] state)
+	{
+		Attr parent=doc.createAttribute("parent");
+		parent.setValue("1");
+		Element mxcell1 = doc.createElement("mxCell");
+		Attr id1=doc.createAttribute("id");
+		Attr as=doc.createAttribute("as");
+		Attr vertex=doc.createAttribute("vertex");
+		vertex.setNodeValue("1");		
+		as.setValue("geometry");
+		id1.setValue(id);
+		Attr stylefinal=doc.createAttribute("style");
+		stylefinal.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
+		Attr valuefinal=doc.createAttribute("value");
+		valuefinal.setValue(Arrays.toString(state));
+		mxcell1.setAttributeNode(id1);
+		mxcell1.setAttributeNode(parent);
+		mxcell1.setAttributeNode(stylefinal);
+		mxcell1.setAttributeNode(valuefinal);
+		mxcell1.setAttributeNode(vertex);
+		Element mxGeometry1=doc.createElement("mxGeometry");
+		mxGeometry1.setAttributeNode(as);
+		mxGeometry1.setAttribute("height", "50.0");
+		mxGeometry1.setAttribute("width", "50.0");
+		mxGeometry1.setAttribute("x", x);
+		mxGeometry1.setAttribute("y", y);
+		mxcell1.appendChild(mxGeometry1);
+		root.appendChild(mxcell1);
+		return mxcell1;		
+	}
 	
 	/**
 	 * @return	the array of transitions
@@ -500,6 +821,14 @@ public class MSCA  extends CA implements java.io.Serializable
 	
 	
 	
+	public MSCA mpcConstraints(int[][][] products,int[][] L)
+	{
+		int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
+		statesToVisit[0]=products;
+		return null;
+	}
+	
+	
 //	/**
 //	 * similar to the corresponding method in CA class, with CATransition swapped with MSCATransition and CA swapped with MSCA  
 //	 * 
@@ -537,6 +866,60 @@ public class MSCA  extends CA implements java.io.Serializable
 //	}
 	
 	/**
+	 * an array containing the number of  states of each principal
+	 * @param states  all the states of the MSCA enumerated
+	 * @return
+	 */
+	public static int[] numberOfPrincipalsStates(int[][] states)
+	{
+		int[] max = new int[states[0].length];
+		for (int j=0;j<max.length;j++)
+			max[j]=-1;
+		for (int i=0;i<states.length;i++)
+		{
+			for (int j=0;j<max.length;j++)
+			{
+				if (max[j]<states[i][j])
+					max[j]=states[i][j];
+			}
+		}
+		for (int j=0;j<max.length;j++)
+			max[j]+=1;		
+		return max;
+	}
+	
+	/**
+	 * 
+	 * @param all final states of the composed automaton
+	 * @return the final states of each principal
+	 */
+	public static int[][] principalsFinalStates(int[][] states)
+	{
+		int rank=states[0].length;
+		int[] count=new int[rank];
+		int[][] pfs=new int[rank][states.length];
+		for (int j=0;j<rank;j++)
+		{
+			pfs[j][0]=states[0][j];
+			count[j]=1;
+		}
+		for (int i=1;i<states.length;i++)
+		{
+			for (int j=0;j<rank;j++)
+			{
+				if (MSCAUtil.getIndex(pfs[j], states[i][j])==-1 )
+				{
+					pfs[j][count[j]]=states[i][j];
+					count[j]++;
+				}
+			}
+		}
+		for (int j=0;j<rank;j++)
+			pfs[j]=MSCAUtil.removeTailsNull(pfs[j], count[j]);
+		return pfs;
+	}
+	
+	/**
 	 * 
 	 * 
 	 * @return all  states that appear in at least one transition
@@ -569,6 +952,18 @@ public class MSCA  extends CA implements java.io.Serializable
 //	    for (int i=0;i<pointer;i++)
 //	    	f[i]=s[i];
 		return s;
+	}
+	
+	public int[][][] allNonFinalAndFinalStates()
+	{
+		int[][][] r = new int[2][][];
+		int[][] states=this.allStates();
+		int[][] finalstates=MSCAUtil.setIntersection(states, this.allFinalStates());//only reachable final states
+		int[][] nonfinalstates=MSCAUtil.setDifference(states, finalstates);
+		
+		r[0]=nonfinalstates;
+		r[1]=finalstates;
+		return r;
 	}
 	
 //	/**

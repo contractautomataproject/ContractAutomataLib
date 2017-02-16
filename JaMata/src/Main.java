@@ -1,11 +1,11 @@
 
 import java.io.*;
-
 import CA.CAUtil;
 import FMA.FMA;
 import FSA.FSA;
 import MSCA.MSCAUtil;
 import PFSA.PFSA;
+
 
 /**
  * 
@@ -20,6 +20,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main (String [] args){
+		
+			
 		FSA automa = null;
 		try{
 			InputStreamReader reader = new InputStreamReader (System.in);

@@ -757,15 +757,49 @@ public class MSCAUtil extends CAUtil
 	
 	// from now on all methods are utilities not available in CAUtil
 	
-	
+	protected static int[] getArray(String arr)
+	{
+		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+
+		 int[] results = new int[items.length];
+
+		 for (int ii = 0; ii < items.length; ii++) {
+		     try {
+		         results[ii] = Integer.parseInt(items[ii]);
+		     } catch (NumberFormatException nfe) {
+		         nfe.printStackTrace();
+		     };
+		 }
+		 return results;
+	}
 	protected static boolean contains(int[] q, int[][] listq)
 	{
 		for (int i=0;i<listq.length;i++)
 		{
-			if (Arrays.equals(q, listq[i]))
+			if (listq[i]!=null)
+				if (Arrays.equals(q, listq[i]))
 					return true;
 		}
 		return false;
+	}
+	
+	protected static int getIndex(int[] q, int e)
+	{
+		for (int i=0;i<q.length;i++)
+		{
+			if (q[i]==e)
+					return i;
+		}
+		return -1;
+	}
+	protected static int indexContains(int[] q, int[][] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (Arrays.equals(q, listq[i]))
+					return i;
+		}
+		return -1;
 	}
 	protected static boolean contains(MSCATransition t, MSCATransition[] listq)
 	{
@@ -789,6 +823,36 @@ public class MSCAUtil extends CAUtil
 		m=removeDuplicates(m);
 		return m;
 	}
+	protected static int[][] setDifference(int[][] q1, int[][] q2)
+	{
+		int p=0;
+		int[][] m= new int[q1.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (!contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p);
+		return m;
+	}
+	protected static int[][] setIntersection(int[][] q1, int[][] q2)
+	{
+		int p=0;
+		int[][] m= new int[q1.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p);
+		return m;
+	}
 	protected static int[][] removeDuplicates(int[][] m)
 	{
 		int removed=0;
@@ -806,6 +870,13 @@ public class MSCAUtil extends CAUtil
 		m= (int[][])removeHoles(m,removed);
 		return m;
 			
+	}
+	protected static int[] removeTailsNull(int[] q,int length)
+	{
+		int[] r=new int[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
 	}
 	protected static int[][] removeTailsNull(int[][] q,int length)
 	{

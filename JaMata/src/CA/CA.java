@@ -841,6 +841,21 @@ public class CA  extends FSA implements java.io.Serializable
 		return ret;
 	}
 	
+	/**
+	 * 
+	 * @return the maximum number of states
+	 */
+	public int numberOfStates()
+	{
+		int n=1;
+		int[] states=this.getStatesCA();
+		for (int i=0;i<states.length;i++)
+		{
+			n*=(states[i]+1);
+		}
+		return n;
+	}
+	
 	public CATransition[] createArrayTransition(int length)
 	{
 		return new CATransition[length];
