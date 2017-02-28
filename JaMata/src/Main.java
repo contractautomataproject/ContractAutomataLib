@@ -4,7 +4,6 @@ import java.io.*;
 import CA.CAUtil;
 import FMCA.FMCAUtil;
 import FSA.FSA;
-import PFSA.PFSA;
 
 
 /**
@@ -27,7 +26,7 @@ public class Main {
 			InputStreamReader reader = new InputStreamReader (System.in);
 	        BufferedReader myInput = new BufferedReader (reader);
 	        System.out.println("  ****	JaMaTa	****");
-	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA  4 for CA and 5 for MSCA");
+	        System.out.println("Press 3 for FSA  4 for CA and 5 for MSCA");
 	        int type = Integer.parseInt(myInput.readLine());
 	        if (type == 4)
 	        {
