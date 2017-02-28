@@ -1,4 +1,4 @@
-package MSCA;
+package FMCA;
 
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import FSA.Transition;
  *
  */
 @SuppressWarnings("serial")
-public class MSCATransition extends CATransition implements java.io.Serializable{ 
+public class FMCATransition extends CATransition implements java.io.Serializable{ 
 	private boolean must;  
 	
 	/**
@@ -28,7 +28,7 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public MSCATransition(int[] initial, int[] label2, int[] fina,boolean must){
+	public FMCATransition(int[] initial, int[] label2, int[] fina,boolean must){
 		super(initial,label2,fina);
 		this.must=must;
 	}
@@ -51,9 +51,9 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 			return "("+Arrays.toString(getSource())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getArrival())+")";
 	}
 
-	public boolean equals(MSCATransition t)
+	public boolean equals(FMCATransition t)
 	{
-		MSCATransition tr=(MSCATransition) t;
+		FMCATransition tr=(FMCATransition) t;
 		int[] ip =tr.getSource();
 		int[] lp=tr.getLabelP();
 		int[] dp=tr.getArrival();
@@ -65,9 +65,9 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 	 * 
 	 * @return	true if the  must transition request is matched 
 	 */
-	protected  boolean isMatched(MSCA aut)
+	protected  boolean isMatched(FMCA aut)
 	{
-		MSCATransition[] tr = aut.getTransition();
+		FMCATransition[] tr = aut.getTransition();
 //		int[][] fs=aut.allFinalStates();
 		int[][] R=aut.getDanglingStates();
 		//MSCATransition[] unmatch = new MSCATransition[tr.length];
@@ -84,7 +84,7 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 					&&(tr[j].receiver()==this.receiver())	//the same principal
 					&&(tr[j].getSource()[tr[j].receiver()]==this.getSource()[this.receiver()]) //the same source state					
 					&&(tr[j].getLabelP()[tr[j].receiver()]==this.getLabelP()[this.receiver()]) //the same request
-					&&(!MSCAUtil.contains(this.getSource(), R))) //source state is not redundant
+					&&(!FMCAUtil.contains(this.getSource(), R))) //source state is not redundant
 					{
 						return true;
 					}
@@ -99,7 +99,7 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched in aut
 	 */
-	protected static int[][] sourcesUnmatched(MSCATransition[] t, MSCA aut)
+	protected static int[][] sourcesUnmatched(FMCATransition[] t, FMCA aut)
 	{
 		int[][] s= new int[t.length][];
 		int pointer=0;
@@ -107,14 +107,14 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 		{
 			if (!t[i].isMatched(aut))
 			{
-				if (!MSCAUtil.contains(t[i].getSource(), s))
+				if (!FMCAUtil.contains(t[i].getSource(), s))
 				{
 					s[pointer]=t[i].getSource();
 					pointer++;
 				}
 			}
 		}
-		s=MSCAUtil.removeTailsNull(s, pointer);
+		s=FMCAUtil.removeTailsNull(s, pointer);
 		return s;
 	}
 	
@@ -130,20 +130,20 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 	 * @param insert		the states of all other principals who stays idle
 	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
 	 */
-	public MSCATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
+	public FMCATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
 	{
 		if (tt!=null) //if it is a match
 		{
-			int[] s=((MSCATransition) t).getSource();
-			int[] l=((MSCATransition) t).getLabelP();
-			int[] d=((MSCATransition) t).getArrival();
-			int[] ss = ((MSCATransition) tt).getSource();
-			int[] ll=((MSCATransition) tt).getLabelP();
-			int[] dd =((MSCATransition) tt).getArrival();
+			int[] s=((FMCATransition) t).getSource();
+			int[] l=((FMCATransition) t).getLabelP();
+			int[] d=((FMCATransition) t).getArrival();
+			int[] ss = ((FMCATransition) tt).getSource();
+			int[] ll=((FMCATransition) tt).getLabelP();
+			int[] dd =((FMCATransition) tt).getArrival();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			int[] label = new int[insert.length+s.length+ss.length];
-			boolean must = ((MSCATransition) t).isMust() || ((MSCATransition) tt).isMust();
+			boolean must = ((FMCATransition) t).isMust() || ((FMCATransition) tt).isMust();
 			int counter=0;
 			for (int i=0;i<insert.length;i++)
 			{
@@ -200,13 +200,13 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 					dest[insert.length+counter+j]=dd[j];
 				}
 			}
-			return new MSCATransition(initial,label,dest,must);	
+			return new FMCATransition(initial,label,dest,must);	
 		}
 		else
 		{
-			int[] s=((MSCATransition) t).getSource();
-			int[] l=((MSCATransition) t).getLabelP();
-			int[] d=((MSCATransition) t).getArrival();
+			int[] s=((FMCATransition) t).getSource();
+			int[] l=((FMCATransition) t).getLabelP();
+			int[] d=((FMCATransition) t).getArrival();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			int[] label = new int[insert.length+s.length];
@@ -242,7 +242,7 @@ public class MSCATransition extends CATransition implements java.io.Serializable
 				}
 				counter+=s.length; //record the shift due to the first CA 
 			}
-			return new MSCATransition(initial,label,dest,((MSCATransition) t).isMust());	
+			return new FMCATransition(initial,label,dest,((FMCATransition) t).isMust());	
 		}
 	}
 }

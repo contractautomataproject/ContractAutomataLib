@@ -1,10 +1,11 @@
-package MSCA;
+package FMCA;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Scanner;
+
 
 
 import org.xml.sax.SAXException;
@@ -27,11 +28,11 @@ import org.w3c.dom.Attr;
 
 import java.io.File;
 
-import MSCA.MSCA;
-import MSCA.MSCATransition;
-import MSCA.MSCAUtil;
 import CA.CA;
 import CA.CATransition;
+import FMCA.FMCA;
+import FMCA.FMCATransition;
+import FMCA.FMCAUtil;
 import FSA.Transition;
 
 
@@ -44,7 +45,7 @@ import FSA.Transition;
  *
  */
 @SuppressWarnings("serial")
-public class MSCA  extends CA implements java.io.Serializable
+public class FMCA  extends CA implements java.io.Serializable
 {
 	/*
 	private int rank;
@@ -57,20 +58,20 @@ public class MSCA  extends CA implements java.io.Serializable
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
 	 */
-	public MSCA()
+	public FMCA()
 	{
 		super();
 	}
 	
-	public MSCA(int rank, int[] initial, int[] states, int[][] finalstates,MSCATransition[] trans)
+	public FMCA(int rank, int[] initial, int[] states, int[][] finalstates,FMCATransition[] trans)
 	{
 		super(rank,initial,states,finalstates,trans);
 	}
 	
-	public MSCA(int rank, int[] initial, int[][] states, int[][] finalstates,MSCATransition[] trans)
+	public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
 	{
-		super(rank,initial,MSCA.numberOfPrincipalsStates(MSCAUtil.setUnion(states, finalstates)),
-				MSCA.principalsFinalStates(finalstates),trans);
+		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
+				FMCA.principalsFinalStates(finalstates),trans);
 	}
 	
 	
@@ -80,7 +81,7 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * @param the name of the file
 	 * @return	the CA loaded
 	 */
-	public static MSCA load(String fileName)
+	public static FMCA load(String fileName)
 	{
 		try
 		{
@@ -96,7 +97,7 @@ public class MSCA  extends CA implements java.io.Serializable
 			int[] initial = new int[1];
 			int[] states = new int[1];
 			int[][] fin = new int[1][];
-			MSCATransition[] t = new MSCATransition[1];
+			FMCATransition[] t = new FMCATransition[1];
 		//	MSCATransition[] mustt = new MSCATransition[1];
 			int pointert=0;
 	//		int pointermust=0;
@@ -147,7 +148,7 @@ public class MSCA  extends CA implements java.io.Serializable
 								  else
 									  s.next();
 							  }
-							  t = new MSCATransition[lengthT*lengthT*4];//guessed upper bound WARNING
+							  t = new FMCATransition[lengthT*lengthT*4];//guessed upper bound WARNING
 							  s.close();
 							  break;
 						  }
@@ -220,7 +221,7 @@ public class MSCA  extends CA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  t[pointert]=new MSCATransition(store[0],store[1],arr,false);
+									  t[pointert]=new FMCATransition(store[0],store[1],arr,false);
 									  what=0;
 									  pointert++;
 								  }
@@ -255,7 +256,7 @@ public class MSCA  extends CA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  t[pointert]=new MSCATransition(store[0],store[1],arr,true);
+									  t[pointert]=new FMCATransition(store[0],store[1],arr,true);
 									  what=0;
 									  pointert++;
 								  }
@@ -269,13 +270,13 @@ public class MSCA  extends CA implements java.io.Serializable
 				  }
 			}
 			br.close();	
-			MSCATransition[] fintr = new MSCATransition[pointert]; //the length of the array is exactly the number of transitions
+			FMCATransition[] fintr = new FMCATransition[pointert]; //the length of the array is exactly the number of transitions
 			  for (int i=0;i<pointert;i++)
 			  {
 				  fintr[i]=t[i];
 			  }
 			 
-			return new MSCA(rank,initial,states,fin,fintr);
+			return new FMCA(rank,initial,states,fin,fintr);
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
@@ -285,7 +286,7 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * @param filename
 	 * @return
 	 */
-	public static MSCA importFromXML(String filename)
+	public static FMCA importFromXML(String filename)
 	{
 		 try {
 	         File inputFile = new File(filename);
@@ -306,7 +307,7 @@ public class MSCA  extends CA implements java.io.Serializable
 	         int[][] finalstates=new int[nodeList.getLength()][];
 	         int[] idstate=new int[nodeList.getLength()];
 	         int[] idfinalstate=new int[nodeList.getLength()];
-	         MSCATransition[] t= new MSCATransition[nodeList.getLength()];
+	         FMCATransition[] t= new FMCATransition[nodeList.getLength()];
 	         int statec=0;
 	         int finalstatec=0;
 	         int trc=0;
@@ -324,25 +325,25 @@ public class MSCA  extends CA implements java.io.Serializable
 	            	 if (eElement.hasAttribute("edge"))//edge
 	            	 {
 	            		 int idsource=Integer.parseInt(eElement.getAttribute("source"));
-	            		 int index=MSCAUtil.getIndex(idstate, idsource);
+	            		 int index=FMCAUtil.getIndex(idstate, idsource);
 	            		 int[] source;
 	            		 if (index>-1)
 	            			 source=states[index];
 	            		 else
-	            		 	source=finalstates[MSCAUtil.getIndex(idfinalstate, idsource)];
+	            		 	source=finalstates[FMCAUtil.getIndex(idfinalstate, idsource)];
 	            		 
 	            		 int idtarget=Integer.parseInt(eElement.getAttribute("target"));
-	            		 index=MSCAUtil.getIndex(idstate, idtarget);
+	            		 index=FMCAUtil.getIndex(idstate, idtarget);
 	            		 int[] target;
 	            		 if (index>-1)
 	            			 target=states[index];
 	            		 else
-	            		 	target=finalstates[MSCAUtil.getIndex(idfinalstate, idtarget)];
+	            		 	target=finalstates[FMCAUtil.getIndex(idfinalstate, idtarget)];
 	            		 
 	            		 
-	            		 int[] label=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            		 int[] label=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            		 boolean isMust=!eElement.getAttribute("style").contains("dashed=1");
-	            		 t[trc]=new MSCATransition(source,label,target,isMust);
+	            		 t[trc]=new FMCATransition(source,label,target,isMust);
 	            		 trc++;
 	            	 }
 	            	 else  //state
@@ -350,26 +351,26 @@ public class MSCA  extends CA implements java.io.Serializable
 	            		 if (eElement.getAttribute("style").contains("terminate.png"))
 	            		 { 
 	            			 idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
-	            			 finalstates[finalstatec]=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            			 finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            			 finalstatec++;
 	            		 }
 	            		 else{
 	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
-	            			 states[statec]=MSCAUtil.getArray(eElement.getAttribute("value"));
+	            			 states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            			 statec++;
 	            		 }
 	            	 }
 	               }
 	            }
 	         }
-	         finalstates=MSCAUtil.removeTailsNull(finalstates, finalstatec);
-             states=MSCAUtil.removeTailsNull(states, statec);
-             t=MSCAUtil.removeTailsNull(t, trc);
+	         finalstates=FMCAUtil.removeTailsNull(finalstates, finalstatec);
+             states=FMCAUtil.removeTailsNull(states, statec);
+             t=FMCAUtil.removeTailsNull(t, trc);
              int rank=states[0].length;
              int[] initial = new int[rank];
              for (int ind=0;ind<rank;ind++)
           	   initial[ind]=0;
-             MSCA aut= new MSCA(rank, initial,states,finalstates, t);
+             FMCA aut= new FMCA(rank, initial,states,finalstates, t);
              return aut;
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
@@ -421,24 +422,24 @@ public class MSCA  extends CA implements java.io.Serializable
 			for (int i=0;i<statesf.length;i++)
 				statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*50),"130",statesf[i]);
 			
-			MSCATransition t[]= this.getTransition();
+			FMCATransition t[]= this.getTransition();
 			for (int i=0;i<t.length;i++)
 			{
 				Element s; Element ta;
 				int source;
-				source=MSCAUtil.indexContains(t[i].getSource(), states);
+				source=FMCAUtil.indexContains(t[i].getSource(), states);
 				if (source==-1)
 				{
-					source=MSCAUtil.indexContains(t[i].getSource(), statesf);
+					source=FMCAUtil.indexContains(t[i].getSource(), statesf);
 					s=statesef[source];
 				}
 				else
 					s=statese[source];
 				int target;
-				target=MSCAUtil.indexContains(t[i].getArrival(), states);
+				target=FMCAUtil.indexContains(t[i].getArrival(), states);
 				if (target==-1)
 				{
-					target=MSCAUtil.indexContains(t[i].getArrival(), statesf);
+					target=FMCAUtil.indexContains(t[i].getArrival(), statesf);
 					ta=statesef[target];
 				}
 				else
@@ -576,12 +577,12 @@ public class MSCA  extends CA implements java.io.Serializable
 	/**
 	 * @return	the array of transitions
 	 */
-	public  MSCATransition[] getTransition()
+	public  FMCATransition[] getTransition()
 	{
 		Transition[] temp = super.getTransition();
-		MSCATransition[] t = new MSCATransition[temp.length];
+		FMCATransition[] t = new FMCATransition[temp.length];
 		for (int i=0;i<temp.length;i++)
-				t[i]=(MSCATransition)temp[i];
+				t[i]=(FMCATransition)temp[i];
 		return t;
 	}
 	
@@ -590,24 +591,24 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * compared to CA this method also clones the must transitions
 	 * @return a new object CA clone
 	 */
-	public MSCA clone()
+	public FMCA clone()
 	{
-		MSCATransition[] at = this.getTransition();
-		MSCATransition[] finalTr = new MSCATransition[at.length];
+		FMCATransition[] at = this.getTransition();
+		FMCATransition[] finalTr = new FMCATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
 		{
 			int[] in=at[i].getSource();
 			int[] l=at[i].getLabelP();
 			int[] f= at[i].getArrival();
 			boolean must=at[i].isMust();
-			finalTr[i] = new MSCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),must);
+			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),must);
 		}	
 		int[][] finalstates=getFinalStatesCA();
 		int[][] nf = new int[finalstates.length][];
 		for (int i=0;i<finalstates.length;i++)
 			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 		
-		return new MSCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length),Arrays.copyOf(getStatesCA(), getStatesCA().length),finalstates,finalTr);
+		return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length),Arrays.copyOf(getStatesCA(), getStatesCA().length),finalstates,finalTr);
 	}
 	
 	/**
@@ -615,7 +616,7 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * @param i		index of the CA
 	 * @return		the ith principal
 	 */
-	public MSCA proj(int i)
+	public FMCA proj(int i)
 	{
 		/*
 		if ((i<0)||(i>rank)) //check if the parameter i is in the rank of the CA
@@ -676,14 +677,14 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * 
 	 * @return the most permissive controller for modal agreement
 	 */
-	public MSCA mpc()
+	public FMCA mpc()
 	{
-		MSCA a = this.clone();
-		MSCATransition[] tr = a.getTransition();
-		MSCATransition[] rem= new MSCATransition[tr.length];  //solo per testing
+		FMCA a = this.clone();
+		FMCATransition[] tr = a.getTransition();
+		FMCATransition[] rem= new FMCATransition[tr.length];  //solo per testing
 		//int[][] fs=a.allFinalStates();
 		int removed=0;
-		MSCATransition[] mustrequest=new MSCATransition[tr.length]; //initial  transitions
+		FMCATransition[] mustrequest=new FMCATransition[tr.length]; //initial  transitions
 		int pointer4=0;
 		for (int i=0;i<tr.length;i++)
 		{
@@ -697,7 +698,7 @@ public class MSCA  extends CA implements java.io.Serializable
 				}
 				else
 				{
-					mustrequest[pointer4]= new MSCATransition(tr[i].getSource(),tr[i].getLabelP(),tr[i].getArrival(),true);
+					mustrequest[pointer4]= new FMCATransition(tr[i].getSource(),tr[i].getLabelP(),tr[i].getArrival(),true);
 					pointer4++;
 					//if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
 					if (tr[i].isMatched(a))
@@ -710,8 +711,8 @@ public class MSCA  extends CA implements java.io.Serializable
 			}
 		}
 
-		tr=  MSCAUtil.removeHoles(tr, removed);		
-		mustrequest=MSCAUtil.removeTailsNull(mustrequest, pointer4);
+		tr=  FMCAUtil.removeHoles(tr, removed);		
+		mustrequest=FMCAUtil.removeTailsNull(mustrequest, pointer4);
 		a.setTransition(tr); //K_0 
 		int[][] R=a.getDanglingStates();
 //		//all the source states of unmatched transitions
@@ -731,22 +732,22 @@ public class MSCA  extends CA implements java.io.Serializable
 //			R_0=MSCAUtil.removeTailsNull(R_0, pointer);
 //			R=MSCAUtil.setUnion(R, R_0);
 //		}
-		int[][] R_0=MSCATransition.sourcesUnmatched(mustrequest, a);
-		R=MSCAUtil.setUnion(R, R_0);
+		int[][] R_0=FMCATransition.sourcesUnmatched(mustrequest, a);
+		R=FMCAUtil.setUnion(R, R_0);
 		boolean update=false;
 		do{
-			MSCATransition[] trcheck= new MSCATransition[tr.length*R.length];//all must transitions without redundant source state
+			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//all must transitions without redundant source state
 			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
 			int pointer2=0;
 			removed=0;
-			 rem= new MSCATransition[tr.length]; 
+			 rem= new FMCATransition[tr.length]; 
 			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
 				if (!(tr[i]==null))
 				{
 					if (tr[i].isMust())
 					{   
-						if (MSCAUtil.contains(tr[i].getSource(), R))
+						if (FMCAUtil.contains(tr[i].getSource(), R))
 						{
 							rem[removed]=tr[i];
 							tr[i]=null;
@@ -759,7 +760,7 @@ public class MSCA  extends CA implements java.io.Serializable
 							pointer2++;
 						}
 					}
-					else if (!tr[i].isMust()&&(MSCAUtil.contains(tr[i].getArrival(), R)))
+					else if (!tr[i].isMust()&&(FMCAUtil.contains(tr[i].getArrival(), R)))
 					{
 						rem[removed]=tr[i];
 						tr[i]=null;
@@ -767,7 +768,7 @@ public class MSCA  extends CA implements java.io.Serializable
 					}
 				}
 			} 
-			tr=  MSCAUtil.removeHoles(tr, removed);
+			tr=  FMCAUtil.removeHoles(tr, removed);
 			a.setTransition(tr);  //K_i
 			//update R
 			int[][] newR=new int[pointer2][];
@@ -780,7 +781,7 @@ public class MSCA  extends CA implements java.io.Serializable
 				//	{
 				//if arrival state is redundant,  add source state to R it has not been already added, we know that source state is not in R
 				// setUnion removes duplicates we could skip the check
-						if ((MSCAUtil.contains(trcheck[i].getArrival(), a.getDanglingStates())&&(!MSCAUtil.contains(trcheck[i].getSource(),newR))))//&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
+						if ((FMCAUtil.contains(trcheck[i].getArrival(), a.getDanglingStates())&&(!FMCAUtil.contains(trcheck[i].getSource(),newR))))//&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
 						{
 							newR[pointer3]=trcheck[i].getSource();
 							pointer3++;
@@ -791,18 +792,18 @@ public class MSCA  extends CA implements java.io.Serializable
 			update=(pointer3>0);
 			if (update)
 			{
-				R=MSCAUtil.setUnion(R, MSCAUtil.removeTailsNull(newR, pointer3));
+				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, pointer3));
 			}
-			int[][] su= MSCATransition.sourcesUnmatched(mustrequest, a);
-			int[][] newsources=	MSCAUtil.setUnion(R_0 ,su);
+			int[][] su= FMCATransition.sourcesUnmatched(mustrequest, a);
+			int[][] newsources=	FMCAUtil.setUnion(R_0 ,su);
 			if (newsources.length!=R_0.length)
 			{
 				R_0=newsources;
-				R=MSCAUtil.setUnion(R, R_0);
+				R=FMCAUtil.setUnion(R, R_0);
 				update=true;
 			}
 			int[][] danglingStates=a.getDanglingStates();
-			int[][] RwithDang=	MSCAUtil.setUnion(R ,danglingStates);
+			int[][] RwithDang=	FMCAUtil.setUnion(R ,danglingStates);
 			if (RwithDang.length!=R.length)
 			{
 				R=RwithDang;
@@ -810,18 +811,18 @@ public class MSCA  extends CA implements java.io.Serializable
 			}
 		}while(update);
 		
-		if (MSCAUtil.contains(a.getInitialCA(), R))
+		if (FMCAUtil.contains(a.getInitialCA(), R))
 			return null;
 		
 //		tr=  MSCAUtil.removeHoles(tr, removed);
 //		a.setTransition(tr);
-		a = (MSCA) MSCAUtil.removeUnreachable(a);
+		a = (FMCA) FMCAUtil.removeUnreachable(a);
 		return a;
 	}
 	
 	
 	
-	public MSCA mpcConstraints(int[][][] products,int[][] L)
+	public FMCA mpcConstraints(int[][][] products,int[][] L)
 	{
 		int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
 		statesToVisit[0]=products;
@@ -907,7 +908,7 @@ public class MSCA  extends CA implements java.io.Serializable
 		{
 			for (int j=0;j<rank;j++)
 			{
-				if (MSCAUtil.getIndex(pfs[j], states[i][j])==-1 )
+				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )
 				{
 					pfs[j][count[j]]=states[i][j];
 					count[j]++;
@@ -915,7 +916,7 @@ public class MSCA  extends CA implements java.io.Serializable
 			}
 		}
 		for (int j=0;j<rank;j++)
-			pfs[j]=MSCAUtil.removeTailsNull(pfs[j], count[j]);
+			pfs[j]=FMCAUtil.removeTailsNull(pfs[j], count[j]);
 		return pfs;
 	}
 	
@@ -926,28 +927,28 @@ public class MSCA  extends CA implements java.io.Serializable
 	 */
 	public int[][] allStates()
 	{
-		MSCA aut=this.clone();
+		FMCA aut=this.clone();
 		int[][] s = new int[this.prodStates()][];
 		s[0]=aut.getInitialCA();
-		MSCATransition[] t = aut.getTransition();
+		FMCATransition[] t = aut.getTransition();
 		int pointer=1;
 		for (int i=0;i<t.length;i++)
 		{
 			int[] start = t[i].getSource();
 			int[] arr = t[i].getArrival();
 			
-			if (!MSCAUtil.contains(arr, s))
+			if (!FMCAUtil.contains(arr, s))
 			{
 				s[pointer]=arr;
 				pointer++;
 			}
-			if (!MSCAUtil.contains(start, s))
+			if (!FMCAUtil.contains(start, s))
 			{
 				s[pointer]=start;
 				pointer++;
 			}
 		}
-		s=MSCAUtil.removeTailsNull(s, pointer);
+		s=FMCAUtil.removeTailsNull(s, pointer);
 //	    int[][] f = new int[pointer][];
 //	    for (int i=0;i<pointer;i++)
 //	    	f[i]=s[i];
@@ -958,8 +959,8 @@ public class MSCA  extends CA implements java.io.Serializable
 	{
 		int[][][] r = new int[2][][];
 		int[][] states=this.allStates();
-		int[][] finalstates=MSCAUtil.setIntersection(states, this.allFinalStates());//only reachable final states
-		int[][] nonfinalstates=MSCAUtil.setDifference(states, finalstates);
+		int[][] finalstates=FMCAUtil.setIntersection(states, this.allFinalStates());//only reachable final states
+		int[][] nonfinalstates=FMCAUtil.setDifference(states, finalstates);
 		
 		r[0]=nonfinalstates;
 		r[1]=finalstates;
@@ -1022,13 +1023,13 @@ public class MSCA  extends CA implements java.io.Serializable
 				{
 					int[] pointervisited = new int[1];
 					pointervisited[0]=0;
-					if((MSCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
-						&&(MSCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
+					if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+						&&(FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
 						remove=false;
 					pointervisited = new int[1];
 					pointervisited[0]=0;
 				}
-				if ((remove)&&(!MSCAUtil.contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
+				if ((remove)&&(!FMCAUtil.contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
 				{
 					redundantStates[pointer]=allStates[ind];
 					pointer++;
@@ -1036,7 +1037,7 @@ public class MSCA  extends CA implements java.io.Serializable
 													
 		}
 		//remove null space in array redundantStates
-		redundantStates = MSCAUtil.removeTailsNull(redundantStates, pointer);
+		redundantStates = FMCAUtil.removeTailsNull(redundantStates, pointer);
 		
 		return redundantStates;
 	}
@@ -1045,18 +1046,18 @@ public class MSCA  extends CA implements java.io.Serializable
 	 * this method is not inherited from CA
 	 * @return	all the  must transitions request that are not matched 
 	 */
-	protected  MSCATransition[] getUnmatch()
+	protected  FMCATransition[] getUnmatch()
 	{
-		MSCATransition[] tr = this.getTransition();
+		FMCATransition[] tr = this.getTransition();
 		int[][] fs=this.allFinalStates();
 		int pointer=0;
 		int[][] R=this.getDanglingStates();
-		MSCATransition[] unmatch = new MSCATransition[tr.length];
+		FMCATransition[] unmatch = new FMCATransition[tr.length];
 		for (int i=0;i<tr.length;i++)
 		{
 			if ((tr[i].request())
 				&&((tr[i].isMust())
-				&&(!MSCAUtil.contains(tr[i].getSource(), fs)))) // if source state is not final
+				&&(!FMCAUtil.contains(tr[i].getSource(), fs)))) // if source state is not final
 			{
 				boolean matched=false;
 				for (int j=0;j<tr.length;j++)	
@@ -1066,7 +1067,7 @@ public class MSCA  extends CA implements java.io.Serializable
 						&&(tr[j].receiver()==tr[i].receiver())	//the same principal
 						&&(tr[j].getSource()[tr[j].receiver()]==tr[i].getSource()[tr[i].receiver()]) //the same source state					
 						&&(tr[j].getLabelP()[tr[j].receiver()]==tr[i].getLabelP()[tr[i].receiver()]) //the same request
-						&&(!MSCAUtil.contains(tr[i].getSource(), R))) //source state is not redundant
+						&&(!FMCAUtil.contains(tr[i].getSource(), R))) //source state is not redundant
 						{
 							matched=true; // the request is matched
 						}
@@ -1080,23 +1081,23 @@ public class MSCA  extends CA implements java.io.Serializable
 		}
 		if (pointer>0)
 		{
-			unmatch = MSCAUtil.removeTailsNull(unmatch, pointer);
+			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer);
 			return unmatch;
 		}
 		else
 			return null;
 	}
 	
-	public MSCATransition[] createArrayTransition(int length)
+	public FMCATransition[] createArrayTransition(int length)
 	{
-		return new MSCATransition[length];
+		return new FMCATransition[length];
 	}
-	public MSCATransition[][] createArrayTransition2(int length)
+	public FMCATransition[][] createArrayTransition2(int length)
 	{
-		return new MSCATransition[length][];
+		return new FMCATransition[length][];
 	}
-	public MSCA createNew(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
+	public FMCA createNew(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
 	{
-		return new MSCA(rank,initial,states,finalstates,(MSCATransition[])tra);
+		return new FMCA(rank,initial,states,finalstates,(FMCATransition[])tra);
 	}
 }

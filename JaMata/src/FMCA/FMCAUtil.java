@@ -1,4 +1,4 @@
-package MSCA;
+package FMCA;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,7 +12,7 @@ import CA.CAUtil;
  * @author Davide Basile
  *
  */
-public class MSCAUtil extends CAUtil
+public class FMCAUtil extends CAUtil
 {
 
 	static boolean debug = true;
@@ -648,9 +648,9 @@ public class MSCAUtil extends CAUtil
 		try{
 			InputStreamReader reader = new InputStreamReader (System.in);
 			BufferedReader myInput = new BufferedReader (reader);
-			MSCA prod;
-			MSCA[] aut=null;
-			MSCA a;
+			FMCA prod;
+			FMCA[] aut=null;
+			FMCA a;
 			String s="";
 			do
 			{
@@ -666,7 +666,7 @@ public class MSCAUtil extends CAUtil
 				{
 				case "1":
 					System.out.println("Computing the product automaton ... ");
-					prod = (MSCA) CAUtil.product(aut);
+					prod = (FMCA) CAUtil.product(aut);
 					prod.print();
 			        prod.printToFile();
 					break;
@@ -682,7 +682,7 @@ public class MSCAUtil extends CAUtil
 
 				case "3":
 					System.out.println("Computing the associative product automaton ... ");
-					prod = (MSCA) MSCAUtil.aproduct(aut);
+					prod = (FMCA) FMCAUtil.aproduct(aut);
 					prod.print();
 					prod.printToFile();
 					break;
@@ -691,7 +691,7 @@ public class MSCAUtil extends CAUtil
 				case "9":
 					System.out.println("The most permissive controller of modal agreement for the last MSCA loaded is");
 					a = aut[aut.length-1];
-					MSCA mpc = a.mpc();
+					FMCA mpc = a.mpc();
 					if (mpc!=null)
 					{
 						mpc.print();
@@ -708,13 +708,13 @@ public class MSCAUtil extends CAUtil
 	 * identical to the method of CAUtil,  I just substituted CA with MSCA and CATransition with MSCATransition,  
 	 * @return
 	 */
-	protected static MSCA[] load()
+	protected static FMCA[] load()
 	{
 		try
 		{
-			MSCA[] a = new MSCA[10];
+			FMCA[] a = new FMCA[10];
 			int i=0;
-			MSCA automa;
+			FMCA automa;
 			String s="";
 			InputStreamReader reader = new InputStreamReader (System.in);
 			BufferedReader myInput = new BufferedReader (reader);
@@ -730,11 +730,11 @@ public class MSCAUtil extends CAUtil
 					//s = "CA1";
 			        if (!s.isEmpty())
 			        {
-			        	automa = MSCA.load(s);
+			        	automa = FMCA.load(s);
 			        }
 			        else
 			        	{
-				        automa = new MSCA();
+				        automa = new FMCA();
 			        	}
 			        automa.print();
 			        a[i] = automa;
@@ -742,10 +742,10 @@ public class MSCAUtil extends CAUtil
 			        i++;
 				}
 			}
-			MSCA[] aut;
+			FMCA[] aut;
 			if (i<10)
 			{
-				aut=new MSCA[i];
+				aut=new FMCA[i];
 				for (int ind=0;ind<i;ind++)
 					aut[ind]=a[ind];
 			}
@@ -801,7 +801,7 @@ public class MSCAUtil extends CAUtil
 		}
 		return -1;
 	}
-	protected static boolean contains(MSCATransition t, MSCATransition[] listq)
+	protected static boolean contains(FMCATransition t, FMCATransition[] listq)
 	{
 		for (int i=0;i<listq.length;i++)
 		{
@@ -885,9 +885,9 @@ public class MSCAUtil extends CAUtil
 			r[i]=q[i];
 		return r;
 	}
-	protected static MSCATransition[] removeTailsNull(MSCATransition[] q,int length)
+	protected static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
 	{
-		MSCATransition[] r=new MSCATransition[length];
+		FMCATransition[] r=new FMCATransition[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;
@@ -909,13 +909,13 @@ public class MSCAUtil extends CAUtil
 		}
 		return fin;
 	}
-	protected static MSCATransition[] removeHoles(MSCATransition[] l, int holes )
+	protected static FMCATransition[] removeHoles(FMCATransition[] l, int holes )
 	{
 		/**
 		 * remove holes (null) in t
 		 */
 		int pointer=0;
-		MSCATransition[] fin = new MSCATransition[l.length-holes];
+		FMCATransition[] fin = new FMCATransition[l.length-holes];
 		for (int ind=0;ind<l.length;ind++)
 		{
 			if (l[ind]!=null)
