@@ -21,7 +21,7 @@ import javax.swing.UIManager;
 
 import org.w3c.dom.Document;
 
-import MSCA.MSCA;
+import FMCA.FMCA;
 
 import com.mxgraph.analysis.StructuralException;
 import com.mxgraph.analysis.mxGraphProperties.GraphType;
@@ -527,7 +527,7 @@ public class EditorMenuBar extends JMenuBar
 								{
 
 									String fileName =fc.getSelectedFile().toString();
-									MSCA aut=MSCA.load(fileName);
+									FMCA aut=FMCA.load(fileName);
 									fileName=aut.exportToXML(fileName);
 									
 										Document document = mxXmlUtils
@@ -574,7 +574,7 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getAbsolutePath();
-				MSCA aut= MSCA.importFromXML(filename);
+				FMCA aut= FMCA.importFromXML(filename);
 			}
 		});
 
@@ -590,9 +590,9 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
-				MSCA aut= MSCA.importFromXML(filename);
+				FMCA aut= FMCA.importFromXML(filename);
 				aut.printToFile();
-				MSCA controller=aut.mpc();
+				FMCA controller=aut.mpc();
 				
 				controller.exportToXML("K_"+filename);
 			}

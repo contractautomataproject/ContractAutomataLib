@@ -1,9 +1,9 @@
 
 import java.io.*;
+
 import CA.CAUtil;
-import FMA.FMA;
+import FMCA.FMCAUtil;
 import FSA.FSA;
-import MSCA.MSCAUtil;
 import PFSA.PFSA;
 
 
@@ -36,7 +36,7 @@ public class Main {
 	        }
 	        else if (type == 5)
 	        {
-	        	MSCAUtil.MSCATest();
+	        	FMCAUtil.MSCATest();
 	        	return;
 	        }
 	        System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for creating a new one");
@@ -44,20 +44,12 @@ public class Main {
 	        //String s ="CA1";
 	        if (!s.isEmpty())
 	        {
-	        	if (type == 1)
-	        		automa =  (FMA) FSA.load(s);
-	        	else if (type == 2)
-	        		automa = (PFSA) FSA.load(s);
-	        	else if (type == 3)
+	        	 if (type == 3)
 	        		automa = FSA.load(s);
 	        }
 	        else
 	        	{
-		        	if (type == 1)
-		        		automa =  new FMA();
-		        	else if (type == 2)
-		        		automa = new PFSA();
-		        	else if (type == 3)
+		        	 if (type == 3)
 		        		automa = new FSA();
 	        	}
 	        automa.print();
