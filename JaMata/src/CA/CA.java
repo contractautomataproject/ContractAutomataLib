@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import FSA.FSA;
-import FSA.Simulator;
 import FSA.Transition;
 
 
@@ -281,16 +280,7 @@ public class CA  extends FSA implements java.io.Serializable
 		return null;
 	}
 	
-	
-	/**
-	 * Create an instance of the simulator for an FMA
-	 */
-	protected Simulator createSim()
-	{
-		//return new FMASimulator(this);
-		return null;
-	}
-	
+		
 	/**
 	 * 
 	 * @param i		the index of the transition to be showed as a message to the user

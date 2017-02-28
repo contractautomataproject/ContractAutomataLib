@@ -52,7 +52,6 @@ public class Main {
 		        		automa = new FSA();
 	        	}
 	        automa.print();
-	        automa.run();
 		}
 		catch (Exception e){e.printStackTrace();}
 	}

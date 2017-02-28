@@ -153,34 +153,6 @@ public class FSA implements java.io.Serializable{
 		return null;
 	}
 	
-	/**
-	 * Take in input a string to be recognized by the automaton, create an instance of the Simulator
-	 * and run it with the string in input.
-	 */
-	public void run()
-	{
-		InputStreamReader reader = new InputStreamReader (System.in);
-        BufferedReader myInput = new BufferedReader (reader);
-		System.out.println("Insert length of the string to be recognized: ");
-		int sleng;int[] srec=null;
-		try {
-			sleng = Integer.parseInt(myInput.readLine());
-			srec = new int[sleng];
-			for (int i=0; i<sleng; i++){
-				System.out.println("Insert the character "+i+" of the string to be recognized");
-				srec[i]= Integer.parseInt(myInput.readLine());
-			}
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Simulator sim = createSim();
-		if (sim.run(srec))
-			System.out.println("The string "+Arrays.toString(srec)+" is accepted by the automaton");
-		else
-			System.out.println("The string "+Arrays.toString(srec)+" is not accepted by the automaton");
-	}
 	
 	/**
 	 * 
@@ -226,14 +198,7 @@ public class FSA implements java.io.Serializable{
 		return states;
 	}
 	
-	/**
-	 * 
-	 * @return	an instance of the simulator istantiated with this automaton
-	 */
-	protected Simulator createSim()
-	{
-		return new Simulator(this);
-	}
+	
 	
 	/**
 	 * 
