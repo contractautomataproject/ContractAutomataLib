@@ -21,7 +21,7 @@ import FSA.Transition;
 @SuppressWarnings("serial")
 public class FMCATransition extends CATransition implements java.io.Serializable{ 
 	private boolean must;  
-	
+	private int type; 
 	/**
 	 * 
 	 * @param initial		source state
