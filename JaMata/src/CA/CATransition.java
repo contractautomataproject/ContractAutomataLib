@@ -2,9 +2,6 @@ package CA;
 
 
 import java.util.Arrays;
-
-
-
 import FSA.Transition;
 
 
@@ -25,7 +22,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @param initial		source state
 	 * @param label2			label
-	 * @param fina			arrival state
+	 * @param fina			target state
 	 */
 	public CATransition(int[] initial, int[] label2, int[] fina){
 		super(0,0,0);
@@ -45,8 +42,8 @@ public class CATransition extends Transition implements java.io.Serializable{
 		this.source = new int[1];
 		this.target = new int[1];
 		this.label = new int[1];
-		source[0]=super.getInitial();
-		target[0]=super.getFinal();
+		source[0]=super.getSource();
+		target[0]=super.getTarget();
 		if (super.getLabel()==0)
 		{
 			System.out.println("Error, principals do not have silent transitions, the label is automatically set to 1");
@@ -60,17 +57,17 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return		the source state of the transition
 	 */
-	public int[] getSource()
+	public int[] getSourceP()
 	{
-		return source;
+		return this.source;
 	}
 	
 	
 	/**
 	 * 
-	 * @return		the arrival state of the transition
+	 * @return		the target state of the transition
 	 */
-	public int[] getArrival()
+	public int[] getTargetP()
 	{
 		return target;
 	}
@@ -86,9 +83,34 @@ public class CATransition extends Transition implements java.io.Serializable{
 	
 	/**
 	 * 
+	 * @return the action of the transition, in case of a match it returns the offer (positive)
+	 */
+	public int getAction()
+	{
+		if (!this.isRequest())
+		{
+			for (int i=0;i<label.length;i++)
+			{
+				if(label[i]>0)
+					return label[i];
+			}
+		}
+		else
+		{
+			for (int i=0;i<label.length;i++)
+			{
+				if(label[i]<0)
+					return label[i];
+			}
+		}
+		return 0;
+	}
+	
+	/**
+	 * 
 	 * @return true if the transition is a match
 	 */
-	public boolean match()
+	public boolean isMatch()
 	{
 		int c=0;
 		for (int i=0;i<label.length;i++)
@@ -99,11 +121,12 @@ public class CATransition extends Transition implements java.io.Serializable{
 		return (c==2);
 	}
 	
+	
 	/**
 	 * 
 	 * @return true if the transition is an offer
 	 */
-	public boolean offer()
+	public boolean isOffer()
 	{
 		int c=0;
 		int l=0;
@@ -122,7 +145,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return true if the transition is a request
 	 */
-	public boolean request()
+	public boolean isRequest()
 	{
 		int c=0;
 		int l=0;
@@ -141,7 +164,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return the index of the sender or -1 
 	 */
-	public int sender()
+	public int getSender()
 	{
 		for (int i=0;i<label.length;i++)
 		{
@@ -155,7 +178,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return the index of the receiver or -1 
 	 */
-	public int receiver()
+	public int getReceiver()
 	{
 		for (int i=0;i<label.length;i++)
 		{
@@ -176,9 +199,9 @@ public class CATransition extends Transition implements java.io.Serializable{
 	public boolean equals(Object t)
 	{
 		CATransition tr=(CATransition) t;
-		int[] ip =tr.getSource();
+		int[] ip =tr.getSourceP();
 		int[] lp=tr.getLabelP();
-		int[] dp=tr.getArrival();
+		int[] dp=tr.getTargetP();
 		return ( Arrays.equals(ip,source))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target));
 	}	
 	
@@ -225,12 +248,12 @@ public class CATransition extends Transition implements java.io.Serializable{
 	{
 		if (tt!=null)
 		{
-			int[] s=((CATransition) t).getSource();
+			int[] s=((CATransition) t).getSourceP();
 			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getArrival();
-			int[] ss = ((CATransition) tt).getSource();
+			int[] d=((CATransition) t).getTargetP();
+			int[] ss = ((CATransition) tt).getSourceP();
 			int[] ll=((CATransition) tt).getLabelP();
-			int[] dd =((CATransition) tt).getArrival();
+			int[] dd =((CATransition) tt).getTargetP();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			int[] label = new int[insert.length+s.length+ss.length];
@@ -294,9 +317,9 @@ public class CATransition extends Transition implements java.io.Serializable{
 		}
 		else
 		{
-			int[] s=((CATransition) t).getSource();
+			int[] s=((CATransition) t).getSourceP();
 			int[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getArrival();
+			int[] d=((CATransition) t).getTargetP();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			int[] label = new int[insert.length+s.length];

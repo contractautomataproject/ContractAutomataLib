@@ -13,9 +13,6 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 
-
-
-
 /**
  * This class represents a FSA.
  * 

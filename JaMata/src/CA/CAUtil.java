@@ -146,7 +146,7 @@ public class CAUtil
 							{	
 								if(gen[ind3]!=null)
 								{
-									if (Arrays.equals(gen[ind3].getSource(),temp[ind][ind2].getSource()) &&  //the state is the same
+									if (Arrays.equals(gen[ind3].getSourceP(),temp[ind][ind2].getSourceP()) &&  //the state is the same
 											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
 									{
 										gen[ind3]=null;
@@ -253,7 +253,7 @@ public class CAUtil
 		{
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
-			int[] s = t.getSource();
+			int[] s = t.getSourceP();
 			/**
 			int[] debugg = {0,0,1};
 			if (Arrays.equals(s,debugg))
@@ -335,7 +335,7 @@ public class CAUtil
 		{
 			// for each transition checks if the arrival state s is reachable from one of the final states of the ca
 			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getArrival();
+			int[] arr = t.getTargetP();
 
 			boolean remove=true;
 			
@@ -412,9 +412,9 @@ public class CAUtil
 		{
 			if (t[i]!=null)
 			{
-				if (Arrays.equals(state,t[i].getArrival()))
+				if (Arrays.equals(state,t[i].getTargetP()))
 				{
-					if (amIReachable(t[i].getSource(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+					if (amIReachable(t[i].getSourceP(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
 						return true;
 				}
 			}

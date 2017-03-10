@@ -12,9 +12,9 @@ import java.io.InputStreamReader;
  */
 @SuppressWarnings("serial")
 public class Transition implements java.io.Serializable {
-	private int initial;
+	private int source;
 	private int label;
-	private int fina;
+	private int target;
 	
 	/**
 	 * 
@@ -23,9 +23,9 @@ public class Transition implements java.io.Serializable {
 	 * @param fina			final state
 	 */
 	public Transition(int initial, int label, int fina){
-		this.initial=initial;
+		this.source=initial;
 		this.label=label;
-		this.fina=fina;
+		this.target=fina;
 	}
 	
 	
@@ -40,14 +40,14 @@ public class Transition implements java.io.Serializable {
         BufferedReader myInput = new BufferedReader (reader);
 		try {
 			System.out.println("Insert start state of the transition "+i);
-			this.initial = Integer.parseInt(myInput.readLine());
+			this.source = Integer.parseInt(myInput.readLine());
 			if (label)
 			{
 				System.out.println("Insert label of the transition "+i);
 				this.label = Integer.parseInt(myInput.readLine());
 			}
 			System.out.println("Insert arrival state of the transition "+i);
-			this.fina = Integer.parseInt(myInput.readLine());
+			this.target = Integer.parseInt(myInput.readLine());
 		} catch (Exception e) {
 			e.printStackTrace();
 		};
@@ -57,9 +57,9 @@ public class Transition implements java.io.Serializable {
 	 * 
 	 * @return		the initial state of the transition
 	 */
-	public int getInitial()
+	public int getSource()
 	{
-		return initial;
+		return source;
 	}
 	
 	/**
@@ -75,9 +75,9 @@ public class Transition implements java.io.Serializable {
 	 * 
 	 * @return		the final state of the transition
 	 */
-	public int getFinal()
+	public int getTarget()
 	{
-		return fina;
+		return target;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class Transition implements java.io.Serializable {
 	 */
 	public String toString()
 	{
-		return "("+initial+","+label+","+fina+")";
+		return "("+source+","+label+","+target+")";
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class Transition implements java.io.Serializable {
 		int j=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if (tr[i].getInitial()==n)
+			if (tr[i].getSource()==n)
 			{
 				t[j]=tr[i];
 				j++;

@@ -20,24 +20,50 @@ import FSA.Transition;
  */
 @SuppressWarnings("serial")
 public class FMCATransition extends CATransition implements java.io.Serializable{ 
-	private boolean must;  
-	private int type; 
+	//private boolean must;  
+	public enum action{
+		PERMITTED,URGENT,GREEDY,LAZY
+	}
+	private action type;
 	/**
 	 * 
 	 * @param initial		source state
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public FMCATransition(int[] initial, int[] label2, int[] fina,boolean must){
+	public FMCATransition(int[] initial, int[] label2, int[] fina, action type){
 		super(initial,label2,fina);
-		this.must=must;
+		this.type=type;
+//		if (type!=action.PERMITTED)
+//			this.must=true;
 	}
 	
 	
-	
-		public boolean isMust()
+	public boolean isUrgent()
 	{
-		return this.must;
+		return (this.type==action.URGENT);
+	}
+	
+	public boolean isGreedy()
+	{
+		return (this.type==action.GREEDY);
+	}
+	
+	
+	public boolean isLazy()
+	{
+		return (this.type==action.LAZY);
+	}
+	
+	
+	public boolean isMust()
+	{
+		return (this.type!=action.PERMITTED);
+	}
+	
+	public action getType()
+	{
+		return this.type;
 	}
 	
 	/**
@@ -45,25 +71,29 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 */
 	public String toString()
 	{
-		if (this.must)
-			return "!("+Arrays.toString(getSource())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getArrival())+")";
-		else
-			return "("+Arrays.toString(getSource())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getArrival())+")";
+		switch (this.type) 
+		{
+			case PERMITTED: return "("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
+			case URGENT:return "!U("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
+			case GREEDY:return "!G("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
+			case LAZY:return "!L("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";		
+		}
+		return null;
 	}
 
 	public boolean equals(FMCATransition t)
 	{
 		FMCATransition tr=(FMCATransition) t;
-		int[] ip =tr.getSource();
+		int[] ip =tr.getSourceP();
 		int[] lp=tr.getLabelP();
-		int[] dp=tr.getArrival();
-		boolean must=tr.isMust();
-		return ( Arrays.equals(ip,getSource()))&&(Arrays.equals(lp,getLabelP()))&&(Arrays.equals(dp,this.getArrival())&&(this.must==must));
+		int[] dp=tr.getTargetP();
+		action type=tr.getType();
+		return ( Arrays.equals(ip,getSourceP()))&&(Arrays.equals(lp,getLabelP()))&&(Arrays.equals(dp,this.getTargetP())&&(this.type==type));
 	}	
 	
 	/**
 	 * 
-	 * @return	true if the  must transition request is matched 
+	 * @return	true if the  greedy/lazy transition request is matched 
 	 */
 	protected  boolean isMatched(FMCA aut)
 	{
@@ -71,20 +101,20 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 //		int[][] fs=aut.allFinalStates();
 		int[][] R=aut.getDanglingStates();
 		//MSCATransition[] unmatch = new MSCATransition[tr.length];
-		if ((this.request())
-			&&(this.isMust()))
+		if ((this.isRequest())
+			&&(this.isGreedy()||this.isLazy()))
 		{
 
 //			if (!MSCAUtil.contains(this.getSource(), fs)) // if source state is not final
 //				return true;
 			for (int j=0;j<tr.length;j++)	
 			{
-				if ((tr[j].match())
-					&&(tr[j].isMust())
-					&&(tr[j].receiver()==this.receiver())	//the same principal
-					&&(tr[j].getSource()[tr[j].receiver()]==this.getSource()[this.receiver()]) //the same source state					
-					&&(tr[j].getLabelP()[tr[j].receiver()]==this.getLabelP()[this.receiver()]) //the same request
-					&&(!FMCAUtil.contains(this.getSource(), R))) //source state is not redundant
+				if ((tr[j].isMatch())
+					&&((tr[j].isGreedy()&&this.isGreedy())||(tr[j].isUrgent()&&this.isUrgent()))//the same type (greedy or lazy)
+					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
+					&&(tr[j].getSourceP()[tr[j].getReceiver()]==this.getSourceP()[this.getReceiver()]) //the same source state					
+					&&(tr[j].getLabelP()[tr[j].getReceiver()]==this.getLabelP()[this.getReceiver()]) //the same request
+					&&(!FMCAUtil.contains(this.getSourceP(), R))) //source state is not redundant
 					{
 						return true;
 					}
@@ -92,9 +122,96 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		}
 		return false;
 	}
+
+
+
+	/**
+	 * 
+	 * @return a new request transition where the sender of the match is idle
+	 */
+	public FMCATransition extractRequestFromMatch()
+	{
+		if (!this.isMatch())
+			return null;
+		int length=this.getSourceP().length;
+		int sender=this.getSender();
+		int[] source=Arrays.copyOf(this.getSourceP(), length);
+		int[] target=Arrays.copyOf(this.getTargetP(), length);
+		int[] request=Arrays.copyOf(this.getLabelP(), length);
+		target[sender]=source[sender];  //the sender is now idle
+		request[sender]=0;  //swapping offer to idle
+		return new FMCATransition(source,request,target,this.type); //returning the request transition
+		
+	}
 	
 	/**
 	 * 
+	 * @return	true if the  lazy match transition is lazy unmatchable in aut
+	 */
+	protected  boolean isLazyUnmatchable(FMCA aut)
+	{
+		FMCATransition[] tr = aut.getTransition();
+//		int[][] fs=aut.allFinalStates();
+		//MSCATransition[] unmatch = new MSCATransition[tr.length];
+		if ((this.isMatch())
+			&&(this.isLazy()))
+		{
+			for (int j=0;j<tr.length;j++)	
+			{
+				if (this.equals(tr[j]))
+					return false; //the transition must not be in aut
+			}
+			FMCATransition t= this.extractRequestFromMatch(); //extract the request transition from this
+			return t.isMatched(aut); 
+		}
+		else
+			return false;
+	}
+	
+	/**
+	 * 
+	 * @param aut
+	 * @return	true if the transition is uncontrollable in aut
+	 */
+	protected boolean isUncontrollable(FMCA aut)
+	{
+		return this.isUrgent()||(this.isMatch()&&this.isGreedy())||this.isMatched(aut)||this.isLazyUnmatchable(aut);
+		
+	}
+	
+	protected boolean isForbidden(Product p)
+	{
+		return (FMCAUtil.getIndex(p.getForbidden(),this.getAction())>=0);
+	}
+	
+	protected boolean isRequired(Product p)
+	{
+		return (FMCAUtil.getIndex(p.getRequired(),this.getAction())>=0);		
+	}
+	
+	/**
+	 *
+	 * @param t
+	 * @return   source states of transitions in t 
+	 */
+	protected static int[][] getSources(FMCATransition[] t)
+	{
+		int[][] s= new int[t.length][];
+		int pointer=0;
+		for (int i=0;i<t.length;i++)
+		{
+			if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
+			{
+				s[pointer]=t[i].getSourceP();
+				pointer++;
+			}
+		}
+		s=FMCAUtil.removeTailsNull(s, pointer);
+		return s;
+	}
+
+	/**
+	 * It should not be necessary anymore for FMCA because it detects uncontrollable transitions, which contains the unmatched ones
 	 * @param t
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched in aut
@@ -107,9 +224,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		{
 			if (!t[i].isMatched(aut))
 			{
-				if (!FMCAUtil.contains(t[i].getSource(), s))
+				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
 				{
-					s[pointer]=t[i].getSource();
+					s[pointer]=t[i].getSourceP();
 					pointer++;
 				}
 			}
@@ -119,9 +236,8 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}
 	
 	/**
-	 * This method is different from the corresponding one in CATransition class because it deals with must transitions
+	 * This method is different from the corresponding one in CATransition class because it deals with necessary actions
 	 * 
-	 * TODO fix CAUtil to call this method
 	 * 
 	 * @param t				first transition to move
 	 * @param tt			second transition to move only in case of match
@@ -134,16 +250,20 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		if (tt!=null) //if it is a match
 		{
-			int[] s=((FMCATransition) t).getSource();
+			int[] s=((FMCATransition) t).getSourceP();
 			int[] l=((FMCATransition) t).getLabelP();
-			int[] d=((FMCATransition) t).getArrival();
-			int[] ss = ((FMCATransition) tt).getSource();
+			int[] d=((FMCATransition) t).getTargetP();
+			int[] ss = ((FMCATransition) tt).getSourceP();
 			int[] ll=((FMCATransition) tt).getLabelP();
-			int[] dd =((FMCATransition) tt).getArrival();
+			int[] dd =((FMCATransition) tt).getTargetP();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			int[] label = new int[insert.length+s.length+ss.length];
-			boolean must = ((FMCATransition) t).isMust() || ((FMCATransition) tt).isMust();
+			action type;
+			if (((FMCATransition) t).isRequest())
+				type=((FMCATransition) t).getType();
+			else
+				type=((FMCATransition) tt).getType();
 			int counter=0;
 			for (int i=0;i<insert.length;i++)
 			{
@@ -200,13 +320,13 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					dest[insert.length+counter+j]=dd[j];
 				}
 			}
-			return new FMCATransition(initial,label,dest,must);	
+			return new FMCATransition(initial,label,dest,type);	
 		}
-		else
+		else	//is not a match
 		{
-			int[] s=((FMCATransition) t).getSource();
+			int[] s=((FMCATransition) t).getSourceP();
 			int[] l=((FMCATransition) t).getLabelP();
-			int[] d=((FMCATransition) t).getArrival();
+			int[] d=((FMCATransition) t).getTargetP();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			int[] label = new int[insert.length+s.length];
@@ -242,7 +362,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				}
 				counter+=s.length; //record the shift due to the first CA 
 			}
-			return new FMCATransition(initial,label,dest,((FMCATransition) t).isMust());	
+			return new FMCATransition(initial,label,dest,((FMCATransition) t).getType());	
 		}
 	}
 }

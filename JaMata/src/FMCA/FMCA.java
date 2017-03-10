@@ -55,6 +55,8 @@ public class FMCA  extends CA implements java.io.Serializable
 //	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
 //			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
+	//TODO: add feature constraint
+	
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
 	 */
@@ -221,7 +223,7 @@ public class FMCA  extends CA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  t[pointert]=new FMCATransition(store[0],store[1],arr,false);
+									  t[pointert]=new FMCATransition(store[0],store[1],arr,FMCATransition.action.PERMITTED);
 									  what=0;
 									  pointert++;
 								  }
@@ -233,6 +235,15 @@ public class FMCA  extends CA implements java.io.Serializable
 						  }
 						  case "!": //a must transition
 						  {
+							  //TODO: check if the read operation works
+							  String stype= strLine.substring(1,2);
+							  FMCATransition.action type=null;
+							  switch (stype)
+							  {
+							  	case "U": type=FMCATransition.action.URGENT;
+							  	case "G": type=FMCATransition.action.GREEDY;
+							  	case "L": type=FMCATransition.action.LAZY;
+							  }
 							  String[] ss=strLine.split("]");
 							  int what=0;
 							  int[][] store=new int[2][];
@@ -256,7 +267,7 @@ public class FMCA  extends CA implements java.io.Serializable
 								  s.close();
 								  if (what==2)
 								  {
-									  t[pointert]=new FMCATransition(store[0],store[1],arr,true);
+									  t[pointert]=new FMCATransition(store[0],store[1],arr,type);
 									  what=0;
 									  pointert++;
 								  }
@@ -343,7 +354,11 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 
 	            		 int[] label=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            		 boolean isMust=!eElement.getAttribute("style").contains("dashed=1");
-	            		 t[trc]=new FMCATransition(source,label,target,isMust);
+	            		 if (!isMust)
+	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.PERMITTED);
+	            		 else
+	            			 //TODO: find a way to draw necessary actions
+	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.GREEDY);
 	            		 trc++;
 	            	 }
 	            	 else  //state
@@ -427,19 +442,19 @@ public class FMCA  extends CA implements java.io.Serializable
 			{
 				Element s; Element ta;
 				int source;
-				source=FMCAUtil.indexContains(t[i].getSource(), states);
+				source=FMCAUtil.indexContains(t[i].getSourceP(), states);
 				if (source==-1)
 				{
-					source=FMCAUtil.indexContains(t[i].getSource(), statesf);
+					source=FMCAUtil.indexContains(t[i].getSourceP(), statesf);
 					s=statesef[source];
 				}
 				else
 					s=statese[source];
 				int target;
-				target=FMCAUtil.indexContains(t[i].getArrival(), states);
+				target=FMCAUtil.indexContains(t[i].getTargetP(), states);
 				if (target==-1)
 				{
-					target=FMCAUtil.indexContains(t[i].getArrival(), statesf);
+					target=FMCAUtil.indexContains(t[i].getTargetP(), statesf);
 					ta=statesef[target];
 				}
 				else
@@ -597,11 +612,10 @@ public class FMCA  extends CA implements java.io.Serializable
 		FMCATransition[] finalTr = new FMCATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
 		{
-			int[] in=at[i].getSource();
+			int[] in=at[i].getSourceP();
 			int[] l=at[i].getLabelP();
-			int[] f= at[i].getArrival();
-			boolean must=at[i].isMust();
-			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),must);
+			int[] f= at[i].getTargetP();
+			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),at[i].getType());
 		}	
 		int[][] finalstates=getFinalStatesCA();
 		int[][] nf = new int[finalstates.length][];
@@ -672,97 +686,73 @@ public class FMCA  extends CA implements java.io.Serializable
 
 	
 	/**
-	 * compute the most permissive controller for modal agreement
+	 * compute the most permissive controller of product p
 	 * the algorithm is different from the corresponding of CA
 	 * 
 	 * @return the most permissive controller for modal agreement
 	 */
-	public FMCA mpc()
+	public FMCA mpc(Product p)
 	{
 		FMCA a = this.clone();
 		FMCATransition[] tr = a.getTransition();
-		FMCATransition[] rem= new FMCATransition[tr.length];  //solo per testing
+		FMCATransition[] rem = new FMCATransition[tr.length];  //solo per testing
 		//int[][] fs=a.allFinalStates();
 		int removed=0;
-		FMCATransition[] mustrequest=new FMCATransition[tr.length]; //initial  transitions
-		int pointer4=0;
+		
+		//I need to store the transitions, to check later on 
+		//if some controllable transition becomes uncontrollable
+		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
+		int badtransitioncounter=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if ((tr[i].request()))
+			if (!tr[i].isUncontrollable(this)&&(tr[i].isRequest()||tr[i].isForbidden(p))) //controllable and bad
 			{
-				if (!tr[i].isMust())
-				{
-					rem[removed]=tr[i];
-					tr[i] = null;
-					removed++;
-				}
-				else
-				{
-					mustrequest[pointer4]= new FMCATransition(tr[i].getSource(),tr[i].getLabelP(),tr[i].getArrival(),true);
-					pointer4++;
-					//if ((unmatch==null)||(!MSCAUtil.contains(tr[i], unmatch)))
-					if (tr[i].isMatched(a))
-					{
-						rem[removed]=tr[i];
-						tr[i] = null;
-						removed++;
-					}
-				}
+				rem[removed]=tr[i]; //solo per testing
+				tr[i] = null;
+				removed++;
+			}
+			else if (tr[i].isUncontrollable(this)&&(tr[i].isRequest()||tr[i].isForbidden(p))) 	//uncontrollable and bad
+			{	
+				badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				badtransitioncounter++;		
 			}
 		}
 
 		tr=  FMCAUtil.removeHoles(tr, removed);		
-		mustrequest=FMCAUtil.removeTailsNull(mustrequest, pointer4);
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
 		a.setTransition(tr); //K_0 
-		int[][] R=a.getDanglingStates();
-//		//all the source states of unmatched transitions
-//		unmatch=a.getUnmatch();
-//		if (unmatch!=null)
-//		{
-//			int pointer=0;
-//			int[][] R_0= new int[unmatch.length][];
-//			for (int i=0;i<unmatch.length;i++)
-//			{
-//				if (!MSCAUtil.contains(unmatch[i].getSource(),R_0))
-//				{
-//					R_0[pointer]=unmatch[i].getSource();
-//					pointer++;
-//				}
-//			}
-//			R_0=MSCAUtil.removeTailsNull(R_0, pointer);
-//			R=MSCAUtil.setUnion(R, R_0);
-//		}
-		int[][] R_0=FMCATransition.sourcesUnmatched(mustrequest, a);
-		R=FMCAUtil.setUnion(R, R_0);
+		
+
+		int[][] R_0=FMCATransition.getSources(badtransitions); 
+		int[][] R=FMCAUtil.setUnion(a.getDanglingStates(), R_0); //R_0
 		boolean update=false;
 		do{
 			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//all must transitions without redundant source state
-			//int[] index=new int[tr.length*R.length]; //the ith element of trcheck is the index[i] element of tr
-			int pointer2=0;
+			int trcheckpointer=0;
 			removed=0;
-			 rem= new FMCATransition[tr.length]; 
+			rem= new FMCATransition[tr.length]; 
 			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
 				if (!(tr[i]==null))
 				{
-					if (tr[i].isMust())
+					if (tr[i].isUncontrollable(this))
 					{   
-						if (FMCAUtil.contains(tr[i].getSource(), R))
+						if (FMCAUtil.contains(tr[i].getSourceP(), R))
 						{
-							rem[removed]=tr[i];
+							rem[removed]=tr[i];//solo per testing
 							tr[i]=null;
 							removed++;
 						}
 						else
 						{
-							trcheck[pointer2]=tr[i]; //we will check if the target state is redundant to update R
+							trcheck[trcheckpointer]=tr[i]; //we will check if the target state is redundant to update R
 							//index[pointer2]=i;
-							pointer2++;
+							trcheckpointer++;
 						}
 					}
-					else if (!tr[i].isMust()&&(FMCAUtil.contains(tr[i].getArrival(), R)))
+					else if (!tr[i].isUncontrollable(this)&&(FMCAUtil.contains(tr[i].getTargetP(), R)))
 					{
-						rem[removed]=tr[i];
+						rem[removed]=tr[i]; //solo per testing
 						tr[i]=null;
 						removed++;
 					}
@@ -771,30 +761,25 @@ public class FMCA  extends CA implements java.io.Serializable
 			tr=  FMCAUtil.removeHoles(tr, removed);
 			a.setTransition(tr);  //K_i
 			//update R
-			int[][] newR=new int[pointer2][];
-			int pointer3=0;
-			for (int i=0;i<pointer2;i++)//for all must transitions without redundant source state
+			int[][] newR=new int[trcheckpointer][];
+			int newRpointer=0;
+			int[][] danglingStates=a.getDanglingStates();
+			for (int i=0;i<trcheckpointer;i++)//for all must transitions without redundant source state
 			{
-				//for (int j=0;j<R.length;j++)//for all redundant states
-				//.{
-				//	if (Arrays.equals(trcheck[i].getArrival(), R[j])) 
-				//	{
-				//if arrival state is redundant,  add source state to R it has not been already added, we know that source state is not in R
+				//if target state is redundant,  add source state to R if it has not been already added, we know that source state is not in R
 				// setUnion removes duplicates we could skip the check
-						if ((FMCAUtil.contains(trcheck[i].getArrival(), a.getDanglingStates())&&(!FMCAUtil.contains(trcheck[i].getSource(),newR))))//&&(!MSCAUtil.contains(trcheck[i].getSource(), fs)))
-						{
-							newR[pointer3]=trcheck[i].getSource();
-							pointer3++;
-						}
-				//	}
-				//}
+				if ((FMCAUtil.contains(trcheck[i].getTargetP(), danglingStates)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),newR))))
+				{
+					newR[newRpointer]=trcheck[i].getSourceP();
+					newRpointer++;
+				}
 			}
-			update=(pointer3>0);
+			update=(newRpointer>0);
 			if (update)
 			{
-				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, pointer3));
+				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
 			}
-			int[][] su= FMCATransition.sourcesUnmatched(mustrequest, a);
+			int[][] su= FMCATransition.sourcesUnmatched(badtransitions, a);
 			int[][] newsources=	FMCAUtil.setUnion(R_0 ,su);
 			if (newsources.length!=R_0.length)
 			{
@@ -802,7 +787,6 @@ public class FMCA  extends CA implements java.io.Serializable
 				R=FMCAUtil.setUnion(R, R_0);
 				update=true;
 			}
-			int[][] danglingStates=a.getDanglingStates();
 			int[][] RwithDang=	FMCAUtil.setUnion(R ,danglingStates);
 			if (RwithDang.length!=R.length)
 			{
@@ -934,8 +918,8 @@ public class FMCA  extends CA implements java.io.Serializable
 		int pointer=1;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] start = t[i].getSource();
-			int[] arr = t[i].getArrival();
+			int[] start = t[i].getSourceP();
+			int[] arr = t[i].getTargetP();
 			
 			if (!FMCAUtil.contains(arr, s))
 			{
@@ -1055,19 +1039,19 @@ public class FMCA  extends CA implements java.io.Serializable
 		FMCATransition[] unmatch = new FMCATransition[tr.length];
 		for (int i=0;i<tr.length;i++)
 		{
-			if ((tr[i].request())
+			if ((tr[i].isRequest())
 				&&((tr[i].isMust())
-				&&(!FMCAUtil.contains(tr[i].getSource(), fs)))) // if source state is not final
+				&&(!FMCAUtil.contains(tr[i].getSourceP(), fs)))) // if source state is not final
 			{
 				boolean matched=false;
 				for (int j=0;j<tr.length;j++)	
 				{
-					if ((tr[j].match())
+					if ((tr[j].isMatch())
 						&&(tr[j].isMust())
-						&&(tr[j].receiver()==tr[i].receiver())	//the same principal
-						&&(tr[j].getSource()[tr[j].receiver()]==tr[i].getSource()[tr[i].receiver()]) //the same source state					
-						&&(tr[j].getLabelP()[tr[j].receiver()]==tr[i].getLabelP()[tr[i].receiver()]) //the same request
-						&&(!FMCAUtil.contains(tr[i].getSource(), R))) //source state is not redundant
+						&&(tr[j].getReceiver()==tr[i].getReceiver())	//the same principal
+						&&(tr[j].getSourceP()[tr[j].getReceiver()]==tr[i].getSourceP()[tr[i].getReceiver()]) //the same source state					
+						&&(tr[j].getLabelP()[tr[j].getReceiver()]==tr[i].getLabelP()[tr[i].getReceiver()]) //the same request
+						&&(!FMCAUtil.contains(tr[i].getSourceP(), R))) //source state is not redundant
 						{
 							matched=true; // the request is matched
 						}

@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
+import FMCA.Product;
 
 import com.mxgraph.analysis.StructuralException;
 import com.mxgraph.analysis.mxGraphProperties.GraphType;
@@ -592,7 +593,10 @@ public class EditorMenuBar extends JMenuBar
 				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(filename);
 				aut.printToFile();
-				FMCA controller=aut.mpc();
+				//TODO fix
+				int[] dummy=new int[1];
+				Product p=new Product(dummy,dummy);
+				FMCA controller = aut.mpc(p);
 				
 				controller.exportToXML("K_"+filename);
 			}

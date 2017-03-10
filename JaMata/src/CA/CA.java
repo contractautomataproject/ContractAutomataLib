@@ -378,9 +378,9 @@ public class CA  extends FSA implements java.io.Serializable
 		CATransition[] finalTr = new CATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
 		{
-			int[] in=at[i].getSource();
+			int[] in=at[i].getSourceP();
 			int[] l=at[i].getLabelP();
-			int[] f= at[i].getArrival();
+			int[] f= at[i].getTargetP();
 			finalTr[i] = new CATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
 		}
 		
@@ -415,8 +415,8 @@ public class CA  extends FSA implements java.io.Serializable
 			int label = tt.getLabelP()[i];
 			if(label!=0)
 			{
-				int source =  tt.getSource()[i];
-				int dest = tt.getArrival()[i];
+				int source =  tt.getSourceP()[i];
+				int dest = tt.getTargetP()[i];
 				int[] sou = new int[1];
 				sou[0]=source;
 				int[] des = new int[1];
@@ -458,7 +458,7 @@ public class CA  extends FSA implements java.io.Serializable
 		int removed=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (!t[i].match())
+			if (!t[i].isMatch())
 			{
 				t[i] = null;
 				removed++;
@@ -495,7 +495,7 @@ public class CA  extends FSA implements java.io.Serializable
 		int removed=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (t[i].request())
+			if (t[i].isRequest())
 			{
 				t[i] = null;
 				removed++;
@@ -589,25 +589,25 @@ public class CA  extends FSA implements java.io.Serializable
 		int[][] reach = this.reachableStates();
 		for (int i=0;i<t.length;i++)
 		{
-			if (t[i].match())
+			if (t[i].isMatch())
 			{
 				int[] l=t[i].getLabelP();
-				int s = t[i].sender();
+				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getSource()[s])&&(!Arrays.equals(reach[j],t[i].getSource())))
+					if ((reach[j][s]==t[i].getSourceP()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getSource(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSourceP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
 						{
 							int[][] re = new int[3][];
-							re[0]=t[i].getSource();
+							re[0]=t[i].getSourceP();
 							re[1]=t[i].getLabelP();
 							re[2]=reach[j];
 							return re;
@@ -638,25 +638,25 @@ public class CA  extends FSA implements java.io.Serializable
 		int[][] reach = this.reachableStates();
 		for (int i=0;i<t.length;i++)
 		{
-			if (!t[i].request())
+			if (!t[i].isRequest())
 			{
 				int[] l=t[i].getLabelP();
-				int s = t[i].sender();
+				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getSource()[s])&&(!Arrays.equals(reach[j],t[i].getSource())))
+					if ((reach[j][s]==t[i].getSourceP()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getSource(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSourceP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
 						{
 							int[][] re = new int[3][];
-							re[0]=t[i].getSource();
+							re[0]=t[i].getSourceP();
 							re[1]=t[i].getLabelP();
 							re[2]=reach[j];
 							return re;
@@ -684,8 +684,8 @@ public class CA  extends FSA implements java.io.Serializable
 		{
 			for(int j=i+1;j<t.length;j++)
 			{
-				if (Arrays.equals(t[i].getSource(), t[j].getSource())&&t[i].sender()!=t[j].sender())
-					return t[i].getSource();
+				if (Arrays.equals(t[i].getSourceP(), t[j].getSourceP())&&t[i].getSender()!=t[j].getSender())
+					return t[i].getSourceP();
 			}
 		}
 		return null;
@@ -706,7 +706,7 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointer=1;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] p = t[i].getArrival();
+			int[] p = t[i].getTargetP();
 			boolean found=false;
 			int j=0;
 			while((!found)&&(s[j]!=null))
@@ -767,8 +767,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getSource();
-			int[] d = t[i].getArrival();
+			int[] s = t[i].getSourceP();
+			int[] d = t[i].getTargetP();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)
@@ -804,8 +804,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getSource();
-			int[] d = t[i].getArrival();
+			int[] s = t[i].getSourceP();
+			int[] d = t[i].getTargetP();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)

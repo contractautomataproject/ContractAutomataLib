@@ -691,7 +691,10 @@ public class FMCAUtil extends CAUtil
 				case "9":
 					System.out.println("The most permissive controller of modal agreement for the last MSCA loaded is");
 					a = aut[aut.length-1];
-					FMCA mpc = a.mpc();
+					//TODO fix
+					int[] dummy=new int[1];
+					Product p=new Product(dummy,dummy);
+					FMCA mpc = a.mpc(p);
 					if (mpc!=null)
 					{
 						mpc.print();
