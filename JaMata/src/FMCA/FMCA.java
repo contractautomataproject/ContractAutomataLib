@@ -687,7 +687,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	/**
 	 * compute the most permissive controller of product p
-	 * the algorithm is different from the corresponding of CA
+	 * the algorithm is different from the corresponding of MSCA
 	 * 
 	 * @return the most permissive controller for modal agreement
 	 */
@@ -697,10 +697,13 @@ public class FMCA  extends CA implements java.io.Serializable
 		FMCATransition[] tr = a.getTransition();
 		FMCATransition[] rem = new FMCATransition[tr.length];  //solo per testing
 		//int[][] fs=a.allFinalStates();
-		int removed=0;
+		int removed = 0;
 		
 		//I need to store the transitions, to check later on 
 		//if some controllable transition becomes uncontrollable
+		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
+		int potentiallyUncontrollableCounter = 0;
+		
 		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
 		int badtransitioncounter=0;
 		for (int i=0;i<tr.length;i++)
@@ -711,23 +714,31 @@ public class FMCA  extends CA implements java.io.Serializable
 				tr[i] = null;
 				removed++;
 			}
-			else if (tr[i].isUncontrollable(this)&&(tr[i].isRequest()||tr[i].isForbidden(p))) 	//uncontrollable and bad
+			else if (tr[i].isUncontrollable(this)) 	//uncontrollable and bad
 			{	
-				badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				badtransitioncounter++;		
+				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
+				{
+					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+					badtransitioncounter++;		
+				}
+				else if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
+				{
+					potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+					potentiallyUncontrollableCounter++;		
+				}
 			}
 		}
 
 		tr=  FMCAUtil.removeHoles(tr, removed);		
 		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
 		a.setTransition(tr); //K_0 
 		
-
-		int[][] R_0=FMCATransition.getSources(badtransitions); 
-		int[][] R=FMCAUtil.setUnion(a.getDanglingStates(), R_0); //R_0
+		int[][] unmatchedOrLazyunmatchable=new int[potentiallyUncontrollable.length][];
+		int[][] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
 		boolean update=false;
 		do{
-			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//all must transitions without redundant source state
+			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
 			int trcheckpointer=0;
 			removed=0;
 			rem= new FMCATransition[tr.length]; 
@@ -737,7 +748,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				{
 					if (tr[i].isUncontrollable(this))
 					{   
-						if (FMCAUtil.contains(tr[i].getSourceP(), R))
+						if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
 						{
 							rem[removed]=tr[i];//solo per testing
 							tr[i]=null;
@@ -745,12 +756,11 @@ public class FMCA  extends CA implements java.io.Serializable
 						}
 						else
 						{
-							trcheck[trcheckpointer]=tr[i]; //we will check if the target state is redundant to update R
-							//index[pointer2]=i;
+							trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state
 							trcheckpointer++;
 						}
 					}
-					else if (!tr[i].isUncontrollable(this)&&(FMCAUtil.contains(tr[i].getTargetP(), R)))
+					else if (!tr[i].isUncontrollable(this)&&(FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
 					{
 						rem[removed]=tr[i]; //solo per testing
 						tr[i]=null;
@@ -760,46 +770,54 @@ public class FMCA  extends CA implements java.io.Serializable
 			} 
 			tr=  FMCAUtil.removeHoles(tr, removed);
 			a.setTransition(tr);  //K_i
-			//update R
+			//
+			//
+			// building R_i
+			//
+			//
+			int[][] danglingStates = a.getDanglingStates();
 			int[][] newR=new int[trcheckpointer][];
 			int newRpointer=0;
-			int[][] danglingStates=a.getDanglingStates();
-			for (int i=0;i<trcheckpointer;i++)//for all must transitions without redundant source state
+			
+			for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state
 			{
-				//if target state is redundant,  add source state to R if it has not been already added, we know that source state is not in R
+				//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
 				// setUnion removes duplicates we could skip the check
-				if ((FMCAUtil.contains(trcheck[i].getTargetP(), danglingStates)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),newR))))
+				if ((FMCAUtil.contains(trcheck[i].getTargetP(), danglingStates)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
 				{
 					newR[newRpointer]=trcheck[i].getSourceP();
 					newRpointer++;
 				}
 			}
-			update=(newRpointer>0);
+			//add dangling states to R
+			int[][] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
+			update = (RwithDang.length!=R.length);
 			if (update)
+				R = RwithDang;
+			
+			//add source states of uncontrollable transitions with redundant target to R
+			if (newRpointer>0)
 			{
 				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
-			}
-			int[][] su= FMCATransition.sourcesUnmatched(badtransitions, a);
-			int[][] newsources=	FMCAUtil.setUnion(R_0 ,su);
-			if (newsources.length!=R_0.length)
-			{
-				R_0=newsources;
-				R=FMCAUtil.setUnion(R, R_0);
 				update=true;
 			}
-			int[][] RwithDang=	FMCAUtil.setUnion(R ,danglingStates);
-			if (RwithDang.length!=R.length)
+			
+			//add source states of uncontrollable transitions that were previously controllable
+			int[][] su= FMCATransition. areMatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
+			int[][] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
+			if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
 			{
-				R=RwithDang;
+				unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
+				R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
 				update=true;
 			}
+			
 		}while(update);
 		
-		if (FMCAUtil.contains(a.getInitialCA(), R))
+		//if initial state is bad or not all required actions are fired
+		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
 			return null;
 		
-//		tr=  MSCAUtil.removeHoles(tr, removed);
-//		a.setTransition(tr);
 		a = (FMCA) FMCAUtil.removeUnreachable(a);
 		return a;
 	}

@@ -211,18 +211,17 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}
 
 	/**
-	 * It should not be necessary anymore for FMCA because it detects uncontrollable transitions, which contains the unmatched ones
 	 * @param t
 	 * @param aut
-	 * @return   source states of transitions in t that are unmatched in aut
+	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
 	 */
-	protected static int[][] sourcesUnmatched(FMCATransition[] t, FMCA aut)
+	protected static int[][] areMatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
 	{
 		int[][] s= new int[t.length][];
 		int pointer=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (!t[i].isMatched(aut))
+			if ((!t[i].isMatched(aut))||(t[i].isLazyUnmatchable(aut)))
 			{
 				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
 				{
