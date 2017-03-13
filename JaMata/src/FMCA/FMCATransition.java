@@ -181,7 +181,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	
 	protected boolean isForbidden(Product p)
 	{
-		return (FMCAUtil.getIndex(p.getForbidden(),this.getAction())>=0);
+		return (FMCAUtil.getIndex(p.getForbidden(),Math.abs(this.getAction()))>=0);
 	}
 	
 	protected boolean isRequired(Product p)

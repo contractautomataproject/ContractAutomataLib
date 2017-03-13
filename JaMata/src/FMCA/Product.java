@@ -6,8 +6,17 @@ public class Product {
 	
 	public Product(int[] r, int[] f)
 	{
-		this.required=r;
-		this.forbidden=f;
+		//all positive integers, to avoid sign mismatches
+		int[] rp = new int[r.length];
+		for (int i=0;i<r.length;i++)
+			rp[i]=Math.abs(r[i]);
+
+		int[] fp = new int[f.length];
+		for (int i=0;i<f.length;i++)
+			fp[i]=Math.abs(f[i]);
+
+		this.required=rp;
+		this.forbidden=fp;
 	}
 
 	public int[] getRequired()

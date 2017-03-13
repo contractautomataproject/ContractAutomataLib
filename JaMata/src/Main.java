@@ -26,7 +26,7 @@ public class Main {
 			InputStreamReader reader = new InputStreamReader (System.in);
 	        BufferedReader myInput = new BufferedReader (reader);
 	        System.out.println("  ****	JaMaTa	****");
-	        System.out.println("Press 3 for FSA  4 for CA and 5 for MSCA");
+	        System.out.println("Press 3 for FSA  4 for CA and 5 for FMCA");
 	        int type = Integer.parseInt(myInput.readLine());
 	        if (type == 4)
 	        {
@@ -35,7 +35,7 @@ public class Main {
 	        }
 	        else if (type == 5)
 	        {
-	        	FMCAUtil.MSCATest();
+	        	FMCAUtil.FMCATest();
 	        	return;
 	        }
 	        System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for creating a new one");

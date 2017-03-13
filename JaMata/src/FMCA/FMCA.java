@@ -235,14 +235,13 @@ public class FMCA  extends CA implements java.io.Serializable
 						  }
 						  case "!": //a must transition
 						  {
-							  //TODO: check if the read operation works
 							  String stype= strLine.substring(1,2);
 							  FMCATransition.action type=null;
 							  switch (stype)
 							  {
-							  	case "U": type=FMCATransition.action.URGENT;
-							  	case "G": type=FMCATransition.action.GREEDY;
-							  	case "L": type=FMCATransition.action.LAZY;
+							  	case "U": type=FMCATransition.action.URGENT;break;
+							  	case "G": type=FMCATransition.action.GREEDY;break;
+							  	case "L": type=FMCATransition.action.LAZY;break;
 							  }
 							  String[] ss=strLine.split("]");
 							  int what=0;
@@ -714,25 +713,30 @@ public class FMCA  extends CA implements java.io.Serializable
 				tr[i] = null;
 				removed++;
 			}
-			else if (tr[i].isUncontrollable(this)) 	//uncontrollable and bad
+		}
+		tr=  FMCAUtil.removeHoles(tr, removed);		
+		a.setTransition(tr); //K_0 
+		
+		//computing R_0
+		for (int i=0;i<tr.length;i++)
+		{
+			if (tr[i].isUncontrollable(this)) 	//uncontrollable and bad
 			{	
 				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
 				{
 					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
 					badtransitioncounter++;		
 				}
-				else if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
-				{
-					potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-					potentiallyUncontrollableCounter++;		
-				}
+			}
+			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
 			}
 		}
 
-		tr=  FMCAUtil.removeHoles(tr, removed);		
 		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
 		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
-		a.setTransition(tr); //K_0 
 		
 		int[][] unmatchedOrLazyunmatchable=new int[potentiallyUncontrollable.length][];
 		int[][] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0

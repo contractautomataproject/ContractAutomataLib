@@ -7,7 +7,7 @@ import java.util.Arrays;
 import CA.CAUtil;
 
 /**
- * Utilities for MSCA: product, aproduct
+ * Utilities for FMCA: product, aproduct
  * 
  * @author Davide Basile
  *
@@ -639,11 +639,11 @@ public class FMCAUtil extends CAUtil
 //	}
 
 	/**
-	 * Similar to CATest but with only the operations implemented for MSCA
+	 * Similar to CATest but with only the operations implemented for FMCA
 	 * 
 	 * Testing the CA
 	 */
-	public static void MSCATest()
+	public static void FMCATest()
 	{
 		try{
 			InputStreamReader reader = new InputStreamReader (System.in);
@@ -672,10 +672,10 @@ public class FMCAUtil extends CAUtil
 					break;
 
 				case "2":
-					System.out.println("Computing the projection of the last MSCA loaded, insert the index of the principal:");
+					System.out.println("Computing the projection of the last FMCA loaded, insert the index of the principal:");
 					s=myInput.readLine();
 					//int ind = Integer.parseInt(s);
-					//MSCA projected = aut[aut.length-1].proj(ind);
+					//FMCA projected = aut[aut.length-1].proj(ind);
 					//projected.print();
 					//projected.printToFile();
 					break;
@@ -689,11 +689,12 @@ public class FMCAUtil extends CAUtil
 
 				
 				case "9":
-					System.out.println("The most permissive controller of modal agreement for the last MSCA loaded is");
+					System.out.println("The most permissive controller of modal agreement for the last FMCA loaded is");
 					a = aut[aut.length-1];
 					//TODO fix
-					int[] dummy=new int[1];
-					Product p=new Product(dummy,dummy);
+					int[] R={3};
+					int[] F={2};
+					Product p=new Product(R,F);
 					FMCA mpc = a.mpc(p);
 					if (mpc!=null)
 					{
@@ -708,7 +709,7 @@ public class FMCAUtil extends CAUtil
 	
 	/**
 	 * 
-	 * identical to the method of CAUtil,  I just substituted CA with MSCA and CATransition with MSCATransition,  
+	 * identical to the method of CAUtil,  I just substituted CA with FMCA and CATransition with FMCATransition,  
 	 * @return
 	 */
 	protected static FMCA[] load()
