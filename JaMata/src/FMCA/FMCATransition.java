@@ -99,12 +99,11 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		FMCATransition[] tr = aut.getTransition();
 //		int[][] fs=aut.allFinalStates();
-		int[][] R=aut.getDanglingStates();
 		//MSCATransition[] unmatch = new MSCATransition[tr.length];
 		if ((this.isRequest())
 			&&(this.isGreedy()||this.isLazy()))
 		{
-
+			int[][] R=aut.getDanglingStates();
 //			if (!MSCAUtil.contains(this.getSource(), fs)) // if source state is not final
 //				return true;
 			for (int j=0;j<tr.length;j++)	

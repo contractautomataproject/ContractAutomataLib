@@ -81,7 +81,7 @@ import com.mxgraph.view.mxGraphView;
 
 public class EditorMenuBar extends JMenuBar
 {
-
+	String lastDir;
 	/**
 	 * 
 	 */
@@ -466,7 +466,7 @@ public class EditorMenuBar extends JMenuBar
 		}
 		
 		
-		menu = add(new JMenu("MSCAT"));
+		menu = add(new JMenu("FMCAT"));
 
 		item = menu.add(new JMenuItem("Import Automaton"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
@@ -478,7 +478,7 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				//BasicGraphEditor editor = EditorActions.getEditor(e);
-				String lastDir="";
+				//String lastDir="";
 
 				if (editor != null)
 				{
@@ -490,8 +490,10 @@ public class EditorMenuBar extends JMenuBar
 
 						if (graph != null)
 						{
-							String wd = (lastDir != null) ? lastDir : System
-									.getProperty("user.dir");
+							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+							
+							String wd=System.getProperty("user.dir");
+							
 
 							JFileChooser fc = new JFileChooser(wd);
 
@@ -512,7 +514,7 @@ public class EditorMenuBar extends JMenuBar
 							fc.addChoosableFileFilter(defaultFilter);
 
 							fc.addChoosableFileFilter(new DefaultFileFilter(".data",
-									"MSCA description " + mxResources.get("file")
+									"FMCA description " + mxResources.get("file")
 											+ " (.data)"));
 							
 							fc.setFileFilter(defaultFilter);
@@ -594,8 +596,9 @@ public class EditorMenuBar extends JMenuBar
 				FMCA aut= FMCA.importFromXML(filename);
 				aut.printToFile();
 				//TODO fix
-				int[] dummy=new int[1];
-				Product p=new Product(dummy,dummy);
+				int[] R={3};
+				int[] F={2};
+				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
 				
 				controller.exportToXML("K_"+filename);
@@ -657,7 +660,7 @@ public class EditorMenuBar extends JMenuBar
 		// Creates the help menu
 		menu = add(new JMenu(mxResources.get("help")));
 
-		item = menu.add(new JMenuItem("aboutMSCAT"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("aboutFMCAT"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*

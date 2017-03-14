@@ -352,12 +352,14 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 
 	            		 
 	            		 int[] label=FMCAUtil.getArray(eElement.getAttribute("value"));
-	            		 boolean isMust=!eElement.getAttribute("style").contains("dashed=1");
-	            		 if (!isMust)
-	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.PERMITTED);
-	            		 else
-	            			 //TODO: find a way to draw necessary actions
-	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.GREEDY);
+	            		 if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
+	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.URGENT);//red
+	            		 else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
+	 	            		 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.GREEDY); //orange
+	            		 else if (eElement.getAttribute("style").contains("strokeColor=#00FF00"))
+	 	            		 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.LAZY); //green
+	            		 else 
+	 	            		 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.PERMITTED); //otherwise
 	            		 trc++;
 	            	 }
 	            	 else  //state
@@ -458,7 +460,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				}
 				else
 					ta=statese[target];
-				createElementEdge(doc,root,Integer.toString(i+2+states.length+statesf.length),s,ta,Arrays.toString(t[i].getLabelP()),!t[i].isMust());
+				createElementEdge(doc,root,Integer.toString(i+2+states.length+statesf.length),s,ta,Arrays.toString(t[i].getLabelP()),t[i].getType());
 			}
 			//edges
 			/* createElementEdge(doc,root,"4",state1,state2,"a!");
@@ -484,13 +486,18 @@ public class FMCA  extends CA implements java.io.Serializable
 			return null;
 		}
 	}
-	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,boolean may)
+	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,FMCATransition.action type)
 	{
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
 		Attr style=doc.createAttribute("style");
-		if (may)
-			style.setValue("straight;dashed=1");
+		
+		if (type==FMCATransition.action.URGENT)
+			style.setValue("straight;strokeColor=#FF0000");
+		else if (type==FMCATransition.action.GREEDY)
+				style.setValue("straight;strokeColor=#FFA500");
+		else if (type==FMCATransition.action.LAZY)
+			style.setValue("straight;strokeColor=#00FF00");
 		else
 			style.setValue("straight");
 		Attr id1=doc.createAttribute("id");
@@ -519,9 +526,23 @@ public class FMCA  extends CA implements java.io.Serializable
 		Element mxPointTarget=doc.createElement("mxPoint");
 		mxPointTarget.setAttribute("as","targetPoint");
 		mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
-		mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
 		mxGeometry1.appendChild(mxPointTarget);
 		
+		Element pointArray=doc.createElement("Array");
+		pointArray.setAttribute("as","points");
+		Element mxPoint=doc.createElement("mxPoint");
+		float coordinate=(Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x")) 
+				+ Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"))
+				)/2;
+		mxPoint.setAttribute("x", coordinate+"");
+		coordinate=(Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y")) 
+				+ Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"))
+				)/2;
+		mxPoint.setAttribute("y", coordinate+"");
+		pointArray.appendChild(mxPoint);
+		
+		mxGeometry1.appendChild(pointArray);
 		mxcell1.appendChild(mxGeometry1);
 		root.appendChild(mxcell1);
 		return mxcell1;		
@@ -600,6 +621,22 @@ public class FMCA  extends CA implements java.io.Serializable
 		return t;
 	}
 	
+	/**
+	 * @return	copy Transitions
+	 */
+	public  FMCATransition[] copyTransition()
+	{
+		FMCATransition[] at = this.getTransition();
+		FMCATransition[] finalTr = new FMCATransition[at.length];
+		for(int i=0;i<finalTr.length;i++)
+		{
+			int[] in=at[i].getSourceP();
+			int[] l=at[i].getLabelP();
+			int[] f= at[i].getTargetP();
+			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),at[i].getType());
+		}
+		return finalTr;
+	}
 	
 	/**
 	 * compared to CA this method also clones the must transitions
@@ -607,6 +644,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	public FMCA clone()
 	{
+		//TODO: call copyTransitions method and use inherited method
 		FMCATransition[] at = this.getTransition();
 		FMCATransition[] finalTr = new FMCATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
@@ -705,22 +743,27 @@ public class FMCA  extends CA implements java.io.Serializable
 		
 		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
 		int badtransitioncounter=0;
+		
+		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+		//and this operation affects the set of uncontrollable transitions in K_i
+		FMCATransition[] trcopy=a.copyTransition();
 		for (int i=0;i<tr.length;i++)
 		{
-			if (!tr[i].isUncontrollable(this)&&(tr[i].isRequest()||tr[i].isForbidden(p))) //controllable and bad
+			if (!tr[i].isUncontrollable(a)&&(tr[i].isRequest()||tr[i].isForbidden(p))) //controllable and bad
 			{
 				rem[removed]=tr[i]; //solo per testing
-				tr[i] = null;
+				trcopy[i] = null;
 				removed++;
 			}
 		}
+		tr=trcopy;
 		tr=  FMCAUtil.removeHoles(tr, removed);		
 		a.setTransition(tr); //K_0 
 		
 		//computing R_0
 		for (int i=0;i<tr.length;i++)
 		{
-			if (tr[i].isUncontrollable(this)) 	//uncontrollable and bad
+			if (tr[i].isUncontrollable(a)) 	//uncontrollable and bad
 			{	
 				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
 				{
@@ -746,16 +789,20 @@ public class FMCA  extends CA implements java.io.Serializable
 			int trcheckpointer=0;
 			removed=0;
 			rem= new FMCATransition[tr.length]; 
+			
+			//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+			//and this operation affects the set of uncontrollable transitions in K_i
+			trcopy=a.copyTransition();
 			for (int i=0;i<tr.length;i++)  //for all transitions
 			{
 				if (!(tr[i]==null))
 				{
-					if (tr[i].isUncontrollable(this))
+					if (tr[i].isUncontrollable(a)) 
 					{   
 						if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
 						{
 							rem[removed]=tr[i];//solo per testing
-							tr[i]=null;
+							trcopy[i]=null;
 							removed++;
 						}
 						else
@@ -764,14 +811,15 @@ public class FMCA  extends CA implements java.io.Serializable
 							trcheckpointer++;
 						}
 					}
-					else if (!tr[i].isUncontrollable(this)&&(FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
+					else if (!tr[i].isUncontrollable(a)&&(FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
 					{
 						rem[removed]=tr[i]; //solo per testing
-						tr[i]=null;
+						trcopy[i]=null;
 						removed++;
 					}
 				}
 			} 
+			tr=trcopy;
 			tr=  FMCAUtil.removeHoles(tr, removed);
 			a.setTransition(tr);  //K_i
 			//
@@ -822,6 +870,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
 			return null;
 		
+		a.getDanglingStates();
 		a = (FMCA) FMCAUtil.removeUnreachable(a);
 		return a;
 	}
@@ -1020,30 +1069,51 @@ public class FMCA  extends CA implements java.io.Serializable
 		int[][] fs = this.allFinalStates();
 		int[][] redundantStates = new int[this.prodStates()][];
 		int[][] allStates = this.allStates();
-		int pointer=0;
+		int redundantStatesPointer=0;
 		for (int ind=0;ind<allStates.length;ind++)
 		{
-				// for each state checks if  is reachable from one of the final states of the ca, and if it is reachable
-				boolean remove=true;
+				//TODO check if it is possible to check reachability from initial state only once
+				// for each state checks if it reaches one of the final states  and if it is reachable from the initial state
+				int[] pointervisited = new int[1];
+				pointervisited[0]=0;
+				
+				//I need to check the reachability from initial state only once!
+				boolean remove=!FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],
+						pointervisited,reachable,unreachable,pointerreachable,pointerunreachable);  	
+				
+				if (!remove) //if it is reachable from initial state
+				{
+					remove=true;  // at the end of the loop if remove=true none of final states is reachable
+					for (int i=0;i<fs.length;i++)
+					{
+						pointervisited = new int[1];
+						pointervisited[0]=0;
+						if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,
+								reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  
+							remove=false;
+					}
+				}
+				/*boolean remove=true;
 				for (int i=0;i<fs.length;i++)
 				{
 					int[] pointervisited = new int[1];
 					pointervisited[0]=0;
-					if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
-						&&(FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
+					// note that pointervisited is not reinitialised before checking reachability from initial state
+					if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],
+							pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
+						&&(FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],
+								pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
 						remove=false;
-					pointervisited = new int[1];
-					pointervisited[0]=0;
-				}
-				if ((remove)&&(!FMCAUtil.contains(allStates[ind],redundantStates)))//non dovrebbe essercene bisogno
+				}*/
+				if ((remove))//&&(!FMCAUtil.contains(allStates[ind],redundantStates)))//there should be no need for this
 				{
-					redundantStates[pointer]=allStates[ind];
-					pointer++;
+					redundantStates[redundantStatesPointer]=allStates[ind];
+					redundantStatesPointer++;
 				}
 													
 		}
 		//remove null space in array redundantStates
-		redundantStates = FMCAUtil.removeTailsNull(redundantStates, pointer);
+		redundantStates = FMCAUtil.removeTailsNull(redundantStates, redundantStatesPointer);
 		
 		return redundantStates;
 	}

@@ -399,7 +399,7 @@ public class CAUtil
 		{
 			if (Arrays.equals(visited[j],state))
 			{
-				return false;
+				return false;		//detected a loop, state has not been reached 
 			}
 		}
 		visited[pointervisited[0]]=state;
