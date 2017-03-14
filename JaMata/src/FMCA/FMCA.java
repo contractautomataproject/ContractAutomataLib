@@ -1062,10 +1062,10 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	protected int[][] getDanglingStates()
 	{
-		int pointerreachable=0;
+		/*int pointerreachable=0;
 		int pointerunreachable=0;
 		int[][] reachable = new int[this.prodStates()][]; 
-		int[][] unreachable = new int[this.prodStates()][];
+		int[][] unreachable = new int[this.prodStates()][];*/
 		int[][] fs = this.allFinalStates();
 		int[][] redundantStates = new int[this.prodStates()][];
 		int[][] allStates = this.allStates();
@@ -1079,7 +1079,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				
 				//I need to check the reachability from initial state only once!
 				boolean remove=!FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],
-						pointervisited,reachable,unreachable,pointerreachable,pointerunreachable);  	
+						pointervisited,null,null,0,0);  	
 				
 				if (!remove) //if it is reachable from initial state
 				{
@@ -1089,7 +1089,7 @@ public class FMCA  extends CA implements java.io.Serializable
 						pointervisited = new int[1];
 						pointervisited[0]=0;
 						if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,
-								reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  
+								null,null,0,0)&&remove))  
 							remove=false;
 					}
 				}
