@@ -7,6 +7,8 @@
 		<add as="fontSize" value="12"/>
 		<add as="fontColor" value="#1d258f"/>
 		<add as="fontFamily" value="Verdana"/>
+		<add as="width" value="50"/>
+		<add as="heigth" value="50"/>
 	</add>
 	<add as="defaultEdge" extend="defaultEdge">
 		<add as="labelBackgroundColor" value="white"/>

@@ -68,9 +68,9 @@ public class SchemaEditorMenuBar extends JMenuBar
 
 		menu.addSeparator();
 
-		menu.add(editor.bind(mxResources.get("import"), new ImportAction(),
+		/*menu.add(editor.bind(mxResources.get("import"), new ImportAction(),
 				"/com/mxgraph/examples/swing/images/open.gif"));
-		menu.add(editor.bind(mxResources.get("save"), new SaveAction(false),
+		*/menu.add(editor.bind(mxResources.get("save"), new SaveAction(false),
 				"/com/mxgraph/examples/swing/images/save.gif"));
 		menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(true),
 				"/com/mxgraph/examples/swing/images/saveas.gif"));

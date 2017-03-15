@@ -10,7 +10,9 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -99,7 +101,15 @@ public class EditorMenuBar extends JMenuBar
 	{
 		final mxGraphComponent graphComponent = editor.getGraphComponent();
 		final mxGraph graph = graphComponent.getGraph();
-
+		
+		graph.setDisconnectOnMove(false);
+		graph.setEdgeLabelsMovable(false);
+		//graph.setAllowDanglingEdges(false);
+		graph.setAllowLoops(true);
+		graph.setCellsResizable(false);
+		graph.setCellStyles("width","50.0");
+		graph.setCellStyles("heigth","50.0");
+		
 		JMenu menu = null;
 		JMenu submenu = null;
 
@@ -113,7 +123,7 @@ public class EditorMenuBar extends JMenuBar
 		menu.addSeparator();
 		
 			
-		menu.add(editor.bind("Import Automaton", new ImportAction(), "/com/mxgraph/examples/swing/images/save.gif"));
+		//menu.add(editor.bind("Import Automaton", new ImportAction(), "/com/mxgraph/examples/swing/images/save.gif"));
 		menu.add(editor.bind(mxResources.get("save"), new SaveAction(false), "/com/mxgraph/examples/swing/images/save.gif"));
 		menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(true), "/com/mxgraph/examples/swing/images/saveas.gif"));
 
@@ -148,20 +158,20 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(editor.bind(mxResources.get("selectAll"), mxGraphActions.getSelectAllAction()));
 		menu.add(editor.bind(mxResources.get("selectNone"), mxGraphActions.getSelectNoneAction()));
 
-		menu.addSeparator();
+		//menu.addSeparator();
 
-		menu.add(editor.bind(mxResources.get("warning"), new WarningAction()));
-		menu.add(editor.bind(mxResources.get("edit"), mxGraphActions.getEditAction()));
+		//menu.add(editor.bind(mxResources.get("warning"), new WarningAction()));
+		//menu.add(editor.bind(mxResources.get("edit"), mxGraphActions.getEditAction()));
 
 		// Creates the view menu
 		menu = add(new JMenu(mxResources.get("view")));
-
-		JMenuItem item = menu.add(new TogglePropertyItem(graphComponent, mxResources.get("pageLayout"), "PageVisible", true,
+		JMenuItem item;
+/*		JMenuItem item = menu.add(new TogglePropertyItem(graphComponent, mxResources.get("pageLayout"), "PageVisible", true,
 				new ActionListener()
 				{
-					/**
+					*//**
 					 * 
-					 */
+					 *//*
 					public void actionPerformed(ActionEvent e)
 					{
 						if (graphComponent.isPageVisible() && graphComponent.isCenterPage())
@@ -177,10 +187,10 @@ public class EditorMenuBar extends JMenuBar
 
 		item.addActionListener(new ActionListener()
 		{
-			/*
+			
 			 * (non-Javadoc)
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-			 */
+			 
 			public void actionPerformed(ActionEvent e)
 			{
 				if (e.getSource() instanceof TogglePropertyItem)
@@ -193,10 +203,10 @@ public class EditorMenuBar extends JMenuBar
 						// Scrolls the view to the center
 						SwingUtilities.invokeLater(new Runnable()
 						{
-							/*
+							
 							 * (non-Javadoc)
 							 * @see java.lang.Runnable#run()
-							 */
+							 
 							public void run()
 							{
 								graphComponent.scrollToCenter(true);
@@ -225,7 +235,7 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(new ToggleGridItem(editor, mxResources.get("grid")));
 		menu.add(new ToggleRulersItem(editor, mxResources.get("rulers")));
 
-		menu.addSeparator();
+		menu.addSeparator();*/
 
 		submenu = (JMenu) menu.add(new JMenu(mxResources.get("zoom")));
 
@@ -245,7 +255,7 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(editor.bind(mxResources.get("zoomIn"), mxGraphActions.getZoomInAction()));
 		menu.add(editor.bind(mxResources.get("zoomOut"), mxGraphActions.getZoomOutAction()));
 
-		menu.addSeparator();
+		/*menu.addSeparator();
 
 		menu.add(editor.bind(mxResources.get("page"), new ZoomPolicyAction(mxGraphComponent.ZOOM_POLICY_PAGE)));
 		menu.add(editor.bind(mxResources.get("width"), new ZoomPolicyAction(mxGraphComponent.ZOOM_POLICY_WIDTH)));
@@ -253,8 +263,8 @@ public class EditorMenuBar extends JMenuBar
 		menu.addSeparator();
 
 		menu.add(editor.bind(mxResources.get("actualSize"), mxGraphActions.getZoomActualAction()));
-
-		// Creates the format menu
+*/
+	/*	// Creates the format menu
 		menu = add(new JMenu(mxResources.get("format")));
 
 		populateFormatMenu(menu, editor);
@@ -342,7 +352,10 @@ public class EditorMenuBar extends JMenuBar
 				new StylesheetAction("/com/mxgraph/examples/swing/resources/basic-style.xml")));
 		submenu.add(editor.bind(mxResources.get("defaultStyle"), new StylesheetAction(
 				"/com/mxgraph/examples/swing/resources/default-style.xml")));
-
+*/
+		
+		//TODO Davide decomments if you need it
+		/*
 		// Creates the options menu
 		menu = add(new JMenu(mxResources.get("options")));
 
@@ -351,9 +364,9 @@ public class EditorMenuBar extends JMenuBar
 
 		submenu.add(new TogglePropertyItem(graphComponent, mxResources.get("preferPageSize"), "PreferPageSize", true, new ActionListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void actionPerformed(ActionEvent e)
 			{
 				graphComponent.zoomAndCenter();
@@ -379,9 +392,9 @@ public class EditorMenuBar extends JMenuBar
 
 		submenu.add(new TogglePropertyItem(graphComponent, mxResources.get("centerPage"), "CenterPage", true, new ActionListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void actionPerformed(ActionEvent e)
 			{
 				if (graphComponent.isPageVisible() && graphComponent.isCenterPage())
@@ -441,9 +454,9 @@ public class EditorMenuBar extends JMenuBar
 
 		submenu.add(new TogglePropertyItem(graph, mxResources.get("allowLoops"), "AllowLoops"));
 		submenu.add(new TogglePropertyItem(graph, mxResources.get("multigraph"), "Multigraph"));
-
+*/
 		// Creates the window menu
-		menu = add(new JMenu(mxResources.get("window")));
+		/*menu = add(new JMenu(mxResources.get("window")));
 
 		UIManager.LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
 
@@ -453,9 +466,9 @@ public class EditorMenuBar extends JMenuBar
 			
 			menu.add(new AbstractAction(lafs[i].getName())
 			{
-				/**
+				*//**
 				 * 
-				 */
+				 *//*
 				private static final long serialVersionUID = 7588919504149148501L;
 
 				public void actionPerformed(ActionEvent e)
@@ -464,7 +477,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 			});
 		}
-		
+*/		
 		
 		menu = add(new JMenu("FMCAT"));
 
@@ -578,6 +591,7 @@ public class EditorMenuBar extends JMenuBar
 			{
 				String filename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(filename);
+				aut.printToFile(filename);
 			}
 		});
 
@@ -594,14 +608,22 @@ public class EditorMenuBar extends JMenuBar
 			{
 				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(filename);
-				aut.printToFile();
+				aut.printToFile(filename);
 				//TODO fix
 				int[] R={3};
 				int[] F={2};
 				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
-				
-				controller.exportToXML("K_"+filename);
+				if (controller!=null)
+				{
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename K_"+filename,"Success!",JOptionPane.WARNING_MESSAGE);
+					controller.exportToXML("K_"+filename);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+					
 			}
 		});
 

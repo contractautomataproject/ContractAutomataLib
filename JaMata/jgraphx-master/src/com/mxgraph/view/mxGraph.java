@@ -445,7 +445,7 @@ public class mxGraph extends mxEventSource
 	 * Specifies if loops (aka self-references) are allowed.
 	 * Default is false.
 	 */
-	protected boolean allowLoops = false;
+	protected boolean allowLoops = true;
 
 	/**
 	 * Specifies the multiplicities to be used for validation of the graph.
@@ -473,7 +473,7 @@ public class mxGraph extends mxEventSource
 	 * Specifies if edges with disconnected terminals are
 	 * allowed in the graph. Default is false.
 	 */
-	protected boolean allowDanglingEdges = true;
+	protected boolean allowDanglingEdges = false;
 
 	/**
 	 * Specifies if edges that are cloned should be validated and only inserted
@@ -485,7 +485,7 @@ public class mxGraph extends mxEventSource
 	 * Specifies if edges should be disconnected from their terminals when they
 	 * are moved. Default is true.
 	 */
-	protected boolean disconnectOnMove = true;
+	protected boolean disconnectOnMove = false;
 
 	/**
 	 * Specifies if labels should be visible. This is used in

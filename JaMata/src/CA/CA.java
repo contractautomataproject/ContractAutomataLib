@@ -43,7 +43,7 @@ public class CA  extends FSA implements java.io.Serializable
 	        finalstates[0]= super.getFinalStates();
 	       // this.tra=(CATransition[])super.getTransition();
 	        //super.write(this);
-	        this.printToFile();
+	        this.printToFile("");
 		}
 		catch (Exception e){System.out.println("Errore inserimento");}
 	}
@@ -84,20 +84,26 @@ public class CA  extends FSA implements java.io.Serializable
 	/**
 	 * print the description of the CA to a file
 	 */
-	public void printToFile()
+	public void printToFile(String filename)
 	{
 		String name=null;
 		InputStreamReader reader = new InputStreamReader(System.in);
         BufferedReader myInput = new BufferedReader(reader);
 		try {
-			System.out.println("Do you want to save this automaton? (write yes or no)");
-			if (myInput.readLine().equals("yes"))
-			{	
-				System.out.println("Write the name of this automaton");
-				name= myInput.readLine();
+			if (filename=="")
+			{
+				System.out.println("Do you want to save this automaton? (write yes or no)");
+				if (myInput.readLine().equals("yes"))
+				{	
+					System.out.println("Write the name of this automaton");
+					name= myInput.readLine();
+				}
+				else return;
 			}
-			else return;
-			 PrintWriter pr = new PrintWriter(name+".data"); 
+			else
+				name=filename;
+			 
+			PrintWriter pr = new PrintWriter(name+".data"); 
 			 pr.println("Rank: "+this.rank);
 			 pr.println("Number of states: "+Arrays.toString(this.getStatesCA()));
 			 pr.println("Initial state: " +Arrays.toString(this.getInitialCA()));

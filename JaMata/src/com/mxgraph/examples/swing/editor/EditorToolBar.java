@@ -63,9 +63,9 @@ public class EditorToolBar extends JToolBar
 		add(editor.bind("Open", new OpenAction(),
 				"/com/mxgraph/examples/swing/images/open.gif"));
 
-		add(editor.bind("Import", new ImportAction(),
+		/*add(editor.bind("Import", new ImportAction(),
 				"/com/mxgraph/examples/swing/images/open.gif"));
-		add(editor.bind("Save", new SaveAction(false),
+		*/add(editor.bind("Save", new SaveAction(false),
 				"/com/mxgraph/examples/swing/images/save.gif"));
 		
 
@@ -95,9 +95,9 @@ public class EditorToolBar extends JToolBar
 		add(editor.bind("Redo", new HistoryAction(false),
 				"/com/mxgraph/examples/swing/images/redo.gif"));
 
-		addSeparator();
+		//addSeparator();
 
-		// Gets the list of available fonts from the local graphics environment
+/*		// Gets the list of available fonts from the local graphics environment
 		// and adds some frequently used fonts at the beginning of the list
 		GraphicsEnvironment env = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
@@ -115,9 +115,9 @@ public class EditorToolBar extends JToolBar
 
 		fontCombo.addActionListener(new ActionListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void actionPerformed(ActionEvent e)
 			{
 				String font = fontCombo.getSelectedItem().toString();
@@ -141,9 +141,9 @@ public class EditorToolBar extends JToolBar
 
 		sizeCombo.addActionListener(new ActionListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void actionPerformed(ActionEvent e)
 			{
 				mxGraph graph = editor.getGraphComponent().getGraph();
@@ -200,9 +200,9 @@ public class EditorToolBar extends JToolBar
 		// Sets the zoom in the zoom combo the current value
 		mxIEventListener scaleTracker = new mxIEventListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void invoke(Object sender, mxEventObject evt)
 			{
 				ignoreZoomChange = true;
@@ -231,9 +231,9 @@ public class EditorToolBar extends JToolBar
 
 		zoomCombo.addActionListener(new ActionListener()
 		{
-			/**
+			*//**
 			 * 
-			 */
+			 *//*
 			public void actionPerformed(ActionEvent e)
 			{
 				mxGraphComponent graphComponent = editor.getGraphComponent();
@@ -278,6 +278,6 @@ public class EditorToolBar extends JToolBar
 					}
 				}
 			}
-		});
+		});*/
 	}
 }

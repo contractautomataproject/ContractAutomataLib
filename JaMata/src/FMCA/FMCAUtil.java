@@ -668,7 +668,7 @@ public class FMCAUtil extends CAUtil
 					System.out.println("Computing the product automaton ... ");
 					prod = (FMCA) CAUtil.product(aut);
 					prod.print();
-			        prod.printToFile();
+			        prod.printToFile("");
 					break;
 
 				case "2":
@@ -684,7 +684,7 @@ public class FMCAUtil extends CAUtil
 					System.out.println("Computing the associative product automaton ... ");
 					prod = (FMCA) FMCAUtil.aproduct(aut);
 					prod.print();
-					prod.printToFile();
+					prod.printToFile("");
 					break;
 
 				
@@ -699,7 +699,7 @@ public class FMCAUtil extends CAUtil
 					if (mpc!=null)
 					{
 						mpc.print();
-						mpc.printToFile();
+						mpc.printToFile("");
 					}
 					break;								}				
 			}while(!s.equals("15"));

@@ -4,8 +4,10 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.TransferHandler;
 
+import com.mxgraph.examples.swing.editor.EditorActions.FMCAAction;
 import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
 import com.mxgraph.swing.util.mxGraphActions;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxResources;
 
 public class EditorPopupMenu extends JPopupMenu
@@ -49,6 +51,16 @@ public class EditorPopupMenu extends JPopupMenu
 				.setEnabled(selected);
 
 		addSeparator();
+		
+		//JMenu submenu = (JMenu) menu.add(new JMenu(mxResources.get("line")));
+
+		add(editor.bind("Urgent", new FMCAAction("Urgent", mxConstants.STYLE_STROKECOLOR),""));
+				//"/com/mxgraph/examples/swing/images/linecolor.gif"));
+		add(editor.bind("Greedy", new FMCAAction("Greedy", mxConstants.STYLE_STROKECOLOR),""));
+		add(editor.bind("Lazy", new FMCAAction("Lazy", mxConstants.STYLE_STROKECOLOR),""));
+		add(editor.bind("Permitted", new FMCAAction("Permitted", mxConstants.STYLE_STROKECOLOR),""));
+		
+	/*	addSeparator();
 
 		// Creates the format menu
 		JMenu menu = (JMenu) add(new JMenu(mxResources.get("format")));
@@ -77,6 +89,6 @@ public class EditorPopupMenu extends JPopupMenu
 
 		add(editor.bind(mxResources.get("selectAll"), mxGraphActions
 				.getSelectAllAction()));
-	}
+*/	}
 
 }

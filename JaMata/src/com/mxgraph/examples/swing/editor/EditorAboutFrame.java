@@ -39,7 +39,7 @@ public class EditorAboutFrame extends JDialog
 	public EditorAboutFrame(Frame owner)
 	{
 		super(owner);
-		setTitle("about MSCAT");//mxResources.get("aboutGraphEditor"));
+		setTitle("about FMCAT");//mxResources.get("aboutGraphEditor"));
 		setLayout(new BorderLayout());
 
 		// Creates the gradient panel
@@ -72,7 +72,7 @@ public class EditorAboutFrame extends JDialog
 				.createEmptyBorder(8, 8, 12, 8)));
 
 		// Adds title
-		JLabel titleLabel = new JLabel("about MSCAT");//mxResources.get("aboutGraphEditor"));
+		JLabel titleLabel = new JLabel("about FMCAT");//mxResources.get("aboutGraphEditor"));
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
 		titleLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 		titleLabel.setOpaque(false);
@@ -80,7 +80,7 @@ public class EditorAboutFrame extends JDialog
 
 		// Adds optional subtitle
 		JLabel subtitleLabel = new JLabel(
-				"MSCAT, GUI based on mxGraph");//"For more information visit http://www.mxgraph.com/");
+				"Featured Modal Contract Automata Tool, GUI based on mxGraph");//"For more information visit http://www.mxgraph.com/");
 		subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
 		subtitleLabel.setOpaque(false);
 		panel.add(subtitleLabel, BorderLayout.CENTER);

@@ -692,7 +692,7 @@ public class CAUtil
 					prod = CAUtil.product(aut);
 					prod.print();
 			        //FSA.write(prod);
-					prod.printToFile();
+					prod.printToFile("");
 					break;
 
 				case "2":
@@ -702,7 +702,7 @@ public class CAUtil
 					CA projected = aut[aut.length-1].proj(ind);
 					projected.print();
 					//FSA.write(projected);
-					projected.printToFile();
+					projected.printToFile("");
 					break;
 
 				case "3":
@@ -710,7 +710,7 @@ public class CAUtil
 					prod = CAUtil.aproduct(aut);
 					prod.print();
 			        //FSA.write(prod);
-					prod.printToFile();
+					prod.printToFile("");
 					break;
 
 				case "4":
@@ -721,7 +721,7 @@ public class CAUtil
 					else
 						System.out.println("The CA is not strongly safe");
 			        //FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 
 				case "5":
@@ -732,7 +732,7 @@ public class CAUtil
 					else
 						System.out.println("The CA does not admit strong agreement");
 			        //FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 
 				case "6":
@@ -743,7 +743,7 @@ public class CAUtil
 					else
 						System.out.println("The CA is not safe");
 			        //FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 
 				case "7":
@@ -754,7 +754,7 @@ public class CAUtil
 					else
 						System.out.println("The CA does not admit agreement");
 			        //FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 
 				case "8":
@@ -763,7 +763,7 @@ public class CAUtil
 					CA smpc = a.smpc();
 					smpc.print();
 					//FSA.write(smpc);
-					smpc.printToFile();
+					smpc.printToFile("");
 					break;
 
 				case "9":
@@ -772,7 +772,7 @@ public class CAUtil
 					CA mpc = a.mpc();
 					mpc.print();
 					//FSA.write(mpc);
-					mpc.printToFile();
+					mpc.printToFile("");
 					break;
 
 				case "10":
@@ -787,7 +787,7 @@ public class CAUtil
 						System.out.println("State "+Arrays.toString(bc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(bc[1])+" which is instead enabled in state "+Arrays.toString(bc[0]));
 					}
 			        //FSA.write(a);
-			        a.printToFile();
+			        a.printToFile("");
 					break;
 
 				case "11":
@@ -799,7 +799,7 @@ public class CAUtil
 					else
 						System.out.println("The CA has no mixed choice states");
 			        //FSA.write(a);
-			        a.printToFile();
+			        a.printToFile("");
 					break;
 
 				case "12":
@@ -814,7 +814,7 @@ public class CAUtil
 						System.out.println("State "+Arrays.toString(ebc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(ebc[1])+" which is instead enabled in state "+Arrays.toString(ebc[0]));
 					}
 			        //FSA.write(a);
-			        a.printToFile();
+			        a.printToFile("");
 					break;
 				case"13":
 					a = aut[aut.length-1];
@@ -824,7 +824,7 @@ public class CAUtil
 					for(int i=0;i<l.length;i++)
 						System.out.println(l[i].toString());
 					//FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 				case"14":
 					a = aut[aut.length-1];
@@ -834,7 +834,7 @@ public class CAUtil
 					for(int i=0;i<sl.length;i++)
 						System.out.println(sl[i].toString());
 					//FSA.write(a);
-					a.printToFile();
+					a.printToFile("");
 					break;
 				}				
 			}while(!s.equals("15"));

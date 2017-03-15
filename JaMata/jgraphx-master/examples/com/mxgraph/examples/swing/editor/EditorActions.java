@@ -1438,6 +1438,7 @@ public class EditorActions
 					// Check modified flag and display save dialog
 					mxCell root = new mxCell();
 					root.insert(new mxCell());
+					
 					graph.getModel().setRoot(root);
 
 					editor.setModified(false);

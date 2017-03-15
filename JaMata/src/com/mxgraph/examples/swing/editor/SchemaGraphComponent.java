@@ -140,6 +140,9 @@ public class SchemaGraphComponent extends mxGraphComponent
 	{
 		if (getGraph().getModel().isVertex(state.getCell()))
 		{
+			//TODO:Davide I changed the size here but sthi
+			state.setHeight(50.0);
+			state.setWidth(50.0);
 			return new Component[] { new JTableRenderer(state.getCell(), this) };
 		}
 

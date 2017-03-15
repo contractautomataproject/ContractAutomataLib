@@ -1,5 +1,4 @@
 package com.mxgraph.examples.swing.editor;
-import com.mxgraph.examples.swing.editor.EditorActions.ImportAction;
 
 
 import java.awt.Dimension;
@@ -10,15 +9,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.TransferHandler;
-
-import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SaveAction;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxResources;
@@ -54,8 +49,8 @@ public class SchemaEditorToolBar extends JToolBar
 				"/com/mxgraph/examples/swing/images/new.gif"));
 		add(editor.bind("Open", new OpenAction(),
 				"/com/mxgraph/examples/swing/images/open.gif"));
-		add(editor.bind("Import", new ImportAction(),
-				"/com/mxgraph/examples/swing/images/open.gif"));
+/*		add(editor.bind("Import", new ImportAction(),
+				"/com/mxgraph/examples/swing/images/open.gif"));*/
 		add(editor.bind("Save", new SaveAction(false),
 				"/com/mxgraph/examples/swing/images/save.gif"));
 
@@ -63,7 +58,7 @@ public class SchemaEditorToolBar extends JToolBar
 
 		add(editor.bind("Print", new PrintAction(),
 				"/com/mxgraph/examples/swing/images/print.gif"));
-
+/*
 		addSeparator();
 
 		add(editor.bind("Cut", TransferHandler.getCutAction(),
@@ -79,14 +74,14 @@ public class SchemaEditorToolBar extends JToolBar
 				"/com/mxgraph/examples/swing/images/delete.gif"));
 
 		addSeparator();
-
-		add(editor.bind("Undo", new HistoryAction(true),
+*/
+/*		add(editor.bind("Undo", new HistoryAction(true),
 				"/com/mxgraph/examples/swing/images/undo.gif"));
 		add(editor.bind("Redo", new HistoryAction(false),
 				"/com/mxgraph/examples/swing/images/redo.gif"));
 
 		addSeparator();
-
+*/
 		final mxGraphView view = editor.getGraphComponent().getGraph()
 				.getView();
 		final JComboBox zoomCombo = new JComboBox(new Object[] { "400%",

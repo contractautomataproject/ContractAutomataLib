@@ -45,6 +45,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
+import FMCA.FMCATransition;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
@@ -497,6 +498,7 @@ public class EditorActions
 	 *
 	 */
 	@SuppressWarnings("serial")
+	
 	public static class PrintAction extends AbstractAction
 	{
 		/**
@@ -2152,8 +2154,66 @@ public class EditorActions
 				}
 			}
 		}
+		
+		
 	}
 
+	/**
+	 *
+	 */
+	@SuppressWarnings("serial")
+	public static class FMCAAction extends AbstractAction
+	{
+		/**
+		 * 
+		 */
+		protected String name, key;
+
+		/**
+		 * 
+		 * @param key
+		 */
+		public FMCAAction(String name, String key)
+		{
+			this.name = name;
+			this.key = key;
+		}
+
+		/**
+		 * 
+		 */
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getSource() instanceof mxGraphComponent)
+			{
+				mxGraphComponent graphComponent = (mxGraphComponent) e
+						.getSource();
+				mxGraph graph = graphComponent.getGraph();
+
+				if (!graph.isSelectionEmpty())
+				{
+					/*Color newColor = JColorChooser.showDialog(graphComponent,
+							name, null);
+
+					if (newColor != null)
+					{
+						graph.setCellStyles(key, mxUtils.hexString(newColor));
+					}*/
+					if (this.name=="Urgent")
+						graph.setCellStyles(key, "#FF0000");// mxUtils.hexString( newColor));
+					else if (this.name=="Greedy")
+						graph.setCellStyles(key, "#FFA500");// mxUtils.hexString( newColor));
+					else if (this.name=="Lazy")
+						graph.setCellStyles(key, "#00FF00");// mxUtils.hexString( newColor));
+					else if (this.name=="Permitted")
+						graph.setCellStyles(key,"");
+				}
+			}
+		}
+		
+		
+	}
+	
 	/**
 	 *
 	 */

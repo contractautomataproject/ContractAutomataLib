@@ -58,7 +58,7 @@ public class GraphEditor extends BasicGraphEditor
 
 	public GraphEditor()
 	{
-		this("MSCA Tool", new CustomGraphComponent(new CustomGraph()));
+		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class GraphEditor extends BasicGraphEditor
 								GraphEditor.class
 										.getResource("/com/mxgraph/examples/swing/images/event.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
-						80, 80, "State");
+						50, 50, "State");
 		
 		symbolsPalette
 				.addTemplate(
@@ -111,7 +111,7 @@ public class GraphEditor extends BasicGraphEditor
 								GraphEditor.class
 										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
-						80, 80, "FinalState");
+						50, 50, "FinalState");
 	}
 
 	/**
@@ -134,10 +134,12 @@ public class GraphEditor extends BasicGraphEditor
 			super(graph);
 
 			// Sets switches typically used in an editor
-			setPageVisible(true);
-			setGridVisible(true);
+			setPageVisible(false);
+			setGridVisible(false);
 			setToolTips(true);
-			getConnectionHandler().setCreateTarget(true);
+			setConnectable(false);
+			
+			getConnectionHandler().setCreateTarget(false);
 
 			// Loads the defalt stylesheet from an external file
 			mxCodec codec = new mxCodec();

@@ -164,6 +164,8 @@ public class BasicGraphEditor extends JPanel
 		graphComponent = component;
 		final mxGraph graph = graphComponent.getGraph();
 		undoManager = createUndoManager();
+		
+		
 
 		// Do not change the scale and translation after files have been loaded
 		graph.setResetViewOnRootChange(false);
@@ -207,7 +209,7 @@ public class BasicGraphEditor extends JPanel
 
 		// Creates the outer split pane that contains the inner split pane and
 		// the graph component on the right side of the window
-		JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inner,
+		JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, libraryPane,
 				graphComponent);
 		outer.setOneTouchExpandable(true);
 		outer.setDividerLocation(200);
