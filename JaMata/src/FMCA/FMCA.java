@@ -315,12 +315,43 @@ public class FMCA  extends CA implements java.io.Serializable
 	         NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
 	         int[][] states=new int[nodeList.getLength()][];
 	         int[][] finalstates=new int[nodeList.getLength()][];
-	         int[] idstate=new int[nodeList.getLength()];
+	         int[] idstate=new int[nodeList.getLength()]; //each node has associated an id, used for identifying source and target of an edge
 	         int[] idfinalstate=new int[nodeList.getLength()];
 	         FMCATransition[] t= new FMCATransition[nodeList.getLength()];
 	         int statec=0;
 	         int finalstatec=0;
 	         int trc=0;
+	         /**
+	          * first read all the states, then all the edges
+	          */
+	         for (int i = 0; i < nodeList.getLength(); i++) 
+	         {
+	            Node nNode = nodeList.item(i);
+	          //  System.out.println("\nCurrent Element :" 
+	          //     + nNode.getNodeName());
+	            if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+	            {
+	               Element eElement = (Element) nNode;
+	               String prova=eElement.getAttribute("id");
+	               if (Integer.parseInt(prova)>1)
+	               {
+	            	 if (!eElement.hasAttribute("edge"))//edge
+	            	 {
+	            		 if (eElement.getAttribute("style").contains("terminate.png"))
+	            		 { 
+	            			 idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
+	            			 finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+	            			 finalstatec++;
+	            		 }
+	            		 else{
+	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
+	            			 states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+	            			 statec++;
+	            		 }
+	            	 }
+	               }
+	            }
+	         }
 	         for (int i = 0; i < nodeList.getLength(); i++) 
 	         {
 	            Node nNode = nodeList.item(i);
@@ -361,20 +392,6 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 else 
 	 	            		 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.PERMITTED); //otherwise
 	            		 trc++;
-	            	 }
-	            	 else  //state
-	            	 {
-	            		 if (eElement.getAttribute("style").contains("terminate.png"))
-	            		 { 
-	            			 idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
-	            			 finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
-	            			 finalstatec++;
-	            		 }
-	            		 else{
-	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
-	            			 states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
-	            			 statec++;
-	            		 }
 	            	 }
 	               }
 	            }
@@ -838,7 +855,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				{
 					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
 					// setUnion removes duplicates we could skip the check
-					if ((FMCAUtil.contains(trcheck[i].getTargetP(), danglingStates)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
+					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
 					{
 						newR[newRpointer]=trcheck[i].getSourceP();
 						newRpointer++;
@@ -858,7 +875,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				}
 				
 				//add source states of uncontrollable transitions that were previously controllable
-				int[][] su= FMCATransition. areMatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
+				int[][] su= FMCATransition. areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
 				int[][] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
 				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
 				{

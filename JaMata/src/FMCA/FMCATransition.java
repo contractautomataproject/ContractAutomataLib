@@ -109,7 +109,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			for (int j=0;j<tr.length;j++)	
 			{
 				if ((tr[j].isMatch())
-					&&((tr[j].isGreedy()&&this.isGreedy())||(tr[j].isUrgent()&&this.isUrgent()))//the same type (greedy or lazy)
+					&&((tr[j].isGreedy()&&this.isGreedy())||(tr[j].isLazy()&&this.isLazy()))//the same type (greedy or lazy)
 					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
 					&&(tr[j].getSourceP()[tr[j].getReceiver()]==this.getSourceP()[this.getReceiver()]) //the same source state					
 					&&(tr[j].getLabelP()[tr[j].getReceiver()]==this.getLabelP()[this.getReceiver()]) //the same request
@@ -118,8 +118,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 						return true;
 					}
 			}
+			return false;
 		}
-		return false;
+		return true; // trivially matched, it is not a request or it is not greedy or lazy
 	}
 
 
@@ -161,7 +162,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					return false; //the transition must not be in aut
 			}
 			FMCATransition t= this.extractRequestFromMatch(); //extract the request transition from this
-			return t.isMatched(aut); 
+			return !t.isMatched(aut); 
 		}
 		else
 			return false;
@@ -174,7 +175,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 */
 	protected boolean isUncontrollable(FMCA aut)
 	{
-		return this.isUrgent()||(this.isMatch()&&this.isGreedy())||this.isMatched(aut)||this.isLazyUnmatchable(aut);
+		return this.isUrgent()||(this.isMatch()&&this.isGreedy())||!this.isMatched(aut)||this.isLazyUnmatchable(aut);
 		
 	}
 	
@@ -214,7 +215,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
 	 */
-	protected static int[][] areMatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
+	protected static int[][] areUnmatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
 	{
 		int[][] s= new int[t.length][];
 		int pointer=0;

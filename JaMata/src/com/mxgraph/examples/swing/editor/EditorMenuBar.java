@@ -607,11 +607,12 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(filename);
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
 				aut.printToFile(filename);
 				//TODO fix
-				int[] R={3};
-				int[] F={2};
+				int[] R={};
+				int[] F={};
 				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
 				if (controller!=null)
