@@ -129,16 +129,16 @@ public class CAUtil
 					 * and its state 
 					 */
 					CATransition tra = gen[0];
-					int[] lab = tra.getLabelP(); 
+					String[] lab = tra.getLabelP(); 
 					int pr1=-1;
 					for (int ind2=0;ind2<lab.length;ind2++)
 					{
-						if (lab[ind2]!=0)
+						if (lab[ind2]!=CATransition.idle)
 						{
 							pr1=ind2; //principal
 						}
 					}
-					int label = tra.getLabelP()[pr1];  //the action of the principal who moves
+					String label = tra.getLabelP()[pr1];  //the action of the principal who moves
 					for (int ind3=0;ind3<gen.length;ind3++)
 					{
 						for (int ind=0;ind<pointertemp;ind++)
@@ -778,13 +778,13 @@ public class CAUtil
 				case "10":
 					a = aut[aut.length-1];
 					a.print();
-					int[][] bc = a.branchingCondition();
+					String[][] bc = a.branchingCondition();
 					if (bc==null)
 						System.out.println("The CA enjoys the branching condition");
 					else
 					{
 						System.out.println("The CA does not enjoy the branching condition ");
-						System.out.println("State "+Arrays.toString(bc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(bc[1])+" which is instead enabled in state "+Arrays.toString(bc[0]));
+						System.out.println("State "+bc[2][0]+" violates the branching condition because it has no transition labelled "+bc[1]+" which is instead enabled in state "+bc[0][0]);
 					}
 			        //FSA.write(a);
 			        a.printToFile("");
@@ -805,13 +805,13 @@ public class CAUtil
 				case "12":
 					a = aut[aut.length-1];
 					a.print();
-					int[][] ebc = a.extendedBranchingCondition();
+					String[][] ebc = a.extendedBranchingCondition();
 					if (ebc==null)
 						System.out.println("The CA enjoys the extended branching condition");
 					else
 					{
 						System.out.println("The CA does not enjoy the extended branching condition ");
-						System.out.println("State "+Arrays.toString(ebc[2])+" violates the branching condition because it has no transition labelled "+Arrays.toString(ebc[1])+" which is instead enabled in state "+Arrays.toString(ebc[0]));
+						System.out.println("State "+ebc[2][0]+" violates the branching condition because it has no transition labelled "+ebc[1]+" which is instead enabled in state "+ebc[0][0]);
 					}
 			        //FSA.write(a);
 			        a.printToFile("");

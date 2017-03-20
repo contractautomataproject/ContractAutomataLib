@@ -92,8 +92,8 @@ public class CA  extends FSA implements java.io.Serializable
 		try {
 			if (filename=="")
 			{
-				System.out.println("Do you want to save this automaton? (write yes or no)");
-				if (myInput.readLine().equals("yes"))
+				System.out.println("Do you want to save this automaton? (write yes or no, default yes)");
+				if (!myInput.readLine().equals("no"))
 				{	
 					System.out.println("Write the name of this automaton");
 					name= myInput.readLine();
@@ -240,36 +240,8 @@ public class CA  extends FSA implements java.io.Serializable
 						  case "(":
 						  {
 							  String[] ss=strLine.split("]");
-							  int what=0;
-							  int[][] store=new int[2][];
-							  for (int i=0;i<ss.length;i++)
-							  {
-								  int[] arr = new int[rank];
-								  Scanner s = new Scanner(ss[i]);
-								  s.useDelimiter(",|\\[| ");
-								  int j=0;
-								  while (s.hasNext())
-								  {
-									  if (s.hasNextInt())
-									  {
-										 arr[j]=s.nextInt();
-										 j++;
-									  }
-									  else {
-										   s.next();
-									  }
-								  }
-								  s.close();
-								  if (what==2)
-								  {
-									  t[pointert]=new CATransition(store[0],store[1],arr);
-									  what=0;
-									  pointert++;
-								  }
-								  else
-									  store[what]=arr;
-								  what++;
-							  }						 
+							  t[pointert]=loadTransition(ss,rank);
+							  pointert++;
 							  break;
 						  }
 					  }
@@ -286,16 +258,77 @@ public class CA  extends FSA implements java.io.Serializable
 		return null;
 	}
 	
+	protected static CATransition loadTransition(String[] ss, int rank)
+	{
+		  int what=0;
+		  int[][] store=new int[1][];
+		  String[] label = new String[rank];
+		  for (int i=0;i<ss.length;i++)
+			  //TODO check
+		  {
+			  int[] statestransition = new int[rank];
+			  Scanner s = new Scanner(ss[i]);
+			  s.useDelimiter(",|\\[| ");
+			  int j=0;
+			  while (s.hasNext())
+			  {
+				  if (what==0||what==2)//source or target
+				  {
+					  if (s.hasNextInt())
+					  {
+						  statestransition[j]=s.nextInt();
+						 j++;
+					  }
+					  else {
+						   s.next();
+					  }
+				  }
+				  else
+				  {
+					  if (s.hasNext())
+					  {
+						  String action=s.next();
+						  if (action.contains(CATransition.idle))
+							  label[j]=CATransition.idle;
+						  else if (action.contains(CATransition.offer))
+							  label[j]=action.substring(action.indexOf(CATransition.offer));
+						  else if (action.contains(CATransition.request))
+							  label[j]=action.substring(action.indexOf(CATransition.request));
+						  else
+							  j--; //trick for not increasing the counter j
+						  
+						  j++;
+					  }
+					  else {
+						   s.next();
+					  }
+				  }
+			  }
+			  s.close();
+			  if (what==2)
+			  {
+				  return new CATransition(store[0],label,statestransition);
+			  }
+			  else
+			  {
+				  if (what==0)
+					  store[what]=statestransition; //the source state
+			  }
+			  what++;
+		  }
+		  return null;
+	}
+	
 		
 	/**
 	 * 
 	 * @param i		the index of the transition to be showed as a message to the user
 	 * @return		a new Transition for this automaton
 	 */
-	protected Transition createTransition(int i)
+/*	protected Transition createTransition(int i)
 	{
 		return new CATransition(i);
-	}
+	}*/
 	
 	
 	/**
@@ -385,7 +418,7 @@ public class CA  extends FSA implements java.io.Serializable
 		for(int i=0;i<finalTr.length;i++)
 		{
 			int[] in=at[i].getSourceP();
-			int[] l=at[i].getLabelP();
+			String[] l=at[i].getLabelP();
 			int[] f= at[i].getTargetP();
 			finalTr[i] = new CATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
 		}
@@ -418,8 +451,8 @@ public class CA  extends FSA implements java.io.Serializable
 		for (int ind=0;ind<tra.length;ind++)
 		{
 			CATransition tt= ((CATransition)tra[ind]);
-			int label = tt.getLabelP()[i];
-			if(label!=0)
+			String label = tt.getLabelP()[i];
+			if(label!=CATransition.idle)
 			{
 				int source =  tt.getSourceP()[i];
 				int dest = tt.getTargetP()[i];
@@ -427,7 +460,7 @@ public class CA  extends FSA implements java.io.Serializable
 				sou[0]=source;
 				int[] des = new int[1];
 				des[0]=dest;
-				int[] lab = new int[1];
+				String[] lab = new String[1];
 				lab[0]=label;
 				CATransition selected = new CATransition(sou,lab,des);
 				boolean skip=false;
@@ -581,7 +614,7 @@ public class CA  extends FSA implements java.io.Serializable
 	 * @return null if the branching condition holds, otherwise the initial state and label of the
 	 * 				match transition together with the state where the transition is not present
 	 */
-	public int[][] branchingCondition()
+	public String[][] branchingCondition()
 	{
 		/**
 		 * for all transitions:
@@ -597,7 +630,7 @@ public class CA  extends FSA implements java.io.Serializable
 		{
 			if (t[i].isMatch())
 			{
-				int[] l=t[i].getLabelP();
+				String[] l=t[i].getLabelP();
 				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
@@ -612,10 +645,12 @@ public class CA  extends FSA implements java.io.Serializable
 						}
 						if (!found)
 						{
-							int[][] re = new int[3][];
-							re[0]=t[i].getSourceP();
+							//TODO FIX
+							String[][] re = new String[3][];
+							int[] source=t[i].getSourceP();
+							re[0][0]=Arrays.toString(source);
 							re[1]=t[i].getLabelP();
-							re[2]=reach[j];
+							re[2][0]=Arrays.toString(reach[j]);
 							return re;
 						}
 					}
@@ -630,7 +665,7 @@ public class CA  extends FSA implements java.io.Serializable
 	 * @return null if the ext. branching condition holds, otherwise the initial state and label of the
 	 * 				transition together with the state where the transition is not present
 	 */
-	public int[][] extendedBranchingCondition()
+	public String[][] extendedBranchingCondition()
 	{
 		/**
 		 * for all transitions:
@@ -646,7 +681,7 @@ public class CA  extends FSA implements java.io.Serializable
 		{
 			if (!t[i].isRequest())
 			{
-				int[] l=t[i].getLabelP();
+				String[] l=t[i].getLabelP();
 				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
@@ -661,10 +696,17 @@ public class CA  extends FSA implements java.io.Serializable
 						}
 						if (!found)
 						{
-							int[][] re = new int[3][];
+							/*int[][] re = new int[3][];
 							re[0]=t[i].getSourceP();
-							re[1]=t[i].getLabelP();
+							re[1]=t[i].getLabelP();		
 							re[2]=reach[j];
+							return re;*/
+							//TODO FIX
+							String[][] re = new String[3][];
+							int[] source=t[i].getSourceP();
+							re[0][0]=Arrays.toString(source);
+							re[1]=t[i].getLabelP();
+							re[2][0]=Arrays.toString(reach[j]);
 							return re;
 						}
 					}

@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 
 import FMCA.FMCA;
 import FMCA.Product;
+import CA.CAUtil;
 
 import com.mxgraph.analysis.StructuralException;
 import com.mxgraph.analysis.mxGraphProperties.GraphType;
@@ -479,7 +480,7 @@ public class EditorMenuBar extends JMenuBar
 		}
 */		
 		
-		menu = add(new JMenu("FMCAT"));
+		menu = add(new JMenu("FMCA Operations"));
 
 		item = menu.add(new JMenuItem("Import Automaton"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
@@ -504,12 +505,16 @@ public class EditorMenuBar extends JMenuBar
 						if (graph != null)
 						{
 							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+							//String wd=System.getProperty("user.dir");
 							
-							String wd=System.getProperty("user.dir");
-							
-
+							File f=editor.getCurrentFile();
+							String wd;
+							if (f!=null)
+								wd=editor.getCurrentFile().getParent();
+							else
+								wd=System.getProperty("user.dir");
 							JFileChooser fc = new JFileChooser(wd);
-
+							
 							// Adds file filter for supported file format
 							DefaultFileFilter defaultFilter = new DefaultFileFilter(
 									".data", "")//mxResources.get("allSupportedFormats")
@@ -544,7 +549,8 @@ public class EditorMenuBar extends JMenuBar
 
 									String fileName =fc.getSelectedFile().toString();
 									FMCA aut=FMCA.load(fileName);
-									fileName=aut.exportToXML(fileName);
+									File file=aut.exportToXML(fileName);
+									fileName=file.getAbsolutePath();
 									
 										Document document = mxXmlUtils
 												.parseXml(mxUtils.readFile(fileName));
@@ -556,8 +562,7 @@ public class EditorMenuBar extends JMenuBar
 										codec.decode(
 												document.getDocumentElement(),
 												graph.getModel());
-										editor.setCurrentFile(fc
-												.getSelectedFile());
+										editor.setCurrentFile(file);
 
 										editor.setModified(false);
 										editor.getUndoManager().clear();
@@ -592,11 +597,157 @@ public class EditorMenuBar extends JMenuBar
 				String filename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(filename);
 				aut.printToFile(filename);
+				JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename,"Success!",JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
 		menu.addSeparator();
 
+		item = menu.add(new JMenuItem("Composition"));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				//BasicGraphEditor editor = EditorActions.getEditor(e);
+				//String lastDir="";
+
+				if (editor != null)
+				{
+					if (!editor.isModified()
+							|| JOptionPane.showConfirmDialog(editor,
+									mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
+					{
+						mxGraph graph = editor.getGraphComponent().getGraph();
+
+						if (graph != null)
+						{
+							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+							
+							File f=editor.getCurrentFile();
+							String wd;
+							if (f!=null)
+								wd=editor.getCurrentFile().getParent();
+							else
+								wd=System.getProperty("user.dir");
+
+							JFileChooser fc = new JFileChooser(wd);
+
+							// Adds file filter for supported file format
+							DefaultFileFilter defaultFilter = new DefaultFileFilter(
+									".data", "")//mxResources.get("allSupportedFormats")
+											//+ " (.mxe, .png, .vdx)")
+							{
+
+								public boolean accept(File file)
+								{
+									String lcase = file.getName().toLowerCase();
+
+									return super.accept(file)
+											|| lcase.endsWith(".data");
+								}
+							};
+							fc.addChoosableFileFilter(defaultFilter);
+
+							fc.addChoosableFileFilter(new DefaultFileFilter(".data",
+									"FMCA textual description " + mxResources.get("file")
+											+ " (.data)"));
+							
+							
+							fc.setFileFilter(defaultFilter);
+							
+							FMCA[] aut = new FMCA[50]; //upperbound to 50
+							String[] names= new String[50];
+							int fmcacount = 0;
+
+							int rc = fc.showDialog(null,
+									mxResources.get("openFile"));
+
+							while (rc == JFileChooser.APPROVE_OPTION)
+							{
+								lastDir = fc.getSelectedFile().getParent();
+								try
+								{
+									String fileName =fc.getSelectedFile().toString();
+									aut[fmcacount]=FMCA.load(fileName);
+									names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
+									fmcacount++;
+									rc = fc.showDialog(null,
+											mxResources.get("openFile"));
+								}
+								catch (Exception ex)
+								{
+									ex.printStackTrace();
+									JOptionPane.showMessageDialog(
+											editor.getGraphComponent(),
+											ex.toString(),
+											mxResources.get("error"),
+											JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							String compositionname="";
+							FMCA[] autWithoutTailsNull = new FMCA[fmcacount];
+							for (int i=0;i<fmcacount;i++)
+							{
+								autWithoutTailsNull[i]=aut[i];
+								compositionname+=names[i];
+								if (!(i==(fmcacount-1)))
+									compositionname+="x";
+							}
+							FMCA composition = (FMCA) CAUtil.product(autWithoutTailsNull);	
+							File file=null;
+							if (composition!=null)
+							{
+								JOptionPane.showMessageDialog(null,"The composition has been stored with filename "+lastDir+"\\"+compositionname,"Success!",JOptionPane.WARNING_MESSAGE);
+								file=composition.exportToXML(lastDir+"\\"+compositionname);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null,"Error","Error",JOptionPane.WARNING_MESSAGE);
+								return;
+								
+							}
+							//loading the file
+							try
+							{								
+								
+								Document document = mxXmlUtils
+											.parseXml(mxUtils.readFile(wd+compositionname+".mxe"));
+													/*mxUtils.readFile(fc
+																					.getSelectedFile()
+																					.getAbsolutePath()));
+								*/
+								mxCodec codec = new mxCodec(document);
+								codec.decode(
+										document.getDocumentElement(),
+										graph.getModel());
+								editor.setCurrentFile(file);
+								
+								editor.setModified(false);
+								editor.getUndoManager().clear();
+								editor.getGraphComponent().zoomAndCenter();
+							}
+							catch (IOException ex)
+							{
+								ex.printStackTrace();
+								JOptionPane.showMessageDialog(
+										editor.getGraphComponent(),
+										ex.toString(),
+										mxResources.get("error"),
+										JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}
+				}
+			}
+		});
+		
+		
+		
+		
 		item = menu.add(new JMenuItem("Most Permissive Controller"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
@@ -607,18 +758,48 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
 				aut.printToFile(filename);
 				//TODO fix
-				int[] R={};
-				int[] F={};
+				String[] R={};
+				String[] F={};
 				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
+				File file=null;
 				if (controller!=null)
 				{
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename K_"+filename,"Success!",JOptionPane.WARNING_MESSAGE);
-					controller.exportToXML("K_"+filename);
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//K_"+filename,"Success!",JOptionPane.WARNING_MESSAGE);
+					file=controller.exportToXML(lastDir+"//K_"+filename);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(lastDir+"//K_"+filename));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));
+						*/
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else
 				{
@@ -683,7 +864,7 @@ public class EditorMenuBar extends JMenuBar
 		// Creates the help menu
 		menu = add(new JMenu(mxResources.get("help")));
 
-		item = menu.add(new JMenuItem("aboutFMCAT"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("about FMCA Tool"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -697,10 +878,10 @@ public class EditorMenuBar extends JMenuBar
 		});
 	}
 
-	/**
+/*	*//**
 	 * Adds menu items to the given shape menu. This is factored out because
 	 * the shape menu appears in the menubar and also in the popupmenu.
-	 */
+	 *//*
 	public static void populateShapeMenu(JMenu menu, BasicGraphEditor editor)
 	{
 		menu.add(editor.bind(mxResources.get("home"), mxGraphActions.getHomeAction(), "/com/mxgraph/examples/swing/images/house.gif"));
@@ -761,10 +942,10 @@ public class EditorMenuBar extends JMenuBar
 
 	}
 
-	/**
+	*//**
 	 * Adds menu items to the given format menu. This is factored out because
 	 * the format menu appears in the menubar and also in the popupmenu.
-	 */
+	 *//*
 	public static void populateFormatMenu(JMenu menu, BasicGraphEditor editor)
 	{
 		JMenu submenu = (JMenu) menu.add(new JMenu(mxResources.get("background")));
@@ -962,7 +1143,7 @@ public class EditorMenuBar extends JMenuBar
 
 		menu.add(editor.bind(mxResources.get("style"), new StyleAction()));
 	}
-
+*/
 	/**
 	 *
 	 */

@@ -1,10 +1,13 @@
 package FMCA;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Scanner;
+
+
 
 
 
@@ -201,36 +204,9 @@ public class FMCA  extends CA implements java.io.Serializable
 						  case "(": //a may transition
 						  {
 							  String[] ss=strLine.split("]");
-							  int what=0;
-							  int[][] store=new int[2][];
-							  for (int i=0;i<ss.length;i++)
-							  {
-								  int[] arr = new int[rank];
-								  Scanner s = new Scanner(ss[i]);
-								  s.useDelimiter(",|\\[| ");
-								  int j=0;
-								  while (s.hasNext())
-								  {
-									  if (s.hasNextInt())
-									  {
-										 arr[j]=s.nextInt();
-										 j++;
-									  }
-									  else {
-										   s.next();
-									  }
-								  }
-								  s.close();
-								  if (what==2)
-								  {
-									  t[pointert]=new FMCATransition(store[0],store[1],arr,FMCATransition.action.PERMITTED);
-									  what=0;
-									  pointert++;
-								  }
-								  else
-									  store[what]=arr;
-								  what++;
-							  }						 
+							  CATransition temp=loadTransition(ss,rank);
+							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),FMCATransition.action.PERMITTED);
+							  pointert++;
 							  break;
 						  }
 						  case "!": //a must transition
@@ -244,36 +220,9 @@ public class FMCA  extends CA implements java.io.Serializable
 							  	case "L": type=FMCATransition.action.LAZY;break;
 							  }
 							  String[] ss=strLine.split("]");
-							  int what=0;
-							  int[][] store=new int[2][];
-							  for (int i=0;i<ss.length;i++)
-							  {
-								  int[] arr = new int[rank];
-								  Scanner s = new Scanner(ss[i]);
-								  s.useDelimiter(",|\\[| ");
-								  int j=0;
-								  while (s.hasNext())
-								  {
-									  if (s.hasNextInt())
-									  {
-										 arr[j]=s.nextInt();
-										 j++;
-									  }
-									  else {
-										   s.next();
-									  }
-								  }
-								  s.close();
-								  if (what==2)
-								  {
-									  t[pointert]=new FMCATransition(store[0],store[1],arr,type);
-									  what=0;
-									  pointert++;
-								  }
-								  else
-									  store[what]=arr;
-								  what++;
-							  }						 
+							  CATransition temp=loadTransition(ss,rank);
+							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),type);
+							  pointert++;				 
 							  break;
 						  }
 					  }
@@ -287,7 +236,8 @@ public class FMCA  extends CA implements java.io.Serializable
 			  }
 			 
 			return new FMCA(rank,initial,states,fin,fintr);
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (FileNotFoundException e) {System.out.println("File not found"); return null;}
+		catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
 	
@@ -382,7 +332,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 	target=finalstates[FMCAUtil.getIndex(idfinalstate, idtarget)];
 	            		 
 	            		 
-	            		 int[] label=FMCAUtil.getArray(eElement.getAttribute("value"));
+	            		 String[] label=FMCAUtil.getArrayString(eElement.getAttribute("value"));
 	            		 if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
 	            			 t[trc]=new FMCATransition(source,label,target,FMCATransition.action.URGENT);//red
 	            		 else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
@@ -420,7 +370,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * @param fileName
 	 * @return
 	 */
-	public String exportToXML(String fileName)
+	public File exportToXML(String fileName)
 	{
 		try{
 			DocumentBuilderFactory dbFactory =
@@ -490,15 +440,17 @@ public class FMCA  extends CA implements java.io.Serializable
 			Transformer transformer =
 					transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			String s=fileName.substring(0,fileName.indexOf("."));
+			if (fileName.contains("."))
+				fileName=fileName.substring(0,fileName.indexOf("."));
+			File file = new File(fileName+".mxe");
 			StreamResult result =
-					new StreamResult(new File(s+".mxe"));
+					new StreamResult(file);
 			transformer.transform(source, result);
 			/*// Output to console for testing
 			StreamResult consoleResult =
 					new StreamResult(System.out);
 			transformer.transform(source, consoleResult);*/
-			return s+".mxe";
+			return file;//fileName+".mxe";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -649,7 +601,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		for(int i=0;i<finalTr.length;i++)
 		{
 			int[] in=at[i].getSourceP();
-			int[] l=at[i].getLabelP();
+			String[] l=at[i].getLabelP();
 			int[] f= at[i].getTargetP();
 			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),at[i].getType());
 		}
@@ -668,7 +620,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		for(int i=0;i<finalTr.length;i++)
 		{
 			int[] in=at[i].getSourceP();
-			int[] l=at[i].getLabelP();
+			String[] l=at[i].getLabelP();
 			int[] f= at[i].getTargetP();
 			finalTr[i] = new FMCATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length),at[i].getType());
 		}	

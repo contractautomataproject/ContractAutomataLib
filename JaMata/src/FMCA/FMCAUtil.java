@@ -692,8 +692,8 @@ public class FMCAUtil extends CAUtil
 					System.out.println("The most permissive controller of modal agreement for the last FMCA loaded is");
 					a = aut[aut.length-1];
 					//TODO fix
-					int[] R={3};
-					int[] F={2};
+					String[] R={};
+					String[] F={};
 					Product p=new Product(R,F);
 					FMCA mpc = a.mpc(p);
 					if (mpc!=null)
@@ -724,22 +724,23 @@ public class FMCAUtil extends CAUtil
 			BufferedReader myInput = new BufferedReader (reader);
 			while (!s.equals("no")&&i<10)
 			{
-				System.out.println("Do you want to create/load other CA? (yes/no)");
+				System.out.println("Do you want to create/load other CA? (yes/no, default yes)");
 				s = myInput.readLine();
 				//s = "yes";
 				if(!s.equals("no"))
 				{
-					System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for create a new one");
-					s = myInput.readLine();
-					//s = "CA1";
-			        if (!s.isEmpty())
-			        {
-			        	automa = FMCA.load(s);
-			        }
-			        else
-			        	{
-				        automa = new FMCA();
-			        	}
+					do{
+						System.out.println("Insert the name of the automaton (without .data extension) to load or leave empty for create a new one");
+						s = myInput.readLine();
+				        if (!s.isEmpty())
+				        {
+				        	automa = FMCA.load(s);
+				        }
+				        else
+				        	{
+					        automa = new FMCA();
+				        	}
+					} while (automa==null);
 			        automa.print();
 			        a[i] = automa;
 			        //s="no";
@@ -776,6 +777,23 @@ public class FMCAUtil extends CAUtil
 		 }
 		 return results;
 	}
+	
+	protected static String[] getArrayString(String arr)
+	{
+		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+
+		 /*int[] results = new int[items.length];
+
+		 for (int ii = 0; ii < items.length; ii++) {
+		     try {
+		         results[ii] = Integer.parseInt(items[ii]);
+		     } catch (NumberFormatException nfe) {
+		         nfe.printStackTrace();
+		     };
+		 }*/
+		 return items;
+	}
+	
 	protected static boolean contains(int[] q, int[][] listq)
 	{
 		for (int i=0;i<listq.length;i++)
@@ -792,6 +810,16 @@ public class FMCAUtil extends CAUtil
 		for (int i=0;i<q.length;i++)
 		{
 			if (q[i]==e)
+					return i;
+		}
+		return -1;
+	}
+	
+	protected static int getIndex(String[] q, String e)
+	{
+		for (int i=0;i<q.length;i++)
+		{
+			if (q[i].equals(e))
 					return i;
 		}
 		return -1;

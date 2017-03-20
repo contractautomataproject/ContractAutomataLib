@@ -31,7 +31,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public FMCATransition(int[] initial, int[] label2, int[] fina, action type){
+	public FMCATransition(int[] initial, String[] label2, int[] fina, action type){
 		super(initial,label2,fina);
 		this.type=type;
 //		if (type!=action.PERMITTED)
@@ -85,7 +85,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		FMCATransition tr=(FMCATransition) t;
 		int[] ip =tr.getSourceP();
-		int[] lp=tr.getLabelP();
+		String[] lp=tr.getLabelP();
 		int[] dp=tr.getTargetP();
 		action type=tr.getType();
 		return ( Arrays.equals(ip,getSourceP()))&&(Arrays.equals(lp,getLabelP()))&&(Arrays.equals(dp,this.getTargetP())&&(this.type==type));
@@ -137,9 +137,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		int sender=this.getSender();
 		int[] source=Arrays.copyOf(this.getSourceP(), length);
 		int[] target=Arrays.copyOf(this.getTargetP(), length);
-		int[] request=Arrays.copyOf(this.getLabelP(), length);
+		String[] request=Arrays.copyOf(this.getLabelP(), length);
 		target[sender]=source[sender];  //the sender is now idle
-		request[sender]=0;  //swapping offer to idle
+		request[sender]=CATransition.idle;  //swapping offer to idle
 		return new FMCATransition(source,request,target,this.type); //returning the request transition
 		
 	}
@@ -181,12 +181,12 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	
 	protected boolean isForbidden(Product p)
 	{
-		return (FMCAUtil.getIndex(p.getForbidden(),Math.abs(this.getAction()))>=0);
+		return (FMCAUtil.getIndex(p.getForbidden(),this.getUnsignedAction())>=0);
 	}
 	
 	protected boolean isRequired(Product p)
 	{
-		return (FMCAUtil.getIndex(p.getRequired(),this.getAction())>=0);		
+		return (FMCAUtil.getIndex(p.getRequired(),this.getUnsignedAction())>=0);		
 	}
 	
 	/**
@@ -250,14 +250,14 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		if (tt!=null) //if it is a match
 		{
 			int[] s=((FMCATransition) t).getSourceP();
-			int[] l=((FMCATransition) t).getLabelP();
+			String[] l=((FMCATransition) t).getLabelP();
 			int[] d=((FMCATransition) t).getTargetP();
 			int[] ss = ((FMCATransition) tt).getSourceP();
-			int[] ll=((FMCATransition) tt).getLabelP();
+			String[] ll=((FMCATransition) tt).getLabelP();
 			int[] dd =((FMCATransition) tt).getTargetP();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
-			int[] label = new int[insert.length+s.length+ss.length];
+			String[] label = new String[insert.length+s.length+ss.length];
 			action type;
 			if (((FMCATransition) t).isRequest())
 				type=((FMCATransition) t).getType();
@@ -296,7 +296,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					{
 						initial[i+counter]=insert[i];
 						dest[i+counter]=insert[i];
-						label[i+counter]=0;
+						label[i+counter]=CATransition.idle;
 					}
 				}
 			}
@@ -324,11 +324,11 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		else	//is not a match
 		{
 			int[] s=((FMCATransition) t).getSourceP();
-			int[] l=((FMCATransition) t).getLabelP();
+			String[] l=((FMCATransition) t).getLabelP();
 			int[] d=((FMCATransition) t).getTargetP();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
-			int[] label = new int[insert.length+s.length];
+			String[] label = new String[insert.length+s.length];
 			int counter=0;
 			for (int i=0;i<insert.length;i++)
 			{
@@ -348,7 +348,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				{
 					initial[i+counter]=insert[i];
 					dest[i+counter]=insert[i];
-					label[i+counter]=0;
+					label[i+counter]=CATransition.idle;
 				}
 			}
 			if (firstprinci==insert.length)//case limit, the first CA was the last of aut

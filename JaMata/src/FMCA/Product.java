@@ -1,30 +1,32 @@
 package FMCA;
 
+import CA.CATransition;
+
 public class Product {
-	private int[] required;
-	private int[] forbidden;
+	private String[] required;
+	private String[] forbidden;
 	
-	public Product(int[] r, int[] f)
+	public Product(String[] r, String[] f)
 	{
 		//all positive integers, to avoid sign mismatches
-		int[] rp = new int[r.length];
+		String[] rp = new String[r.length];
 		for (int i=0;i<r.length;i++)
-			rp[i]=Math.abs(r[i]);
+			rp[i]=CATransition.getUnsignedAction(r[i]);
 
-		int[] fp = new int[f.length];
+		String[] fp = new String[f.length];
 		for (int i=0;i<f.length;i++)
-			fp[i]=Math.abs(f[i]);
+			fp[i]=CATransition.getUnsignedAction(f[i]);
 
 		this.required=rp;
 		this.forbidden=fp;
 	}
 
-	public int[] getRequired()
+	public String[] getRequired()
 	{
 		return required;
 	}
 	
-	public int[] getForbidden()
+	public String[] getForbidden()
 	{
 		return forbidden;
 	}
@@ -42,7 +44,7 @@ public class Product {
 			boolean found=false;
 			for (int j=0;j<t.length;j++)
 			{
-				if (Math.abs(t[j].getAction())==Math.abs(this.required[i]))  //do not differ between requests and offers
+				if (CATransition.getUnsignedAction(t[j].getAction())==this.required[i])  //do not differ between requests and offers
 					found=true;
 			}
 			if (!found)

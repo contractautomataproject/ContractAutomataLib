@@ -45,11 +45,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
-import FMCA.FMCATransition;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
-import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.canvas.mxSvgCanvas;
 import com.mxgraph.io.mxCodec;
@@ -1551,7 +1549,8 @@ public class EditorActions
 
 								String fileName =fc.getSelectedFile().toString();
 								FMCA aut=FMCA.load(fileName);
-								fileName=aut.exportToXML(fileName);
+								File file=aut.exportToXML(fileName);
+								fileName=file.getAbsolutePath();
 								/*if (fc.getSelectedFile().getAbsolutePath()
 										.toLowerCase().endsWith(".png"))
 								{
@@ -1577,8 +1576,7 @@ public class EditorActions
 									codec.decode(
 											document.getDocumentElement(),
 											graph.getModel());
-									editor.setCurrentFile(fc
-											.getSelectedFile());
+									editor.setCurrentFile(file);
 
 									resetEditor(editor);
 								//}
