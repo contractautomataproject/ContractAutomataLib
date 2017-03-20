@@ -1,0 +1,9 @@
+Rank: 1
+Number of states: [4]
+Initial state: [0]
+Final states: [[3]]
+Transitions: 
+
+!G([2],[?receipt],[3])
+!U([0],[?room],[1])
+([1],[!card],[2])

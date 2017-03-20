@@ -1,0 +1,8 @@
+Rank: 1
+Number of states: [3]
+Initial state: [0]
+Final states: [[2]]
+Transitions: 
+
+!G([1],[?receipt],[2])
+!U([0],[?room],[1])

@@ -1,0 +1,11 @@
+Rank: 2
+Number of states: [3, 3]
+Initial state: [0, 0]
+Final states: [[2][2]]
+Transitions: 
+
+([0, 0],[!pippo, ?pippo],[1, 1])
+([1, 1],[!pluto, -],[2, 1])
+([1, 2],[!pluto, -],[2, 2])
+([1, 1],[-, !pluto],[1, 2])
+([2, 1],[-, !pluto],[2, 2])

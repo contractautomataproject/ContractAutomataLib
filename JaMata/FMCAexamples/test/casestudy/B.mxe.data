@@ -1,0 +1,11 @@
+Rank: 1
+Number of states: [5]
+Initial state: [0]
+Final states: [[4]]
+Transitions: 
+
+([1],[!room],[2])
+([0],[!room],[1])
+([3],[!room],[4])
+([2],[!receipt],[4])
+([1],[!receipt],[3])

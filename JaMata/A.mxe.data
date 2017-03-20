@@ -1,0 +1,8 @@
+Rank: 1
+Number of states: [3]
+Initial state: [0]
+Final states: [[2]]
+Transitions: 
+
+([0],[!pippo],[1])
+!G([1],[?pluto],[2])
