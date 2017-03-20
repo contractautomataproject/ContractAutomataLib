@@ -191,7 +191,7 @@ public class SchemaEditorMenuBar extends JMenuBar
 		});
 
 		menu.add(new TogglePropertyItem(graphComponent, mxResources
-				.get("antialias"), "AntiAlias", true));
+				.get("antialias"), "AntiAlias", false)); //TODO check
 
 		menu.addSeparator();
 

@@ -805,7 +805,8 @@ public class EditorActions
 						{
 							BufferedImage image = mxCellRenderer
 									.createBufferedImage(graph, null, 1, bg,
-											graphComponent.isAntiAlias(), null,
+											false, null, //TODO:check
+											//graphComponent.isAntiAlias(), null,
 											graphComponent.getCanvas());
 
 							if (image != null)

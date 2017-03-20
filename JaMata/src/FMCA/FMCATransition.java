@@ -112,7 +112,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					&&((tr[j].isGreedy()&&this.isGreedy())||(tr[j].isLazy()&&this.isLazy()))//the same type (greedy or lazy)
 					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
 					&&(tr[j].getSourceP()[tr[j].getReceiver()]==this.getSourceP()[this.getReceiver()]) //the same source state					
-					&&(tr[j].getLabelP()[tr[j].getReceiver()]==this.getLabelP()[this.getReceiver()]) //the same request
+					&&(tr[j].getLabelP()[tr[j].getReceiver()].equals(this.getLabelP()[this.getReceiver()])) //the same request
 					&&(!FMCAUtil.contains(this.getSourceP(), R))) //source state is not redundant
 					{
 						return true;

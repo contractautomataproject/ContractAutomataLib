@@ -4,6 +4,8 @@ Initial state: [0]
 Final states: [[3]]
 Transitions: 
 
-!G([2],[?receipt],[3])
+!G([2],[?invoice],[3])
 !U([0],[?room],[1])
 ([1],[!card],[2])
+([2],[?receipt],[3])
+([1],[!cash],[3])

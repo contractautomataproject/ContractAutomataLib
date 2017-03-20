@@ -77,11 +77,11 @@ public class GraphEditor extends BasicGraphEditor
 		// is clicked in the shape palette
 		
 		symbolsPalette.addEdgeTemplate(
-				"Horizontal Edge",
+				"Edge",//"Horizontal Edge",
 				new ImageIcon(
 						GraphEditor.class
 								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
-				null, 100, 100, "");
+				"", 100, 100, "");
 		symbolsPalette.addEdgeTemplate(
 				"Vertical Edge",
 				new ImageIcon(
@@ -102,7 +102,7 @@ public class GraphEditor extends BasicGraphEditor
 								GraphEditor.class
 										.getResource("/com/mxgraph/examples/swing/images/event.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
-						50, 50, "State");
+						40, 40, "State"); //TODO use vectorial images
 		
 		symbolsPalette
 				.addTemplate(
@@ -111,7 +111,7 @@ public class GraphEditor extends BasicGraphEditor
 								GraphEditor.class
 										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
-						50, 50, "FinalState");
+						40, 40, "FinalState");
 	}
 
 	/**

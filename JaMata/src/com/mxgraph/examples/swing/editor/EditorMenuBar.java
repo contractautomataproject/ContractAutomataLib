@@ -715,7 +715,7 @@ public class EditorMenuBar extends JMenuBar
 							{								
 								
 								Document document = mxXmlUtils
-											.parseXml(mxUtils.readFile(wd+compositionname+".mxe"));
+											.parseXml(mxUtils.readFile(wd+"\\"+compositionname+".mxe"));
 													/*mxUtils.readFile(fc
 																					.getSelectedFile()
 																					.getAbsolutePath()));
