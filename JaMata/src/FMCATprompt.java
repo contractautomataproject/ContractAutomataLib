@@ -12,7 +12,7 @@ import FSA.FSA;
  * @author Davide	Basile
  *
  */
-public class Main {
+public class FMCATprompt {
 	/**
 	 * Select the kind of automaton and choose to create a new automaton or loading a stored automaton, then run 
 	 * the simulator

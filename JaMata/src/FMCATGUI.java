@@ -35,7 +35,7 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
-public class GraphEditor extends BasicGraphEditor
+public class FMCATGUI extends BasicGraphEditor
 {
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class GraphEditor extends BasicGraphEditor
 	public static URL url = null;
 
 
-	public GraphEditor()
+	public FMCATGUI()
 	{
 		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
 	}
@@ -64,7 +64,7 @@ public class GraphEditor extends BasicGraphEditor
 	/**
 	 * 
 	 */
-	public GraphEditor(String appTitle, mxGraphComponent component)
+	public FMCATGUI(String appTitle, mxGraphComponent component)
 	{
 		super(appTitle, component);
 	
@@ -79,19 +79,19 @@ public class GraphEditor extends BasicGraphEditor
 		symbolsPalette.addEdgeTemplate(
 				"Edge",//"Horizontal Edge",
 				new ImageIcon(
-						GraphEditor.class
+						FMCATGUI.class
 								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
 				"", 100, 100, "");
 		symbolsPalette.addEdgeTemplate(
 				"Vertical Edge",
 				new ImageIcon(
-						GraphEditor.class
+						FMCATGUI.class
 								.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
 				"vertical", 100, 100, "");
 		symbolsPalette.addEdgeTemplate(
 				"Rounded Edge",
 				new ImageIcon(
-						GraphEditor.class
+						FMCATGUI.class
 								.getResource("/com/mxgraph/examples/swing/images/entity.png")),
 				"entity", 100, 100, "");
 		
@@ -99,7 +99,7 @@ public class GraphEditor extends BasicGraphEditor
 				.addTemplate(
 						"State",//"Event",
 						new ImageIcon(
-								GraphEditor.class
+								FMCATGUI.class
 										.getResource("/com/mxgraph/examples/swing/images/event.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
 						40, 40, "State"); //TODO use vectorial images
@@ -108,7 +108,7 @@ public class GraphEditor extends BasicGraphEditor
 				.addTemplate(
 						"FinalState",//"Terminate",
 						new ImageIcon(
-								GraphEditor.class
+								FMCATGUI.class
 										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
 						40, 40, "FinalState");
@@ -143,7 +143,7 @@ public class GraphEditor extends BasicGraphEditor
 
 			// Loads the defalt stylesheet from an external file
 			mxCodec codec = new mxCodec();
-			Document doc = mxUtils.loadDocument(GraphEditor.class.getResource(
+			Document doc = mxUtils.loadDocument(FMCATGUI.class.getResource(
 					"/com/mxgraph/examples/swing/resources/default-style.xml")
 					.toString());
 			codec.decode(doc.getDocumentElement(), graph.getStylesheet());
@@ -350,7 +350,7 @@ public class GraphEditor extends BasicGraphEditor
 		mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
 		mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
 
-		GraphEditor editor = new GraphEditor();
+		FMCATGUI editor = new FMCATGUI();
 		editor.createFrame(new EditorMenuBar(editor)).setVisible(true);
 	}
 }
