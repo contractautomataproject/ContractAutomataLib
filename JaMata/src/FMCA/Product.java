@@ -34,7 +34,7 @@ public class Product {
 	/**
 	 * 
 	 * @param t
-	 * @return checks that all required actions are available in the transitions t
+	 * @return true if all required actions are available in the transitions t
 	 */
 	public boolean checkRequired(FMCATransition[] t)
 	{
@@ -44,7 +44,7 @@ public class Product {
 			boolean found=false;
 			for (int j=0;j<t.length;j++)
 			{
-				if (CATransition.getUnsignedAction(t[j].getAction())==this.required[i])  //do not differ between requests and offers
+				if (CATransition.getUnsignedAction(t[j].getAction()).equals(this.required[i]))  //do not differ between requests and offers
 					found=true;
 			}
 			if (!found)

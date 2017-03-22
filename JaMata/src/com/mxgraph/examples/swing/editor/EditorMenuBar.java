@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -24,6 +25,7 @@ import javax.swing.UIManager;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
+import FMCA.FMCAUtil;
 import FMCA.Product;
 import CA.CAUtil;
 
@@ -762,21 +764,47 @@ public class EditorMenuBar extends JMenuBar
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
 				aut.printToFile(filename);
-				//TODO fix
-				String[] R={};
-				String[] F={};
+				String[] R=new String[50];
+				int Rcount=0;
+				String S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Signed Required features or empty for next",
+						JOptionPane.PLAIN_MESSAGE);
+				while (!S.equals("")){
+					R[Rcount]=S;
+					Rcount++;
+					S= (String) JOptionPane.showInputDialog(null, 
+												"Insert Signed Required features or empty for next",
+												JOptionPane.PLAIN_MESSAGE);
+				}
+				R=FMCAUtil.removeTailsNull(R,Rcount);
+				
+				String[] F=new String[50];
+				int Fcount=0;
+				S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Signed Forbidden actions or empty for next",
+						JOptionPane.PLAIN_MESSAGE);
+				while (!S.equals("")){
+					F[Fcount]=S;
+					Fcount++;
+					S= (String) JOptionPane.showInputDialog(null, 
+												"Insert Signed Forbidden Features or empty for next",
+												JOptionPane.PLAIN_MESSAGE);
+				}
+				F=FMCAUtil.removeTailsNull(F,Fcount);
+				
 				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
 				File file=null;
 				if (controller!=null)
 				{
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//K_"+filename,"Success!",JOptionPane.WARNING_MESSAGE);
-					file=controller.exportToXML(lastDir+"//K_"+filename);
+					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					file=controller.exportToXML(lastDir+"//"+K);
 					try
 					{								
 						
 						Document document = mxXmlUtils
-									.parseXml(mxUtils.readFile(lastDir+"//K_"+filename));
+									.parseXml(mxUtils.readFile(lastDir+"//"+K));
 											/*mxUtils.readFile(fc
 																			.getSelectedFile()
 																			.getAbsolutePath()));

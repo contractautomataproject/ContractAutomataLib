@@ -917,6 +917,13 @@ public class FMCAUtil extends CAUtil
 			r[i]=q[i];
 		return r;
 	}
+	public static String[] removeTailsNull(String[] q,int length)
+	{
+		String[] r=new String[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
 	protected static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
 	{
 		FMCATransition[] r=new FMCATransition[length];
