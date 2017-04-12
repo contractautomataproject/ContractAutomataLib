@@ -1,0 +1,11 @@
+Rank: 2
+Number of states: [3, 5]
+Initial state: [0, 0]
+Final states: [[2][4]]
+Transitions: 
+
+!G([1, 2],[?receipt, !receipt],[2, 4])
+!G([1, 1],[?receipt, !receipt],[2, 3])
+!U([0, 0],[?room, !room],[1, 1])
+([1, 1],[-, !room],[1, 2])
+([2, 3],[-, !room],[2, 4])
