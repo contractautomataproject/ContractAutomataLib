@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 
 import FMCA.FMCA;
 import FMCA.FMCAUtil;
+import FMCA.Family;
 import FMCA.Product;
 import CA.CAUtil;
 
@@ -748,9 +749,197 @@ public class EditorMenuBar extends JMenuBar
 		});
 		
 		
+		item = menu.add(new JMenuItem("Load Products"));
+		item.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (editor != null)
+				{
+					if (!editor.isModified()
+							|| JOptionPane.showConfirmDialog(editor,
+									mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
+					{
+						mxGraph graph = editor.getGraphComponent().getGraph();
+
+						if (graph != null)
+						{
+							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+							//String wd=System.getProperty("user.dir");
+							
+							File f=editor.getCurrentFile();
+							String wd;
+							if (f!=null)
+								wd=editor.getCurrentFile().getParent();
+							else
+								wd=System.getProperty("user.dir");
+							JFileChooser fc = new JFileChooser(wd);
+							
+							// Adds file filter for supported file format
+							DefaultFileFilter defaultFilter = new DefaultFileFilter(
+									".prod", "")//mxResources.get("allSupportedFormats")
+											//+ " (.mxe, .png, .vdx)")
+							{
+
+								public boolean accept(File file)
+								{
+									String lcase = file.getName().toLowerCase();
+
+									return super.accept(file)
+											|| lcase.endsWith(".prod");
+								}
+							};
+							fc.addChoosableFileFilter(defaultFilter);
+
+							fc.addChoosableFileFilter(new DefaultFileFilter(".prod",
+									"Products List " + mxResources.get("file")
+											+ " (.prod)"));
+							
+							fc.setFileFilter(defaultFilter);
+
+							int rc = fc.showDialog(null,
+									mxResources.get("openFile"));
+
+							if (rc == JFileChooser.APPROVE_OPTION)
+							{
+								lastDir = fc.getSelectedFile().getParent();
+
+								try
+								{
+									String fileName =fc.getSelectedFile().toString();
+
+									Family fam=new Family(fileName);
+
+									JOptionPane.showMessageDialog(
+											editor.getGraphComponent(),
+											"The products loaded are:\n"+fam.toString(),
+											mxResources.get("earth"),
+											JOptionPane.INFORMATION_MESSAGE);
+//									FMCA aut=FMCA.load(fileName);
+//									File file=aut.exportToXML(fileName);
+//									fileName=file.getAbsolutePath();
+//									
+//										Document document = mxXmlUtils
+//												.parseXml(mxUtils.readFile(fileName));
+//														/*mxUtils.readFile(fc
+//														.getSelectedFile()
+//														.getAbsolutePath()));
+//	*/
+//										mxCodec codec = new mxCodec(document);
+//										codec.decode(
+//												document.getDocumentElement(),
+//												graph.getModel());
+//										editor.setCurrentFile(file);
+//
+//										editor.setModified(false);
+//										editor.getUndoManager().clear();
+//										editor.getGraphComponent().zoomAndCenter();
+								}
+								catch (Exception ex)
+								{
+									ex.printStackTrace();
+									JOptionPane.showMessageDialog(
+											editor.getGraphComponent(),
+											ex.toString(),
+											mxResources.get("error"),
+											JOptionPane.ERROR_MESSAGE);
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+		
+		item = menu.add(new JMenuItem("Most Permissive Controller: load Products"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+				aut.printToFile(filename);
+				String[] R=new String[50];
+				int Rcount=0;
+				String S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Signed Required features or empty for next",
+						JOptionPane.PLAIN_MESSAGE);
+				while (!S.equals("")){
+					R[Rcount]=S;
+					Rcount++;
+					S= (String) JOptionPane.showInputDialog(null, 
+												"Insert Signed Required features or empty for next",
+												JOptionPane.PLAIN_MESSAGE);
+				}
+				R=FMCAUtil.removeTailsNull(R,Rcount);
+				
+				String[] F=new String[50];
+				int Fcount=0;
+				S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Signed Forbidden actions or empty for next",
+						JOptionPane.PLAIN_MESSAGE);
+				while (!S.equals("")){
+					F[Fcount]=S;
+					Fcount++;
+					S= (String) JOptionPane.showInputDialog(null, 
+												"Insert Signed Forbidden Features or empty for next",
+												JOptionPane.PLAIN_MESSAGE);
+				}
+				F=FMCAUtil.removeTailsNull(F,Fcount);
+				
+				Product p=new Product(R,F);
+				FMCA controller = aut.mpc(p);
+				File file=null;
+				if (controller!=null)
+				{
+					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					file=controller.exportToXML(lastDir+"//"+K);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(lastDir+"//"+K));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));
+						*/
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+					
+			}
+		});
 		
 		
-		item = menu.add(new JMenuItem("Most Permissive Controller"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Most Permissive Controller: type Product"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*

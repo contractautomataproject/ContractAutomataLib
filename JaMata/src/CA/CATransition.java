@@ -139,7 +139,10 @@ public class CATransition extends Transition implements java.io.Serializable{
 	
 	public static String getUnsignedAction(String label)
 	{
-		return label.substring(1);
+		if (label.startsWith("!")||label.startsWith("?"))
+			return label.substring(1);
+		else
+			return label;
 	}
 	
 	/**
