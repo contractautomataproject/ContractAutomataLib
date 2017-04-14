@@ -11,7 +11,8 @@ import java.util.List;
 public class Family {
 	private Product[] elements;
 	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
-	
+	private int[][] depth; //depth[i] level i -- list of products
+	private int[] pointerToLevel; //i index to po, pointerLevel[i] index to depth[totfeatures i]
 	public Family(Product[] elements, int[][] po)
 	{
 		this.elements=elements;
@@ -40,16 +41,38 @@ public class Family {
 		return po;
 	}
 	
+	public int[][] getDepth()
+	{
+		return this.depth;
+	}
+	
+	public int[] getPointerToLevel()
+	{
+		return this.pointerToLevel;
+	}
+	
+	
 	/**
 	 * generate po of products, no transitive closure!
 	 * @return
 	 */
 	protected int[][] generatePO()
 	{
+		depth=new int[100][100];//TODO upper bounds;	
+		int[] depthcount=new int[100];//TODO upperbound  count the number of products at each level of depth
+		for (int i=0;i<depthcount.length;i++)
+			depthcount[i]=0;
 		Product[] p=this.elements;
 		int[][] po=new int[p.length][p.length]; 
+		pointerToLevel=new int[p.length];
+		int maxdepth=0;
 		for (int i=0;i<p.length;i++)
 		{
+			if (p[i].getForbiddenAndRequiredNumber()>maxdepth)
+				maxdepth=p[i].getForbiddenAndRequiredNumber();
+			depth[p[i].getForbiddenAndRequiredNumber()][depthcount[p[i].getForbiddenAndRequiredNumber()]]=i;
+			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
+			depthcount[p[i].getForbiddenAndRequiredNumber()]+=1;
 			for (int j=i+1;j<p.length;j++)
 			{
 				if (p[i].getForbiddenAndRequiredNumber()==p[j].getForbiddenAndRequiredNumber()+1)//1 level of depth
@@ -73,6 +96,18 @@ public class Family {
 					po[j][i]=0;
 			}
 		}
+		
+		//remove tails null
+		int newdepth[][] = new int[maxdepth+1][];
+		for (int i=0;i<newdepth.length;i++)
+		{
+			newdepth[i]= new int[depthcount[i]];
+			for (int j=0;j<newdepth[i].length;j++)
+			{
+				newdepth[i][j]=depth[i][j];
+			}
+		}
+		depth=newdepth;
 		return po;
 	}
 	
@@ -118,11 +153,5 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			s+=Arrays.toString(po[i])+"\n";
 		return s;
-	}
-	
-	public static void main(String[] args){
-		//Product[] t=Family.readFile(System.getProperty("user.dir"),"fa.txt");
-		Family test= new Family("fa.txt");
-		System.out.println(test.toString());
 	}
 }

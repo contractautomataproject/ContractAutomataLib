@@ -81,6 +81,6 @@ public class Product {
 	
 	public String toString()
 	{
-		return "Required : "+Arrays.toString(required)+";\nForbidden : "+Arrays.toString(forbidden)+";\n";
+		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
 	}
 }

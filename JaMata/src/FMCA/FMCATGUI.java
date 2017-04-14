@@ -1,3 +1,4 @@
+package FMCA;
 /**
  * Copyright (c) 2006-2012, JGraph Ltd */
 
@@ -17,6 +18,7 @@ import org.w3c.dom.Document;
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
 import com.mxgraph.examples.swing.editor.EditorMenuBar;
 import com.mxgraph.examples.swing.editor.EditorPalette;
+import com.mxgraph.examples.swing.editor.ProductFrame;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -37,6 +39,8 @@ import com.mxgraph.view.mxGraph;
 
 public class FMCATGUI extends BasicGraphEditor
 {
+	
+	private ProductFrame pf;
 	/**
 	 * 
 	 */
@@ -61,16 +65,25 @@ public class FMCATGUI extends BasicGraphEditor
 		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
 	}
 
+	public void setProductFrame(ProductFrame pf)
+	{
+		this.pf=pf;
+	}
+	
+	public ProductFrame getProductFrame()
+	{
+		return this.pf;
+	}
+	
 	/**
 	 * 
 	 */
 	public FMCATGUI(String appTitle, mxGraphComponent component)
 	{
 		super(appTitle, component);
-	
+		pf=null;
 		// Creates the shapes palette
 	//	EditorPalette shapesPalette = insertPalette(mxResources.get("shapes"));
-	//	EditorPalette imagesPalette = insertPalette(mxResources.get("images"));
 		EditorPalette symbolsPalette = insertPalette(mxResources.get("symbols"));
 
 		// Sets the edge template to be used for creating new edges if an edge

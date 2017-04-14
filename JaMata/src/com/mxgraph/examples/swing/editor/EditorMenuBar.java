@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
@@ -25,6 +27,7 @@ import javax.swing.UIManager;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
+import FMCA.FMCATGUI;
 import FMCA.FMCAUtil;
 import FMCA.Family;
 import FMCA.Product;
@@ -101,7 +104,7 @@ public class EditorMenuBar extends JMenuBar
 	/**
 	 * @param editor
 	 */
-	public EditorMenuBar(final BasicGraphEditor editor)
+	public EditorMenuBar(final FMCATGUI editor)
 	{
 		final mxGraphComponent graphComponent = editor.getGraphComponent();
 		final mxGraph graph = graphComponent.getGraph();
@@ -809,31 +812,10 @@ public class EditorMenuBar extends JMenuBar
 									String fileName =fc.getSelectedFile().toString();
 
 									Family fam=new Family(fileName);
-
-									JOptionPane.showMessageDialog(
-											editor.getGraphComponent(),
-											"The products loaded are:\n"+fam.toString(),
-											mxResources.get("earth"),
-											JOptionPane.INFORMATION_MESSAGE);
-//									FMCA aut=FMCA.load(fileName);
-//									File file=aut.exportToXML(fileName);
-//									fileName=file.getAbsolutePath();
-//									
-//										Document document = mxXmlUtils
-//												.parseXml(mxUtils.readFile(fileName));
-//														/*mxUtils.readFile(fc
-//														.getSelectedFile()
-//														.getAbsolutePath()));
-//	*/
-//										mxCodec codec = new mxCodec(document);
-//										codec.decode(
-//												document.getDocumentElement(),
-//												graph.getModel());
-//										editor.setCurrentFile(file);
-//
-//										editor.setModified(false);
-//										editor.getUndoManager().clear();
-//										editor.getGraphComponent().zoomAndCenter();
+							        ProductFrame pf= new ProductFrame(fam, (JPanel)editor);
+							        editor.setProductFrame(pf);
+							        
+																		
 								}
 								catch (Exception ex)
 								{
@@ -860,7 +842,17 @@ public class EditorMenuBar extends JMenuBar
 			 */
 			public void actionPerformed(ActionEvent e)
 			{
-				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
@@ -948,7 +940,17 @@ public class EditorMenuBar extends JMenuBar
 			 */
 			public void actionPerformed(ActionEvent e)
 			{
-				String filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
