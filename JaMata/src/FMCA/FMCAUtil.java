@@ -805,6 +805,17 @@ public class FMCAUtil extends CAUtil
 		return false;
 	}
 	
+	protected static boolean contains(String q, String[] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (listq[i]!=null)
+				if (q.equals(listq[i]))
+					return true;
+		}
+		return false;
+	}
+	
 	protected static int getIndex(int[] q, int e)
 	{
 		for (int i=0;i<q.length;i++)
@@ -927,6 +938,13 @@ public class FMCAUtil extends CAUtil
 	protected static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
 	{
 		FMCATransition[] r=new FMCATransition[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	protected static Product[] removeTailsNull(Product[] q,int length)
+	{
+		Product[] r=new Product[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;

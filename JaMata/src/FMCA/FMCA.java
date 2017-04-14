@@ -60,6 +60,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	//TODO: add feature constraint
 	
+	private Family family;
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
 	 */
@@ -73,6 +74,12 @@ public class FMCA  extends CA implements java.io.Serializable
 		super(rank,initial,states,finalstates,trans);
 	}
 	
+	public FMCA(int rank, int[] initial, int[] states, int[][] finalstates,FMCATransition[] trans, Family f)
+	{
+		super(rank,initial,states,finalstates,trans);
+		this.family=f;
+	}
+	
 	public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
 	{
 		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
@@ -80,7 +87,15 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	
+	public void setFamily(Family f)
+	{
+		this.family=f;
+	}
 	
+	public Family getFamily()
+	{
+		return family;
+	}
 	/**
 	 * load a MSCA described in a text file, compared to CA it also loads the must transitions
 	 * @param the name of the file

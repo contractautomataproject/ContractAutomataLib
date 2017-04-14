@@ -5,23 +5,31 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class Family {
 	private Product[] elements;
-	private int[][] po;
+	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
 	
 	public Family(Product[] elements, int[][] po)
 	{
 		this.elements=elements;
 		this.po=po;
 	}
-	public Family()
+	
+	public Family(Product[] elements)
 	{
-		this.elements=null;
-		this.po=null;
+		this.elements=elements;
+		this.po=this.generatePO();
 	}
+	
+	public Family(String filename)
+	{
+		this.elements=Family.readFile(System.getProperty("user.dir"),filename);
+		this.po=this.generatePO();
+	}
+	
 	public Product[] getProducts()
 	{
 		return elements;
@@ -32,33 +40,89 @@ public class Family {
 		return po;
 	}
 	
-	public static String[] readFile(String currentdir, String filename){
-		Path p=Paths.get(currentdir, filename);
+	/**
+	 * generate po of products, no transitive closure!
+	 * @return
+	 */
+	protected int[][] generatePO()
+	{
+		Product[] p=this.elements;
+		int[][] po=new int[p.length][p.length]; 
+		for (int i=0;i<p.length;i++)
+		{
+			for (int j=i+1;j<p.length;j++)
+			{
+				if (p[i].getForbiddenAndRequiredNumber()==p[j].getForbiddenAndRequiredNumber()+1)//1 level of depth
+				{
+					if (p[i].containsFeature(p[j]))
+						po[i][j]=1;
+					else
+						po[i][j]=0;
+				}
+				else
+					po[i][j]=0;
+				
+				if (p[j].getForbiddenAndRequiredNumber()==p[i].getForbiddenAndRequiredNumber()+1)//1 level of depth
+				{
+					if (p[j].containsFeature(p[i]))
+						po[j][i]=1;
+					else
+						po[j][i]=0;
+				}
+				else
+					po[j][i]=0;
+			}
+		}
+		return po;
+	}
+	
+	/**
+	 * read products from file
+	 * @param currentdir
+	 * @param filename
+	 * @return
+	 */
+	protected static Product[] readFile(String currentdir, String filename){
+		//Path p=Paths.get(currentdir, filename);
+		Path p=Paths.get("", filename);
+		
 		Charset charset = Charset.forName("ISO-8859-1");
 		List<String> lines = null;
 		try {
 			lines = Files.readAllLines(p, charset);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String[] arr = lines.toArray(new String[lines.size()]);
-		boolean end=false;
-		int i=0;
-		while (!end)
+		Product[] products=new Product[arr.length];//TODO fix max products
+		for(int productsind=0;productsind<arr.length;productsind++)
 		{
-			String[] s=arr[i].split("{");
-			Scanner sc=new Scanner(arr[i]).useDelimiter("{");
-			i+=1;
-			if (arr[i].equals("end"))
-				end=true;
+			String[] s=arr[productsind].split("}"); //each line identifies a product			
+			String required=s[0].substring(s[0].indexOf("{")+1);
+			String requireds[]=required.split(",");
+
+			String forbidden=s[1].substring(s[1].indexOf("{")+1);
+			String forbiddens[]=forbidden.split(",");
+
+			products[productsind]=new Product(requireds,forbiddens);
 		}
-		
-		return arr;
+		return products;
+	}
+	
+	public String toString()
+	{
+		String s="";
+		for (int i=0;i<elements.length;i++)
+			s+="Product "+i+"\n"+elements[i].toString()+"\n";
+		s+="< Matrix:\n";
+		for (int i=0;i<elements.length;i++)
+			s+=Arrays.toString(po[i])+"\n";
+		return s;
 	}
 	
 	public static void main(String[] args){
-		String[] t=Family.readFile(System.getProperty("user.dir"),"test.txt");
-		System.out.println(t.toString());
+		//Product[] t=Family.readFile(System.getProperty("user.dir"),"fa.txt");
+		Family test= new Family("fa.txt");
+		System.out.println(test.toString());
 	}
 }

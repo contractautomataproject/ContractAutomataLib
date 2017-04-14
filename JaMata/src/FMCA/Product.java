@@ -1,5 +1,7 @@
 package FMCA;
 
+import java.util.Arrays;
+
 import CA.CATransition;
 
 public class Product {
@@ -31,6 +33,30 @@ public class Product {
 		return forbidden;
 	}
 	
+	public int getForbiddenAndRequiredNumber()
+	{
+		return required.length+forbidden.length;
+	}
+	
+	/**
+	 * check if all features of p are contained 
+	 * @param p
+	 * @return
+	 */
+	public boolean containsFeature(Product p)
+	{
+		String[] rp=p.getRequired();
+		String[] rf=p.getForbidden();
+		for(int i=0;i<rp.length;i++)
+			if (!FMCAUtil.contains(rp[i], this.required))
+				return false;
+		for(int i=0;i<rp.length;i++)
+			if (!FMCAUtil.contains(rf[i], this.forbidden))
+				return false;
+		
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param t
@@ -51,5 +77,10 @@ public class Product {
 				return false;
 		}
 		return true;
+	}
+	
+	public String toString()
+	{
+		return "Required : "+Arrays.toString(required)+";\nForbidden : "+Arrays.toString(forbidden)+";\n";
 	}
 }
