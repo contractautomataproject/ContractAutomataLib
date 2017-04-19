@@ -63,6 +63,7 @@ public class FMCATGUI extends BasicGraphEditor
 	public FMCATGUI()
 	{
 		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
+		pf=null;
 	}
 
 	public void setProductFrame(ProductFrame pf)

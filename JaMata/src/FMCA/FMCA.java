@@ -96,6 +96,9 @@ public class FMCA  extends CA implements java.io.Serializable
 	{
 		return family;
 	}
+	
+	
+	
 	/**
 	 * load a MSCA described in a text file, compared to CA it also loads the must transitions
 	 * @param the name of the file

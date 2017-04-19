@@ -22,7 +22,7 @@ public class ProductFrame extends JDialog{
         getContentPane().add(panel);
         setSize(600,600);
         setLocationRelativeTo(frame);
-        setTitle("Valid Products");
+        setTitle("Family Products");
         panel.setLayout(null);
         Product[] prod = f.getProducts();
         int[][] depth = f.getDepth();
@@ -48,6 +48,10 @@ public class ProductFrame extends JDialog{
         setVisible(true);
 	  }
 
+	public Family getFamily()
+	{
+		return fam;
+	}
     public void paint(Graphics g) {
         super.paint(g);  // fixes the immediate problem.
         Graphics2D g2 = (Graphics2D) g;

@@ -751,8 +751,38 @@ public class EditorMenuBar extends JMenuBar
 			}
 		});
 		
+
+		item = menu.add(new JMenuItem("Clear Product Family"));
+		item.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (editor != null)
+				{
+					if (!editor.isModified()
+							|| JOptionPane.showConfirmDialog(editor,
+									mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
+					{
+						mxGraph graph = editor.getGraphComponent().getGraph();
+
+						if (graph != null)
+						{
+							ProductFrame pf=editor.getProductFrame();
+							if (pf==null)
+								return;
+							else
+							{
+								editor.setProductFrame(null);
+								pf.dispose();
+							}
+						}
+					}
+				}
+			}
+		});
+
 		
-		item = menu.add(new JMenuItem("Load Products"));
+		item = menu.add(new JMenuItem("Load Product Family"));
 		item.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -769,6 +799,12 @@ public class EditorMenuBar extends JMenuBar
 						{
 							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
 							//String wd=System.getProperty("user.dir");
+							ProductFrame pf=editor.getProductFrame();
+							if (pf!=null)
+							{
+								editor.setProductFrame(null);
+								pf.dispose();
+							}
 							
 							File f=editor.getCurrentFile();
 							String wd;
@@ -812,7 +848,7 @@ public class EditorMenuBar extends JMenuBar
 									String fileName =fc.getSelectedFile().toString();
 
 									Family fam=new Family(fileName);
-							        ProductFrame pf= new ProductFrame(fam, (JPanel)editor);
+							        pf= new ProductFrame(fam, (JPanel)editor);
 							        editor.setProductFrame(pf);
 							        
 																		
@@ -832,8 +868,8 @@ public class EditorMenuBar extends JMenuBar
 				}
 			}
 		});
-		
-		item = menu.add(new JMenuItem("Most Permissive Controller: load Products"));//mxResources.get("aboutGraphEditor")));
+
+		item = menu.add(new JMenuItem("Valid Products"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -853,44 +889,123 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
 					return;
 				}
+				
+
+				ProductFrame pf=editor.getProductFrame();
+				if (pf==null)
+				{
+					JOptionPane.showMessageDialog(null,"No product family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
 				aut.printToFile(filename);
-				String[] R=new String[50];
-				int Rcount=0;
-				String S= (String) JOptionPane.showInputDialog(null, 
-						"Insert Signed Required features or empty for next",
-						JOptionPane.PLAIN_MESSAGE);
-				while (!S.equals("")){
-					R[Rcount]=S;
-					Rcount++;
-					S= (String) JOptionPane.showInputDialog(null, 
-												"Insert Signed Required features or empty for next",
-												JOptionPane.PLAIN_MESSAGE);
-				}
-				R=FMCAUtil.removeTailsNull(R,Rcount);
+				Family fam= editor.getProductFrame().getFamily().validProducts(aut);
 				
-				String[] F=new String[50];
-				int Fcount=0;
-				S= (String) JOptionPane.showInputDialog(null, 
-						"Insert Signed Forbidden actions or empty for next",
-						JOptionPane.PLAIN_MESSAGE);
-				while (!S.equals("")){
-					F[Fcount]=S;
-					Fcount++;
-					S= (String) JOptionPane.showInputDialog(null, 
-												"Insert Signed Forbidden Features or empty for next",
-												JOptionPane.PLAIN_MESSAGE);
+				pf=editor.getProductFrame();
+				if (pf!=null)
+				{
+					editor.setProductFrame(null);
+					pf.dispose();
 				}
-				F=FMCAUtil.removeTailsNull(F,Fcount);
 				
-				Product p=new Product(R,F);
-				FMCA controller = aut.mpc(p);
+				pf= new ProductFrame(fam, (JPanel)editor);
+		        editor.setProductFrame(pf);
+					
+			}
+		});
+
+		item = menu.add(new JMenuItem("Canonical Products"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+
+				ProductFrame pf=editor.getProductFrame();
+				if (pf==null)
+				{
+					JOptionPane.showMessageDialog(null,"No product family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+					
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+				
+				Family fam= editor.getProductFrame().getFamily();
+				Product[] p=fam.getProducts();
+				int[] cp=fam.getCanonicalProducts(aut);
+				if (cp!=null)
+				{
+					String message="Canonical Products:\n";
+					for (int i=0;i<cp.length;i++)
+						message+= i+" : \n"+p[cp[i]].toString()+"\n";
+					JOptionPane.showMessageDialog(null,message,"Empty",JOptionPane.PLAIN_MESSAGE);
+				}
+				else
+					JOptionPane.showMessageDialog(null,"No Canonical Products","Empty",JOptionPane.WARNING_MESSAGE);
+					
+			}
+		});
+		
+		item = menu.add(new JMenuItem("Most Permissive Controller of Family"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+
+				ProductFrame pf=editor.getProductFrame();
+				if (pf==null)
+				{
+					JOptionPane.showMessageDialog(null,"No product family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+					
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+				
+				
+				Family f=pf.getFamily();
+				FMCA controller = f.getMPCofFamily(aut);
 				File file=null;
 				if (controller!=null)
 				{
-					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
+					String K="K_family_"+filename;
 					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
 					file=controller.exportToXML(lastDir+"//"+K);
 					try
@@ -931,7 +1046,7 @@ public class EditorMenuBar extends JMenuBar
 		});
 		
 		
-		item = menu.add(new JMenuItem("Most Permissive Controller: type Product"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Most Permissive Controller of a Product"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -954,35 +1069,42 @@ public class EditorMenuBar extends JMenuBar
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
-				aut.printToFile(filename);
-				String[] R=new String[50];
-				int Rcount=0;
+				//aut.printToFile(filename);
 				String S= (String) JOptionPane.showInputDialog(null, 
-						"Insert Signed Required features or empty for next",
+						"Insert Required features separated by semicolon",
 						JOptionPane.PLAIN_MESSAGE);
-				while (!S.equals("")){
-					R[Rcount]=S;
-					Rcount++;
-					S= (String) JOptionPane.showInputDialog(null, 
-												"Insert Signed Required features or empty for next",
-												JOptionPane.PLAIN_MESSAGE);
-				}
-				R=FMCAUtil.removeTailsNull(R,Rcount);
+				if (S==null)
+					return;
+//				String[] R=new String[50];
+//				int Rcount=0;
+//				while (!S.equals("")){
+//					R[Rcount]=S;
+//					Rcount++;
+//					S= (String) JOptionPane.showInputDialog(null, 
+//												"Insert Required features or empty for next",
+//												JOptionPane.PLAIN_MESSAGE);
+//				}
+//				R=FMCAUtil.removeTailsNull(R,Rcount);
+				String[] R=S.split(";");
 				
-				String[] F=new String[50];
-				int Fcount=0;
 				S= (String) JOptionPane.showInputDialog(null, 
-						"Insert Signed Forbidden actions or empty for next",
+						"Insert Forbidden actions separated by semicolon",
 						JOptionPane.PLAIN_MESSAGE);
-				while (!S.equals("")){
-					F[Fcount]=S;
-					Fcount++;
-					S= (String) JOptionPane.showInputDialog(null, 
-												"Insert Signed Forbidden Features or empty for next",
-												JOptionPane.PLAIN_MESSAGE);
-				}
-				F=FMCAUtil.removeTailsNull(F,Fcount);
-				
+				if (S==null)
+					return;
+
+//				String[] F=new String[50];
+//				int Fcount=0;
+//				while (!S.equals("")){
+//					F[Fcount]=S;
+//					Fcount++;
+//					S= (String) JOptionPane.showInputDialog(null, 
+//												"Insert Forbidden Features or empty for next",
+//												JOptionPane.PLAIN_MESSAGE);
+//				}
+//				F=FMCAUtil.removeTailsNull(F,Fcount);
+
+				String[] F=S.split(";");
 				Product p=new Product(R,F);
 				FMCA controller = aut.mpc(p);
 				File file=null;
@@ -998,8 +1120,8 @@ public class EditorMenuBar extends JMenuBar
 									.parseXml(mxUtils.readFile(lastDir+"//"+K));
 											/*mxUtils.readFile(fc
 																			.getSelectedFile()
-																			.getAbsolutePath()));
-						*/
+																			.getAbsolutePath()));*/
+						
 						mxCodec codec = new mxCodec(document);
 						codec.decode(
 								document.getDocumentElement(),

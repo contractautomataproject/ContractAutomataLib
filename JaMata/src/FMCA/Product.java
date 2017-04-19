@@ -43,20 +43,34 @@ public class Product {
 	 * @param p
 	 * @return
 	 */
-	public boolean containsFeature(Product p)
+	public boolean containsFeatures(Product p)
 	{
 		String[] rp=p.getRequired();
 		String[] rf=p.getForbidden();
 		for(int i=0;i<rp.length;i++)
 			if (!FMCAUtil.contains(rp[i], this.required))
 				return false;
-		for(int i=0;i<rp.length;i++)
+		for(int i=0;i<rf.length;i++)
 			if (!FMCAUtil.contains(rf[i], this.forbidden))
 				return false;
 		
 		return true;
 	}
 	
+	/**
+	 * check if all forbidden features of p are contained 
+	 * @param p
+	 * @return
+	 */
+	public boolean containsForbiddenFeatures(Product p)
+	{
+		String[] rf=p.getForbidden();
+		for(int i=0;i<rf.length;i++)
+			if (!FMCAUtil.contains(rf[i], this.forbidden))
+				return false;
+		
+		return true;
+	}
 	/**
 	 * 
 	 * @param t
@@ -79,6 +93,30 @@ public class Product {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @param t
+	 * @return true if all forbidden actions are not available in the transitions t
+	 */
+	public boolean checkForbidden(FMCATransition[] t)
+	{
+		
+		for (int i=0;i<this.forbidden.length;i++)
+		{
+			for (int j=0;j<t.length;j++)
+			{
+				if (CATransition.getUnsignedAction(t[j].getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isValid(FMCA aut)
+	{
+		FMCATransition[] t=aut.getTransition();
+		return this.checkForbidden(t)&&this.checkForbidden(t);
+	}
 	public String toString()
 	{
 		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";

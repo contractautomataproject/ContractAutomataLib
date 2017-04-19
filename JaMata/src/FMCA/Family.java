@@ -11,8 +11,10 @@ import java.util.List;
 public class Family {
 	private Product[] elements;
 	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
+	private int[][] reversepo; //matrix po[i][j]==1 iff elements[i]>elements[j]
 	private int[][] depth; //depth[i] level i -- list of products
 	private int[] pointerToLevel; //i index to po, pointerLevel[i] index to depth[totfeatures i]
+	private boolean[] hasParents;// hasParents[i]==true iff there exists j s.t. reversepo[i][j]=1
 	public Family(Product[] elements, int[][] po)
 	{
 		this.elements=elements;
@@ -22,13 +24,13 @@ public class Family {
 	public Family(Product[] elements)
 	{
 		this.elements=elements;
-		this.po=this.generatePO();
+		this.generatePO();
 	}
 	
 	public Family(String filename)
 	{
 		this.elements=Family.readFile(System.getProperty("user.dir"),filename);
-		this.po=this.generatePO();
+		this.generatePO();
 	}
 	
 	public Product[] getProducts()
@@ -39,6 +41,11 @@ public class Family {
 	public int[][] getPartialOrder()
 	{
 		return po;
+	}
+	
+	public int[][] getReversePO()
+	{
+		return reversepo;
 	}
 	
 	public int[][] getDepth()
@@ -56,14 +63,18 @@ public class Family {
 	 * generate po of products, no transitive closure!
 	 * @return
 	 */
-	protected int[][] generatePO()
+	protected void generatePO()
 	{
 		depth=new int[100][100];//TODO upper bounds;	
 		int[] depthcount=new int[100];//TODO upperbound  count the number of products at each level of depth
 		for (int i=0;i<depthcount.length;i++)
 			depthcount[i]=0;
 		Product[] p=this.elements;
-		int[][] po=new int[p.length][p.length]; 
+		po=new int[p.length][p.length]; 
+		reversepo=new int[p.length][p.length]; 
+		hasParents=new boolean[p.length];
+		for (int i=0;i<p.length;i++)
+			hasParents[i]=false;
 		pointerToLevel=new int[p.length];
 		int maxdepth=0;
 		for (int i=0;i<p.length;i++)
@@ -77,23 +88,43 @@ public class Family {
 			{
 				if (p[i].getForbiddenAndRequiredNumber()==p[j].getForbiddenAndRequiredNumber()+1)//1 level of depth
 				{
-					if (p[i].containsFeature(p[j]))
+					if (p[i].containsFeatures(p[j]))
+					{
 						po[i][j]=1;
+						reversepo[j][i]=1;
+						hasParents[i]=true;
+					}
 					else
+					{
 						po[i][j]=0;
+						reversepo[j][i]=0;
+					}
 				}
 				else
+				{
 					po[i][j]=0;
+					reversepo[j][i]=0;
+				}
 				
 				if (p[j].getForbiddenAndRequiredNumber()==p[i].getForbiddenAndRequiredNumber()+1)//1 level of depth
 				{
-					if (p[j].containsFeature(p[i]))
+					if (p[j].containsFeatures(p[i]))
+					{
 						po[j][i]=1;
+						reversepo[i][j]=1;
+						hasParents[j]=true;
+					}
 					else
+					{
 						po[j][i]=0;
+						reversepo[i][j]=0;
+					}
 				}
 				else
+				{
 					po[j][i]=0;
+					reversepo[i][j]=0;
+				}
 			}
 		}
 		
@@ -108,7 +139,6 @@ public class Family {
 			}
 		}
 		depth=newdepth;
-		return po;
 	}
 	
 	/**
@@ -153,5 +183,187 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			s+=Arrays.toString(po[i])+"\n";
 		return s;
+	}
+	
+	/**
+	 * 
+	 * @param aut
+	 * @return an new family with only products valid in aut
+	 */
+	public Family validProducts(FMCA aut)
+	{
+		boolean[] valid=new boolean[elements.length];
+		for (int i=0;i<elements.length;i++)
+			valid[i]=false; //initialise
+		int[] tv = getTopProducts();
+		for (int i=0;i<tv.length;i++)
+			valid(valid,tv[i],aut);
+		
+		Product[] newp=new Product[elements.length];
+		int count=0;
+		for (int i=0;i<newp.length;i++)
+		{
+			if (valid[i])
+			{
+				newp[count]=elements[i];
+				count++;
+			}
+		}
+		newp=FMCAUtil.removeTailsNull(newp, count);
+		return new Family(newp);
+	}
+	
+	private void valid(boolean[] valid, int i, FMCA aut)
+	{
+		if (elements[i].isValid(aut))
+		{
+			valid[i]=true;
+			for (int j=0;j<reversepo[i].length;j++)
+			{
+				if (reversepo[i][j]==1)
+					valid(valid,j,aut);
+			}
+		}//do not visit subtree if not valid
+	}
+	
+	/**
+	 * 
+	 * @return all top products p s.t. there not exists p'>p
+	 */
+	public int[] getTopProducts()
+	{
+		int[] tp=new int[elements.length];
+		int count=0;
+		for (int i=0;i<elements.length;i++) 
+		{
+			if (!hasParents[i])
+			{
+				tp[count]=i;
+				count++;
+			}
+		}
+		tp=FMCAUtil.removeTailsNull(tp, count);
+		return tp;
+	}
+	
+	
+	/**
+	 * 
+	 * @param aut
+	 * @return  the indexes in this.elements of canonical products
+	 */
+	public int[] getCanonicalProducts(FMCA aut)
+	{
+		Family f=this.validProducts(aut); //prefilter
+		Product[] p=f.getProducts();
+		int[] ind= f.getTopProducts(); 
+		FMCA[] K= new FMCA[p.length];
+		int nonemptylength=0;
+		int[] nonemptyindex= new int[p.length];
+		for (int i=0;i<ind.length;i++)
+		{
+			K[i]=aut.mpc(p[ind[i]]);
+			if (K[i]!=null)
+			{
+				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
+				nonemptylength++;
+			}
+		}
+		
+		//quotient by forbidden actions: initialise
+		int[][] quotient = new int[nonemptylength][nonemptylength]; //upperbound
+		int quotientclasses=0;
+		int[] classlength=new int[nonemptylength]; //upperbound
+		boolean[] addedToClass=new boolean[nonemptylength];
+		for (int i=0;i<nonemptylength;i++)
+		{
+			addedToClass[i]=false;
+			classlength[i]=0;
+		}
+		//build
+		for (int i=0;i<nonemptylength;i++) 
+		{
+			if (addedToClass[i]==false) //not added previously
+			{
+				addedToClass[i]=true;
+				quotient[quotientclasses][classlength[quotientclasses]]=nonemptyindex[i]; //index in the array of products
+				classlength[quotientclasses]++;
+				for (int j=i+1;j<nonemptylength;j++)
+				{
+					if (p[nonemptyindex[i]].containsForbiddenFeatures(p[nonemptyindex[j]]))
+					{
+						addedToClass[j]=true;
+						quotient[quotientclasses][classlength[quotientclasses]]=nonemptyindex[j]; //index in the array of products
+						classlength[quotientclasses]++;
+					}
+				}
+				quotientclasses++;
+			}
+		}
+		//take as canonical product the first element of each class
+		int[] canonicalproducts=new int[quotientclasses];
+		for (int i=0;i<quotientclasses;i++)
+		{
+			canonicalproducts[i]=quotient[i][0];
+		}
+		return canonicalproducts;
+	}
+	
+	public FMCA getMPCofFamily(FMCA aut)
+	{
+		Family f=this.validProducts(aut); //prefilter
+		Product[] p=f.getProducts();
+		int[] ind= f.getTopProducts(); 
+		FMCA[] K= new FMCA[p.length];
+		int nonemptylength=0;
+		int[] nonemptyindex= new int[p.length];
+		for (int i=0;i<ind.length;i++)
+		{
+			K[i]=aut.mpc(p[ind[i]]);
+			if (K[i]!=null)
+			{
+				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
+				nonemptylength++;
+			}
+		}
+		
+		//quotient by forbidden actions: initialise
+		int[][] quotient = new int[nonemptylength][nonemptylength]; //upperbound
+		int quotientclasses=0;
+		int[] classlength=new int[nonemptylength]; //upperbound
+		boolean[] addedToClass=new boolean[nonemptylength];
+		for (int i=0;i<nonemptylength;i++)
+		{
+			addedToClass[i]=false;
+			classlength[i]=0;
+		}
+		//build
+		for (int i=0;i<nonemptylength;i++) 
+		{
+			if (addedToClass[i]==false) //not added previously
+			{
+				addedToClass[i]=true;
+				quotient[quotientclasses][classlength[quotientclasses]]=nonemptyindex[i]; //index in the array of products
+				classlength[quotientclasses]++;
+				for (int j=i+1;j<nonemptylength;j++)
+				{
+					if (p[nonemptyindex[i]].containsForbiddenFeatures(p[nonemptyindex[j]]))
+					{
+						addedToClass[j]=true;
+						quotient[quotientclasses][classlength[quotientclasses]]=nonemptyindex[j]; //index in the array of products
+						classlength[quotientclasses]++;
+					}
+				}
+				quotientclasses++;
+			}
+		}
+		//take as canonical product the first element of each class
+		
+		FMCA[] K2= new FMCA[quotientclasses]; //K of all canonical products
+		for (int i=0;i<quotientclasses;i++)
+		{
+			K2[i]=K[quotient[i][0]]; 
+		}
+		return FMCAUtil.union(K2);
 	}
 }

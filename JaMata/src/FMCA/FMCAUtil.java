@@ -16,6 +16,98 @@ public class FMCAUtil extends CAUtil
 {
 
 	static boolean debug = true;
+	
+	/**
+	 * 
+	 * @param aut
+	 * @return compute the union of the FMCA in aut
+	 */
+	public static FMCA union(FMCA[] aut)
+	{
+		//TODO rename the states
+		int rank=aut[0].getRank(); //the aut must have all the same rank
+		for (int i=1;i<aut.length;i++)
+		{
+			if (aut[1].getRank()!=rank)
+				return null;
+		}
+		
+		int[] initial = new int[rank]; //special initial state
+		String[] label = new String[rank];
+		label[0]="!dummy";				
+		for (int i=0;i<rank;i++)
+		{
+			initial[i]=aut[0].getInitialCA()[i]-1;
+			if (i!=0)
+				label[i]="-";
+		}
+		//dummy transitions to initial states
+		FMCATransition[] t=new FMCATransition[aut.length];
+		for (int i=0;i<t.length;i++)
+		{
+			t[i]=new FMCATransition(initial,label,aut[i].getInitialCA(),FMCATransition.action.PERMITTED); 
+		}
+		int trlength=t.length;
+		FMCATransition[][] tr=new FMCATransition[aut.length][];
+		for (int i=0;i<aut.length;i++)
+		{
+			tr[i]=aut[i].getTransition();
+			trlength+=tr[i].length;
+		}
+		FMCATransition[] uniontr=new FMCATransition[trlength];//union of all transitions
+		int count=0;
+		for (int i=0;i<t.length;i++)
+		{
+			uniontr[count]=t[i];
+			count++;
+		}
+		for (int i=0;i<aut.length;i++)
+		{
+			for (int j=0;j<tr[i].length;j++)
+			{
+				uniontr[count]=tr[i][j];
+				count++;
+			}
+		}
+		
+		int[] states = new int[rank];
+		int[] finalstateslength = new int[rank];
+		for (int i=0;i<rank;i++)
+		{
+			states[i]=0;
+			finalstateslength[i]=0; //initialise
+		}
+		for (int i=0;i<aut.length;i++)
+		{
+			for (int j=0;j<rank;j++)
+			{
+				states[j]+= aut[i].getStatesCA()[j]; //sum of states		
+				finalstateslength[j] += aut[i].getFinalStatesCA()[j].length;
+			}
+		}
+
+		int[][] finalstates = new int[rank][];
+		int[] finalstatescount= new int[rank];
+		for (int i=0;i<rank;i++)
+		{
+			finalstatescount[i]=0;
+			finalstates[i]=new int[finalstateslength[i]];
+		}
+		for (int i=0;i<aut.length;i++)
+		{
+			for (int j=0;j<rank;j++)
+			{		
+				int[] fs=aut[i].getFinalStatesCA()[j];
+				for (int z=0;z<fs.length;z++)
+				{
+					finalstates[j][finalstatescount[j]]=fs[z];//TODO check
+					finalstatescount[j]++;
+				}
+			}
+		}
+		return new FMCA(rank, initial, states, finalstates, uniontr);
+	}
+	
 //	/**
 //	 * identical to the method of CAUtil,  I just substituted CA with MSCA and CATransition with MSCATransition, 
 //	 * 
