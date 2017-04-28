@@ -61,6 +61,11 @@ public class CATransition extends Transition implements java.io.Serializable{
 		return this.source;
 	}
 	
+	public void setSourceP(int[] s)
+	{
+		this.source=s;
+	}
+	
 	
 	/**
 	 * 
@@ -69,6 +74,11 @@ public class CATransition extends Transition implements java.io.Serializable{
 	public int[] getTargetP()
 	{
 		return target;
+	}
+	
+	public void setTargetP(int[] t)
+	{
+		this.target=t;
 	}
 	
 	/**
@@ -80,6 +90,11 @@ public class CATransition extends Transition implements java.io.Serializable{
 		return label;
 	}
 	
+	public void setLabelP(String[] l)
+	{
+		this.label=l;
+	}
+
 	/**
 	 * 
 	 * @return the action of the transition, in case of a match it returns the offer (positive)

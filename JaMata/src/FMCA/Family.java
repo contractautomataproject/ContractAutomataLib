@@ -252,7 +252,7 @@ public class Family {
 	 * @param aut
 	 * @return  the indexes in this.elements of canonical products
 	 */
-	public int[] getCanonicalProducts(FMCA aut)
+	public Product[] getCanonicalProducts(FMCA aut)
 	{
 		Family f=this.validProducts(aut); //prefilter
 		Product[] p=f.getProducts();
@@ -301,10 +301,10 @@ public class Family {
 			}
 		}
 		//take as canonical product the first element of each class
-		int[] canonicalproducts=new int[quotientclasses];
+		Product[] canonicalproducts=new Product[quotientclasses];
 		for (int i=0;i<quotientclasses;i++)
 		{
-			canonicalproducts[i]=quotient[i][0];
+			canonicalproducts[i]=p[quotient[i][0]];
 		}
 		return canonicalproducts;
 	}
@@ -319,8 +319,8 @@ public class Family {
 		int[] nonemptyindex= new int[p.length];
 		for (int i=0;i<ind.length;i++)
 		{
-			K[i]=aut.mpc(p[ind[i]]);
-			if (K[i]!=null)
+			K[ind[i]]=aut.mpc(p[ind[i]]);
+			if (K[ind[i]]!=null)
 			{
 				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
 				nonemptylength++;

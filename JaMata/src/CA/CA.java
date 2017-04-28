@@ -340,6 +340,11 @@ public class CA  extends FSA implements java.io.Serializable
 		return finalstates;
 	}
 	
+	public void setFinalStatesCA(int[][] fs)
+	{
+		this.finalstates=fs;
+	}
+	
 	/**
 	 * 
 	 * @return	the array of states
@@ -356,6 +361,11 @@ public class CA  extends FSA implements java.io.Serializable
 	public int[] getInitialCA()
 	{
 		return initial;
+	}
+	
+	public void setInitialCA(int[] i)
+	{
+		this.initial=i;
 	}
 	
 	/**

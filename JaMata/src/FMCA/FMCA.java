@@ -379,7 +379,10 @@ public class FMCA  extends CA implements java.io.Serializable
 	         e.printStackTrace();
 	      } catch (IOException e) {
 	         e.printStackTrace();
-	      } 
+	      } catch (Exception e) {
+		         e.printStackTrace();
+		      } 
+		 
 		return null;
 	}
 	
@@ -867,12 +870,12 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	
 	
-	public FMCA mpcConstraints(int[][][] products,int[][] L)
+/*	public FMCA mpcConstraints(int[][][] products,int[][] L)
 	{
 		int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
 		statesToVisit[0]=products;
 		return null;
-	}
+	}*/
 	
 	
 //	/**

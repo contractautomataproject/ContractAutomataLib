@@ -602,8 +602,20 @@ public class EditorMenuBar extends JMenuBar
 			{
 				String filename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(filename);
-				aut.printToFile(filename);
-				JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename,"Success!",JOptionPane.WARNING_MESSAGE);
+				if (aut!=null)
+				{
+					aut.printToFile(filename);
+					JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename,"Success!",JOptionPane.PLAIN_MESSAGE);
+				}
+				else 
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
 
@@ -901,19 +913,30 @@ public class EditorMenuBar extends JMenuBar
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
-				aut.printToFile(filename);
-				Family fam= editor.getProductFrame().getFamily().validProducts(aut);
-				
-				pf=editor.getProductFrame();
-				if (pf!=null)
+				if (aut!=null)
 				{
-					editor.setProductFrame(null);
-					pf.dispose();
-				}
-				
-				pf= new ProductFrame(fam, (JPanel)editor);
-		        editor.setProductFrame(pf);
+					aut.printToFile(filename);
+					Family fam= editor.getProductFrame().getFamily().validProducts(aut);
 					
+					pf=editor.getProductFrame();
+					if (pf!=null)
+					{
+						editor.setProductFrame(null);
+						pf.dispose();
+					}
+					
+					pf= new ProductFrame(fam, (JPanel)editor);
+			        editor.setProductFrame(pf);
+				}
+				else 
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+				}	
 			}
 		});
 
@@ -949,15 +972,24 @@ public class EditorMenuBar extends JMenuBar
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
 				
 				Family fam= editor.getProductFrame().getFamily();
-				Product[] p=fam.getProducts();
-				int[] cp=fam.getCanonicalProducts(aut);
+				Product[] cp=fam.getCanonicalProducts(aut);
 				if (cp!=null)
 				{
 					String message="Canonical Products:\n";
 					for (int i=0;i<cp.length;i++)
-						message+= i+" : \n"+p[cp[i]].toString()+"\n";
+						message+= i+" : \n"+cp[i].toString()+"\n";
 					JOptionPane.showMessageDialog(null,message,"Empty",JOptionPane.PLAIN_MESSAGE);
 				}
 				else
@@ -998,10 +1030,22 @@ public class EditorMenuBar extends JMenuBar
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
+
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
 				
 				
 				Family f=pf.getFamily();
 				FMCA controller = f.getMPCofFamily(aut);
+				controller.printToFile("test");
 				File file=null;
 				if (controller!=null)
 				{
@@ -1069,6 +1113,19 @@ public class EditorMenuBar extends JMenuBar
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
 				FMCA aut= FMCA.importFromXML(absfilename);
+				
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
+				
+				
 				//aut.printToFile(filename);
 				String S= (String) JOptionPane.showInputDialog(null, 
 						"Insert Required features separated by semicolon",

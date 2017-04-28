@@ -85,7 +85,7 @@ public class FSA implements java.io.Serializable{
 	{
 		System.out.println("This is the automaton:");
 		System.out.println("Number of states: " + this.getStates());
-		System.out.println("Initial state: " +this.getInitial());
+		System.out.println("Initial state: " +this.initial);
 		System.out.println("Final states: "+Arrays.toString(this.getFinalStates()));
 		System.out.println("Transition: "+Arrays.toString(this.getTransition()));
 	}

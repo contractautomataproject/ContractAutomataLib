@@ -24,12 +24,46 @@ public class FMCAUtil extends CAUtil
 	 */
 	public static FMCA union(FMCA[] aut)
 	{
-		//TODO rename the states
+		int upperbound=100; //TODO upperbound check
 		int rank=aut[0].getRank(); //the aut must have all the same rank
-		for (int i=1;i<aut.length;i++)
+		for (int i=0;i<aut.length;i++)
 		{
-			if (aut[1].getRank()!=rank)
+			int[][] fs=aut[i].getFinalStatesCA();
+			int[][] newfs=new int[fs.length][];
+			for (int j=0;j<newfs.length;j++)
+			{
+				newfs[j]=Arrays.copyOf(fs[j], fs[j].length);
+			}
+			for (int j=0;j<newfs.length;j++)
+			{
+				for (int z=0;z<newfs[j].length;z++)
+					newfs[j][z]+=upperbound*(i+1);
+			}
+			aut[i].setFinalStatesCA(newfs);
+		}
+		for (int i=0;i<aut.length;i++)
+		{
+			if (aut[i].getRank()!=rank)
 				return null;
+			
+			//renaming states of operands
+			int[] initial=aut[i].getInitialCA();
+			for (int z=0;z<initial.length;z++)
+				initial[z]=initial[z]+upperbound*(i+1);
+			aut[i].setInitialCA(initial);
+			FMCATransition[] t=aut[i].getTransition();
+			for (int j=0;j<t.length;j++)
+			{
+				int[] source=Arrays.copyOf(t[j].getSourceP(),t[j].getSourceP().length);
+				int[] target=Arrays.copyOf(t[j].getTargetP(),t[j].getTargetP().length);
+				for (int z=0;z<source.length;z++)
+				{
+					source[z] = source[z] + upperbound*(i+1);
+					target[z] = target[z] + upperbound*(i+1);
+				}
+				t[j].setSourceP(source);
+				t[j].setTargetP(target);
+			}
 		}
 		
 		int[] initial = new int[rank]; //special initial state
@@ -37,7 +71,7 @@ public class FMCAUtil extends CAUtil
 		label[0]="!dummy";				
 		for (int i=0;i<rank;i++)
 		{
-			initial[i]=aut[0].getInitialCA()[i]-1;
+			initial[i]=0;
 			if (i!=0)
 				label[i]="-";
 		}
@@ -79,32 +113,41 @@ public class FMCAUtil extends CAUtil
 		}
 		for (int i=0;i<aut.length;i++)
 		{
+			int[][] fs = aut[i].getFinalStatesCA();
 			for (int j=0;j<rank;j++)
 			{
 				states[j]+= aut[i].getStatesCA()[j]; //sum of states		
-				finalstateslength[j] += aut[i].getFinalStatesCA()[j].length;
+				finalstateslength[j] += fs[j].length; //number of final states of operands
 			}
 		}
 
 		int[][] finalstates = new int[rank][];
 		int[] finalstatescount= new int[rank];
-		for (int i=0;i<rank;i++)
+		for (int i=0;i<finalstates.length;i++)
 		{
 			finalstatescount[i]=0;
 			finalstates[i]=new int[finalstateslength[i]];
 		}
 		for (int i=0;i<aut.length;i++)
 		{
+			int[][] fs = aut[i].getFinalStatesCA();
 			for (int j=0;j<rank;j++)
 			{		
-				int[] fs=aut[i].getFinalStatesCA()[j];
-				for (int z=0;z<fs.length;z++)
+				for (int z=0;z<fs[j].length;z++)
 				{
-					finalstates[j][finalstatescount[j]]=fs[z];//TODO check
+					finalstates[j][finalstatescount[j]]=fs[j][z];//TODO check
 					finalstatescount[j]++;
 				}
 			}
 		}
+		
+		/*int[][] finalstates = new int[rank][];
+		for (int i=0;i<rank;i++)
+		{
+			int[][] fs=aut[i].getFinalStatesCA();
+			
+		}*/
+	
 		return new FMCA(rank, initial, states, finalstates, uniontr);
 	}
 	
@@ -801,7 +844,8 @@ public class FMCAUtil extends CAUtil
 	
 	/**
 	 * 
-	 * identical to the method of CAUtil,  I just substituted CA with FMCA and CATransition with FMCATransition,  
+	 * identical to the method of CAUtil,  I just substituted CA with FMCA and CATransition with FMCATransition,
+	 * TODO remove  
 	 * @return
 	 */
 	protected static FMCA[] load()
@@ -861,19 +905,23 @@ public class FMCAUtil extends CAUtil
 		 int[] results = new int[items.length];
 
 		 for (int ii = 0; ii < items.length; ii++) {
-		     try {
+		    // try {
 		         results[ii] = Integer.parseInt(items[ii]);
-		     } catch (NumberFormatException nfe) {
+		     /*} catch (NumberFormatException nfe) {
 		         nfe.printStackTrace();
-		     };
+		     };*/
 		 }
 		 return results;
 	}
 	
-	protected static String[] getArrayString(String arr)
+	protected static String[] getArrayString(String arr) throws Exception
 	{
 		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-
+		 for (int i=0;i<items.length;i++)
+		 {
+			 if (!(items[i].startsWith("!")||items[i].startsWith("?")))
+				 throw new Exception();
+		 }
 		 /*int[] results = new int[items.length];
 
 		 for (int ii = 0; ii < items.length; ii++) {
@@ -958,6 +1006,7 @@ public class FMCAUtil extends CAUtil
 		m=removeDuplicates(m);
 		return m;
 	}
+	
 	protected static int[][] setDifference(int[][] q1, int[][] q2)
 	{
 		int p=0;

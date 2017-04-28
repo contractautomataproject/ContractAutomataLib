@@ -92,7 +92,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}	
 	
 	/**
-	 * 
+	 * aka  controllable greedy/lazy request
 	 * @return	true if the  greedy/lazy transition request is matched 
 	 */
 	protected  boolean isMatched(FMCA aut)
@@ -145,7 +145,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}
 	
 	/**
-	 * 
+	 * aka uncontrollable lazy match
 	 * @return	true if the  lazy match transition is lazy unmatchable in aut
 	 */
 	protected  boolean isLazyUnmatchable(FMCA aut)
