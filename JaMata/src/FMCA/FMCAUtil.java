@@ -919,7 +919,7 @@ public class FMCAUtil extends CAUtil
 		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
 		 for (int i=0;i<items.length;i++)
 		 {
-			 if (!(items[i].startsWith("!")||items[i].startsWith("?")))
+			 if (!(items[i].startsWith("!")||items[i].startsWith("?")||items[i].startsWith("-")))
 				 throw new Exception();
 		 }
 		 /*int[] results = new int[items.length];

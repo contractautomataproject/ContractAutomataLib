@@ -1,0 +1,10 @@
+Rank: 1
+Number of states: [4]
+Initial state: [0]
+Final states: [[3]]
+Transitions: 
+
+!L([2],[?invoice],[3])
+!L([0],[?room],[1])
+([1],[!card],[2])
+([2],[?receipt],[3])

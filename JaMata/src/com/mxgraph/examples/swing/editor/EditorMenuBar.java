@@ -605,7 +605,7 @@ public class EditorMenuBar extends JMenuBar
 				if (aut!=null)
 				{
 					aut.printToFile(filename);
-					JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename,"Success!",JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
 				}
 				else 
 				{
@@ -719,8 +719,8 @@ public class EditorMenuBar extends JMenuBar
 							File file=null;
 							if (composition!=null)
 							{
-								JOptionPane.showMessageDialog(null,"The composition has been stored with filename "+lastDir+"\\"+compositionname,"Success!",JOptionPane.WARNING_MESSAGE);
 								file=composition.exportToXML(lastDir+"\\"+compositionname);
+								JOptionPane.showMessageDialog(null,"The composition has been stored with filename "+lastDir+"\\"+compositionname,"Success!",JOptionPane.WARNING_MESSAGE);
 							}
 							else
 							{
