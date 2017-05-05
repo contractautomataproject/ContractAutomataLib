@@ -11,7 +11,7 @@ The Hotel Reservation Scenario FMCAs are under the folder FMCAexamples/HotelRese
 
 The base package is FSA (Finite State Automata). 
 These classes are extended for representing
-	- FSCA (Featured Modal Service Contract Automata) extends CA
+	- FMCA (Featured Modal Service Contract Automata) extends CA
 	- CA (Contract Automata) see CAT repository for more informations on CA
 
 
