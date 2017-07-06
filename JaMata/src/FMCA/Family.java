@@ -1,5 +1,6 @@
 package FMCA;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -7,6 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class Family {
 	private Product[] elements;
@@ -65,8 +76,8 @@ public class Family {
 	 */
 	protected void generatePO()
 	{
-		depth=new int[100][100];//TODO upper bounds;	
-		int[] depthcount=new int[100];//TODO upperbound  count the number of products at each level of depth
+		depth=new int[1000][1000];//TODO upper bounds;	
+		int[] depthcount=new int[1000];//TODO upperbound  count the number of products at each level of depth
 		for (int i=0;i<depthcount.length;i++)
 			depthcount[i]=0;
 		Product[] p=this.elements;
@@ -173,6 +184,82 @@ public class Family {
 		}
 		return products;
 	}
+	
+	public static Product[] importFamily(String currentdir, String filename)
+	{	
+		String[] features=getFeatures(filename);
+		File folder = new File(currentdir.substring(0, currentdir.lastIndexOf("\\")));
+		File[] listOfFiles = folder.listFiles();
+		Product[] pr=new Product[listOfFiles.length];
+		int prlength=0;
+		    for (int i = 0; i < listOfFiles.length; i++) {
+		      if (listOfFiles[i].isFile()&&listOfFiles[i].getName().contains("config")) {
+		    	Path p=Paths.get("", listOfFiles[i].getAbsolutePath());
+		  		Charset charset = Charset.forName("ISO-8859-1");
+		  		List<String> lines = null;
+		  		try {
+		  			lines = Files.readAllLines(p, charset);
+		  		} catch (IOException e) {
+		  			e.printStackTrace();
+		  		}
+		  		String[] f1 = lines.toArray(new String[lines.size()]); //required features
+		  		pr[prlength]=new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1));
+		  		prlength++;
+		      }
+		    }
+		pr=FMCAUtil.removeTailsNull(pr, prlength);
+		return pr;
+	}
+	
+	private static String[] getFeatures(String filename)
+	{
+		String[] features=null;
+		try {
+	         File inputFile = new File(filename);
+	         DocumentBuilderFactory dbFactory 
+	            = DocumentBuilderFactory.newInstance();
+	         DocumentBuilder dBuilder;
+
+	         dBuilder = dbFactory.newDocumentBuilder();
+
+	         Document doc = dBuilder.parse(inputFile);
+	         doc.getDocumentElement().normalize();
+
+	         //XPath xPath =  XPathFactory.newInstance().newXPath();
+	         
+	         //NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
+	         NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
+	         
+	         features=new String[nodeList.getLength()];
+	         /**
+	          * first read all the states, then all the edges
+	          */
+	         int ind =0;
+	         for (int i = 0; i < nodeList.getLength(); i++) 
+	         {
+	            Node nNode = nodeList.item(i);
+	          //  System.out.println("\nCurrent Element :" 
+	          //     + nNode.getNodeName());
+	            if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+	            {
+	               Element eElement = (Element) nNode;
+	               features[i]=eElement.getAttribute("name");    
+	               ind++;
+	            }       
+	        }
+	        features=FMCAUtil.removeTailsNull(features, ind);
+	      } catch (ParserConfigurationException e) {
+	         e.printStackTrace();
+	      } catch (SAXException e) {
+	         e.printStackTrace();
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      } catch (Exception e) {
+		         e.printStackTrace();
+		      } 
+		return features;		
+	}
+
 	
 	public String toString()
 	{

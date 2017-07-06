@@ -19,15 +19,20 @@ public class ProductFrame extends JDialog{
 	public ProductFrame(Family f, JPanel frame){
 		this.fam=f;
         JPanel panel=new JPanel();
-        getContentPane().add(panel);
-        setSize(600,600);
-        setLocationRelativeTo(frame);
+        this.setLocationRelativeTo(frame);
+        this.setSize(800,800);
         setTitle("Family Products");
-        panel.setLayout(null);
+        //panel.setLayout(null);
+        panel.setAutoscrolls(true);
         Product[] prod = f.getProducts();
         int[][] depth = f.getDepth();
-        
-        
+        JScrollPane scrollpanel= new JScrollPane(panel,
+      		   ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,  
+      		   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      
+         scrollpanel.setPreferredSize(new Dimension( 600,600));
+         scrollpanel.setAutoscrolls(true);
+         
         nodes = new JLabel[prod.length];
         
         for (int i=0;i<depth.length;i++)
@@ -36,15 +41,21 @@ public class ProductFrame extends JDialog{
         	{
         		nodes[depth[i][j]] = new JLabel();
         		nodes[depth[i][j]].setText(prod[depth[i][j]].toString());
-        		nodes[depth[i][j]].setBounds(10+j*150, 10+i*50, 200, 50);
+        		int width=prod[depth[i][j]].getForbiddenAndRequiredNumber()*60;
+        		nodes[depth[i][j]].setBounds(10+j*width, 10+i*50, width, 50);
         		//nodes[depth[i][j]].setHorizontalAlignment(10+j*20);
         		//nodes[depth[i][j]].setVerticalAlignment(10+i*60);
         		//nodes[depth[i][j]].setFont(new Font("Verdana",1,8));
                 panel.add(nodes[depth[i][j]]);
         	}
         }
+             
         panel.setBorder(new LineBorder(Color.BLACK));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        
+     
+        getContentPane().add(scrollpanel);
+        
         setVisible(true);
 	  }
 

@@ -1037,6 +1037,36 @@ public class FMCAUtil extends CAUtil
 		m=removeTailsNull(m,p);
 		return m;
 	}
+	protected static String[] setDifference(String[] q1, String[] q2)
+	{
+		int p=0;
+		String[] m= new String[q1.length];
+		for (int i=0;i<m.length;i++)
+		{
+			if (!contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p);
+		return m;
+	}
+	protected static String[] setIntersection(String[] q1, String[] q2)
+	{
+		int p=0;
+		String[] m= new String[q1.length];
+		for (int i=0;i<m.length;i++)
+		{
+			if (contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p);
+		return m;
+	}
 	protected static int[][] removeDuplicates(int[][] m)
 	{
 		int removed=0;

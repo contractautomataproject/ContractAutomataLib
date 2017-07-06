@@ -881,6 +881,96 @@ public class EditorMenuBar extends JMenuBar
 			}
 		});
 
+		item = menu.add(new JMenuItem("Import Product Family"));
+		item.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (editor != null)
+				{
+					if (!editor.isModified()
+							|| JOptionPane.showConfirmDialog(editor,
+									mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
+					{
+						mxGraph graph = editor.getGraphComponent().getGraph();
+
+						if (graph != null)
+						{
+							//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+							//String wd=System.getProperty("user.dir");
+							ProductFrame pf=editor.getProductFrame();
+							if (pf!=null)
+							{
+								editor.setProductFrame(null);
+								pf.dispose();
+							}
+							
+							File f=editor.getCurrentFile();
+							String wd;
+							if (f!=null)
+								wd=editor.getCurrentFile().getParent();
+							else
+								wd=System.getProperty("user.dir");
+							JFileChooser fc = new JFileChooser(wd);
+							
+							// Adds file filter for supported file format
+							DefaultFileFilter defaultFilter = new DefaultFileFilter(
+									".xml", "")//mxResources.get("allSupportedFormats")
+											//+ " (.mxe, .png, .vdx)")
+							{
+
+								public boolean accept(File file)
+								{
+									String lcase = file.getName().toLowerCase();
+
+									return super.accept(file)
+											|| lcase.endsWith(".cfr.data");
+								}
+							};
+							fc.addChoosableFileFilter(defaultFilter);
+
+							fc.addChoosableFileFilter(new DefaultFileFilter(".xml",
+									" Feature Model " + mxResources.get("file")
+											+ " (.xml)"));
+							
+							fc.setFileFilter(defaultFilter);
+
+							int rc = fc.showDialog(null,
+									mxResources.get("openFile"));
+
+							if (rc == JFileChooser.APPROVE_OPTION)
+							{
+								lastDir = fc.getSelectedFile().getParent();
+
+								try
+								{
+									String fileName =fc.getSelectedFile().toString();
+									
+									Product[] pr=Family.importFamily(fc.getSelectedFile().getPath(),fileName);
+									
+									Family fam=new Family(pr);
+							        pf= new ProductFrame(fam, (JPanel)editor);
+							        editor.setProductFrame(pf);
+							        
+																		
+								}
+								catch (Exception ex)
+								{
+									ex.printStackTrace();
+									JOptionPane.showMessageDialog(
+											editor.getGraphComponent(),
+											ex.toString(),
+											mxResources.get("error"),
+											JOptionPane.ERROR_MESSAGE);
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+		
+		
 		item = menu.add(new JMenuItem("Valid Products"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
