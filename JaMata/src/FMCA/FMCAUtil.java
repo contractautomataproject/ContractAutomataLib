@@ -1006,7 +1006,18 @@ public class FMCAUtil extends CAUtil
 		m=removeDuplicates(m);
 		return m;
 	}
-	
+	protected static Product[] concat(Product[] q1, Product[] q2)
+	{
+		Product[] m= new Product[q1.length+q2.length];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		return m;
+	}
 	protected static int[][] setDifference(int[][] q1, int[][] q2)
 	{
 		int p=0;

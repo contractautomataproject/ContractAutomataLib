@@ -185,6 +185,14 @@ public class Family {
 		return products;
 	}
 	
+	/**
+	 * loads the list of products generated through FeatureIDE
+	 * the list of products and the xml model description must be inside 
+	 * the same directory
+	 * @param currentdir
+	 * @param filename
+	 * @return
+	 */
 	public static Product[] importFamily(String currentdir, String filename)
 	{	
 		String[] features=getFeatures(filename);
@@ -208,7 +216,72 @@ public class Family {
 		      }
 		    }
 		pr=FMCAUtil.removeTailsNull(pr, prlength);
+		//return generateSuperProducts(pr,features);
 		return pr;
+	}
+	
+	/**
+	 * 
+	 * @param p list of pairwise different products
+	 * @param features  the features of the products
+	 * @return  list containing all valid superproducts (aka subfamily)
+	 */
+	private static Product[] generateSuperProducts(Product[] p, String[] features)
+	{
+		if ((p==null)||features==null)
+			return null;
+
+		Product[][] pl= new Product[features.length][];
+		pl[features.length-1]=p;
+		for (int level=features.length; level>0;level--)//start from the bottom of the tree, all features instantiated
+		{
+			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
+			int newprodind=0;
+			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
+			{
+				for (int prodind=0; prodind<pl[level-1].length;prodind++)
+				{
+					if (pl[level-1][prodind].getForbiddenAndRequiredNumber()==level && pl[level-1][prodind].containFeature(features[removedfeature]))
+					{
+						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
+						{
+							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level && pl[level-1][prodcompare].containFeature(features[removedfeature])) 
+								/*for each pair of products at the same level check if by removing the selected feature they 
+								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
+								  product (the feature is contained in both products) otherwise the two products are equals, 
+								  and initially no products are equal and this property is invariant.
+								 */
+							{
+								Product debug=pl[level-1][prodind];
+								Product debug2=pl[level-1][prodcompare];
+								String[] rf=new String[1];
+								rf[0]=features[removedfeature];
+								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf),
+										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
+								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf),
+										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
+								if (p1.equals(p2))
+								{	//new super product discovered!
+									newproducts[newprodind]=p1;
+									newprodind++;
+								}
+							}			
+						}
+					}
+				}
+			}
+			if (newprodind>0)
+			{
+				newproducts=FMCAUtil.removeTailsNull(newproducts, newprodind);
+				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
+				pl[level-2]=newproducts;
+			}
+			else
+				break; //stop earlier when no products are discovered
+		}
+		for (int i=features.length-2;i>0;i--)
+			p=FMCAUtil.concat(p, pl[i]);  
+		return p;
 	}
 	
 	private static String[] getFeatures(String filename)

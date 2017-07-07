@@ -71,6 +71,36 @@ public class Product {
 		
 		return true;
 	}
+	
+	/**
+	 * check if all required features of p are contained 
+	 * @param p
+	 * @return
+	 */
+	public boolean containsRequiredFeatures(Product p)
+	{
+		String[] rf=p.getRequired();
+		for(int i=0;i<rf.length;i++)
+			if (!FMCAUtil.contains(rf[i], this.required))
+				return false;
+		
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 * @return  true if feature f is contained (either required or forbidden)
+	 */
+	public boolean containFeature(String f)
+	{
+		String[] s= new String[1];
+		s[0]=f;
+		Product temp = new Product(s,s);
+		return (this.containsRequiredFeatures(temp)||this.containsForbiddenFeatures(temp));
+	}
+	
+	
 	/**
 	 * 
 	 * @param t
@@ -112,6 +142,7 @@ public class Product {
 		return true;
 	}
 	
+	
 	public boolean isValid(FMCA aut)
 	{
 		FMCATransition[] t=aut.getTransition();
@@ -120,5 +151,19 @@ public class Product {
 	public String toString()
 	{
 		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
+	}
+	
+	/**
+	 * 
+	 * @param p
+	 * @return true if both products have the same required and forbidden features
+	 */
+	public boolean equals(Product p)
+	{
+		return (
+			((p.getRequired().length==required.length)&&(this.containsRequiredFeatures(p)))
+			&&
+			((p.getForbidden().length==forbidden.length)&&(this.containsForbiddenFeatures(p)))			
+			);
 	}
 }
