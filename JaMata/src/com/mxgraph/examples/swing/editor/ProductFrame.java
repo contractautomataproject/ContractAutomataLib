@@ -75,6 +75,8 @@ public class ProductFrame extends JDialog{
 	        	                int j = Integer.parseInt(sj);
 	        	                int[] ptl=fam.getPointerToLevel();
 	        	                int[][] rpo=fam.getReversePO();
+	        	                int[][] depth=fam.getDepth();
+	        	                Product[] prod = fam.getProducts();
 	        	                int poindex=depth[i][j];
 	        	                String message="Subproducts of P"+poindex+" "+prod[poindex].toString()+" \n";
 	        	                for (int ind=0;ind<rpo[poindex].length;ind++)
