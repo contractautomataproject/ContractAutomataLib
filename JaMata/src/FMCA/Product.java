@@ -153,6 +153,12 @@ public class Product {
 		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
 	}
 	
+	public String toHTMLString(String s)
+	{
+        return "<html>"+s+"R:"+Arrays.toString(required)+"<br />F:"+Arrays.toString(forbidden)+"</html>";
+	
+	}
+	
 	/**
 	 * 
 	 * @param p

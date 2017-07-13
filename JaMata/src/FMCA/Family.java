@@ -23,8 +23,8 @@ public class Family {
 	private Product[] elements;
 	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
 	private int[][] reversepo; //matrix po[i][j]==1 iff elements[i]>elements[j]
-	private int[][] depth; //depth[i] level i -- list of products
-	private int[] pointerToLevel; //i index to po, pointerLevel[i] index to depth[totfeatures i]
+	private int[][] depth; //depth[i] level i -- list of products, depth[i][j] index to elements
+	private int[] pointerToLevel; //i index to elements, pointerLevel[i] index to depth[totfeatures i]
 	private boolean[] hasParents;// hasParents[i]==true iff there exists j s.t. reversepo[i][j]=1
 	public Family(Product[] elements, int[][] po)
 	{
@@ -187,8 +187,7 @@ public class Family {
 	
 	/**
 	 * loads the list of products generated through FeatureIDE
-	 * the list of products and the xml model description must be inside 
-	 * the same directory
+	 * 
 	 * @param currentdir
 	 * @param filename
 	 * @return
@@ -196,31 +195,77 @@ public class Family {
 	public static Product[] importFamily(String currentdir, String filename)
 	{	
 		String[] features=getFeatures(filename);
-		File folder = new File(currentdir.substring(0, currentdir.lastIndexOf("\\")));
+		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
+		currentdir+="\\products\\";
+		File folder = new File(currentdir);
 		File[] listOfFiles = folder.listFiles();
 		Product[] pr=new Product[listOfFiles.length];
 		int prlength=0;
 		    for (int i = 0; i < listOfFiles.length; i++) {
-		      if (listOfFiles[i].isFile()&&listOfFiles[i].getName().contains("config")) {
-		    	Path p=Paths.get("", listOfFiles[i].getAbsolutePath());
-		  		Charset charset = Charset.forName("ISO-8859-1");
-		  		List<String> lines = null;
-		  		try {
-		  			lines = Files.readAllLines(p, charset);
-		  		} catch (IOException e) {
-		  			e.printStackTrace();
-		  		}
-		  		String[] f1 = lines.toArray(new String[lines.size()]); //required features
-		  		pr[prlength]=new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1));
-		  		prlength++;
-		      }
+				Path p=null;
+				boolean found=true;
+				if (listOfFiles[i].isFile()&&listOfFiles[i].getName().contains("config")) { //no sub-directory on products
+					p=Paths.get("", listOfFiles[i].getAbsolutePath());
+				}
+				else if (listOfFiles[i].isDirectory())
+				{
+					File[] ff = listOfFiles[i].listFiles();
+					if (ff!=null && ff.length>0 && ff[0]!=null && ff[0].isFile()&&ff[0].getName().contains("config")) //each product has its own sub-directory
+					{
+						p=Paths.get("", ff[0].getAbsolutePath());
+					}
+					else
+						found=false;
+				}
+				if (found)
+				{
+					Charset charset = Charset.forName("ISO-8859-1");
+					List<String> lines = null;
+					try {
+						lines = Files.readAllLines(p, charset);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					/*if (prlength==0||prlength==15)
+					{
+						System.out.println();
+					}
+*/					String[] f1 = lines.toArray(new String[lines.size()]); //required features
+					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1)); 
+					boolean alreadyinserted=false;
+					/**
+					 * product generation of featureide may generate duplicate product!
+					 */
+					for (int z=0;z<prlength;z++) 
+					{
+						if (pro.equals(pr[z]))
+						{
+							alreadyinserted=true;
+							break;
+						}
+					}
+					if (!alreadyinserted)
+					{
+						pr[prlength]=pro;
+						prlength++;
+					}
+				}		      
 		    }
 		pr=FMCAUtil.removeTailsNull(pr, prlength);
-		//return generateSuperProducts(pr,features);
-		return pr;
+		return generateSuperProducts(pr,features);
 	}
 	
 	/**
+	 * 
+	 * given two products p1 p2 identical but for a feature f activated in one 
+	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
+	 * This method generates all possible super products. 
+	 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
+	 * This condition holds for the method.
+	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
+	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
+	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
+	 * 
 	 * 
 	 * @param p list of pairwise different products
 	 * @param features  the features of the products
@@ -233,9 +278,10 @@ public class Family {
 
 		Product[][] pl= new Product[features.length][];
 		pl[features.length-1]=p;
-		for (int level=features.length; level>0;level--)//start from the bottom of the tree, all features instantiated
+		for (int level=features.length; level>1;level--)//start from the bottom of the tree, all features instantiated
 		{
 			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
+			//String[]  featuresremoved = new String[pl[level-1].length*(pl[level-1].length-1)]; //debug
 			int newprodind=0;
 			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
 			{
@@ -248,22 +294,39 @@ public class Family {
 							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level && pl[level-1][prodcompare].containFeature(features[removedfeature])) 
 								/*for each pair of products at the same level check if by removing the selected feature they 
 								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
-								  product (the feature is contained in both products) otherwise the two products are equals, 
-								  and initially no products are equal and this property is invariant.
+								  product (the feature is contained in both products). No duplicates are inserted.
 								 */
 							{
-								Product debug=pl[level-1][prodind];
+/*								Product debug=pl[level-1][prodind];
 								Product debug2=pl[level-1][prodcompare];
-								String[] rf=new String[1];
+								if (debug.equals(debug2))
+								{
+									boolean error=true;
+								}
+*/								String[] rf=new String[1];
 								rf[0]=features[removedfeature];
 								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf),
 										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
 								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf),
-										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
+										FMCAUtil.setDifference(pl[level-1][prodcompare].getForbidden(),rf));
 								if (p1.equals(p2))
-								{	//new super product discovered!
-									newproducts[newprodind]=p1;
-									newprodind++;
+								{	//featuresremoved[newprodind]=features[removedfeature];
+									boolean alreadyinserted=false;
+									for (int z=0;z<newprodind;z++) //check if the product was not inserted previously by removing a different feature
+									{
+										if (p1.equals(newproducts[z]))
+										{
+											alreadyinserted=true;
+											break;
+										}
+									}
+									if (!alreadyinserted)
+									{
+										//new super product discovered!
+										newproducts[newprodind]=p1;
+										newprodind++;
+									}
+									
 								}
 							}			
 						}
@@ -279,8 +342,11 @@ public class Family {
 			else
 				break; //stop earlier when no products are discovered
 		}
-		for (int i=features.length-2;i>0;i--)
-			p=FMCAUtil.concat(p, pl[i]);  
+		for (int i=features.length-2;i>=0;i--)
+		{	
+			if (pl[i]!=null)
+				p=FMCAUtil.concat(p, pl[i]);  
+		}
 		return p;
 	}
 	
