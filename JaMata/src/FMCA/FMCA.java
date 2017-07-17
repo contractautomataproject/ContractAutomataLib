@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 
 
+
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,6 +61,10 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	//TODO: add feature constraint
 	
+	float[] xstate=null;		// --> state i has coordinates xstate[i]
+	float[] ystate;
+	float[] xfinalstate;
+	float[] yfinalstate;
 	private Family family;
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
@@ -74,10 +79,21 @@ public class FMCA  extends CA implements java.io.Serializable
 		super(rank,initial,states,finalstates,trans);
 	}
 	
+		
 	public FMCA(int rank, int[] initial, int[] states, int[][] finalstates,FMCATransition[] trans, Family f)
 	{
 		super(rank,initial,states,finalstates,trans);
 		this.family=f;
+	}
+	
+	public FMCA(int rank, int[] initial, int[] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
+	{
+
+		super(rank,initial,states,finalstates,trans);
+		this.xstate=xstate;
+		this.ystate=ystate;
+		this.xfinalstate=xfinalstate;
+		this.yfinalstate=yfinalstate;
 	}
 	
 	public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
@@ -86,6 +102,16 @@ public class FMCA  extends CA implements java.io.Serializable
 				FMCA.principalsFinalStates(finalstates),trans);
 	}
 	
+	public FMCA(int rank, int[] initial, int[][] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
+	{
+
+		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
+				FMCA.principalsFinalStates(finalstates),trans);
+		this.xstate=xstate;
+		this.ystate=ystate;
+		this.xfinalstate=xfinalstate;
+		this.yfinalstate=yfinalstate;
+	}
 	
 	public void setFamily(Family f)
 	{
@@ -97,8 +123,23 @@ public class FMCA  extends CA implements java.io.Serializable
 		return family;
 	}
 	
+	public float[] getXState()
+	{
+		return xstate;
+	}
 	
-	
+	public float[] getYState()
+	{
+		return ystate;
+	}
+	public float[] getXFinalState()
+	{
+		return xfinalstate;
+	}
+	public float[] getYFinalState()
+	{
+		return yfinalstate;
+	}
 	/**
 	 * load a MSCA described in a text file, compared to CA it also loads the must transitions
 	 * @param the name of the file
@@ -260,7 +301,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * parse the XML description of graphEditor into an MSCA object
+	 * parse the XML description of graphEditor into an FMCA object
 	 * @param filename
 	 * @return
 	 */
@@ -284,7 +325,11 @@ public class FMCA  extends CA implements java.io.Serializable
 	         int[][] states=new int[nodeList.getLength()][];
 	         int[][] finalstates=new int[nodeList.getLength()][];
 	         int[] idstate=new int[nodeList.getLength()]; //each node has associated an id, used for identifying source and target of an edge
+	         float[] xstate=new float[idstate.length];
+	         float[] ystate=new float[idstate.length];
 	         int[] idfinalstate=new int[nodeList.getLength()];
+	         float[] xfinalstate=new float[idstate.length];
+	         float[] yfinalstate=new float[idstate.length];
 	         FMCATransition[] t= new FMCATransition[nodeList.getLength()];
 	         int statec=0;
 	         int finalstatec=0;
@@ -309,11 +354,20 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 { 
 	            			 idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
 	            			 finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+	            			 NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
+	            			 Element geo= (Element) g.item(0);
+	            			 xfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("x"));
+	            			 yfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("y"));
+	            			 
 	            			 finalstatec++;
 	            		 }
 	            		 else{
 	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
 	            			 states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+	            			 NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
+	            			 Element geo= (Element) g.item(0);
+	            			 xstate[statec]=Float.parseFloat(geo.getAttribute("x"));
+	            			 ystate[statec]=Float.parseFloat(geo.getAttribute("y"));
 	            			 statec++;
 	            		 }
 	            	 }
@@ -365,13 +419,17 @@ public class FMCA  extends CA implements java.io.Serializable
 	            }
 	         }
 	         finalstates=FMCAUtil.removeTailsNull(finalstates, finalstatec);
-             states=FMCAUtil.removeTailsNull(states, statec);
+	         xfinalstate=FMCAUtil.removeTailsNull(xstate, finalstatec);
+             yfinalstate=FMCAUtil.removeTailsNull(ystate, finalstatec);
+	         states=FMCAUtil.removeTailsNull(states, statec);
+             xstate=FMCAUtil.removeTailsNull(xstate, statec);
+             ystate=FMCAUtil.removeTailsNull(ystate, statec);
              t=FMCAUtil.removeTailsNull(t, trc);
              int rank=states[0].length;
              int[] initial = new int[rank];
              for (int ind=0;ind<rank;ind++)
           	   initial[ind]=0;
-             FMCA aut= new FMCA(rank, initial,states,finalstates, t);
+             FMCA aut= new FMCA(rank, initial,states,xstate,ystate,finalstates,xfinalstate,yfinalstate, t);
              return aut;
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
@@ -387,8 +445,8 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * write the MSCA as a mxGraphModel for the GUI
-	 * @param fileName
+	 * write the FMCA as a mxGraphModel for the GUI
+	 * @param fileName	write the automaton into fileName
 	 * @return
 	 */
 	public File exportToXML(String fileName)
@@ -420,13 +478,21 @@ public class FMCA  extends CA implements java.io.Serializable
 			
 			//TODO: smart graph display
 			for (int i=0;i<states.length;i++)
-				statese[i]=createElementState(doc, root,Integer.toString(i+2), Integer.toString(i*200),"60",states[i]);
-			
+			{
+				if (xstate!=null)
+					statese[i]=createElementState(doc, root,Integer.toString(i+2), xstate[i]+"",ystate[i]+"",states[i]);
+				else
+					statese[i]=createElementState(doc, root,Integer.toString(i+2), Integer.toString(i*200),"60",states[i]);
+			}
 			int[][] statesf=all[1];
 			Element[] statesef=new Element[statesf.length];
 			for (int i=0;i<statesf.length;i++)
-				statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*200),"200",statesf[i]);
-			
+			{
+				if (xstate!=null)
+					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), xfinalstate[i]+"",yfinalstate[i]+"",statesf[i]);
+				else
+					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*200),"200",statesf[i]);
+			}
 			FMCATransition t[]= this.getTransition();
 			for (int i=0;i<t.length;i++)
 			{
@@ -650,7 +716,27 @@ public class FMCA  extends CA implements java.io.Serializable
 		for (int i=0;i<finalstates.length;i++)
 			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 		
-		return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length),Arrays.copyOf(getStatesCA(), getStatesCA().length),finalstates,finalTr);
+		float[] xstate=this.getXState();
+		if (xstate!=null)
+		{
+			float[] ystate=this.getYState();
+			float[] xfinalstate=this.getXFinalState();
+			float[] yfinalstate=this.getYFinalState();
+			
+			return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length), 
+					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
+					 Arrays.copyOf(xstate, xstate.length), 
+					 Arrays.copyOf(ystate, ystate.length), 
+					 finalstates,
+					 Arrays.copyOf(xfinalstate, xfinalstate.length), 
+					 Arrays.copyOf(yfinalstate, yfinalstate.length), 
+					 finalTr);
+		}
+		else
+			return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length), 
+					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
+					 finalstates,
+					 finalTr);
 	}
 	
 	/**
@@ -978,7 +1064,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	public int[][] allStates()
 	{
 		FMCA aut=this.clone();
-		int[][] s = new int[this.prodStates()][];
+		int[][] s = new int[this.prodStates()+1][]; //there could be a dummy initial state
 		s[0]=aut.getInitialCA();
 		FMCATransition[] t = aut.getTransition();
 		int pointer=1;
@@ -1015,6 +1101,20 @@ public class FMCA  extends CA implements java.io.Serializable
 		r[0]=nonfinalstates;
 		r[1]=finalstates;
 		return r;
+	}
+	
+	/**
+	 * 
+	 * @return all actions present in the automaton
+	 */
+	public String[] getActions()
+	{
+		FMCATransition[] tr=this.getTransition();
+		String[] act = new String[tr.length];
+		for (int i=0;i<tr.length;i++)
+			act[i]=	CATransition.getUnsignedAction(tr[i].getAction());
+		act=FMCAUtil.removeDuplicates(act);
+		return act;
 	}
 	
 //	/**

@@ -413,8 +413,10 @@ public class Family {
 	
 	/**
 	 * 
+	 * the valid product method exploit the partial order so it starts from top products
+	 * 
 	 * @param aut
-	 * @return an new family with only products valid in aut
+	 * @return a new family with only products valid in aut
 	 */
 	public Family validProducts(FMCA aut)
 	{
@@ -423,7 +425,7 @@ public class Family {
 			valid[i]=false; //initialise
 		int[] tv = getTopProducts();
 		for (int i=0;i<tv.length;i++)
-			valid(valid,tv[i],aut);
+			valid(valid,tv[i],aut); //recursive method
 		
 		Product[] newp=new Product[elements.length];
 		int count=0;
@@ -439,6 +441,12 @@ public class Family {
 		return new Family(newp);
 	}
 	
+	/**
+	 * recursive method, if element[i] is valid than iterates on its children
+	 * @param valid   valid[i]=true if element[i] is valid
+	 * @param i   current element
+	 * @param aut  automaton to check
+	 */
 	private void valid(boolean[] valid, int i, FMCA aut)
 	{
 		if (elements[i].isValid(aut))
@@ -573,7 +581,17 @@ public class Family {
 				classlength[quotientclasses]++;
 				for (int j=i+1;j<nonemptylength;j++)
 				{
-					if (p[nonemptyindex[i]].containsForbiddenFeatures(p[nonemptyindex[j]]))
+					/**
+					 * The quotient class consider all products with the same set of forbidden features, ignoring 
+					 * those features that are never displayed in the automaton
+					 */
+					String[] act=aut.getActions();
+					Product test1=new Product(new String[0],FMCAUtil.setIntersection(p[nonemptyindex[i]].getForbidden(),act));
+					Product test2=new Product(new String[0],FMCAUtil.setIntersection(p[nonemptyindex[j]].getForbidden(),act));
+					if (test1.containsForbiddenFeatures(test2)
+						&&	
+						test2.containsForbiddenFeatures(test1)
+						)
 					{
 						addedToClass[j]=true;
 						quotient[quotientclasses][classlength[quotientclasses]]=nonemptyindex[j]; //index in the array of products

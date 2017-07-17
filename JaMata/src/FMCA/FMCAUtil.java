@@ -24,6 +24,8 @@ public class FMCAUtil extends CAUtil
 	 */
 	public static FMCA union(FMCA[] aut)
 	{
+		if (aut.length==0)
+			return null;
 		int upperbound=100; //TODO upperbound check
 		int rank=aut[0].getRank(); //the aut must have all the same rank
 		for (int i=0;i<aut.length;i++)
@@ -1096,9 +1098,34 @@ public class FMCAUtil extends CAUtil
 		return m;
 			
 	}
+	protected static String[] removeDuplicates(String[] m)
+	{
+		int removed=0;
+		for (int i=0;i<m.length;i++)
+		{
+			for (int j=i+1;j<m.length;j++)
+			{
+				if ((m[i]!=null)&&(m[i].equals(m[j])))
+				{
+					m[j]=null;
+					removed++;
+				}
+			}
+		}
+		m= (String[])removeHoles(m,removed);
+		return m;
+			
+	}
 	protected static int[] removeTailsNull(int[] q,int length)
 	{
 		int[] r=new int[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	protected static float[] removeTailsNull(float[] q,int length)
+	{
+		float[] r=new float[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;
@@ -1138,6 +1165,23 @@ public class FMCAUtil extends CAUtil
 		 */
 		int pointer=0;
 		int[][] fin = new int[l.length-holes][];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
+	}
+	protected static String[] removeHoles(String[] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		String[] fin = new String[l.length-holes];
 		for (int ind=0;ind<l.length;ind++)
 		{
 			if (l[ind]!=null)

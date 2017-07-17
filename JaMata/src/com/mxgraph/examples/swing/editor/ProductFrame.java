@@ -32,7 +32,7 @@ public class ProductFrame extends JDialog{
       		   ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,  
       		   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
       
-         scrollpanel.setPreferredSize(new Dimension( 600,600));
+         scrollpanel.setPreferredSize(new Dimension(600,600));
          scrollpanel.setAutoscrolls(true);
          
         int rows = depth.length;
@@ -65,6 +65,7 @@ public class ProductFrame extends JDialog{
 	        		nodes[depth[i][j]].setText(prod[depth[i][j]].toHTMLString("P"+depth[i][j]+" "));
 	        		nodes[depth[i][j]].putClientProperty("i", i+"");
 	        		nodes[depth[i][j]].putClientProperty("j", j+"");
+	        		nodes[depth[i][j]].setSize(new Dimension(200,300));
 	        		nodes[depth[i][j]].addActionListener(new ActionListener(){
 	        	           	@Override
 							public void actionPerformed(ActionEvent ae) {

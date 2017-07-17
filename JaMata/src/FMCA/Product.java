@@ -108,7 +108,6 @@ public class Product {
 	 */
 	public boolean checkRequired(FMCATransition[] t)
 	{
-		
 		for (int i=0;i<this.required.length;i++)
 		{
 			boolean found=false;
@@ -146,8 +145,9 @@ public class Product {
 	public boolean isValid(FMCA aut)
 	{
 		FMCATransition[] t=aut.getTransition();
-		return this.checkForbidden(t)&&this.checkForbidden(t);
+		return this.checkForbidden(t)&&this.checkRequired(t);
 	}
+	
 	public String toString()
 	{
 		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";

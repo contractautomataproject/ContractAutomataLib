@@ -1533,7 +1533,7 @@ public class EditorActions
 						fc.addChoosableFileFilter(defaultFilter);
 
 						fc.addChoosableFileFilter(new DefaultFileFilter(".data",
-								"MSCA description " + mxResources.get("file")
+								"FMCA description " + mxResources.get("file")
 										+ " (.data)"));
 
 						fc.setFileFilter(defaultFilter);
@@ -1614,7 +1614,9 @@ public class EditorActions
 		 * 
 		 */
 		protected String lastDir;
-
+		//protected FMCA lastaut;
+		
+		
 		/**
 		 * 
 		 */
@@ -1775,7 +1777,6 @@ public class EditorActions
 											graph.getModel());
 									editor.setCurrentFile(fc
 											.getSelectedFile());
-
 									resetEditor(editor);
 								}
 							}

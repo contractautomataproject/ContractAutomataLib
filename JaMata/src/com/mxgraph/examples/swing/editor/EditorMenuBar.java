@@ -91,6 +91,9 @@ import com.mxgraph.view.mxGraphView;
 public class EditorMenuBar extends JMenuBar
 {
 	String lastDir;
+	
+	FMCA lastaut; //it should be used to avoid to import the automaton from its xml description 
+				 // at each operation. 
 	/**
 	 * 
 	 */
@@ -1140,13 +1143,13 @@ public class EditorMenuBar extends JMenuBar
 				if (controller!=null)
 				{
 					String K="K_family_"+filename;
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
-					file=controller.exportToXML(lastDir+"//"+K);
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"\\"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					file=controller.exportToXML(lastDir+"\\"+K);
 					try
 					{								
 						
 						Document document = mxXmlUtils
-									.parseXml(mxUtils.readFile(lastDir+"//"+K));
+									.parseXml(mxUtils.readFile(lastDir+"\\"+K));
 											/*mxUtils.readFile(fc
 																			.getSelectedFile()
 																			.getAbsolutePath()));
@@ -1160,6 +1163,7 @@ public class EditorMenuBar extends JMenuBar
 						editor.setModified(false);
 						editor.getUndoManager().clear();
 						editor.getGraphComponent().zoomAndCenter();
+						lastaut=controller;
 					}
 					catch (IOException ex)
 					{
@@ -1180,7 +1184,7 @@ public class EditorMenuBar extends JMenuBar
 		});
 		
 		
-		item = menu.add(new JMenuItem("Most Permissive Controller of a Product"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Most Permissive Controller of a Product (insert manually)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -1222,44 +1226,32 @@ public class EditorMenuBar extends JMenuBar
 						JOptionPane.PLAIN_MESSAGE);
 				if (S==null)
 					return;
-//				String[] R=new String[50];
-//				int Rcount=0;
-//				while (!S.equals("")){
-//					R[Rcount]=S;
-//					Rcount++;
-//					S= (String) JOptionPane.showInputDialog(null, 
-//												"Insert Required features or empty for next",
-//												JOptionPane.PLAIN_MESSAGE);
-//				}
-//				R=FMCAUtil.removeTailsNull(R,Rcount);
-				String[] R=S.split(";");
+				String[] R;
+				R=S.split(";");
 				
+				if (R[0].equals(""))
+					R=new String[0];
+					
 				S= (String) JOptionPane.showInputDialog(null, 
 						"Insert Forbidden actions separated by semicolon",
 						JOptionPane.PLAIN_MESSAGE);
 				if (S==null)
 					return;
-
-//				String[] F=new String[50];
-//				int Fcount=0;
-//				while (!S.equals("")){
-//					F[Fcount]=S;
-//					Fcount++;
-//					S= (String) JOptionPane.showInputDialog(null, 
-//												"Insert Forbidden Features or empty for next",
-//												JOptionPane.PLAIN_MESSAGE);
-//				}
-//				F=FMCAUtil.removeTailsNull(F,Fcount);
-
 				String[] F=S.split(";");
+				if (F[0].equals(""))
+					F=new String[0];
+				
 				Product p=new Product(R,F);
-				FMCA controller = aut.mpc(p);
+				//FMCA controller = aut.mpc(p);
+
+				//FMCA controller = aut.clone();
+				FMCA controller=aut;
 				File file=null;
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
 					file=controller.exportToXML(lastDir+"//"+K);
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
 					try
 					{								
 						
@@ -1278,6 +1270,105 @@ public class EditorMenuBar extends JMenuBar
 						editor.setModified(false);
 						editor.getUndoManager().clear();
 						editor.getGraphComponent().zoomAndCenter();
+						lastaut=controller;
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+					
+			}
+		});
+		
+		item = menu.add(new JMenuItem("Most Permissive Controller of a Product (product id)"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+				
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
+				
+				ProductFrame pf=editor.getProductFrame();
+				if (pf==null)
+				{
+					JOptionPane.showMessageDialog(null,"No product family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+	
+				
+				
+				Family f=pf.getFamily();
+				
+				String S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Product id",
+						JOptionPane.PLAIN_MESSAGE);
+				if (S==null)
+					return;
+				
+				Product p=f.getProducts()[Integer.parseInt(S)];
+				FMCA controller = aut.mpc(p);
+				File file=null;
+				if (controller!=null)
+				{
+					String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
+					file=controller.exportToXML(lastDir+"\\"+K);
+					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"\\"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(lastDir+"\\"+K));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));*/
+						
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+						lastaut=controller;
 					}
 					catch (IOException ex)
 					{
