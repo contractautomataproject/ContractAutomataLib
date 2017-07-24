@@ -364,4 +364,30 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			return new FMCATransition(initial,label,dest,((FMCATransition) t).getType());	
 		}
 	}
+	
+	/**
+	 * Returns all the transitions starting from a state source
+	 * @param source		the initial state
+	 * @param tr	the array of transitions
+	 * @return the transitions of tr starting from state spirce
+	 */
+	public static FMCATransition[] getTransitionFrom(int[] source, FMCATransition[] tr)
+	{
+		if (tr==null)
+			return null;
+		FMCATransition[] newtr = new FMCATransition[tr.length];
+		int j=0;
+		for (int i=0;i<tr.length;i++)
+		{
+			if (Arrays.equals(source, tr[i].getSourceP()))
+			{
+				newtr[j]=tr[i];
+				j++;
+			}
+		}
+		if (j==0)
+			return null;
+		newtr = FMCAUtil.removeTailsNull(newtr, j);
+		return newtr;
+	}
 }

@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 
 
+
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,10 +62,12 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	//TODO: add feature constraint
 	
-	float[] xstate=null;		// --> state i has coordinates xstate[i]
+	/*float[] xstate=null;		
 	float[] ystate;
 	float[] xfinalstate;
 	float[] yfinalstate;
+	*/
+	private FMCAState[] fstates=null;
 	private Family family;
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
@@ -86,7 +89,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		this.family=f;
 	}
 	
-	public FMCA(int rank, int[] initial, int[] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
+/*	public FMCA(int rank, int[] initial, int[] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
 	{
 
 		super(rank,initial,states,finalstates,trans);
@@ -95,22 +98,26 @@ public class FMCA  extends CA implements java.io.Serializable
 		this.xfinalstate=xfinalstate;
 		this.yfinalstate=yfinalstate;
 	}
-	
-	public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
+*/
+	public FMCA(int rank, int[] initial, int[] states, int[][] finalstates, FMCATransition[] trans, FMCAState[] fstates)
+	{
+
+		super(rank,initial,states,finalstates,trans);
+		this.fstates=fstates;
+	}
+
+	/*public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
 	{
 		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
 				FMCA.principalsFinalStates(finalstates),trans);
-	}
+	}*/
 	
-	public FMCA(int rank, int[] initial, int[][] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
+	public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates, FMCATransition[] trans, FMCAState[] fstate)
 	{
 
 		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
 				FMCA.principalsFinalStates(finalstates),trans);
-		this.xstate=xstate;
-		this.ystate=ystate;
-		this.xfinalstate=xfinalstate;
-		this.yfinalstate=yfinalstate;
+		this.fstates=fstate;
 	}
 	
 	public void setFamily(Family f)
@@ -118,28 +125,29 @@ public class FMCA  extends CA implements java.io.Serializable
 		this.family=f;
 	}
 	
+	public void setState(FMCAState[] s)
+	{
+		this.fstates=s;
+	}
+	
+	public FMCAState[] getState()
+	{
+		return this.fstates;
+	}
+	
+	
 	public Family getFamily()
 	{
 		return family;
 	}
 	
-	public float[] getXState()
+	
+	public boolean containAction(String act)
 	{
-		return xstate;
+		String[] actions = this.getActions();
+		return FMCAUtil.contains(act, actions);
 	}
 	
-	public float[] getYState()
-	{
-		return ystate;
-	}
-	public float[] getXFinalState()
-	{
-		return xfinalstate;
-	}
-	public float[] getYFinalState()
-	{
-		return yfinalstate;
-	}
 	/**
 	 * load a MSCA described in a text file, compared to CA it also loads the must transitions
 	 * @param the name of the file
@@ -160,7 +168,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			int rank=0;
 			int[] initial = new int[1];
 			int[] states = new int[1];
-			int[][] fin = new int[1][];
+			int[][] fin = new int[1][]; //rank initialization later
 			FMCATransition[] t = new FMCATransition[1];
 		//	MSCATransition[] mustt = new MSCATransition[1];
 			int pointert=0;
@@ -176,94 +184,129 @@ public class FMCA  extends CA implements java.io.Serializable
 					  {
 						  case "R":  //Rank Line
 						  {
-							  Scanner s = new Scanner(strLine);
-							  s.useDelimiter("");
-							  while (s.hasNext())
-							  {
-								  if (s.hasNextInt())
-								  {
-									  rank = s.nextInt();
-								  }
-								  else
-								  {
-									  s.next();
-								  }
-							  }
+//							  Scanner s = new Scanner(strLine);
+//							  s.useDelimiter("");
+//							  while (s.hasNext())
+//							  {
+//								  if (s.hasNextInt())
+//								  {
+//									  rank = s.nextInt();
+//								  }
+//								  else
+//								  {
+//									  s.next();
+//								  }
+//							  }
+							  String srank = strLine.substring(6);
+							  rank = Integer.parseInt(srank);
 							  initial = new int[rank];
 							  states = new int[rank];
 							  fin = new int[rank][];
-							  s.close();
+	//						  s.close();
 							  break;
 						  }
 						  case "N":	//Number of states line
 						  {
-							  Scanner s = new Scanner(strLine);
-							  s.useDelimiter("");
+							  String[] arr=strLine.split("[\\[\\],]");
 							  int i=0;
 							  int lengthT=1;
+							  
+							  for (int ind=0;ind<arr.length;ind++)
+							  {
+								  try{
+									  int num=Integer.parseInt(arr[ind].trim());
+									  states[i] = num;
+									  lengthT*=states[i];
+									  i++;
+								  }catch(NumberFormatException e){}
+							  }
+							  
+							  /*
+							  Scanner s = new Scanner(strLine);
+							  s.useDelimiter("");
 							  while (s.hasNext())
 							  {
 								  if (s.hasNextInt())
 								  {
-									  states[i] = s.nextInt();
+									  int test=s.nextInt();
+									  states[i] = test;
 									  lengthT*=states[i];
 									  i++;
 								  }
 								  else
 									  s.next();
 							  }
-							  t = new FMCATransition[lengthT*lengthT*4];//guessed upper bound WARNING
 							  s.close();
+							  */
+							  try{
+							  int length = lengthT*lengthT*4;
+							  t = new FMCATransition[length];//TODO guessed upper bound WARNING
+							  } catch (Exception e) { t = new FMCATransition[1000];}
 							  break;
 						  }
 						  case "I": //Initial state
 						  {
-							  Scanner s = new Scanner(strLine);
-							  s.useDelimiter("");
+							  String[] arr=strLine.split("[\\[\\],]");
 							  int i=0;
-							  while (s.hasNext())
+							  for (int ind=0;ind<arr.length;ind++)
 							  {
-								  if (s.hasNextInt())
-								  {
-									  initial[i] = s.nextInt();
+								  try{
+									  int num=Integer.parseInt(arr[ind].trim());
+									  initial[i] = num;
 									  i++;
-								  }
-								  else
-									  s.next();
+								  }catch(NumberFormatException e){}
 							  }
-							  s.close();
 							  break;
 						  }
 						  case "F": //Final state
 						  {
-							  String[] ss=strLine.split("]");
-							  for (int ind=0;ind<ss.length;ind++)
+							  String[] arr=strLine.split("]");  
+							  int outerindex=0;
+							  
+							  //String[] ss=strLine.split("]");
+							  //for (int ind=0;ind<ss.length;ind++)
+							  for (int ind=0;ind<arr.length;ind++)
 							  {
-								  Scanner s = new Scanner(ss[ind]);
-								  s.useDelimiter("");
-								  int i=0;
-								  int[] tf = new int[states[i]]; //upper bound
-								  while (s.hasNext())
-								  {
-									  if (s.hasNextInt())
+//								  Scanner s = new Scanner(ss[ind]);
+//								  s.useDelimiter("");
+
+								  String[] arr2=arr[ind].split("[,|\\[]"); 
+								  try{
+									  //Integer.parseInt(arr2[0]); //check if we are reading states!
+									  int innerindex=0;
+									  int[] tf = new int[states[innerindex]]; //upper bound
+									  for(int ind2=0;ind2<arr2.length;ind2++)
 									  {
-										  tf[i] = s.nextInt();
-										  i++;
+										  try{
+											  int num=Integer.parseInt(arr2[ind2]);
+											  tf[innerindex] = num;
+											  innerindex++;
+										  }catch(NumberFormatException e){}  //exceptions should never be thrown this way
 									  }
-									  else
-										  s.next();
-								  }
-								  fin[ind]= new int[i];
-								  for (int ii=0;ii<i;ii++)
-									  fin[ind][ii]=tf[ii];
-								  s.close();
+									  fin[outerindex]=FMCAUtil.removeTailsNull(tf, innerindex); 
+									  outerindex++;
+								  }catch(NumberFormatException e){}
+//								  while (s.hasNext())
+//								  {
+//									  if (s.hasNextInt())
+//									  {
+//										  int test=s.nextInt();
+//										  tf[i] = test;
+//										  i++;
+//									  }
+//									  else
+//										  s.next();
+//								  }
+//								  fin[ind]= new int[i];
+//								  for (int ii=0;ii<i;ii++)
+//									  fin[ind][ii]=tf[ii];
+//								  s.close();
 							  }
 							  break;
 						  }
 						  case "(": //a may transition
 						  {
-							  String[] ss=strLine.split("]");
-							  CATransition temp=loadTransition(ss,rank);
+							  CATransition temp=loadTransition(strLine,rank);
 							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),FMCATransition.action.PERMITTED);
 							  pointert++;
 							  break;
@@ -278,8 +321,7 @@ public class FMCA  extends CA implements java.io.Serializable
 							  	case "G": type=FMCATransition.action.GREEDY;break;
 							  	case "L": type=FMCATransition.action.LAZY;break;
 							  }
-							  String[] ss=strLine.split("]");
-							  CATransition temp=loadTransition(ss,rank);
+							  CATransition temp=loadTransition(strLine,rank);
 							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),type);
 							  pointert++;				 
 							  break;
@@ -322,6 +364,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	         
 	         //NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
 	         NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
+	         FMCAState[] fstates= new FMCAState[nodeList.getLength()];
 	         int[][] states=new int[nodeList.getLength()][];
 	         int[][] finalstates=new int[nodeList.getLength()][];
 	         int[] idstate=new int[nodeList.getLength()]; //each node has associated an id, used for identifying source and target of an edge
@@ -334,6 +377,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	         int statec=0;
 	         int finalstatec=0;
 	         int trc=0;
+	         int fstatescount=0;
 	         /**
 	          * first read all the states, then all the edges
 	          */
@@ -349,6 +393,8 @@ public class FMCA  extends CA implements java.io.Serializable
 	               if (Integer.parseInt(prova)>1)
 	               {
 	            	 if (!eElement.hasAttribute("edge"))//edge
+	            		 
+	            		 //TODO remove xstates ystates etc..
 	            	 {
 	            		 if (eElement.getAttribute("style").contains("terminate.png"))
 	            		 { 
@@ -356,19 +402,42 @@ public class FMCA  extends CA implements java.io.Serializable
 	            			 finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            			 NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
 	            			 Element geo= (Element) g.item(0);
-	            			 xfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("x"));
-	            			 yfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("y"));
-	            			 
+	            			 if (geo.hasAttribute("x"))
+	            				 xfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("x"));
+	            			 else
+	            				 xfinalstate[finalstatec]=0;
+	            			 if (geo.hasAttribute("y"))
+	            				 yfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("y"));
+	            			 else
+	            				 yfinalstate[finalstatec]=0;
+	            			 boolean initial=true;
+	            			 for (int ind=0;ind<finalstates[finalstatec].length;ind++)
+	            				 initial=initial&&(finalstates[finalstatec][ind]==0);
+	            			 fstates[fstatescount]=new FMCAState(finalstates[finalstatec], xfinalstate[finalstatec], 
+	            					 yfinalstate[finalstatec], initial,true);
 	            			 finalstatec++;
+	            			 fstatescount++;
 	            		 }
 	            		 else{
 	            			 idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
 	            			 states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
 	            			 NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
 	            			 Element geo= (Element) g.item(0);
-	            			 xstate[statec]=Float.parseFloat(geo.getAttribute("x"));
-	            			 ystate[statec]=Float.parseFloat(geo.getAttribute("y"));
+	            			 if (geo.hasAttribute("x"))
+	            				 xstate[statec]=Float.parseFloat(geo.getAttribute("x"));
+	            			 else
+	            				 xstate[statec]=0;
+	            			 if (geo.hasAttribute("y"))
+	            				 ystate[statec]=Float.parseFloat(geo.getAttribute("y"));
+	            			 else
+	            				 ystate[statec]=0;
+	            			 boolean initial=true;
+	            			 for (int ind=0;ind<states[statec].length;ind++)
+	            				 initial=initial&&(states[statec][ind]==0);
+	            			 fstates[fstatescount]=new FMCAState(states[statec], xstate[statec], 
+	            					 ystate[statec], initial,false);
 	            			 statec++;
+	            			 fstatescount++;
 	            		 }
 	            	 }
 	               }
@@ -424,12 +493,13 @@ public class FMCA  extends CA implements java.io.Serializable
 	         states=FMCAUtil.removeTailsNull(states, statec);
              xstate=FMCAUtil.removeTailsNull(xstate, statec);
              ystate=FMCAUtil.removeTailsNull(ystate, statec);
+             fstates=FMCAUtil.removeTailsNull(fstates, fstatescount);
              t=FMCAUtil.removeTailsNull(t, trc);
              int rank=states[0].length;
              int[] initial = new int[rank];
              for (int ind=0;ind<rank;ind++)
           	   initial[ind]=0;
-             FMCA aut= new FMCA(rank, initial,states,xstate,ystate,finalstates,xfinalstate,yfinalstate, t);
+             FMCA aut= new FMCA(rank, initial,states,finalstates,t,fstates);
              return aut;
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
@@ -479,19 +549,30 @@ public class FMCA  extends CA implements java.io.Serializable
 			//TODO: smart graph display
 			for (int i=0;i<states.length;i++)
 			{
-				if (xstate!=null)
-					statese[i]=createElementState(doc, root,Integer.toString(i+2), xstate[i]+"",ystate[i]+"",states[i]);
+				if (this.fstates!=null)
+					statese[i]=createElementState(doc, root,Integer.toString(i+2), this.fstates,states[i]);
 				else
-					statese[i]=createElementState(doc, root,Integer.toString(i+2), Integer.toString(i*200),"60",states[i]);
+				{	
+					FMCAState[] dum= new FMCAState[1];
+					dum[0]= new FMCAState(states[i],i*200,60); 
+					//statese[i]=createElementState(doc, root,Integer.toString(i+2), Integer.toString(i*200),"60",states[i]);
+					statese[i]=createElementState(doc, root,Integer.toString(i+2), dum,states[i]);
+				}
 			}
 			int[][] statesf=all[1];
 			Element[] statesef=new Element[statesf.length];
 			for (int i=0;i<statesf.length;i++)
 			{
-				if (xstate!=null)
-					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), xfinalstate[i]+"",yfinalstate[i]+"",statesf[i]);
+				if (this.fstates!=null)
+					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), this.fstates,statesf[i]);
 				else
-					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*200),"200",statesf[i]);
+				{	
+					FMCAState[] dum= new FMCAState[1];
+					dum[0]= new FMCAState(statesf[i],i*200,200); 
+					//statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), Integer.toString(i*200),"200",statesf[i]);
+					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), dum,statesf[i]);
+				}
+					
 			}
 			FMCATransition t[]= this.getTransition();
 			for (int i=0;i<t.length;i++)
@@ -577,25 +658,77 @@ public class FMCA  extends CA implements java.io.Serializable
 		
 		Element mxPointSource=doc.createElement("mxPoint");
 		mxPointSource.setAttribute("as","sourcePoint");
-		mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
-		mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
+		
+		
+		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
+		{
+			mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
+		}
+		else
+			mxPointSource.setAttribute("x", "0.0");
+		
+		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
+		{
+			mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
+		}
+		else
+			mxPointSource.setAttribute("y", "0.0");
+		
 		mxGeometry1.appendChild(mxPointSource);
 		Element mxPointTarget=doc.createElement("mxPoint");
 		mxPointTarget.setAttribute("as","targetPoint");
-		mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
-		mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
+		
+		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
+			mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		else
+		{
+			Attr x=doc.createAttribute("x");
+			x.setNodeValue("0.0");
+			mxPointTarget.setAttributeNode(x);
+		}
+		
+		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
+			mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
+		else
+		{
+			Attr y=doc.createAttribute("y");
+			y.setNodeValue("0.0");
+			mxPointTarget.setAttributeNode(y);
+		}
 		mxGeometry1.appendChild(mxPointTarget);
 		
 		Element pointArray=doc.createElement("Array");
 		pointArray.setAttribute("as","points");
 		Element mxPoint=doc.createElement("mxPoint");
-		float coordinate=(Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x")) 
-				+ Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"))
-				)/2;
+		
+		
+		float xs=0; float  xt=0;
+		float ys=0; float  yt=0;
+		
+		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
+		{
+			xs=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x"));
+		}
+		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
+		{
+			xt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		}
+		
+		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
+		{
+			ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
+		}
+
+		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
+		{
+			yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
+		}
+		
+		
+		float coordinate=(xs+xt)/2;
 		mxPoint.setAttribute("x", coordinate+"");
-		coordinate=(Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y")) 
-				+ Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"))
-				)/2;
+		
+		coordinate=(ys+yt)/2;
 		mxPoint.setAttribute("y", coordinate+"");
 		pointArray.appendChild(mxPoint);
 		
@@ -604,7 +737,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
-	private static Element createElementState(Document doc, Element root,String id, String x,String y,int[] state)
+	private static Element createElementState(Document doc, Element root,String id, FMCAState[] states,int[] state)
 	{
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
@@ -628,14 +761,35 @@ public class FMCA  extends CA implements java.io.Serializable
 		mxGeometry1.setAttributeNode(as);
 		mxGeometry1.setAttribute("height", "50.0");
 		mxGeometry1.setAttribute("width", "50.0");
-		mxGeometry1.setAttribute("x", x);
-		mxGeometry1.setAttribute("y", y);
+		for (int i=0;i<states.length;i++)
+		{
+			if (Arrays.equals(state, states[i].getState()))
+			{
+				if (!mxGeometry1.hasAttribute("x"))
+				{
+					Attr x=doc.createAttribute("x");
+					x.setNodeValue(states[i].getX()+"");
+					mxGeometry1.setAttributeNode(x);
+				}
+				else
+					mxGeometry1.setAttribute("x", states[i].getX()+"");
+					
+				if (!mxGeometry1.hasAttribute("y"))
+				{
+					Attr y=doc.createAttribute("y");
+					y.setNodeValue(states[i].getY()+"");
+					mxGeometry1.setAttributeNode(y);
+				}
+				else
+					mxGeometry1.setAttribute("y", states[i].getY()+"");
+			}
+		}
 		mxcell1.appendChild(mxGeometry1);
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
 	
-	private static Element createElementFinalState(Document doc, Element root,String id, String x,String y,int[] state)
+	private static Element createElementFinalState(Document doc, Element root,String id, FMCAState[] states,int[] state)
 	{
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
@@ -659,8 +813,29 @@ public class FMCA  extends CA implements java.io.Serializable
 		mxGeometry1.setAttributeNode(as);
 		mxGeometry1.setAttribute("height", "50.0");
 		mxGeometry1.setAttribute("width", "50.0");
-		mxGeometry1.setAttribute("x", x);
-		mxGeometry1.setAttribute("y", y);
+		for (int i=0;i<states.length;i++)
+		{
+			if (Arrays.equals(state, states[i].getState()))
+			{
+				if (!mxGeometry1.hasAttribute("x"))
+				{
+					Attr x=doc.createAttribute("x");
+					x.setNodeValue(states[i].getX()+"");
+					mxGeometry1.setAttributeNode(x);
+				}
+				else
+					mxGeometry1.setAttribute("x", states[i].getX()+"");
+					
+				if (!mxGeometry1.hasAttribute("y"))
+				{
+					Attr y=doc.createAttribute("y");
+					y.setNodeValue(states[i].getY()+"");
+					mxGeometry1.setAttributeNode(y);
+				}
+				else
+					mxGeometry1.setAttribute("y", states[i].getY()+"");
+			}
+		}
 		mxcell1.appendChild(mxGeometry1);
 		root.appendChild(mxcell1);
 		return mxcell1;		
@@ -676,6 +851,22 @@ public class FMCA  extends CA implements java.io.Serializable
 		for (int i=0;i<temp.length;i++)
 				t[i]=(FMCATransition)temp[i];
 		return t;
+	}
+	
+	
+	/**
+	 * 
+	 * @return  the x coordinate of the furthest state (to the right)
+	 */
+	public float furthestNodeX()
+	{
+		float max=0;
+		for (int i=0;i<fstates.length;i++)
+		{
+			if (max<fstates[i].getX())
+				max=fstates[i].getX();
+		}
+		return max;
 	}
 	
 	/**
@@ -716,7 +907,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		for (int i=0;i<finalstates.length;i++)
 			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 		
-		float[] xstate=this.getXState();
+		/*float[] xstate=this.getXState();
 		if (xstate!=null)
 		{
 			float[] ystate=this.getYState();
@@ -731,6 +922,15 @@ public class FMCA  extends CA implements java.io.Serializable
 					 Arrays.copyOf(xfinalstate, xfinalstate.length), 
 					 Arrays.copyOf(yfinalstate, yfinalstate.length), 
 					 finalTr);
+		}*/
+		FMCAState[] fstates= this.getState();
+		if (fstates!=null)
+		{
+			return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length), 
+					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
+					 finalstates,
+					 finalTr,
+					 Arrays.copyOf(fstates,fstates.length));
 		}
 		else
 			return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length), 
@@ -833,10 +1033,11 @@ public class FMCA  extends CA implements java.io.Serializable
 				removed++;
 			}
 		}
+		
 		tr=trcopy;
 		tr=  FMCAUtil.removeHoles(tr, removed);		
 		a.setTransition(tr); //K_0 
-		
+
 		//computing R_0
 		for (int i=0;i<tr.length;i++)
 		{
@@ -945,12 +1146,14 @@ public class FMCA  extends CA implements java.io.Serializable
 				
 			}while(update);
 		}
+		
+		//a.getDanglingStates();
+		a = (FMCA) FMCAUtil.removeUnreachable(a);
+		
 		//if initial state is bad or not all required actions are fired
 		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
 			return null;
 		
-		a.getDanglingStates();
-		a = (FMCA) FMCAUtil.removeUnreachable(a);
 		return a;
 	}
 	

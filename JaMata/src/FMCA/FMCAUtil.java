@@ -17,6 +17,19 @@ public class FMCAUtil extends CAUtil
 
 	static boolean debug = true;
 	
+	
+	public static float furthestNodesX(FMCA[] aut)
+	{
+		float max=0;
+		for (int i=0;i<aut.length;i++)
+		{
+			float x=aut[i].furthestNodeX();
+			if (max<x)
+				max=x;
+		}
+		return max;
+	}
+	
 	/**
 	 * 
 	 * @param aut
@@ -28,6 +41,9 @@ public class FMCAUtil extends CAUtil
 			return null;
 		int upperbound=100; //TODO upperbound check
 		int rank=aut[0].getRank(); //the aut must have all the same rank
+		
+		float fur=FMCAUtil.furthestNodesX(aut);
+		
 		for (int i=0;i<aut.length;i++)
 		{
 			int[][] fs=aut[i].getFinalStatesCA();
@@ -49,7 +65,7 @@ public class FMCAUtil extends CAUtil
 				return null;
 			
 			//renaming states of operands
-			int[] initial=aut[i].getInitialCA();
+			int[] initial=Arrays.copyOf(aut[i].getInitialCA(),aut[i].getInitialCA().length);
 			for (int z=0;z<initial.length;z++)
 				initial[z]=initial[z]+upperbound*(i+1);
 			aut[i].setInitialCA(initial);
@@ -66,8 +82,21 @@ public class FMCAUtil extends CAUtil
 				t[j].setSourceP(source);
 				t[j].setTargetP(target);
 			}
+			
+			//repositioning states and renaming
+			FMCAState[] fst=aut[i].getState();
+			FMCAState[] newfst=new FMCAState[fst.length];
+			for (int j=0;j<fst.length;j++)
+			{
+				int[] value=Arrays.copyOf(fst[j].getState(),fst[j].getState().length);
+				for (int z=0;z<value.length;z++)
+					value[z]=value[z] + upperbound*(i+1); //rename state
+				newfst[j]=new FMCAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositinioning
+						fst[j].isInitial(),fst[j].isFinalstate());			
+			}
+			aut[i].setState(newfst);
 		}
-		
+	
 		int[] initial = new int[rank]; //special initial state
 		String[] label = new String[rank];
 		label[0]="!dummy";				
@@ -77,6 +106,7 @@ public class FMCAUtil extends CAUtil
 			if (i!=0)
 				label[i]="-";
 		}
+		FMCAState finitial = new FMCAState(initial,(float)((aut.length)*fur)/2,0,true,false);
 		//dummy transitions to initial states
 		FMCATransition[] t=new FMCATransition[aut.length];
 		for (int i=0;i<t.length;i++)
@@ -113,8 +143,10 @@ public class FMCAUtil extends CAUtil
 			states[i]=0;
 			finalstateslength[i]=0; //initialise
 		}
+		int numoffstate=0; //the overall sum of fmcastates of all operands
 		for (int i=0;i<aut.length;i++)
 		{
+			numoffstate+=aut[i].getState().length;
 			int[][] fs = aut[i].getFinalStatesCA();
 			for (int j=0;j<rank;j++)
 			{
@@ -143,6 +175,19 @@ public class FMCAUtil extends CAUtil
 			}
 		}
 		
+		// copying states of operands
+		FMCAState[] ufst = new FMCAState[numoffstate+1];
+		int countfs=0;
+		for (int i=0;i<aut.length;i++)
+		{
+			FMCAState[] so = aut[i].getState();
+			for (int j=0;j<so.length;j++)
+			{
+				ufst[countfs]=so[j];
+				countfs++;
+			}
+		}
+		ufst[countfs]=finitial;
 		/*int[][] finalstates = new int[rank][];
 		for (int i=0;i<rank;i++)
 		{
@@ -150,7 +195,7 @@ public class FMCAUtil extends CAUtil
 			
 		}*/
 	
-		return new FMCA(rank, initial, states, finalstates, uniontr);
+		return new FMCA(rank, initial, states, finalstates, uniontr, ufst);
 	}
 	
 //	/**
@@ -1115,6 +1160,13 @@ public class FMCAUtil extends CAUtil
 		m= (String[])removeHoles(m,removed);
 		return m;
 			
+	}
+	protected static FMCAState[] removeTailsNull(FMCAState[] q,int length)
+	{
+		FMCAState[] r=new FMCAState[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
 	}
 	protected static int[] removeTailsNull(int[] q,int length)
 	{

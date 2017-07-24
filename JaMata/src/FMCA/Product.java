@@ -153,6 +153,20 @@ public class Product {
 		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
 	}
 	
+	public String toStringFile(int id)
+	{
+		String req="";
+		for (int i=0;i<required.length;i++)
+		{
+			req+=required[i]+",";
+		}
+		String forb="";
+		for (int i=0;i<forbidden.length;i++)
+		{
+			forb+=forbidden[i]+",";
+		}
+		return "p"+id+": R={"+req+"} F={"+forb+"}";
+	}
 	public String toHTMLString(String s)
 	{
         return "<html>"+s+"R:"+Arrays.toString(required)+"<br />F:"+Arrays.toString(forbidden)+"</html>";

@@ -1,0 +1,7 @@
+Rank: 1
+Number of states: [3]
+Initial state: [0]
+Final states: [[20,1],[32,4]]
+Transitions: 
+
+([0],[!refund],[20])

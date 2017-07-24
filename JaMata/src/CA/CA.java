@@ -239,8 +239,7 @@ public class CA  extends FSA implements java.io.Serializable
 						  }
 						  case "(":
 						  {
-							  String[] ss=strLine.split("]");
-							  t[pointert]=loadTransition(ss,rank);
+							  t[pointert]=loadTransition(strLine,rank);
 							  pointert++;
 							  break;
 						  }
@@ -258,9 +257,10 @@ public class CA  extends FSA implements java.io.Serializable
 		return null;
 	}
 	
-	protected static CATransition loadTransition(String[] ss, int rank)
+	protected static CATransition loadTransition(String str, int rank)
 	{
 		  int what=0;
+		  String[] ss=str.split("]");
 		  int[][] store=new int[1][];
 		  String[] label = new String[rank];
 		  for (int i=0;i<ss.length;i++)

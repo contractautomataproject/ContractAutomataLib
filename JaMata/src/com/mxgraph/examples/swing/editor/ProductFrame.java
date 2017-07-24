@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.*;
 
-public class ProductFrame extends JDialog{
+public class ProductFrame extends JFrame{
 	private Family fam;
 	JButton[] nodes;
 	/**
@@ -68,51 +68,64 @@ public class ProductFrame extends JDialog{
 	        		nodes[depth[i][j]].setSize(new Dimension(200,300));
 	        		nodes[depth[i][j]].addActionListener(new ActionListener(){
 	        	           	@Override
-							public void actionPerformed(ActionEvent ae) {
+							public void actionPerformed(ActionEvent ae) 
+	        	           	{
 	        	           		JButton source = (JButton)ae.getSource();
 	        	           		String si=(String)source.getClientProperty("i");
         	           		    int i = Integer.parseInt(si);
 	        	           		String sj=(String)source.getClientProperty("j");
 	        	                int j = Integer.parseInt(sj);
-	        	                int[] ptl=fam.getPointerToLevel();
-	        	                int[][] rpo=fam.getReversePO();
+//	        	                int[] ptl=fam.getPointerToLevel();
+//	        	                int[][] rpo=fam.getReversePO();
 	        	                int[][] depth=fam.getDepth();
 	        	                Product[] prod = fam.getProducts();
 	        	                int poindex=depth[i][j];
 	        	                String message="Subproducts of P"+poindex+" "+prod[poindex].toString()+" \n";
-	        	                for (int ind=0;ind<rpo[poindex].length;ind++)
+	        	                int[] subind = fam.getSubProductsofProduct(poindex);
+	        	                Product[] subprod = fam.subsetOfProductsFromIndex(subind);
+	        	                for (int ind=0;ind<subprod.length;ind++)
 	        	                {
-	        	                	if (rpo[poindex][ind]==1)
-	        	                	{
-	        	                		message+="P"+depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]+" "+prod[depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]].toString()+"\n";
-	        	                		if (!source.isBorderPainted())
-	    	        	           		{
-	        	                			try{
-	        	                			nodes[depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]].setBorder(BorderFactory.createLineBorder(Color.red));
-	        	                			nodes[depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]].setBorderPainted(true);
-	        	                			} catch (Exception e){
-	        	                				//debug
-	        	                			   int d=prod[ind].getForbiddenAndRequiredNumber();
-	        	                			   int dd=ptl[ind];
-	        	                			   int ddd=depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]; 
-	        	                			   int x=0;
-	        	                			   System.out.println(d+dd+ddd+x);
-	        	                			   e.printStackTrace();
-	        	                			}
-	        	                		}
-	        	                		else
-	        	                		{
-	        	                			nodes[depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]].setBorder(BorderFactory.createLineBorder(Color.black));
-	        	                			nodes[depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]].setBorderPainted(false);
-	        	                		}
-    	        	           		
-	        	                	}
+	        	                	message+="P"+subind[ind]+" "+subprod[ind].toString()+"\n";
+        	                		if (!source.isBorderPainted())
+    	        	           		{
+        	                			try{
+        	                			nodes[subind[ind]].setBorder(BorderFactory.createLineBorder(Color.red));
+        	                			nodes[subind[ind]].setBorderPainted(true);
+        	                			} catch (Exception e){
+        	                				//debug
+        	                			   int d=prod[ind].getForbiddenAndRequiredNumber();
+        	                			   //int dd=ptl[ind];
+        	                			   //int ddd=depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]; 
+        	                			   int x=0;
+        	                			   //System.out.println(d+dd+ddd+x);
+        	                			   e.printStackTrace();
+        	                			}
+        	                		}
+        	                		else
+        	                		{
+        	                			nodes[subind[ind]].setBorder(BorderFactory.createLineBorder(Color.black));
+        	                			nodes[subind[ind]].setBorderPainted(false);
+        	                		}
 	        	                }
 	        	                if (!source.isBorderPainted())
 	        	                {
 	        	                	source.setBorderPainted(true);
 	        	                	source.setBorder(BorderFactory.createLineBorder(Color.red));
-		        	                JOptionPane.showMessageDialog(null, message);
+	        	                	JTextArea textArea = new JTextArea(200,200);
+	        						textArea.setText(message);
+	        					    textArea.setEditable(true);
+	        					      
+	        					    JScrollPane scrollPane = new JScrollPane(textArea);
+	        					    JDialog jd = new JDialog();
+	        						jd.add(scrollPane);
+	        						jd.setTitle("Sub-Products");
+	        						jd.setResizable(true);
+	        						jd.setVisible(true);
+
+	        						jd.setSize(500,500);
+	        						jd.setLocationRelativeTo(null);
+
+		        	                //JOptionPane.showMessageDialog(null, message);
 	        	                }
 	        	                else{
 	        	                	source.setBorderPainted(false);
@@ -137,12 +150,29 @@ public class ProductFrame extends JDialog{
         panel.setBorder(new LineBorder(Color.BLACK));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
-     
         getContentPane().add(scrollpanel);
-        
+        this.pack();
         setVisible(true);
-	  }
-
+	}
+	
+	public void setColorButtonProducts(int[] prod, Color c)
+	{
+		for (int i=0;i<prod.length;i++)
+		{
+			nodes[prod[i]].setBorder(BorderFactory.createLineBorder(c));
+			nodes[prod[i]].setBorderPainted(true);
+		}
+	}
+	
+	public void resetColorButtonProducts()
+	{
+		for (int i=0;i<nodes.length;i++)
+		{
+			nodes[i].setBorder(BorderFactory.createLineBorder(Color.black));
+			nodes[i].setBorderPainted(false);
+		}
+	}
+	
 	public Family getFamily()
 	{
 		return fam;
