@@ -2,6 +2,7 @@ package CA;
 
 
 import java.util.Arrays;
+
 import FSA.Transition;
 
 
@@ -14,8 +15,8 @@ import FSA.Transition;
  */
 @SuppressWarnings("serial")
 public class CATransition extends Transition implements java.io.Serializable{ 
-	private int[] source;
-	private int[] target;
+	private CAState source;
+	private CAState target;
 	private String[] label;
 	public static  String idle="-";
 	public static  String offer="!";
@@ -23,8 +24,9 @@ public class CATransition extends Transition implements java.io.Serializable{
 	/**
 	 * 
 	 */
-	public CATransition(int[] source, String[] label, int[] target){
+	public CATransition(CAState source, String[] label, CAState target){
 		super(0,0,0);
+		
 		this.source=source;
 		this.target=target;
 		this.label =label;
@@ -56,12 +58,12 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return		the source state of the transition
 	 */
-	public int[] getSourceP()
+	public CAState getSourceP()
 	{
 		return this.source;
 	}
 	
-	public void setSourceP(int[] s)
+	public void setSourceP(CAState s)
 	{
 		this.source=s;
 	}
@@ -71,12 +73,12 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 * @return		the target state of the transition
 	 */
-	public int[] getTargetP()
+	public CAState getTargetP()
 	{
 		return target;
 	}
 	
-	public void setTargetP(int[] t)
+	public void setTargetP(CAState t)
 	{
 		this.target=t;
 	}
@@ -255,16 +257,16 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 */
 	public String toString()
 	{
-		return "("+Arrays.toString(source)+","+Arrays.toString(label)+","+Arrays.toString(target)+")";
+		return "("+Arrays.toString(source.getState())+","+Arrays.toString(label)+","+Arrays.toString(target.getState())+")";
 	}
 
 	public boolean equals(Object t)
 	{
 		CATransition tr=(CATransition) t;
-		int[] ip =tr.getSourceP();
+		int[] ip =tr.getSourceP().getState();
 		String[] lp=tr.getLabelP();
-		int[] dp=tr.getTargetP();
-		return ( Arrays.equals(ip,source))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target));
+		int[] dp=tr.getTargetP().getState();
+		return ( Arrays.equals(ip,source.getState()))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target.getState()));
 	}	
 	
 	/**
@@ -276,8 +278,8 @@ public class CATransition extends Transition implements java.io.Serializable{
 	public static boolean match(String[] l,String[] ll)
 	{
 		int[] dummy=null;
-		CATransition t1=new CATransition(dummy,l,dummy);
-		CATransition t2=new CATransition(dummy,ll,dummy);
+		CATransition t1=new CATransition(new CAState(dummy),l,new CAState(dummy));
+		CATransition t2=new CATransition(new CAState(dummy),ll,new CAState(dummy));
 		if (t1.isMatch()||t2.isMatch())	//both transitions must not be match (non-associative)
 			return false;
 		if (t1.isOffer()&&t2.isOffer())
@@ -300,12 +302,12 @@ public class CATransition extends Transition implements java.io.Serializable{
 	{
 		if (tt!=null)
 		{
-			int[] s=((CATransition) t).getSourceP();
+			int[] s=((CATransition) t).getSourceP().getState();
 			String[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getTargetP();
-			int[] ss = ((CATransition) tt).getSourceP();
+			int[] d=((CATransition) t).getTargetP().getState();
+			int[] ss = ((CATransition) tt).getSourceP().getState();
 			String[] ll=((CATransition) tt).getLabelP();
-			int[] dd =((CATransition) tt).getTargetP();
+			int[] dd =((CATransition) tt).getTargetP().getState();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			String[] label = new String[insert.length+s.length+ss.length];
@@ -365,13 +367,13 @@ public class CATransition extends Transition implements java.io.Serializable{
 					dest[insert.length+counter+j]=dd[j];
 				}
 			}
-			return new CATransition(initial,label,dest);	
+			return new CATransition(new CAState(initial),label,new CAState(dest));	
 		}
 		else
 		{
-			int[] s=((CATransition) t).getSourceP();
+			int[] s=((CATransition) t).getSourceP().getState();
 			String[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getTargetP();
+			int[] d=((CATransition) t).getTargetP().getState();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			String[] label = new String[insert.length+s.length];
@@ -407,7 +409,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 				}
 				counter+=s.length; //record the shift due to the first CA 
 			}
-			return new CATransition(initial,label,dest);	
+			return  new CATransition(new CAState(initial),label,new CAState(dest));		
 		}
 	}
 }

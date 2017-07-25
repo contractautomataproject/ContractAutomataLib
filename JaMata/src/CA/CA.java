@@ -19,7 +19,7 @@ import FSA.Transition;
 public class CA  extends FSA implements java.io.Serializable
 {
 	private int rank;
-	private int[] initial;
+	private CAState initial;
 	private int[] states;
 	private int[][] finalstates; 
 	//private CATransition[] tra;
@@ -37,8 +37,10 @@ public class CA  extends FSA implements java.io.Serializable
 	        this.rank = 1;
 	        this.states = new int[1];
 	        this.states[0] = super.getStates();
-	        this.initial = new int[1];
-	        initial[0] = super.getInitial();
+	        int[] ini= new int[1]; ini[0]=0;
+	        this.initial = new CAState(ini);
+	        this.initial.setInitial(true);
+	       
 	        finalstates = new int[1][super.getFinalStates().length];
 	        finalstates[0]= super.getFinalStates();
 	       // this.tra=(CATransition[])super.getTransition();
@@ -48,7 +50,7 @@ public class CA  extends FSA implements java.io.Serializable
 		catch (Exception e){System.out.println("Errore inserimento");}
 	}
 	
-	public CA(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
+	public CA(int rank, CAState initial, int[] states, int[][] finalstates,CATransition[] tra)
 	{
 		super(tra);
 		this.rank=rank;
@@ -67,7 +69,7 @@ public class CA  extends FSA implements java.io.Serializable
 		 */
 		System.out.println("Rank: "+this.rank);
 		System.out.println("Number of states: "+Arrays.toString(this.getStatesCA()));
-		System.out.println("Initial state: " +Arrays.toString(this.getInitialCA()));
+		System.out.println("Initial state: " +Arrays.toString(this.getInitialCA().getState()));
 		System.out.print("Final states: [");
 		for (int i=0;i<finalstates.length;i++)
 			System.out.print(Arrays.toString(finalstates[i]));
@@ -106,7 +108,7 @@ public class CA  extends FSA implements java.io.Serializable
 			PrintWriter pr = new PrintWriter(name+".data"); 
 			 pr.println("Rank: "+this.rank);
 			 pr.println("Number of states: "+Arrays.toString(this.getStatesCA()));
-			 pr.println("Initial state: " +Arrays.toString(this.getInitialCA()));
+			 pr.println("Initial state: " +Arrays.toString(this.getInitialCA().getState()));
 			 pr.print("Final states: [");
 			 for (int i=0;i<finalstates.length;i++)
 				 pr.print(Arrays.toString(finalstates[i]));
@@ -252,7 +254,9 @@ public class CA  extends FSA implements java.io.Serializable
 			  {
 				  fintr[i]=t[i];
 			  }
-			return new CA(rank,initial,states,fin,fintr);
+			CAState in=new CAState(initial);
+			in.setInitial(true);
+			return new CA(rank,in,states,fin,fintr);
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
@@ -307,7 +311,7 @@ public class CA  extends FSA implements java.io.Serializable
 			  s.close();
 			  if (what==2)
 			  {
-				  return new CATransition(store[0],label,statestransition);
+				  return new CATransition(new CAState(store[0]),label,new CAState(statestransition));
 			  }
 			  else
 			  {
@@ -358,12 +362,12 @@ public class CA  extends FSA implements java.io.Serializable
 	 * 
 	 * @return	the array of initial states
 	 */
-	public int[] getInitialCA()
+	public CAState getInitialCA()
 	{
 		return initial;
 	}
 	
-	public void setInitialCA(int[] i)
+	public void setInitialCA(CAState i)
 	{
 		this.initial=i;
 	}
@@ -427,17 +431,17 @@ public class CA  extends FSA implements java.io.Serializable
 		CATransition[] finalTr = new CATransition[at.length];
 		for(int i=0;i<finalTr.length;i++)
 		{
-			int[] in=at[i].getSourceP();
+			int[] in=at[i].getSourceP().getState();
 			String[] l=at[i].getLabelP();
-			int[] f= at[i].getTargetP();
-			finalTr[i] = new CATransition(Arrays.copyOf(in,in.length),Arrays.copyOf(l,l.length),Arrays.copyOf(f,f.length));
+			int[] f= at[i].getTargetP().getState();
+			finalTr[i] = new CATransition(new CAState(Arrays.copyOf(in,in.length)),Arrays.copyOf(l,l.length),new CAState(Arrays.copyOf(f,f.length)));
 		}
 		
 		int[][] nf = new int[finalstates.length][];
 		for (int i=0;i<finalstates.length;i++)
 			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 		
-		return new CA(rank,Arrays.copyOf(initial, initial.length),Arrays.copyOf(states, states.length),finalstates,finalTr);
+		return new CA(rank,initial.clone(),Arrays.copyOf(states, states.length),finalstates,finalTr);
 	}
 	
 	/**
@@ -451,7 +455,7 @@ public class CA  extends FSA implements java.io.Serializable
 			return null;
 		CATransition[] tra = this.getTransition();
 		int[] init = new int[1];
-		init[0]=initial[i];
+		init[0]=initial.getState()[i];
 		int[] st= new int[1];
 		st[0]= states[i];
 		int[][] fi = new int[1][];
@@ -464,15 +468,15 @@ public class CA  extends FSA implements java.io.Serializable
 			String label = tt.getLabelP()[i];
 			if(label!=CATransition.idle)
 			{
-				int source =  tt.getSourceP()[i];
-				int dest = tt.getTargetP()[i];
+				int source =  tt.getSourceP().getState()[i];
+				int dest = tt.getTargetP().getState()[i];
 				int[] sou = new int[1];
 				sou[0]=source;
 				int[] des = new int[1];
 				des[0]=dest;
 				String[] lab = new String[1];
 				lab[0]=label;
-				CATransition selected = new CATransition(sou,lab,des);
+				CATransition selected = new CATransition(new CAState(sou),lab,new CAState(des));
 				boolean skip=false;
 				for(int j=0;j<pointer;j++)
 				{
@@ -493,7 +497,7 @@ public class CA  extends FSA implements java.io.Serializable
 		tra = new CATransition[pointer];
 		for (int ind=0;ind<pointer;ind++)
 			tra[ind]=t[ind];
-		return new CA(1,init,st,fi,tra);
+		return new CA(1,new CAState(init, CAState.type.INITIAL),st,fi,tra);
 	}
 	
 	/**
@@ -644,20 +648,20 @@ public class CA  extends FSA implements java.io.Serializable
 				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getSourceP()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP())))
+					if ((reach[j][s]==t[i].getSourceP().getState()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP().getState())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getSourceP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSourceP().getState(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
 						{
 							//TODO FIX
 							String[][] re = new String[3][];
-							int[] source=t[i].getSourceP();
+							int[] source=t[i].getSourceP().getState();
 							re[0][0]=Arrays.toString(source);
 							re[1]=t[i].getLabelP();
 							re[2][0]=Arrays.toString(reach[j]);
@@ -695,13 +699,13 @@ public class CA  extends FSA implements java.io.Serializable
 				int s = t[i].getSender();
 				for (int j=0;j<reach.length;j++)
 				{
-					if ((reach[j][s]==t[i].getSourceP()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP())))
+					if ((reach[j][s]==t[i].getSourceP().getState()[s])&&(!Arrays.equals(reach[j],t[i].getSourceP().getState())))
 					{
 						int z=0;
 						boolean found = false;
 						while ((!found)&&(z<t.length))
 						{
-							found=Arrays.equals(t[z].getSourceP(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
+							found=Arrays.equals(t[z].getSourceP().getState(), reach[j])&&Arrays.equals(t[z].getLabelP(), l);
 							z++;
 						}
 						if (!found)
@@ -713,7 +717,7 @@ public class CA  extends FSA implements java.io.Serializable
 							return re;*/
 							//TODO FIX
 							String[][] re = new String[3][];
-							int[] source=t[i].getSourceP();
+							int[] source=t[i].getSourceP().getState();
 							re[0][0]=Arrays.toString(source);
 							re[1]=t[i].getLabelP();
 							re[2][0]=Arrays.toString(reach[j]);
@@ -742,8 +746,8 @@ public class CA  extends FSA implements java.io.Serializable
 		{
 			for(int j=i+1;j<t.length;j++)
 			{
-				if (Arrays.equals(t[i].getSourceP(), t[j].getSourceP())&&t[i].getSender()!=t[j].getSender())
-					return t[i].getSourceP();
+				if (Arrays.equals(t[i].getSourceP().getState(), t[j].getSourceP().getState())&&t[i].getSender()!=t[j].getSender())
+					return t[i].getSourceP().getState();
 			}
 		}
 		return null;
@@ -759,12 +763,12 @@ public class CA  extends FSA implements java.io.Serializable
 		aut = CAUtil.removeUnreachable(aut);
 		aut = CAUtil.removeDanglingTransitions(aut);
 		int[][] s = new int[this.prodStates()][];
-		s[0]=aut.getInitialCA();
+		s[0]=aut.getInitialCA().getState();
 		CATransition[] t = aut.getTransition();
 		int pointer=1;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] p = t[i].getTargetP();
+			int[] p = t[i].getTargetP().getState();
 			boolean found=false;
 			int j=0;
 			while((!found)&&(s[j]!=null))
@@ -825,8 +829,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getSourceP();
-			int[] d = t[i].getTargetP();
+			int[] s = t[i].getSourceP().getState();
+			int[] d = t[i].getTargetP().getState();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)
@@ -862,8 +866,8 @@ public class CA  extends FSA implements java.io.Serializable
 		int pointliable=0;
 		for (int i=0;i<t.length;i++)
 		{
-			int[] s = t[i].getSourceP();
-			int[] d = t[i].getTargetP();
+			int[] s = t[i].getSourceP().getState();
+			int[] d = t[i].getTargetP().getState();
 			boolean founds=false;
 			boolean foundd=false;
 			for(int j=0;j<ms.length;j++)
@@ -913,8 +917,8 @@ public class CA  extends FSA implements java.io.Serializable
 		return new CATransition[length][];
 	}
 	
-	public CA createNew(int rank, int[] initial, int[] states, int[][] finalstates,CATransition[] tra)
+	public CA createNew(int rank, CAState initial, int[] states, int[][] finalstates,CATransition[] tra)
 	{
-		return new CA(rank,initial,states,finalstates,tra);
+		return new CA(rank, initial,states,finalstates,tra);
 	}
 }

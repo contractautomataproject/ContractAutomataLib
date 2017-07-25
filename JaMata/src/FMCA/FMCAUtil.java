@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import CA.CAState;
 import CA.CAUtil;
 
 /**
@@ -65,33 +66,33 @@ public class FMCAUtil extends CAUtil
 				return null;
 			
 			//renaming states of operands
-			int[] initial=Arrays.copyOf(aut[i].getInitialCA(),aut[i].getInitialCA().length);
-			for (int z=0;z<initial.length;z++)
-				initial[z]=initial[z]+upperbound*(i+1);
+			CAState initial=aut[i].getInitialCA().clone();
+			for (int z=0;z<initial.getState().length;z++)
+				initial.getState()[z]=initial.getState()[z]+upperbound*(i+1);
 			aut[i].setInitialCA(initial);
 			FMCATransition[] t=aut[i].getTransition();
 			for (int j=0;j<t.length;j++)
 			{
-				int[] source=Arrays.copyOf(t[j].getSourceP(),t[j].getSourceP().length);
-				int[] target=Arrays.copyOf(t[j].getTargetP(),t[j].getTargetP().length);
-				for (int z=0;z<source.length;z++)
+				CAState source=t[j].getSourceP().clone();
+				CAState target=t[j].getTargetP().clone();
+				for (int z=0;z<source.getState().length;z++)
 				{
-					source[z] = source[z] + upperbound*(i+1);
-					target[z] = target[z] + upperbound*(i+1);
+					source.getState()[z] = source.getState()[z] + upperbound*(i+1);
+					target.getState()[z] = target.getState()[z] + upperbound*(i+1);
 				}
 				t[j].setSourceP(source);
 				t[j].setTargetP(target);
 			}
 			
 			//repositioning states and renaming
-			FMCAState[] fst=aut[i].getState();
-			FMCAState[] newfst=new FMCAState[fst.length];
+			CAState[] fst=aut[i].getState();
+			CAState[] newfst=new CAState[fst.length];
 			for (int j=0;j<fst.length;j++)
 			{
 				int[] value=Arrays.copyOf(fst[j].getState(),fst[j].getState().length);
 				for (int z=0;z<value.length;z++)
 					value[z]=value[z] + upperbound*(i+1); //rename state
-				newfst[j]=new FMCAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositinioning
+				newfst[j]=new CAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositinioning
 						fst[j].isInitial(),fst[j].isFinalstate());			
 			}
 			aut[i].setState(newfst);
@@ -106,12 +107,12 @@ public class FMCAUtil extends CAUtil
 			if (i!=0)
 				label[i]="-";
 		}
-		FMCAState finitial = new FMCAState(initial,(float)((aut.length)*fur)/2,0,true,false);
+		CAState finitial = new CAState(initial,(float)((aut.length)*fur)/2,0,true,false);
 		//dummy transitions to initial states
 		FMCATransition[] t=new FMCATransition[aut.length];
 		for (int i=0;i<t.length;i++)
 		{
-			t[i]=new FMCATransition(initial,label,aut[i].getInitialCA(),FMCATransition.action.PERMITTED); 
+			t[i]=new FMCATransition(finitial,label,aut[i].getInitialCA(),FMCATransition.action.PERMITTED); 
 		}
 		int trlength=t.length;
 		FMCATransition[][] tr=new FMCATransition[aut.length][];
@@ -176,11 +177,11 @@ public class FMCAUtil extends CAUtil
 		}
 		
 		// copying states of operands
-		FMCAState[] ufst = new FMCAState[numoffstate+1];
+		CAState[] ufst = new CAState[numoffstate+1];
 		int countfs=0;
 		for (int i=0;i<aut.length;i++)
 		{
-			FMCAState[] so = aut[i].getState();
+			CAState[] so = aut[i].getState();
 			for (int j=0;j<so.length;j++)
 			{
 				ufst[countfs]=so[j];
@@ -195,7 +196,7 @@ public class FMCAUtil extends CAUtil
 			
 		}*/
 	
-		return new FMCA(rank, initial, states, finalstates, uniontr, ufst);
+		return new FMCA(rank, finitial, states, finalstates, uniontr, ufst);
 	}
 	
 //	/**
@@ -1161,9 +1162,9 @@ public class FMCAUtil extends CAUtil
 		return m;
 			
 	}
-	protected static FMCAState[] removeTailsNull(FMCAState[] q,int length)
+	protected static CAState[] removeTailsNull(CAState[] q,int length)
 	{
-		FMCAState[] r=new FMCAState[length];
+		CAState[] r=new CAState[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;

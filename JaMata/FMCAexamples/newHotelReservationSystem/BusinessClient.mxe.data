@@ -6,9 +6,8 @@ Transitions:
 
 !G([2],[?invoice],[3])
 ([1],[!card],[2])
-([4],[?receipt],[3])
-([1],[!cash],[4])
-([6],[?freeCancellation],[5])
+([2],[?receipt],[3])
+([6],[?noFreeCancellation],[5])
 ([7],[?breakfast],[6])
 !U([0],[?singleRoom],[7])
 ([9],[?privateBathroom],[1])

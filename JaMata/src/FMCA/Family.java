@@ -22,6 +22,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import CA.CAState;
+
 public class Family {
 	private Product[] elements;
 	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
@@ -486,11 +488,11 @@ public class Family {
 		int[] tv = getTopProducts();
 		if (aut.containAction("dummy")) //dummy is an epsilon move
 		{
-			int[] storeinitial=aut.getInitialCA();
+			CAState storeinitial=aut.getInitialCA();
 			for (int i=0;i<tv.length;i++)
 			{
 				aut.setInitialCA(storeinitial);
-				FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
+				FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA().getState(),aut.getTransition());
 				for (int j=0;j<tr.length;j++)
 				{	
 					aut.setInitialCA(tr[j].getTargetP());

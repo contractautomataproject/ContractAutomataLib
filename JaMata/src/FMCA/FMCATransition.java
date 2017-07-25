@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 
 
+
+import CA.CAState;
 import CA.CATransition;
 import FSA.Transition;
 
@@ -31,7 +33,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public FMCATransition(int[] initial, String[] label2, int[] fina, action type){
+	public FMCATransition(CAState initial, String[] label2, CAState fina, action type){
 		super(initial,label2,fina);
 		this.type=type;
 //		if (type!=action.PERMITTED)
@@ -73,22 +75,23 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		switch (this.type) 
 		{
-			case PERMITTED: return "("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
-			case URGENT:return "!U("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
-			case GREEDY:return "!G("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";
-			case LAZY:return "!L("+Arrays.toString(getSourceP())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP())+")";		
+			case PERMITTED: return "("+Arrays.toString(getSourceP().getState())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP().getState())+")";
+			case URGENT:return "!U("+Arrays.toString(getSourceP().getState())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP().getState())+")";
+			case GREEDY:return "!G("+Arrays.toString(getSourceP().getState())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP().getState())+")";
+			case LAZY:return "!L("+Arrays.toString(getSourceP().getState())+","+Arrays.toString(getLabelP())+","+Arrays.toString(getTargetP().getState())+")";		
 		}
 		return null;
 	}
 
+	//TODO equals should check the other fields of CAState
 	public boolean equals(FMCATransition t)
 	{
 		FMCATransition tr=(FMCATransition) t;
-		int[] ip =tr.getSourceP();
+		int[] ip =tr.getSourceP().getState();
 		String[] lp=tr.getLabelP();
-		int[] dp=tr.getTargetP();
+		int[] dp=tr.getTargetP().getState();
 		action type=tr.getType();
-		return ( Arrays.equals(ip,getSourceP()))&&(Arrays.equals(lp,getLabelP()))&&(Arrays.equals(dp,this.getTargetP())&&(this.type==type));
+		return ( Arrays.equals(ip,getSourceP().getState()))&&(Arrays.equals(lp,getLabelP()))&&(Arrays.equals(dp,this.getTargetP().getState())&&(this.type==type));
 	}	
 	
 	/**
@@ -111,9 +114,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				if ((tr[j].isMatch())
 					&&((tr[j].isGreedy()&&this.isGreedy())||(tr[j].isLazy()&&this.isLazy()))//the same type (greedy or lazy)
 					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
-					&&(tr[j].getSourceP()[tr[j].getReceiver()]==this.getSourceP()[this.getReceiver()]) //the same source state					
+					&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==this.getSourceP().getState()[this.getReceiver()]) //the same source state					
 					&&(tr[j].getLabelP()[tr[j].getReceiver()].equals(this.getLabelP()[this.getReceiver()])) //the same request
-					&&(!FMCAUtil.contains(this.getSourceP(), R))) //source state is not redundant
+					&&(!FMCAUtil.contains(this.getSourceP().getState(), R))) //source state is not redundant
 					{
 						return true;
 					}
@@ -133,12 +136,12 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		if (!this.isMatch())
 			return null;
-		int length=this.getSourceP().length;
+		//int length=this.getSourceP().length;
 		int sender=this.getSender();
-		int[] source=Arrays.copyOf(this.getSourceP(), length);
-		int[] target=Arrays.copyOf(this.getTargetP(), length);
-		String[] request=Arrays.copyOf(this.getLabelP(), length);
-		target[sender]=source[sender];  //the sender is now idle
+		CAState source= this.getSourceP().clone();
+		CAState target= this.getTargetP().clone();
+		String[] request=Arrays.copyOf(this.getLabelP(), this.getLabelP().length);
+		target.getState()[sender]=source.getState()[sender];  //the sender is now idle
 		request[sender]=CATransition.idle;  //swapping offer to idle
 		return new FMCATransition(source,request,target,this.type); //returning the request transition
 		
@@ -200,9 +203,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		int pointer=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
+			if (!FMCAUtil.contains(t[i].getSourceP().getState(), s)) //if the source state was not already inserted previously
 			{
-				s[pointer]=t[i].getSourceP();
+				s[pointer]=t[i].getSourceP().getState();
 				pointer++;
 			}
 		}
@@ -223,9 +226,9 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		{
 			if ((!t[i].isMatched(aut))||(t[i].isLazyUnmatchable(aut)))
 			{
-				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
+				if (!FMCAUtil.contains(t[i].getSourceP().getState(), s)) //if the source state was not already inserted previously
 				{
-					s[pointer]=t[i].getSourceP();
+					s[pointer]=t[i].getSourceP().getState();
 					pointer++;
 				}
 			}
@@ -249,12 +252,12 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		if (tt!=null) //if it is a match
 		{
-			int[] s=((FMCATransition) t).getSourceP();
+			int[] s=((FMCATransition) t).getSourceP().getState();
 			String[] l=((FMCATransition) t).getLabelP();
-			int[] d=((FMCATransition) t).getTargetP();
-			int[] ss = ((FMCATransition) tt).getSourceP();
+			int[] d=((FMCATransition) t).getTargetP().getState();
+			int[] ss = ((FMCATransition) tt).getSourceP().getState();
 			String[] ll=((FMCATransition) tt).getLabelP();
-			int[] dd =((FMCATransition) tt).getTargetP();
+			int[] dd =((FMCATransition) tt).getTargetP().getState();
 			int[] initial = new int[insert.length+s.length+ss.length];
 			int[] dest = new int[insert.length+s.length+ss.length];
 			String[] label = new String[insert.length+s.length+ss.length];
@@ -319,13 +322,13 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					dest[insert.length+counter+j]=dd[j];
 				}
 			}
-			return new FMCATransition(initial,label,dest,type);	
+			return new FMCATransition(new CAState(initial),label,new CAState(dest),type);	
 		}
 		else	//is not a match
 		{
-			int[] s=((FMCATransition) t).getSourceP();
+			int[] s=((FMCATransition) t).getSourceP().getState();
 			String[] l=((FMCATransition) t).getLabelP();
-			int[] d=((FMCATransition) t).getTargetP();
+			int[] d=((FMCATransition) t).getTargetP().getState();
 			int[] initial = new int[insert.length+s.length];
 			int[] dest = new int[insert.length+s.length];
 			String[] label = new String[insert.length+s.length];
@@ -361,7 +364,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				}
 				counter+=s.length; //record the shift due to the first CA 
 			}
-			return new FMCATransition(initial,label,dest,((FMCATransition) t).getType());	
+			return new FMCATransition(new CAState(initial),label,new CAState(dest),((FMCATransition) t).getType());	
 		}
 	}
 	
@@ -379,7 +382,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		int j=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if (Arrays.equals(source, tr[i].getSourceP()))
+			if (Arrays.equals(source, tr[i].getSourceP().getState()))
 			{
 				newtr[j]=tr[i];
 				j++;

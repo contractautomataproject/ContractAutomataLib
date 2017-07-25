@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import FMCA.FMCATransition;
+
 
 /**
  * Utilities for CA: product, aproduct
@@ -44,7 +46,7 @@ public class CAUtil
 				statesprod[pointerprodrank]= aut[i].getStatesCA()[j];		
 				totnumstates *= statesprod[pointerprodrank];
 				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesCA()[j];
-				initialprod[pointerprodrank] = aut[i].getInitialCA()[j];
+				initialprod[pointerprodrank] = aut[i].getInitialCA().getState()[j];
 				pointerprodrank++;
 			}
 		}
@@ -146,7 +148,7 @@ public class CAUtil
 							{	
 								if(gen[ind3]!=null)
 								{
-									if (Arrays.equals(gen[ind3].getSourceP(),temp[ind][ind2].getSourceP()) &&  //the state is the same
+									if (Arrays.equals(gen[ind3].getSourceP().getState(),temp[ind][ind2].getSourceP().getState()) &&  //the state is the same
 											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
 									{
 										gen[ind3]=null;
@@ -221,7 +223,7 @@ public class CAUtil
 		for (int ind=0;ind<pointertransprod;ind++)
 			finalTr[ind]= (CATransition)transprod[ind];
 		
-		CA prod = aut[0].createNew(prodrank,initialprod,statesprod,finalstatesprod,finalTr);
+		CA prod = aut[0].createNew(prodrank,new CAState(initialprod, CAState.type.INITIAL),statesprod,finalstatesprod,finalTr);
 		
 		if (debug)
 			System.out.println("Remove unreachable ...");
@@ -248,12 +250,12 @@ public class CAUtil
 		int pointerunreachable=0;
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
-		reachable[0]=aut.getInitialCA();
+		reachable[0]=aut.getInitialCA().getState();
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
-			int[] s = t.getSourceP();
+			int[] s = t.getSourceP().getState();
 			/**
 			int[] debugg = {0,0,1};
 			if (Arrays.equals(s,debugg))
@@ -262,7 +264,7 @@ public class CAUtil
 			pointervisited[0]=0;
 			if (debug)
 				System.out.println("Checking Reachability state "+Arrays.toString(s));
-			if(!amIReachable(s,aut,aut.getInitialCA(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+			if(!amIReachable(s,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
 			{
 				finalTr[ind]=null;
 				removed++;
@@ -335,7 +337,7 @@ public class CAUtil
 		{
 			// for each transition checks if the arrival state s is reachable from one of the final states of the ca
 			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getTargetP();
+			int[] arr = t.getTargetP().getState();
 
 			boolean remove=true;
 			
@@ -380,6 +382,9 @@ public class CAUtil
 	 * @param pointervisited
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
+
+	//TODO pointerunreachable is never updated, probably is not needed. In case this method is called multiple times from another method, substitute 
+	//it with a method which computes a forward visit of the graph only once
 	public static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
 		if (Arrays.equals(state,from))
@@ -412,17 +417,16 @@ public class CAUtil
 		{
 			if (t[i]!=null)
 			{
-				if (Arrays.equals(state,t[i].getTargetP()))
+				if (Arrays.equals(state,t[i].getTargetP().getState()))
 				{
-					if (amIReachable(t[i].getSourceP(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+					if (amIReachable(t[i].getSourceP().getState(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
 						return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	
+		
 	/**
 	 * 
 	 * @param t  first transition made by one CA

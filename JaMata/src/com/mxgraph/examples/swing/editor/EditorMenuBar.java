@@ -91,6 +91,9 @@ import com.mxgraph.examples.swing.editor.EditorActions.WarningAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ZoomPolicyAction;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxGdCodec;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxGraphActions;
@@ -585,6 +588,24 @@ public class EditorMenuBar extends JMenuBar
 														.getAbsolutePath()));
 	*/
 										mxCodec codec = new mxCodec(document);
+										
+										mxGraphModel mgm = (mxGraphModel) codec.decode(
+												document.getDocumentElement(),
+												graph.getModel());//graph.getModel());
+										
+										mxGraph mg=new mxGraph(mgm);
+										mxGraphComponent mgc = new mxGraphComponent(mg);
+									    					    					    
+									    FMCA.morphGraph(mgc.getGraph(), mgc);
+					            								
+						                codec = new mxCodec();
+										String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
+
+										mxUtils.writeFile(xml, fileName);
+
+										document = mxXmlUtils
+													.parseXml(mxUtils.readFile(fileName));
+
 										codec.decode(
 												document.getDocumentElement(),
 												graph.getModel());
@@ -751,19 +772,47 @@ public class EditorMenuBar extends JMenuBar
 							}
 							//loading the file
 							try
-							{								
+							{	
+//								mxIGraphLayout layout = new mxFastOrganicLayout(graph);
+//
+//							    // layout graph
+//							    layout.execute(graph.getDefaultParent());
+
 								
-								Document document = mxXmlUtils
-											.parseXml(mxUtils.readFile(wd+"\\"+compositionname+".mxe"));
-													/*mxUtils.readFile(fc
-																					.getSelectedFile()
-																					.getAbsolutePath()));
-								*/
-								mxCodec codec = new mxCodec(document);
+								  //TODO I store, load, morph and store the file again, there should be a better method
+								  // I do this way because I use Document to update the window
+								    Document document = mxXmlUtils
+											.parseXml(mxUtils.readFile(lastDir+"\\"+compositionname+".mxe"));									
+								    
+								    mxCodec codec = new mxCodec(document);
+									mxGraphModel mgm = (mxGraphModel) codec.decode(
+											document.getDocumentElement(),
+											graph.getModel());//graph.getModel());
+									
+									mxGraph mg=new mxGraph(mgm);
+									mxGraphComponent mgc = new mxGraphComponent(mg);
+								    					    					    
+								    FMCA.morphGraph(mgc.getGraph(), mgc);
+				            								
+					                codec = new mxCodec();
+									String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
+
+									mxUtils.writeFile(xml, lastDir+"\\"+compositionname+".mxe");
+
+									document = mxXmlUtils
+												.parseXml(mxUtils.readFile(lastDir+"\\"+compositionname+".mxe"));
+
+							    
+							    codec = new mxCodec(document);
 								codec.decode(
 										document.getDocumentElement(),
-										graph.getModel());
+										graph.getModel());//graph.getModel());
+								
+								
+								
+								
 								editor.setCurrentFile(file);
+								
 								
 								editor.setModified(false);
 								editor.getUndoManager().clear();
