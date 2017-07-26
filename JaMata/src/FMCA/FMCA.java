@@ -956,7 +956,7 @@ public class FMCA  extends CA implements java.io.Serializable
 					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
 					 finalstates,
 					 finalTr,
-					 Arrays.copyOf(fstates,fstates.length));
+					 Arrays.copyOf(fstates,fstates.length)); //TODO check if it clones
 		}
 		else
 			return new FMCA(getRank(),getInitialCA().clone(), 
@@ -1052,7 +1052,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		FMCATransition[] trcopy=a.copyTransition();
 		for (int i=0;i<tr.length;i++)
 		{
-			System.out.println("transition "+i);
+		//	System.out.println("transition "+i);
 			if (!tr[i].isUncontrollable(a)&&(tr[i].isRequest()||tr[i].isForbidden(p))) //controllable and bad
 			{
 				rem[removed]=tr[i]; //solo per testing
@@ -1086,8 +1086,10 @@ public class FMCA  extends CA implements java.io.Serializable
 		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
 		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
 		
-		int[][] unmatchedOrLazyunmatchable=new int[potentiallyUncontrollable.length][];
-		int[][] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
+		// TODO now CAState are fully compared, check if computing dangling states makes two equal states different
+		//
+		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
+		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
 		boolean update=false;
 		if (R.length>0)
 		{
@@ -1106,7 +1108,7 @@ public class FMCA  extends CA implements java.io.Serializable
 					{
 						if (tr[i].isUncontrollable(a)) 
 						{   
-							if (FMCAUtil.contains(tr[i].getSourceP().getState(), R)) //remove uncontrollable with bad source
+							if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
 							{
 								rem[removed]=tr[i];//solo per testing
 								trcopy[i]=null;
@@ -1118,7 +1120,7 @@ public class FMCA  extends CA implements java.io.Serializable
 								trcheckpointer++;
 							}
 						}
-						else if (!tr[i].isUncontrollable(a)&&(FMCAUtil.contains(tr[i].getTargetP().getState(), R))) //remove controllable with bad target
+						else if (!tr[i].isUncontrollable(a)&&(FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
 						{
 							rem[removed]=tr[i]; //solo per testing
 							trcopy[i]=null;
@@ -1134,22 +1136,22 @@ public class FMCA  extends CA implements java.io.Serializable
 				// building R_i
 				//
 				//
-				int[][] danglingStates = a.getDanglingStates();
-				int[][] newR=new int[trcheckpointer][];
+				CAState[] danglingStates = a.getDanglingStates();
+				CAState[] newR=new CAState[trcheckpointer];
 				int newRpointer=0;
 				
 				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state
 				{
 					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
 					// setUnion removes duplicates we could skip the check
-					if ((FMCAUtil.contains(trcheck[i].getTargetP().getState(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP().getState(),R))))
+					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
 					{
-						newR[newRpointer]=trcheck[i].getSourceP().getState();
+						newR[newRpointer]=trcheck[i].getSourceP();
 						newRpointer++;
 					}
 				}
 				//add dangling states to R
-				int[][] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
+				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
 				update = (RwithDang.length!=R.length);
 				if (update)
 					R = RwithDang;
@@ -1162,8 +1164,8 @@ public class FMCA  extends CA implements java.io.Serializable
 				}
 				
 				//add source states of uncontrollable transitions that were previously controllable
-				int[][] su= FMCATransition. areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
-				int[][] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
+				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
+				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
 				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
 				{
 					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
@@ -1178,7 +1180,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		a = (FMCA) FMCAUtil.removeUnreachable(a);
 		
 		//if initial state is bad or not all required actions are fired
-		if (FMCAUtil.contains(a.getInitialCA().getState(), R)||(!p.checkRequired(a.getTransition())))
+		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
 			return null;
 		
 		return a;
@@ -1385,66 +1387,64 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * not inherited from CA
 	 * @return	redundant states of at
 	 */
-	protected int[][] getDanglingStates()
+	protected CAState[] getDanglingStates()
 	{
-		/*int pointerreachable=0;
-		int pointerunreachable=0;
-		int[][] reachable = new int[this.prodStates()][]; 
-		int[][] unreachable = new int[this.prodStates()][];*/
-		int[][] fs = this.allFinalStates();
-		int[][] redundantStates = new int[this.prodStates()][];
-		int[][] allStates = this.allStates();
-		int redundantStatesPointer=0;
-		for (int ind=0;ind<allStates.length;ind++) //for all states
-		{
-				//TODO check if it is possible to check reachability from initial state only once
-				// for each state checks if it reaches one of the final states  and if it is reachable from the initial state
-				int[] pointervisited = new int[1];
-				pointervisited[0]=0;
-				
-				//I need to check the reachability from initial state only once!
-				boolean remove=!FMCAUtil.amIReachable(allStates[ind],this,getInitialCA().getState(),new int[this.prodStates()][],
-						pointervisited,null,null,0,0);  	
-				
-				if (!remove) //if it is reachable from initial state
-				{
-					remove=true;  // at the end of the loop if remove=true none of final states is reachable
-					for (int i=0;i<fs.length;i++)
-					{
-						pointervisited = new int[1];
-						pointervisited[0]=0;
-						if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,
-								null,null,0,0)&&remove))  
-							remove=false;
-					}
-				}
-				/*boolean remove=true;
-				for (int i=0;i<fs.length;i++)
-				{
-					int[] pointervisited = new int[1];
-					pointervisited[0]=0;
-					// note that pointervisited is not reinitialised before checking reachability from initial state
-					if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],
-							pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove)  
-						&&(FMCAUtil.amIReachable(allStates[ind],this,getInitialCA(),new int[this.prodStates()][],
-								pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)&&remove))  	
-						remove=false;
-				}*/
-				if ((remove))//&&(!FMCAUtil.contains(allStates[ind],redundantStates)))//there should be no need for this
-				{
-					redundantStates[redundantStatesPointer]=allStates[ind];
-					redundantStatesPointer++;
-				}
-													
-		}
-		//remove null space in array redundantStates
-		redundantStates = FMCAUtil.removeTailsNull(redundantStates, redundantStatesPointer);
 		
-		return redundantStates;
+//		int[][] fs = this.allFinalStates();
+//		int[][] redundantStates = new int[this.prodStates()][];
+//		//int[][] allStates = this.allStates();		
+//		int redundantStatesPointer=0;
+//		this.setReachableStates();
+//		for (int ind=0;ind<this.fstates.length;ind++) //for all states
+//		{
+//				//TODO check if it is possible to check reachability from initial state only once
+//				// for each state checks if it reaches one of the final states  and if it is reachable from the initial state
+//				int[] pointervisited = new int[1];
+//				pointervisited[0]=0;
+//				
+//				//I need to check the reachability from initial state only once!
+//				boolean remove=!FMCAUtil.amIReachable(allStates[ind],this,getInitialCA().getState(),new int[this.prodStates()][],
+//						pointervisited,null,null,0,0);  	
+//				
+//				if (fstates[ind].isSetReachable())//!remove) //if it is reachable from initial state
+//				{
+//					remove=true;  // at the end of the loop if remove=true none of final states is reachable
+//					for (int i=0;i<fs.length;i++)
+//					{
+//						pointervisited = new int[1];
+//						pointervisited[0]=0;
+//						if((FMCAUtil.amIReachable(fs[i],this,allStates[ind],new int[this.prodStates()][],pointervisited,
+//								null,null,0,0)&&remove))  
+//							remove=false;
+//					}
+//				}
+//				if ((remove))
+//				{
+//					redundantStates[redundantStatesPointer]=fstates[ind].getState();
+//					redundantStatesPointer++;
+//				}													
+//		}
+//		//remove null space in array redundantStates
+//		redundantStates = FMCAUtil.removeTailsNull(redundantStates, redundantStatesPointer);
+//		
+//		return redundantStates;
+		this.resetReachableAndSuccessfulStates();
+		this.setReachableAndSuccessfulStates();
+		CAState[] dang=new CAState[fstates.length];
+		int dangcounter=0;
+		for (int i=0;i<dang.length;i++)
+		{
+			if (!(fstates[i].isReachable()&&fstates[i].isSuccessfull()))
+			{
+				dang[dangcounter]=fstates[i];
+				dangcounter++;
+			}	
+		}
+		return FMCAUtil.removeTailsNull(dang, dangcounter);
 	}
 	
 	/**
-	 * this method is not inherited from CA
+	 * this method is not inherited from MSCA
 	 * @return	all the  must transitions request that are not matched 
 	 */
 	protected  FMCATransition[] getUnmatch()
@@ -1452,7 +1452,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		FMCATransition[] tr = this.getTransition();
 		int[][] fs=this.allFinalStates();
 		int pointer=0;
-		int[][] R=this.getDanglingStates();
+		CAState[] R=this.getDanglingStates();
 		FMCATransition[] unmatch = new FMCATransition[tr.length];
 		for (int i=0;i<tr.length;i++)
 		{
@@ -1468,7 +1468,7 @@ public class FMCA  extends CA implements java.io.Serializable
 						&&(tr[j].getReceiver()==tr[i].getReceiver())	//the same principal
 						&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==tr[i].getSourceP().getState()[tr[i].getReceiver()]) //the same source state					
 						&&(tr[j].getLabelP()[tr[j].getReceiver()]==tr[i].getLabelP()[tr[i].getReceiver()]) //the same request
-						&&(!FMCAUtil.contains(tr[i].getSourceP().getState(), R))) //source state is not redundant
+						&&(!FMCAUtil.contains(tr[i].getSourceP(), R))) //source state is not redundant
 						{
 							matched=true; // the request is matched
 						}
@@ -1524,11 +1524,33 @@ public class FMCA  extends CA implements java.io.Serializable
 
 	 }
 	
-	
-	public boolean[] forwardVisit()
+	 public void setReachableAndSuccessfulStates()
+	 {
+		 visit(this.getInitialCA()); //firstly reachability must be set !
+		 //TODO record the set of final states this is a fix
+		 int[][] fs = this.allFinalStates();
+		 for (int i=0; i<fs.length; i++)
+		 {
+			 CAState f = CAState.getCAStateWithValue(fs[i], this.getState());
+			 reverseVisit(f);
+		 }
+	 }
+	 
+	 public void resetReachableAndSuccessfulStates()
+	 {
+		 for (int i=0;i<fstates.length;i++)
+		 {
+			 fstates[i].setReachable(false);
+			 fstates[i].setSuccessfull(false);
+		 } 
+	 }
+	 
+	/**
+	 * each reachable states will be set
+	 */
+	public void setReachableStates()
 	{
-		
-		return null;
+		visit(this.getInitialCA());
 	}
 	
 	/**
@@ -1540,14 +1562,32 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * 			do nothing
 	 * 
 	 */
-	private void visit(boolean[][] b, int[] currentstate)
+	private void visit(CAState currentstate)
 	{ 
+		currentstate.setReachable(true);
 		FMCATransition[] tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
+		if (tr==null)
+		{
+			tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
+		}
 		for (int i=0;i<tr.length;i++)
 		{
-			
+			CAState target=tr[i].getTargetP();
+			if (!target.isReachable())
+				visit(target);
 		}
+	}
 	
+	private void reverseVisit(CAState currentstate)
+	{ 
+		currentstate.setSuccessfull(true);
+		FMCATransition[] tr=FMCATransition.getTransitionTo(currentstate, this.getTransition());
+		for (int i=0;i<tr.length;i++)
+		{
+			CAState source=tr[i].getSourceP();
+			if (source.isReachable()&&!source.isSuccessfull()) //warning: it requires to compute reachability
+				reverseVisit(source);
+		}
 	}
 	 
 	public FMCATransition[] createArrayTransition(int length)

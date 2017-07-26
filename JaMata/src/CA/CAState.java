@@ -10,7 +10,8 @@ public class CAState {
 	private float y;
 	private boolean initial;
 	private boolean finalstate;
-	private boolean setReachable=false;
+	private boolean isReachable=false;
+	private boolean isSuccessfull=false;
 	public enum type {
 		INITIAL, FINAL, BOTH
 	}
@@ -84,15 +85,26 @@ public class CAState {
 	public void setFinalstate(boolean finalstate) {
 		this.finalstate = finalstate;
 	}
-	public boolean isSetReachable() {
-		return setReachable;
+	public boolean isReachable() {
+		return isReachable;
 	}
-	public void setSetReachable(boolean setReachable) {
-		this.setReachable = setReachable;
+	public void setReachable(boolean setReachable) {
+		this.isReachable = setReachable;
 	}
 	public CAState clone()
 	{
 		return new CAState(Arrays.copyOf(state,state.length),x,y,initial,finalstate);
+	}
+	
+	public boolean equals(CAState c)
+	{
+		return  (Arrays.equals(state,c.getState())
+				&& this.x==c.getX()
+				&& this.y==c.getY()
+				&& this.initial == c.isInitial()
+				&& this.finalstate == c.isFinalstate()
+				&& this.isReachable == c.isReachable()
+				&& this.isSuccessfull == c.isSuccessfull());
 	}
 	
 	public static CAState getFrom(CAState[] s, int[] value)
@@ -100,6 +112,22 @@ public class CAState {
 		for (int i=0;i<s.length;i++)
 			if (Arrays.equals(s[i].getState(),value))
 				return s[i];
+		return null;
+	}
+	public boolean isSuccessfull() {
+		return isSuccessfull;
+	}
+	public void setSuccessfull(boolean isSuccessfull) {
+		this.isSuccessfull = isSuccessfull;
+	}
+	
+	public static CAState getCAStateWithValue(int[] value, CAState[] states)
+	{
+		for (int i=0;i<states.length;i++)
+		{
+			if (Arrays.equals(states[i].getState(), value))
+				return states[i];
+		}
 		return null;
 	}
 }

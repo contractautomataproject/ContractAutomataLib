@@ -106,7 +106,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		if ((this.isRequest())
 			&&(this.isGreedy()||this.isLazy()))
 		{
-			int[][] R=aut.getDanglingStates();
+			CAState[] R=aut.getDanglingStates();
 //			if (!MSCAUtil.contains(this.getSource(), fs)) // if source state is not final
 //				return true;
 			for (int j=0;j<tr.length;j++)	
@@ -116,7 +116,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
 					&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==this.getSourceP().getState()[this.getReceiver()]) //the same source state					
 					&&(tr[j].getLabelP()[tr[j].getReceiver()].equals(this.getLabelP()[this.getReceiver()])) //the same request
-					&&(!FMCAUtil.contains(this.getSourceP().getState(), R))) //source state is not redundant
+					&&(!FMCAUtil.contains(this.getSourceP(), R))) //source state is not redundant
 					{
 						return true;
 					}
@@ -197,15 +197,15 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param t
 	 * @return   source states of transitions in t 
 	 */
-	protected static int[][] getSources(FMCATransition[] t)
+	protected static CAState[] getSources(FMCATransition[] t)
 	{
-		int[][] s= new int[t.length][];
+		CAState[] s= new CAState[t.length];
 		int pointer=0;
 		for (int i=0;i<t.length;i++)
 		{
-			if (!FMCAUtil.contains(t[i].getSourceP().getState(), s)) //if the source state was not already inserted previously
+			if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
 			{
-				s[pointer]=t[i].getSourceP().getState();
+				s[pointer]=t[i].getSourceP();
 				pointer++;
 			}
 		}
@@ -218,17 +218,17 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
 	 */
-	protected static int[][] areUnmatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
+	protected static CAState[] areUnmatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
 	{
-		int[][] s= new int[t.length][];
+		CAState[] s= new CAState[t.length];
 		int pointer=0;
 		for (int i=0;i<t.length;i++)
 		{
 			if ((!t[i].isMatched(aut))||(t[i].isLazyUnmatchable(aut)))
 			{
-				if (!FMCAUtil.contains(t[i].getSourceP().getState(), s)) //if the source state was not already inserted previously
+				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
 				{
-					s[pointer]=t[i].getSourceP().getState();
+					s[pointer]=t[i].getSourceP();
 					pointer++;
 				}
 			}
@@ -374,7 +374,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param tr	the array of transitions
 	 * @return the transitions of tr starting from state spirce
 	 */
-	public static FMCATransition[] getTransitionFrom(int[] source, FMCATransition[] tr)
+	public static FMCATransition[] getTransitionFrom(CAState source, FMCATransition[] tr)
 	{
 		if (tr==null)
 			return null;
@@ -382,7 +382,27 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		int j=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if (Arrays.equals(source, tr[i].getSourceP().getState()))
+			if (Arrays.equals(source.getState(), tr[i].getSourceP().getState()))
+			{
+				newtr[j]=tr[i];
+				j++;
+			}
+		}
+		if (j==0)
+			return new FMCATransition[0];
+		newtr = FMCAUtil.removeTailsNull(newtr, j);
+		return newtr;
+	}
+	
+	public static FMCATransition[] getTransitionTo(CAState target, FMCATransition[] tr)
+	{
+		if (tr==null)
+			return null;
+		FMCATransition[] newtr = new FMCATransition[tr.length];
+		int j=0;
+		for (int i=0;i<tr.length;i++)
+		{
+			if (Arrays.equals(target.getState(), tr[i].getTargetP().getState()))
 			{
 				newtr[j]=tr[i];
 				j++;

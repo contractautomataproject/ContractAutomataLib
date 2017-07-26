@@ -492,7 +492,7 @@ public class Family {
 			for (int i=0;i<tv.length;i++)
 			{
 				aut.setInitialCA(storeinitial);
-				FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA().getState(),aut.getTransition());
+				FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
 				for (int j=0;j<tr.length;j++)
 				{	
 					aut.setInitialCA(tr[j].getTargetP());

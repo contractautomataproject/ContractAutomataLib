@@ -93,7 +93,7 @@ public class ProductFrame extends JFrame{
         	                			nodes[subind[ind]].setBorderPainted(true);
         	                			} catch (Exception e){
         	                				//debug
-        	                			   int d=prod[ind].getForbiddenAndRequiredNumber();
+        	                				int d=prod[ind].getForbiddenAndRequiredNumber();
         	                			   //int dd=ptl[ind];
         	                			   //int ddd=depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]; 
         	                			   int x=0;

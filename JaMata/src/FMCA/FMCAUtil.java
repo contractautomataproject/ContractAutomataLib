@@ -993,6 +993,17 @@ public class FMCAUtil extends CAUtil
 		return false;
 	}
 	
+	protected static boolean contains(CAState q, CAState[] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (listq[i]!=null)
+				if (q.equals(listq[i])) 
+					return true;
+		}
+		return false;
+	}
+	
 	protected static boolean contains(String q, String[] listq)
 	{
 		for (int i=0;i<listq.length;i++)
@@ -1044,6 +1055,19 @@ public class FMCAUtil extends CAUtil
 	protected static int[][] setUnion(int[][] q1, int[][] q2)
 	{
 		int[][] m= new int[q1.length+q2.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		m=removeDuplicates(m);
+		return m;
+	}
+	protected static CAState[] setUnion(CAState[] q1, CAState[] q2)
+	{
+		CAState[] m= new CAState[q1.length+q2.length];
 		for (int i=0;i<m.length;i++)
 		{
 			if (i<q1.length)
@@ -1144,6 +1168,24 @@ public class FMCAUtil extends CAUtil
 		return m;
 			
 	}
+	protected static CAState[] removeDuplicates(CAState[] m)
+	{
+		int removed=0;
+		for (int i=0;i<m.length;i++)
+		{
+			for (int j=i+1;j<m.length;j++)
+			{
+				if ((m[i]!=null)&&(m[i].equals(m[j])))
+				{
+					m[j]=null;
+					removed++;
+				}
+			}
+		}
+		m= (CAState[])removeHoles(m,removed);
+		return m;
+			
+	}
 	protected static String[] removeDuplicates(String[] m)
 	{
 		int removed=0;
@@ -1218,6 +1260,23 @@ public class FMCAUtil extends CAUtil
 		 */
 		int pointer=0;
 		int[][] fin = new int[l.length-holes][];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
+	}
+	protected static CAState[] removeHoles(CAState[] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		CAState[] fin = new CAState[l.length-holes];
 		for (int ind=0;ind<l.length;ind++)
 		{
 			if (l[ind]!=null)
