@@ -1566,10 +1566,10 @@ public class FMCA  extends CA implements java.io.Serializable
 	{ 
 		currentstate.setReachable(true);
 		FMCATransition[] tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
-		if (tr==null)
-		{
-			tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
-		}
+//		if (tr==null)
+//		{
+//			tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
+//		}
 		for (int i=0;i<tr.length;i++)
 		{
 			CAState target=tr[i].getTargetP();
