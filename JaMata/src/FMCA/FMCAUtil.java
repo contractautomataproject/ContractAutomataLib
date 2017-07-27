@@ -1157,7 +1157,7 @@ public class FMCAUtil extends CAUtil
 		{
 			for (int j=i+1;j<m.length;j++)
 			{
-				if ((m[i]!=null)&&(Arrays.equals(m[i],m[j])))
+				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
 				{
 					m[j]=null;
 					removed++;
@@ -1175,7 +1175,7 @@ public class FMCAUtil extends CAUtil
 		{
 			for (int j=i+1;j<m.length;j++)
 			{
-				if ((m[i]!=null)&&(m[i].equals(m[j])))
+				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
 				{
 					m[j]=null;
 					removed++;
@@ -1193,7 +1193,7 @@ public class FMCAUtil extends CAUtil
 		{
 			for (int j=i+1;j<m.length;j++)
 			{
-				if ((m[i]!=null)&&(m[i].equals(m[j])))
+				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
 				{
 					m[j]=null;
 					removed++;
