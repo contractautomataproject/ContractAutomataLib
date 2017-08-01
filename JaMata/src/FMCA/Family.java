@@ -81,11 +81,12 @@ public class Family {
 	 */
 	protected void generatePO()
 	{
-		depth=new int[1000][1000];//TODO upper bounds;	
-		int[] depthcount=new int[1000];//TODO upperbound  count the number of products at each level of depth
+		Product[] p=this.elements;
+		depth=new int[p.length][p.length];//TODO upper bounds;	
+		int[] depthcount=new int[p.length];//TODO upperbound  count the number of products at each level of depth
 		for (int i=0;i<depthcount.length;i++)
 			depthcount[i]=0;
-		Product[] p=this.elements;
+		
 		po=new int[p.length][p.length]; 
 		reversepo=new int[p.length][p.length]; 
 		hasParents=new boolean[p.length];
@@ -97,8 +98,17 @@ public class Family {
 		{
 			if (p[i].getForbiddenAndRequiredNumber()>maxdepth)
 				maxdepth=p[i].getForbiddenAndRequiredNumber();
-			depth[p[i].getForbiddenAndRequiredNumber()][depthcount[p[i].getForbiddenAndRequiredNumber()]]=i;
+			//try{
+				depth[p[i].getForbiddenAndRequiredNumber()][depthcount[p[i].getForbiddenAndRequiredNumber()]]=i;
+			//}
+			//catch (Exception e)
+			//{
+			//	int debug=p[i].getForbiddenAndRequiredNumber();
+			//	int debug2=depthcount[debug];
+			//	int x;
+			//}
 			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
+
 			depthcount[p[i].getForbiddenAndRequiredNumber()]+=1;
 			for (int j=i+1;j<p.length;j++)
 			{
@@ -526,6 +536,7 @@ public class Family {
 	{
 		int[] pr = new int[this.elements.length];
 		int count=0;
+		//TODO exploit theoretical results to speed up the computation (intersection of MPC, lattice)
 		for (int i=0;i<pr.length;i++)
 		{
 			if (aut.mpc(this.elements[i])!=null)

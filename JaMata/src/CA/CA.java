@@ -757,6 +757,7 @@ public class CA  extends FSA implements java.io.Serializable
 	 * 
 	 * @return all the reachable states 
 	 */
+	// DEPRECATED IN FMCA
 	private int[][] reachableStates()
 	{
 		CA aut=this.clone();

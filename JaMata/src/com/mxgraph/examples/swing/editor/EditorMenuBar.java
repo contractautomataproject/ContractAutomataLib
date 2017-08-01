@@ -698,7 +698,7 @@ public class EditorMenuBar extends JMenuBar
 
 							// Adds file filter for supported file format
 							DefaultFileFilter defaultFilter = new DefaultFileFilter(
-									".data", "")//mxResources.get("allSupportedFormats")
+									".mxe", "")//mxResources.get("allSupportedFormats")
 											//+ " (.mxe, .png, .vdx)")
 							{
 
@@ -707,19 +707,19 @@ public class EditorMenuBar extends JMenuBar
 									String lcase = file.getName().toLowerCase();
 
 									return super.accept(file)
-											|| lcase.endsWith(".data");
+											|| lcase.endsWith(".mxe");
 								}
 							};
 							fc.addChoosableFileFilter(defaultFilter);
 
-							fc.addChoosableFileFilter(new DefaultFileFilter(".data",
-									"FMCA textual description " + mxResources.get("file")
-											+ " (.data)"));
+							fc.addChoosableFileFilter(new DefaultFileFilter(".mxe",
+									"FMCA description " + mxResources.get("file")
+											+ " (.mxe)"));
 							
 							
 							fc.setFileFilter(defaultFilter);
 							
-							FMCA[] aut = new FMCA[50]; //upperbound to 50
+							FMCA[] aut = new FMCA[50]; //TODO upperbound to 50
 							String[] names= new String[50];
 							int fmcacount = 0;
 
@@ -732,7 +732,7 @@ public class EditorMenuBar extends JMenuBar
 								try
 								{
 									String fileName =fc.getSelectedFile().toString();
-									aut[fmcacount]=FMCA.load(fileName);
+									aut[fmcacount]=FMCA.importFromXML(fileName);
 									names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 									fmcacount++;
 									rc = fc.showDialog(null,
@@ -748,7 +748,7 @@ public class EditorMenuBar extends JMenuBar
 											JOptionPane.ERROR_MESSAGE);
 								}
 							}
-							String compositionname="";
+							String compositionname="(";
 							FMCA[] autWithoutTailsNull = new FMCA[fmcacount];
 							for (int i=0;i<fmcacount;i++)
 							{
@@ -757,6 +757,7 @@ public class EditorMenuBar extends JMenuBar
 								if (!(i==(fmcacount-1)))
 									compositionname+="x";
 							}
+							compositionname+=")";
 							FMCA composition = (FMCA) CAUtil.product(autWithoutTailsNull);	
 							File file=null;
 							if (composition!=null)

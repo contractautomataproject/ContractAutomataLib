@@ -16,7 +16,7 @@ import FMCA.FMCATransition;
 public class CAUtil 
 {
 
-	static boolean debug = true;
+	static boolean debug = false;
 	/**
 	 * compute the product automaton of the CA given in aut
 	 * @param aut the operands of the product

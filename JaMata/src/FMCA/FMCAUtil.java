@@ -993,6 +993,16 @@ public class FMCAUtil extends CAUtil
 		return false;
 	}
 	
+	protected static boolean contains(int q, int[] listq,int listlength)
+	{
+		for (int i=0;i<listlength;i++)
+		{
+				if (q==listq[i])
+					return true;
+		}
+		return false;
+	}
+	
 	protected static boolean contains(CAState q, CAState[] listq)
 	{
 		for (int i=0;i<listq.length;i++)

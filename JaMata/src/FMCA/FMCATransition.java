@@ -409,7 +409,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			}
 		}
 		if (j==0)
-			return null;
+			return new FMCATransition[0];
 		newtr = FMCAUtil.removeTailsNull(newtr, j);
 		return newtr;
 	}

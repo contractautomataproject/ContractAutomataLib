@@ -1,0 +1,25 @@
+Rank: 3
+Number of states: [8, 8, 8]
+Initial state: [0, 0, 0]
+Final states: [[103][103][103]]
+Transitions: 
+
+([0, 0, 0],[!dummy, -, -],[100, 100, 100])
+!G([102, 102, 100],[?invoice, !invoice, -],[103, 103, 100])
+([101, 101, 100],[!card, ?card, -],[102, 102, 100])
+!L([100, 100, 100],[?sharedRoom, !sharedRoom, -],[108, 108, 100])
+([109, 109, 100],[?sharedBathroom, !sharedBathroom, -],[101, 101, 100])
+([108, 108, 100],[?noFreeCancellation, !noFreeCancellation, -],[105, 105, 100])
+([105, 105, 100],[?sharedBathroom, !sharedBathroom, -],[101, 101, 100])
+([105, 105, 100],[?breakfast, !breakfast, -],[109, 109, 100])
+([105, 105, 100],[?taxi, !taxi, -],[109, 109, 100])
+([105, 105, 100],[?wifi, !wifi, -],[109, 109, 100])
+!G([103, 102, 102],[-, !invoice, ?invoice],[103, 103, 103])
+([103, 101, 101],[-, ?card, !card],[103, 102, 102])
+([103, 109, 109],[-, !sharedBathroom, ?sharedBathroom],[103, 101, 101])
+([103, 108, 108],[-, !noFreeCancellation, ?noFreeCancellation],[103, 105, 105])
+([103, 105, 105],[-, !sharedBathroom, ?sharedBathroom],[103, 101, 101])
+([103, 105, 105],[-, !breakfast, ?breakfast],[103, 109, 109])
+([103, 105, 105],[-, !taxi, ?taxi],[103, 109, 109])
+([103, 105, 105],[-, !wifi, ?wifi],[103, 109, 109])
+!L([103, 103, 100],[-, !sharedRoom, ?sharedRoom],[103, 108, 108])

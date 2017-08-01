@@ -142,6 +142,7 @@ public class FMCA  extends CA implements java.io.Serializable
 
 		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
 				FMCA.principalsFinalStates(finalstates),trans);
+		System.out.println("");
 		this.fstates=fstate;
 	}
 	
@@ -174,7 +175,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * load a MSCA described in a text file, compared to CA it also loads the must transitions
+	 * load a FMCA described in a text file, compared to CA it also loads the must transitions
 	 * @param the name of the file
 	 * @return	the CA loaded
 	 */
@@ -189,7 +190,6 @@ public class FMCA  extends CA implements java.io.Serializable
 			else
 				fstream = new FileInputStream(fileName+".data");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-			String strLine;
 			int rank=0;
 			int[] initial = new int[1];
 			int[] states = new int[1];
@@ -198,7 +198,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		//	MSCATransition[] mustt = new MSCATransition[1];
 			int pointert=0;
 	//		int pointermust=0;
-			
+			String strLine;
 			//Read File Line By Line
 			while ((strLine = br.readLine()) != null)   
 			{
@@ -567,6 +567,9 @@ public class FMCA  extends CA implements java.io.Serializable
 			mxcell1.setAttribute("id", "1");
 			mxcell1.setAttribute("parent", "0");
 			root.appendChild(mxcell1);
+			//TODO this could be improved: it generates all combinations of states, 
+			// but in case CAState[] fstates !=null we already have all fstates instantiated
+			// there is no need to generate them again
 			int[][][] all=this.allNonFinalAndFinalStates();
 			int[][] states=all[0];
 			Element[] statese=new Element[states.length];
@@ -763,6 +766,15 @@ public class FMCA  extends CA implements java.io.Serializable
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
+	/**
+	 * this method retrieves the coordinates from CAState[] states
+	 * @param doc
+	 * @param root
+	 * @param id
+	 * @param states
+	 * @param state
+	 * @return
+	 */
 	private static Element createElementState(Document doc, Element root,String id, CAState[] states,int[] state)
 	{
 		Attr parent=doc.createAttribute("parent");
@@ -906,8 +918,11 @@ public class FMCA  extends CA implements java.io.Serializable
 		{
 			CAState in=at[i].getSourceP();
 			String[] l=at[i].getLabelP();
-			CAState f= at[i].getTargetP();
-			finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
+			CAState out= at[i].getTargetP();
+			//TODO this is not good, the CAState of transitions should point to fstates field of the FMCA,
+			//		I removed the clone operation, previously an Arrays.copy operation was also called
+			//finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
+			finalTr[i] = new FMCATransition(in,Arrays.copyOf(l,l.length),out,at[i].getType());
 		}
 		return finalTr;
 	}
@@ -918,51 +933,58 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	public FMCA clone()
 	{
-		//TODO: call copyTransitions method and use inherited method
-		FMCATransition[] at = this.getTransition();
-		FMCATransition[] finalTr = new FMCATransition[at.length];
-		for(int i=0;i<finalTr.length;i++)
-		{
-			CAState in=at[i].getSourceP();
-			String[] l=at[i].getLabelP();
-			CAState f= at[i].getTargetP();
-			finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
-		}	
-		int[][] finalstates=getFinalStatesCA();
-		int[][] nf = new int[finalstates.length][];
-		for (int i=0;i<finalstates.length;i++)
-			nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
-		
-		/*float[] xstate=this.getXState();
-		if (xstate!=null)
-		{
-			float[] ystate=this.getYState();
-			float[] xfinalstate=this.getXFinalState();
-			float[] yfinalstate=this.getYFinalState();
-			
-			return new FMCA(getRank(),Arrays.copyOf(getInitialCA(), getInitialCA().length), 
-					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
-					 Arrays.copyOf(xstate, xstate.length), 
-					 Arrays.copyOf(ystate, ystate.length), 
-					 finalstates,
-					 Arrays.copyOf(xfinalstate, xfinalstate.length), 
-					 Arrays.copyOf(yfinalstate, yfinalstate.length), 
-					 finalTr);
-		}*/
-		CAState[] fstates= this.getState();
+		CAState[] clonefstates= this.getState();
 		if (fstates!=null)
 		{
-			return new FMCA(getRank(),getInitialCA().clone(), 
+			for (int i=0;i<clonefstates.length;i++)
+			{
+				clonefstates[i]=clonefstates[i].clone();
+			}
+			//TODO: call copyTransitions method and use inherited method
+			FMCATransition[] at = this.getTransition();
+			FMCATransition[] finalTr = new FMCATransition[at.length];
+			for(int i=0;i<finalTr.length;i++)
+			{
+				CAState in=at[i].getSourceP();
+				String[] l=at[i].getLabelP();
+				CAState out= at[i].getTargetP();
+				in = CAState.getCAStateWithValue(in.getState(), clonefstates);  //retrieve cloned states
+				out = CAState.getCAStateWithValue(out.getState(), clonefstates);
+				finalTr[i] = new FMCATransition(in,Arrays.copyOf(l,l.length),out,at[i].getType());
+			}	
+			int[][] finalstates=getFinalStatesCA();
+			int[][] nf = new int[finalstates.length][];
+			for (int i=0;i<finalstates.length;i++)
+				nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
+			return new FMCA(getRank(),
+					 CAState.getCAStateWithValue(getInitialCA().getState(),clonefstates), 
 					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
 					 finalstates,
 					 finalTr,
-					 Arrays.copyOf(fstates,fstates.length)); //TODO check if it clones
+					 clonefstates); 
 		}
 		else
+		{
+			//this is used when a composition is computed and fstates are not yet generated
+			//TODO probably this should be fixed
+			FMCATransition[] at = this.getTransition();
+			FMCATransition[] finalTr = new FMCATransition[at.length];
+			for(int i=0;i<finalTr.length;i++)
+			{
+				CAState in=at[i].getSourceP();
+				String[] l=at[i].getLabelP();
+				CAState f= at[i].getTargetP();
+				finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
+			}	
+			int[][] finalstates=getFinalStatesCA();
+			int[][] nf = new int[finalstates.length][];
+			for (int i=0;i<finalstates.length;i++)
+				nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
 			return new FMCA(getRank(),getInitialCA().clone(), 
 					 Arrays.copyOf(getStatesCA(), getStatesCA().length), 
 					 finalstates,
 					 finalTr);
+		}		
 	}
 	
 	/**
@@ -1239,20 +1261,36 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	public static int[] numberOfPrincipalsStates(int[][] states)
 	{
-		int[] max = new int[states[0].length];
-		for (int j=0;j<max.length;j++)
-			max[j]=-1;
-		for (int i=0;i<states.length;i++)
+		int[] rank = new int[states[0].length];
+		for (int i=0;i<rank.length;i++)
 		{
-			for (int j=0;j<max.length;j++)
+			int[] principalstates=new int[states.length];//upperbound
+			int count=0;
+			for (int j=0;j<principalstates.length;j++)
 			{
-				if (max[j]<states[i][j])
-					max[j]=states[i][j];
+				if (!FMCAUtil.contains(states[j][i],principalstates,count))
+				{
+					principalstates[count]=states[j][i];
+					count++;
+				}
 			}
+			rank[i]=count;
 		}
-		for (int j=0;j<max.length;j++)
-			max[j]+=1;		
-		return max;
+		
+//		the old code was selecting the state with higher value, not working for states renaming (e.g. FMCA union)
+//		for (int j=0;j<max.length;j++)
+//			max[j]=-1;
+//		for (int i=0;i<states.length;i++)
+//		{
+//			for (int j=0;j<max.length;j++)
+//			{
+//				if (max[j]<states[i][j])
+//					max[j]=states[i][j];
+//			}
+//		}
+//		for (int j=0;j<max.length;j++)
+//			max[j]+=1;		
+		return rank;
 	}
 	
 	/**
@@ -1431,6 +1469,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		this.resetReachableAndSuccessfulStates();
 		this.setReachableAndSuccessfulStates();
 		CAState[] dang=new CAState[fstates.length];
+		
 		int dangcounter=0;
 		for (int i=0;i<dang.length;i++)
 		{
