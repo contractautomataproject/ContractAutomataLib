@@ -250,6 +250,18 @@ public class Family {
 	public static Product[] importFamily(String currentdir, String filename)
 	{	
 		String[] features=getFeatures(filename);
+		String[][] eq = detectDuplicates(filename);
+		int counteq=0;
+		for (int i=0;i<eq.length;i++)
+		{
+			if (FMCAUtil.contains(eq[i][0], features)&&FMCAUtil.contains(eq[i][1], features))
+			{
+				int index=FMCAUtil.getIndex(features, eq[i][1]);
+				features[index]=null;
+				counteq++;
+			}
+		}
+		features=FMCAUtil.removeHoles(features,counteq);
 		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
 		currentdir+="\\products\\";
 		File folder = new File(currentdir);
@@ -286,7 +298,7 @@ public class Family {
 						System.out.println();
 					}
 */					String[] f1 = lines.toArray(new String[lines.size()]); //required features
-					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1)); 
+					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1), eq); 
 					boolean alreadyinserted=false;
 					/**
 					 * product generation of featureide may generate duplicate product!
@@ -363,6 +375,13 @@ public class Family {
 					{
 						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
 						{
+							//debug
+							if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9))
+							{
+								boolean debug=true;
+							}
+							
+							
 							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level && pl[level-1][prodcompare].containFeature(features[removedfeature])) 
 								/*for each pair of products at the same level check if by removing the selected feature they 
 								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
@@ -442,9 +461,7 @@ public class Family {
 	         NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
 	         
 	         features=new String[nodeList.getLength()];
-	         /**
-	          * first read all the states, then all the edges
-	          */
+	         
 	         int ind =0;
 	         for (int i = 0; i < nodeList.getLength(); i++) 
 	         {
@@ -471,7 +488,60 @@ public class Family {
 		return features;		
 	}
 
-	
+	/**
+	 * reads all iff constraints (eq node) and returns a table such that forall i table[i][0] equals table[i][1]
+	 * @param filename
+	 * @return
+	 */
+	private static String[][] detectDuplicates(String filename)
+	{
+		String[][] table = null;
+		try {
+	         File inputFile = new File(filename);
+	         DocumentBuilderFactory dbFactory 
+	            = DocumentBuilderFactory.newInstance();
+	         DocumentBuilder dBuilder;
+
+	         dBuilder = dbFactory.newDocumentBuilder();
+
+	         Document doc = dBuilder.parse(inputFile);
+	         doc.getDocumentElement().normalize();
+
+	         //XPath xPath =  XPathFactory.newInstance().newXPath();
+	         
+	         //NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
+	         NodeList nodeList = (NodeList) doc.getElementsByTagName("eq");
+	         
+	         table= new String[nodeList.getLength()][2]; //exact length
+	         
+	         int ind =0;
+	         for (int i = 0; i < nodeList.getLength(); i++) 
+	         {
+	            Node nNode = nodeList.item(i);
+	          //  System.out.println("\nCurrent Element :" 
+	          //     + nNode.getNodeName());
+	            if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+	            {
+	            	NodeList childs = (NodeList) nNode.getChildNodes();
+	               Node first = childs.item(1);
+	               Node second = childs.item(3);
+	               table[ind][0]= first.getTextContent();    
+	               table[ind][1]= second.getTextContent();          
+	               ind++;
+	            }       
+	        }
+	      } catch (ParserConfigurationException e) {
+	         e.printStackTrace();
+	      } catch (SAXException e) {
+	         e.printStackTrace();
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      } catch (Exception e) {
+		         e.printStackTrace();
+		      } 
+		return table;		
+	}
+
 	public String toString()
 	{
 		String s="";

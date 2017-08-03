@@ -22,7 +22,7 @@ public class CAUtil
 	 * @param aut the operands of the product
 	 * @return the composition of aut
 	 */
-	public static CA product(CA[] aut)
+	public static CA composition(CA[] aut)
 	{
 		if (aut.length==1)
 			return aut[0];
@@ -227,7 +227,7 @@ public class CAUtil
 		
 		if (debug)
 			System.out.println("Remove unreachable ...");
-		prod = removeUnreachable(prod);
+		prod = removeUnreachableTransitions(prod);
 		
 		return prod;
 	}
@@ -237,7 +237,7 @@ public class CAUtil
 	 * @param at	the CA
 	 * @return	a new CA clone of aut with only reachable transitions
 	 */
-	public static CA removeUnreachable(CA at)
+	public static CA removeUnreachableTransitions(CA at)
 	{
 		CA aut = at.clone();
 		CATransition[] finalTr=aut.getTransition();
@@ -246,8 +246,8 @@ public class CAUtil
 		 * remove unreachable transitions
 		 */
 		int removed=0;
-		int pointerreachable=1;
-		int pointerunreachable=0;
+		int reachablepointer=0; //era messo a uno forse per lo stato iniziale, ma viene cmq letto nelle transizioni
+		int unreachablepointer=0;
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
 		reachable[0]=aut.getInitialCA().getState();
@@ -256,46 +256,55 @@ public class CAUtil
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
 			int[] s = t.getSourceP().getState();
-			/**
-			int[] debugg = {0,0,1};
-			if (Arrays.equals(s,debugg))
-				System.out.println("debug");*/
-			int[] pointervisited = new int[1];
-			pointervisited[0]=0;
-			if (debug)
-				System.out.println("Checking Reachability state "+Arrays.toString(s));
-			if(!amIReachable(s,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
+			boolean found=false; //source state must not have been already visited (and inserted in either reachable or unreachable)
+			for (int i=0;i<unreachablepointer;i++)
 			{
-				finalTr[ind]=null;
-				removed++;
-				boolean found=false;
-				for (int i=0;i<pointerunreachable;i++)
+				if (Arrays.equals(unreachable[i],s))
 				{
-					if (Arrays.equals(unreachable[i],s))
-					{
-						found=true;
-					}
-				}
-				if (!found)
-				{
-					unreachable[pointerunreachable]=s;
-					pointerunreachable++;
+					found=true;
+					break;
 				}
 			}
-			else
+			if (!found)
 			{
-				boolean found=false;
-				for (int i=0;i<pointerreachable;i++)
+				for (int i=0;i<reachablepointer;i++)
 				{
 					if (Arrays.equals(reachable[i],s))
 					{
 						found=true;
+						break;
 					}
 				}
-				if (!found)
+			}
+			
+			/**
+			int[] debugg = {0,0,1};
+			if (Arrays.equals(s,debugg))
+				System.out.println("debug");*/
+
+			if (!found)
+			{
+				int[] pointervisited = new int[1];
+				pointervisited[0]=0;
+				if (debug)
+					System.out.println("Checking Reachability state "+Arrays.toString(s));
+				if(!amIReachable(s,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,reachablepointer,unreachablepointer))
 				{
-					reachable[pointerreachable]=s;
-					pointerreachable++;
+					finalTr[ind]=null;
+					removed++;
+					if (unreachable.length==unreachablepointer)
+					{
+						unreachablepointer++;
+						FMCATransition[] debug=FMCATransition.getTransitionFrom(t.getSourceP(), (FMCATransition[]) finalTr);
+						unreachablepointer++;
+					}
+					unreachable[unreachablepointer]=s;
+					unreachablepointer++;
+				}
+				else
+				{
+					reachable[reachablepointer]=s;
+					reachablepointer++;
 				}
 			}
 		}
@@ -514,17 +523,18 @@ public class CAUtil
 				}	
 			}
 		}
-		CATransition[] tr = aut[0].createArrayTransition(numtransitions); // new CATransition[numtransitions];
-//		if (t instanceof MSCATransition )
-//			tr= new MSCATransition[numtransitions];
-//		else
-//			tr= new CATransition[numtransitions];
+		CATransition[] tr = aut[0].createArrayTransition(numtransitions); 
 		if(prodrank!=0)
 		{
 			int[] insert= new int[states.length];
 			//initialize insert to zero in all component
 			for (int ind=0;ind<insert.length;ind++)
 				insert[ind]=0;
+//			if ((insert[0]==7))
+//			{
+//				System.out.println("say");
+//			}
+//			int debug=insert[0];
 			recGen(t,tt,firstprinci, firstprincii,tr,states,0, states.length-1, insert);
 		}
 		else
@@ -641,7 +651,7 @@ public class CAUtil
 		for (int i=0;i<a.length;i++)
 			tot+=a[i].getRank();
 		if (tot==a.length)
-			return product(a);
+			return composition(a);
 		else
 		{
 			CA[] a2=new CA[tot];
@@ -662,7 +672,7 @@ public class CAUtil
 					pointer++;
 				}
 			}
-			return product(a2);
+			return composition(a2);
 		}
 			
 	}
@@ -693,7 +703,7 @@ public class CAUtil
 				{
 				case "1":
 					System.out.println("Computing the product automaton ... ");
-					prod = CAUtil.product(aut);
+					prod = CAUtil.composition(aut);
 					prod.print();
 			        //FSA.write(prod);
 					prod.printToFile("");

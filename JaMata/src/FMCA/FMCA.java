@@ -1199,7 +1199,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		
 		//a.getDanglingStates();
-		a = (FMCA) FMCAUtil.removeUnreachable(a);
+		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
 		
 		//if initial state is bad or not all required actions are fired
 		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))

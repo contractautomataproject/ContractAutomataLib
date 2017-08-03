@@ -333,28 +333,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			int[] dest = new int[insert.length+s.length];
 			String[] label = new String[insert.length+s.length];
 			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else
-				{
-					initial[i+counter]=insert[i];
-					dest[i+counter]=insert[i];
-					label[i+counter]=CATransition.idle;
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
+			if (firstprinci==insert.length)//case limit, the first CA is the last of aut
 			{
 				for (int j=0;j<s.length;j++)
 				{
@@ -362,7 +341,36 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					label[insert.length+j]=l[j];
 					dest[insert.length+j]=d[j];
 				}
-				counter+=s.length; //record the shift due to the first CA 
+				//counter+=s.length; //record the shift due to the first CA 
+			}
+			else
+			{
+				for (int i=0;i<insert.length;i++)
+				{
+					if (i==firstprinci)
+					{
+						for (int j=0;j<s.length;j++)
+						{
+							initial[i+j]=s[j];
+							label[i+j]=l[j];
+							dest[i+j]=d[j];
+						}
+						counter+=s.length; //record the shift due to the first CA 
+						i--;
+						firstprinci=-1;
+					}
+					else
+					{
+						initial[i+counter]=insert[i];
+						dest[i+counter]=insert[i];
+						label[i+counter]=CATransition.idle;
+					}
+				}
+			}
+			if (initial[1]==7)
+			{
+				boolean debug=true;
+				float y=5/0;
 			}
 			return new FMCATransition(new CAState(initial),label,new CAState(dest),((FMCATransition) t).getType());	
 		}
@@ -382,7 +390,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		int j=0;
 		for (int i=0;i<tr.length;i++)
 		{
-			if (Arrays.equals(source.getState(), tr[i].getSourceP().getState()))
+			if (tr[i]!=null&&(Arrays.equals(source.getState(), tr[i].getSourceP().getState())))
 			{
 				newtr[j]=tr[i];
 				j++;

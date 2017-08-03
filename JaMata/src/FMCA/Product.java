@@ -23,6 +23,49 @@ public class Product {
 		this.forbidden=fp;
 	}
 
+	/**
+	 * 
+	 * instantiate a product considering only one element of those that are equals
+	 * 
+	 * @param r
+	 * @param f
+	 * @param eq an array of elements such that eq[i][0] is equal to eq[i][1]
+	 */
+	public Product(String[] r, String[] f, String[][] eq)
+	{
+		//all positive integers, to avoid sign mismatches
+		String[] rp = new String[r.length];
+		for (int i=0;i<r.length;i++)
+			rp[i]=CATransition.getUnsignedAction(r[i]);
+
+		String[] fp = new String[f.length];
+		for (int i=0;i<f.length;i++)
+			fp[i]=CATransition.getUnsignedAction(f[i]);
+
+		int countreq=0;
+		int countforb=0;
+		
+		for (int i=0;i<eq.length;i++)
+		{
+			if (FMCAUtil.contains(eq[i][0], rp)&&FMCAUtil.contains(eq[i][1], rp))
+			{
+				int index=FMCAUtil.getIndex(rp, eq[i][1]);
+				rp[index]=null;
+				countreq++;
+			}
+			else if (FMCAUtil.contains(eq[i][0], fp)&&FMCAUtil.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
+			{
+				int index=FMCAUtil.getIndex(fp, eq[i][1]);
+				fp[index]=null;
+				countforb++;
+			}
+		}
+		rp=FMCAUtil.removeHoles(rp, countreq);
+		fp=FMCAUtil.removeHoles(fp, countforb);
+		this.required=rp;
+		this.forbidden=fp;
+	}
+	
 	public String[] getRequired()
 	{
 		return required;

@@ -758,7 +758,7 @@ public class EditorMenuBar extends JMenuBar
 									compositionname+="x";
 							}
 							compositionname+=")";
-							FMCA composition = (FMCA) CAUtil.product(autWithoutTailsNull);	
+							FMCA composition = (FMCA) CAUtil.composition(autWithoutTailsNull);	
 							File file=null;
 							if (composition!=null)
 							{
@@ -1085,7 +1085,7 @@ public class EditorMenuBar extends JMenuBar
 			}
 		});
 
-		item = menu.add(new JMenuItem("Import Product Family"));
+		item = menu.add(new JMenuItem("Import FeatureIDE Model"));
 		item.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)

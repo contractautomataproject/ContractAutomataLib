@@ -18,7 +18,25 @@ public class FMCAUtil extends CAUtil
 
 	static boolean debug = true;
 	
-	
+	public static FMCA composition(FMCA[] aut)
+	{
+		/**
+		 * 
+		 * array of states of product 
+		 * start from initial state (composed)
+		 * {
+		 * project on states of principals
+		 * extract all transitions of principals
+		 * add transitions to FMCAT (check match)
+		 * load all target states in the array of states to be visited
+		 * (use CAState so that you have pointers, through reachable you avoid visiting 
+		 * states already visited)
+		 * terminates when no more states are added
+		 * }
+		 * 
+		 */
+		return null;
+	}
 	public static float furthestNodesX(FMCA[] aut)
 	{
 		float max=0;
@@ -849,7 +867,7 @@ public class FMCAUtil extends CAUtil
 				{
 				case "1":
 					System.out.println("Computing the product automaton ... ");
-					prod = (FMCA) CAUtil.product(aut);
+					prod = (FMCA) CAUtil.composition(aut);
 					prod.print();
 			        prod.printToFile("");
 					break;
@@ -1039,7 +1057,7 @@ public class FMCAUtil extends CAUtil
 	{
 		for (int i=0;i<q.length;i++)
 		{
-			if (q[i].equals(e))
+			if ((q[i]!=null) &&(q[i].equals(e)))
 					return i;
 		}
 		return -1;
@@ -1160,7 +1178,7 @@ public class FMCAUtil extends CAUtil
 		m=removeTailsNull(m,p);
 		return m;
 	}
-	protected static int[][] removeDuplicates(int[][] m)
+	public static int[][] removeDuplicates(int[][] m)
 	{
 		int removed=0;
 		for (int i=0;i<m.length;i++)

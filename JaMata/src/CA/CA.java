@@ -533,7 +533,7 @@ public class CA  extends FSA implements java.io.Serializable
 
 		a.setTransition(finalTr2);
 		a = CAUtil.removeDanglingTransitions(a);
-		a = CAUtil.removeUnreachable(a);
+		a = CAUtil.removeUnreachableTransitions(a);
 		return a;
 	}
 	
@@ -569,7 +569,7 @@ public class CA  extends FSA implements java.io.Serializable
 		}
 		a.setTransition(finalTr2);
 		a = CAUtil.removeDanglingTransitions(a);
-		a = CAUtil.removeUnreachable(a);
+		a = CAUtil.removeUnreachableTransitions(a);
 		return a;
 	}
 	
@@ -581,7 +581,7 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		CA at = this.clone();
 		at = CAUtil.removeDanglingTransitions(at);
-		at = CAUtil.removeUnreachable(at);
+		at = CAUtil.removeUnreachableTransitions(at);
 		CA a = this.smpc();
 		return (a.getTransition().length == at.getTransition().length);
 	}
@@ -606,7 +606,7 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		CA at = this.clone();
 		at = CAUtil.removeDanglingTransitions(at);
-		at = CAUtil.removeUnreachable(at);
+		at = CAUtil.removeUnreachableTransitions(at);
 		CA a = this.mpc();
 		return (a.getTransition().length == at.getTransition().length);
 	}
@@ -761,7 +761,7 @@ public class CA  extends FSA implements java.io.Serializable
 	private int[][] reachableStates()
 	{
 		CA aut=this.clone();
-		aut = CAUtil.removeUnreachable(aut);
+		aut = CAUtil.removeUnreachableTransitions(aut);
 		aut = CAUtil.removeDanglingTransitions(aut);
 		int[][] s = new int[this.prodStates()][];
 		s[0]=aut.getInitialCA().getState();
