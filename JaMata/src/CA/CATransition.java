@@ -296,9 +296,11 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * @param firstprinci  the index to start to copy the principals in t
 	 * @param firstprincii the index to start to copy the principals in tt
 	 * @param insert		the states of all other principals who stays idle
+	 * @param aut			unused here, necessary in FMCATransition
 	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
 	 */
-	public CATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert)
+	//deprecated for FMCA
+	public CATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
 	{
 		if (tt!=null)
 		{

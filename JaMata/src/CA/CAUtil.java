@@ -455,7 +455,9 @@ public class CAUtil
 		int firstprinci=-1; //index of first principal in aut[i] in the list of all principals in aut
 		int firstprincii=-1; //index of first principal in aut[ii] in the list of all principals in aut
 		int[] states=null; //the number of states of each principal, except i and ii
-		int numtransitions=1; //contains the product of the number of states of each principals, except for those of i and ii
+		int productNumberOfStatesExceptIandII=1; //contains the product of the number of states of each principals, except for those of i and ii
+		
+
 		if (tt!= null) //if is a match
 		{			
 			/**
@@ -475,19 +477,19 @@ public class CAUtil
 					
 			}
 			if (prodrank!=0)
-			{
+			{				
 				states = new int[prodrank]; 
 				int indstates=0;
 				//filling the array states with number of states of all principals of CA in aut except of i and ii
 				for (int ind=0;ind<aut.length;ind++) 
 				{
-					if ((ind!=i)&&(ind!=ii))
+					if ((ind!=i)&&(ind!=ii)) 
 					{
 						int[] statesprinc=aut[ind].getStatesCA();
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
 							{						
 								states[indstates]=statesprinc[ind2];
-								numtransitions*=states[indstates];
+								productNumberOfStatesExceptIandII*=states[indstates];
 								indstates++;
 							}
 					}
@@ -498,7 +500,8 @@ public class CAUtil
 		{
 			for (int ind=0;ind<aut.length;ind++)
 			{
-				if (ind!=i)
+				
+				if (ind!=i) 
 					prodrank = prodrank+(aut[ind].getRank()); 
 				else if (ind==i)
 					firstprinci=prodrank;					
@@ -516,35 +519,28 @@ public class CAUtil
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
 							{						
 								states[indstates]=statesprinc[ind2];
-								numtransitions*=states[indstates];
+								productNumberOfStatesExceptIandII*=states[indstates];
 								indstates++;
 							}
 					}
 				}	
 			}
 		}
-		CATransition[] tr = aut[0].createArrayTransition(numtransitions); 
+		CATransition[] tr = aut[0].createArrayTransition(productNumberOfStatesExceptIandII); 
+		
+		aut=CAUtil.extractAllPrincipals(aut); //TODO this must be shift to method composition, to be called only once!
+		
+		
 		if(prodrank!=0)
 		{
 			int[] insert= new int[states.length];
 			//initialize insert to zero in all component
 			for (int ind=0;ind<insert.length;ind++)
 				insert[ind]=0;
-//			if ((insert[0]==7))
-//			{
-//				System.out.println("say");
-//			}
-//			int debug=insert[0];
-			recGen(t,tt,firstprinci, firstprincii,tr,states,0, states.length-1, insert);
+			recGen(t,tt,firstprinci, firstprincii,tr,states,0, states.length-1, insert,aut); //first call insert = [0,0,0, ...,0]
 		}
 		else
-			tr[0]=t.generateATransition(t,tt,0,0,new int[0]);
-//		{
-//			if (t instanceof MSCATransition )
-//				tr[0]=MSCAUtil.generateATransition(t,tt,0,0,new int[0]);
-//			else
-//				tr[0]=generateATransition(t,tt,0,0,new int[0]);
-//		}
+			tr[0]=t.generateATransition(t,tt,0,0,new int[0],aut);
 		return tr;
 	}
 	
@@ -554,41 +550,51 @@ public class CAUtil
 	 * recursive method that generates all combinations of transitions with all possible states of principals that are idle 
 	 * it must start from the end of array states
 	 * 
+	 * 
+	 * example of evolution considering  array insert where states = [2,2,2], the dot is indstates the array is insert
+	 *  
+	 * [0,0,0.] -> C1 : [0,0,1.] -> C1 : [0,0,2.] -> C2 : [0,0.,0] -> C3 : [0,1,0.]     
+	 * -> C1 : [0,1,1.] -> C1 : [0,1,2.] -> C2 : [0,1.,0] -> C3 : [0,2,0.]
+	 * -> C1 : [0,2,1.] -> C1 : [0,2,2.] -> C2 : [0,2.,0] -> C2 : [0.,0, 0] -> C3 : [1, 0, 0.]
+	 * -> C1 : [1, 0, 1.] ->  ... -> C2 [2, 2, 2] (indstates=-1) -> C4 termination
+	 * 
+	 * 
 	 * @param t		first transition who moves
 	 * @param tt	second transition who moves or null if it is not a match
 	 * @param fi	offset of first CA who moves in list of principals
 	 * @param fii	offset of second CA who moves in list of principals or empty
-	 * @param cat	side effect: modifies cat by adding the generated transitions
-	 * @param states	the number of states of each idle principals
-	 * @param indcat	pointer in the array cat, the first call must be 0
-	 * @param indstates	pointer in the array states, the first call must be states.length-1
-	 * @param insert    it is used to generate all the combinations of states of idle principals, the first must be all zero
+	 * @param cat	side effect: modifies cat by adding the generated transitions   -->modified at each iteration
+	 * @param states	the number of states of each idle principal
+	 * @param indcat	pointer in the array cat, the first call must be 0			-->modified at each iteration
+	 * @param indstates	pointer in the array states, the first call must be states.length-1 	-->modified at each iteration
+	 * @param insert    it is used to generate all the combinations of states of idle principals, the first must be all zero  -->modified at each iteration
+	 * @param aut		array of automata, it is used in generateATransition of FMCA to retrieve the states of idle principals using insert as pointer  --> not modified
 	 */
-	private static void recGen(CATransition t, CATransition tt, int fi, int fii, CATransition[] cat,  int[] states, int indcat, int indstates, int[] insert)
+	private static void recGen(CATransition t, CATransition tt, int fi, int fii, CATransition[] cat,  int[] states, int indcat, int indstates, int[] insert,CA[] aut)
 	{
-		if (indstates==-1)
+		if (indstates==-1) //C4
 			return;
-		if (insert[indstates]==states[indstates])
+		if (insert[indstates]==states[indstates]) /// C2
 		{
 			insert[indstates]=0;
 			indstates--;
-			recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert);
+			recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert,aut);
 		}
 		else
 		{
-			if (indstates==states.length-1)
+			if (indstates==states.length-1)//C1   first calls
 			{
-				cat[indcat]=t.generateATransition(t,tt,fi,fii,insert);
+				cat[indcat]=t.generateATransition(t,tt,fi,fii,insert,aut); //here insert contains the states of the idle principals in the transition
 				indcat++;
 				insert[indstates]++;
-				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert);
+				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert,aut);
 			}
-			else
+			else  //C3
 			{
 				insert[indstates]++; 
 				if (insert[indstates]!=states[indstates])
 					indstates=states.length-1;
-				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert);				
+				recGen(t,tt,fi,fii,cat,states,indcat,indstates,insert,aut);				
 			}
 		}
 	}
@@ -596,14 +602,18 @@ public class CAUtil
 	
 	/**
 	 * 
-	 * Generates all possible combinations of the states in fin, stored in modif
+	 * Generates all possible combinations of the states in fin, stored in modif. Here for indmod I used 
+	 * an array where I always read the element indmod[0] instead of directly passing an integer.
+	 * 
+	 * very similar to recGen for transitions. The only difference is that here instead of generateATransition a novel state 
+	 * is added to modif, where basically the array insert generates all combinations of final states.
 	 * 
 	 * @param fin	the array of final states of each principal
 	 * @param modif		the array of final states of the composition, modified by side effect
 	 * @param states	states[i] = fin[i].length
-	 * @param indmod	index in modif, the first call must be 0
-	 * @param indstates		the index in states, the first call must be states.length-1
-	 * @param insert	it is used to generate all the combinations of final states, the first call must be all zero
+	 * @param indmod	index in modif, the first call must be 0		modified by the method
+	 * @param indstates		the index in states, the first call must be states.length-1		modified by the method
+	 * @param insert	it is used to generate all the combinations of final states, the first call must be all zero		modified by the method
 	 */
 	public static void recGen(int[][] fin, int[][] modif,  int[] states, int indmod[], int indstates[], int[] insert)
 	{
@@ -639,6 +649,24 @@ public class CAUtil
 	}
 	
 	
+	
+	public static CA[] extractAllPrincipals(CA[] aut)
+	{
+		CA[][] principals = new CA[aut.length][];
+		int allprincipals=0;
+		for (int j=0;j<principals.length;j++)
+		{
+			principals[j]= aut[j].allPrincipals();
+			allprincipals+=principals[j].length;
+		}
+		CA[] onlyprincipal = new CA[allprincipals];
+		for (int j=0;j<principals.length;j++)
+		{
+			for (int z=0;z<principals[j].length;z++)
+				onlyprincipal[j+z]=principals[j][z];
+		}
+		return onlyprincipal;
+	}
 	
 	/**
 	 * compute the associative product of the CA in the array a

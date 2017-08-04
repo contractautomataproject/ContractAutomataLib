@@ -1080,6 +1080,24 @@ public class FMCAUtil extends CAUtil
 		}
 		return false;
 	}
+	protected static boolean contains(FMCATransition t, FMCATransition[] listq, int listlength)
+	{
+		for (int i=0;i<listlength;i++)
+		{
+			if (t.equals(listq[i]))
+					return true;
+		}
+		return false;
+	}
+	public static boolean contains(CAState t, CAState[] listq, int listlength)
+	{
+		for (int i=0;i<listlength;i++)
+		{
+			if (t.equals(listq[i]))
+					return true;
+		}
+		return false;
+	}
 	protected static int[][] setUnion(int[][] q1, int[][] q2)
 	{
 		int[][] m= new int[q1.length+q2.length][];

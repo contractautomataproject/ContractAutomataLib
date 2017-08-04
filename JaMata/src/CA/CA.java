@@ -453,6 +453,8 @@ public class CA  extends FSA implements java.io.Serializable
 	{
 		if ((i<0)||(i>rank)) //check if the parameter i is in the rank of the CA
 			return null;
+		if (rank==1)
+			return this;
 		CATransition[] tra = this.getTransition();
 		int[] init = new int[1];
 		init[0]=initial.getState()[i];
@@ -499,7 +501,19 @@ public class CA  extends FSA implements java.io.Serializable
 			tra[ind]=t[ind];
 		return new CA(1,new CAState(init, CAState.type.INITIAL),st,fi,tra);
 	}
-	
+
+	public CA[] allPrincipals()
+	{
+		
+		CA[] principals = new CA[this.rank];
+		for (int i=0;i<principals.length;i++)
+		{
+			principals[i] = this.proj(i);
+		}
+		return principals;
+	}
+			
+			
 	/**
 	 * compute the most permissive controller for strong agreement
 	 * @return KS

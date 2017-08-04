@@ -2,7 +2,7 @@ package CA;
 
 import java.util.Arrays;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
+import FMCA.FMCAUtil;
 
 public class CAState {
 	private int[] state;
@@ -107,13 +107,7 @@ public class CAState {
 				&& this.isSuccessfull == c.isSuccessfull());
 	}
 	
-	public static CAState getFrom(CAState[] s, int[] value)
-	{
-		for (int i=0;i<s.length;i++)
-			if (Arrays.equals(s[i].getState(),value))
-				return s[i];
-		return null;
-	}
+	
 	public boolean isSuccessfull() {
 		return isSuccessfull;
 	}
@@ -129,5 +123,32 @@ public class CAState {
 				return states[i];
 		}
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param tr
+	 * @return an array of CAStates containing all states of transitions tr
+	 */
+	public static CAState[] extractCAStatesFromTransitions(CATransition[] tr)
+	{
+		CAState[] states = new CAState[tr.length*2];//upperbound
+		int count=0;
+		for (int i=0;i<tr.length;i++)
+		{
+			CAState source=tr[i].getSourceP();
+			CAState target=tr[i].getTargetP();
+			if (!FMCAUtil.contains(source,states,count))
+			{
+				states[count]=source;
+				count++;
+			}
+			if (!FMCAUtil.contains(target,states,count))
+			{
+				states[count]=target;
+				count++;
+			}
+		}
+		return states;
 	}
 }

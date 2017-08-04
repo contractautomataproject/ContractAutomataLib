@@ -500,13 +500,13 @@ public class FMCA  extends CA implements java.io.Serializable
 	            		 
 	            		 String[] label=FMCAUtil.getArrayString(eElement.getAttribute("value"));
 	            		 if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
-	            			 t[trc]=new FMCATransition(CAState.getFrom(fstates, source),label,CAState.getFrom(fstates, target),FMCATransition.action.URGENT);//red
+	            			 t[trc]=new FMCATransition(CAState.getCAStateWithValue(source, fstates),label,CAState.getCAStateWithValue(target, fstates),FMCATransition.action.URGENT);//red
 	            		 else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
-	 	            		 t[trc]=new FMCATransition(CAState.getFrom(fstates, source),label,CAState.getFrom(fstates, target),FMCATransition.action.GREEDY); //orange
+	 	            		 t[trc]=new FMCATransition(CAState.getCAStateWithValue(source, fstates),label,CAState.getCAStateWithValue(target, fstates),FMCATransition.action.GREEDY); //orange
 	            		 else if (eElement.getAttribute("style").contains("strokeColor=#00FF00"))
-	 	            		 t[trc]=new FMCATransition(CAState.getFrom(fstates, source),label,CAState.getFrom(fstates, target),FMCATransition.action.LAZY); //green
+	 	            		 t[trc]=new FMCATransition(CAState.getCAStateWithValue(source, fstates),label,CAState.getCAStateWithValue(target, fstates),FMCATransition.action.LAZY); //green
 	            		 else 
-	 	            		 t[trc]=new FMCATransition(CAState.getFrom(fstates, source),label,CAState.getFrom(fstates, target),FMCATransition.action.PERMITTED); //otherwise
+	 	            		 t[trc]=new FMCATransition(CAState.getCAStateWithValue(source, fstates),label,CAState.getCAStateWithValue(target, fstates),FMCATransition.action.PERMITTED); //otherwise
 	            		 trc++;
 	            	 }
 	               }
@@ -524,7 +524,7 @@ public class FMCA  extends CA implements java.io.Serializable
              int[] initial = new int[rank];
              for (int ind=0;ind<rank;ind++)
           	   initial[ind]=0;
-             FMCA aut= new FMCA(rank, CAState.getFrom(fstates, initial),states,finalstates,t,fstates);
+             FMCA aut= new FMCA(rank, CAState.getCAStateWithValue(initial, fstates),states,finalstates,t,fstates);
              return aut;
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
@@ -653,6 +653,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			return null;
 		}
 	}
+	
 	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,FMCATransition.action type)
 	{
 		Attr parent=doc.createAttribute("parent");
@@ -775,6 +776,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * @param state
 	 * @return
 	 */
+	
 	private static Element createElementState(Document doc, Element root,String id, CAState[] states,int[] state)
 	{
 		Attr parent=doc.createAttribute("parent");
@@ -988,64 +990,69 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * compute the projection on the i-th principal, or null if rank=1
-	 * @param i		index of the CA
+	 * compute the projection on the i-th principal
+	 * @param indexprincipal		index of the FMCA
 	 * @return		the ith principal
 	 */
-	public FMCA proj(int i)
+	public FMCA proj(int indexprincipal)
 	{
-		/*
-		if ((i<0)||(i>rank)) //check if the parameter i is in the rank of the CA
+		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //check if the parameter i is in the rank of the FMCA
 			return null;
-		MSCATransition[] tra = this.getTransition();
-		int[] init = new int[1];
-		init[0]=initial[i];
-		int[] st= new int[1];
-		st[0]= states[i];
-		int[][] fi = new int[1][];
-		fi[0]=finalstates[i];
-		MSCATransition[] t = new MSCATransition[tra.length];
+		if (this.getRank()==1)
+			return this;
+		FMCATransition[] tra = this.getTransition();
+		int[] numberofstatesprincipal= new int[1];
+		numberofstatesprincipal[0]= this.getStatesCA()[indexprincipal];
+		FMCATransition[] transitionsprincipal = new FMCATransition[tra.length];
 		int pointer=0;
 		for (int ind=0;ind<tra.length;ind++)
 		{
-			MSCATransition tt= ((MSCATransition)tra[ind]);
-			int label = tt.getLabelP()[i];
-			if(label!=0)
+			FMCATransition tt= ((FMCATransition)tra[ind]);
+			String label = tt.getLabelP()[indexprincipal];
+			if(label!=CATransition.idle)
 			{
-				int source =  tt.getSource()[i];
-				int dest = tt.getArrival()[i];
+				int source =  tt.getSourceP().getState()[indexprincipal];
+				int dest = tt.getTargetP().getState()[indexprincipal];
 				int[] sou = new int[1];
 				sou[0]=source;
 				int[] des = new int[1];
 				des[0]=dest;
-				int[] lab = new int[1];
+				String[] lab = new String[1];
 				lab[0]=label;
-				MSCATransition selected = new MSCATransition(sou,lab,des);
-				boolean skip=false;
-				for(int j=0;j<pointer;j++)
+				FMCATransition selected = null;
+				if (label.substring(0,1).equals(CATransition.offer))
 				{
-					if (t[j].equals(selected))
-					{
-						skip=true;
-						break;
-					}
+					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),FMCATransition.action.PERMITTED);
 				}
-				if (!skip)
+				else {
+					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
+				}
+				
+				if (!FMCAUtil.contains(selected, transitionsprincipal, pointer))
 				{
-					t[pointer]=selected;
+					transitionsprincipal[pointer]=selected;
 					pointer++;
 				}
 			}
 		}
 		
-		tra = new MSCATransition[pointer];
-		for (int ind=0;ind<pointer;ind++)
-			tra[ind]=t[ind];
-		return new MSCA(1,init,st,fi,tra); */
-		return null;  //TODO
+		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer);
+		CAState[] fstates = CAState.extractCAStatesFromTransitions(transitionsprincipal);
+		int[] init=new int[1]; init[0]=0;
+		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
+		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
+		int[][] finalstatesprincipal = new int[1][];
+		finalstatesprincipal[0]=this.getFinalStatesCA()[indexprincipal];
+		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
+		{
+			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
+			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
+		}
+		// FMCA(int rank, CAState initial, int[] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstates)
+		
+		return new FMCA(1,initialstateprincipal,numberofstatesprincipal,finalstatesprincipal,transitionsprincipal,fstates); 
 	}
 	
-
 	
 	/**
 	 * compute the most permissive controller of product p
@@ -1207,52 +1214,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		
 		return a;
 	}
-	
-	
-	
-/*	public FMCA mpcConstraints(int[][][] products,int[][] L)
-	{
-		int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
-		statesToVisit[0]=products;
-		return null;
-	}*/
-	
-	
-//	/**
-//	 * similar to the corresponding method in CA class, with CATransition swapped with MSCATransition and CA swapped with MSCA  
-//	 * 
-//	 * @return all the reachable states 
-//	 */
-//	private int[][] reachableStates()
-//	{
-//		MSCA aut=this.clone();
-//		aut = (MSCA) MSCAUtil.removeUnreachable(aut);
-//		aut = (MSCA) MSCAUtil.removeDanglingTransitions(aut);
-//		int[][] s = new int[this.prodStates()][];
-//		s[0]=aut.getInitialCA();
-//		MSCATransition[] t = aut.getTransition();
-//		int pointer=1;
-//		for (int i=0;i<t.length;i++)
-//		{
-//			int[] p = t[i].getArrival();
-//			boolean found=false;
-//			int j=0;
-//			while((!found)&&(s[j]!=null))
-//			{
-//				found = Arrays.equals(p, s[j]);
-//				j++;
-//			}
-//			if (!found)
-//			{
-//				s[pointer]=p;
-//				pointer++;
-//			}
-//		}
-//	    int[][] f = new int[pointer][];
-//	    for (int i=0;i<pointer;i++)
-//	    	f[i]=s[i];
-//		return f;
-//	}
+		
 	
 	/**
 	 * an array containing the number of  states of each principal
@@ -1386,39 +1348,6 @@ public class FMCA  extends CA implements java.io.Serializable
 		act=FMCAUtil.removeDuplicates(act);
 		return act;
 	}
-	
-//	/**
-//	 * 
-//	 * similar to the corresponding method in CA class, with CATransition swapped with MSCATransition and CA swapped with MSCA  
-//	 * @return all the final states of the CA
-//	 */
-//	public  int[][] allFinalStates()
-//	{
-////		if (rank==1)
-////			return finalstates;
-//
-//		int[][] finalstates=getFinalStatesCA();
-//		int[] states=new int[finalstates.length];
-//		int comb=1;
-//		int[] insert= new int[states.length];
-//		for (int i=0;i<states.length;i++)
-//		{
-//			states[i]=finalstates[i].length;
-//			comb*=states[i];
-//			insert[i]=0;
-//		}
-//		int[][] modif = new int[comb][];
-//		int[] indstates = new int[1];
-//		indstates[0]= states.length-1;
-//		int[] indmod = new int[1];
-//		indmod[0]= 0; 
-//		//CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
-//		MSCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);
-//		return modif;
-//	}
-	
-	
-	
 	
 	/**
 	 * return redundant states who do not reach a final state or are unreachable
@@ -1642,3 +1571,43 @@ public class FMCA  extends CA implements java.io.Serializable
 		return new FMCA(rank,initial,states,finalstates,(FMCATransition[])tra);
 	}
 }
+
+
+
+
+///**
+// * 
+// * similar to the corresponding method in CA class, with CATransition swapped with MSCATransition and CA swapped with MSCA  
+// * @return all the final states of the CA
+// */
+//public  int[][] allFinalStates()
+//{
+////	if (rank==1)
+////		return finalstates;
+//
+//	int[][] finalstates=getFinalStatesCA();
+//	int[] states=new int[finalstates.length];
+//	int comb=1;
+//	int[] insert= new int[states.length];
+//	for (int i=0;i<states.length;i++)
+//	{
+//		states[i]=finalstates[i].length;
+//		comb*=states[i];
+//		insert[i]=0;
+//	}
+//	int[][] modif = new int[comb][];
+//	int[] indstates = new int[1];
+//	indstates[0]= states.length-1;
+//	int[] indmod = new int[1];
+//	indmod[0]= 0; 
+//	//CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
+//	MSCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);
+//	return modif;
+//}
+/*	public FMCA mpcConstraints(int[][][] products,int[][] L)
+{
+	int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
+	statesToVisit[0]=products;
+	return null;
+}*/
+
