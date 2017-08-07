@@ -246,7 +246,7 @@ public class CAUtil
 		 * remove unreachable transitions
 		 */
 		int removed=0;
-		int reachablepointer=0; //era messo a uno forse per lo stato iniziale, ma viene cmq letto nelle transizioni
+		int reachablepointer=1; //era messo a uno forse per lo stato iniziale, ma viene cmq letto nelle transizioni
 		int unreachablepointer=0;
 		int[][] reachable = new int[at.prodStates()][]; 
 		int[][] unreachable = new int[at.prodStates()][];
@@ -255,13 +255,19 @@ public class CAUtil
 		{
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
-			int[] s = t.getSourceP().getState();
+			int[] source = t.getSourceP().getState();
+			if (ind==5)
+			{
+				System.out.println("debug");
+			}
 			boolean found=false; //source state must not have been already visited (and inserted in either reachable or unreachable)
 			for (int i=0;i<unreachablepointer;i++)
 			{
-				if (Arrays.equals(unreachable[i],s))
+				if (Arrays.equals(unreachable[i],source))
 				{
 					found=true;
+					finalTr[ind]=null;
+					removed++;
 					break;
 				}
 			}
@@ -269,7 +275,7 @@ public class CAUtil
 			{
 				for (int i=0;i<reachablepointer;i++)
 				{
-					if (Arrays.equals(reachable[i],s))
+					if (Arrays.equals(reachable[i],source))
 					{
 						found=true;
 						break;
@@ -287,23 +293,23 @@ public class CAUtil
 				int[] pointervisited = new int[1];
 				pointervisited[0]=0;
 				if (debug)
-					System.out.println("Checking Reachability state "+Arrays.toString(s));
-				if(!amIReachable(s,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,reachablepointer,unreachablepointer))
+					System.out.println("Checking Reachability state "+Arrays.toString(source));
+				if(!amIReachable(source,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,reachablepointer,unreachablepointer))
 				{
 					finalTr[ind]=null;
 					removed++;
-					if (unreachable.length==unreachablepointer)
-					{
-						unreachablepointer++;
-						FMCATransition[] debug=FMCATransition.getTransitionFrom(t.getSourceP(), (FMCATransition[]) finalTr);
-						unreachablepointer++;
-					}
-					unreachable[unreachablepointer]=s;
+//					if (unreachable.length==unreachablepointer)
+//					{
+//						unreachablepointer++;
+//						FMCATransition[] debug=FMCATransition.getTransitionFrom(t.getSourceP(), (FMCATransition[]) finalTr);
+//						unreachablepointer++;
+//					}
+					unreachable[unreachablepointer]=source;
 					unreachablepointer++;
 				}
 				else
 				{
-					reachable[reachablepointer]=s;
+					reachable[reachablepointer]=source;
 					reachablepointer++;
 				}
 			}
@@ -312,17 +318,19 @@ public class CAUtil
 		/**
 		 * remove holes (null) in finalTr2
 		 */
-		int pointer=0;
-		CATransition[] finalTr2 = new CATransition[finalTr.length-removed];
-		for (int ind=0;ind<finalTr.length;ind++)
-		{
-			if (finalTr[ind]!=null)
-			{
-				finalTr2[pointer]=finalTr[ind];
-				pointer++;
-			}
-		}
-		aut.setTransition(finalTr2);
+//		int pointer=0;
+//		CATransition[] finalTr2 = new CATransition[finalTr.length-removed];
+//		for (int ind=0;ind<finalTr.length;ind++)
+//		{
+//			if (finalTr[ind]!=null)
+//			{
+//				finalTr2[pointer]=finalTr[ind];
+//				pointer++;
+//			}
+//		}
+		
+		finalTr= CAUtil.removeHoles(finalTr, removed);
+		aut.setTransition(finalTr);
 		return aut;
 	}
 	
@@ -929,6 +937,24 @@ public class CAUtil
 				aut=a;
 			return aut;
 		}catch(Exception e){e.printStackTrace();return null;}
+	}
+	
+	protected static CATransition[] removeHoles(CATransition[] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		CATransition[] fin = new CATransition[l.length-holes];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
 	}
 
 }
