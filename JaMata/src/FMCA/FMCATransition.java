@@ -35,11 +35,15 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param label2			label
 	 * @param fina			arrival state
 	 */
-	public FMCATransition(CAState initial, String[] label2, CAState fina, action type){
+	public FMCATransition(CAState initial, String[] label2, CAState fina, action type)
+	{
 		super(initial,label2,fina);
 		this.type=type;
-//		if (type!=action.PERMITTED)
-//			this.must=true;
+		for (int i=0;i<label2.length;i++)
+		{
+			if (label2[i]==null)
+				System.out.println("debug");
+		}
 	}
 	
 	
@@ -282,6 +286,10 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					{
 						source[i+j]=s[j];
 						label[i+j]=l[j];
+						if (l[j]==null)
+						{
+							System.out.println("vai");
+						}
 						target[i+j]=d[j];
 					}
 					counter+=s.length; //record the shift due to the first CA 
@@ -296,6 +304,10 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 						{
 							source[i+counter+j]=ss[j];
 							label[i+counter+j]=ll[j];
+							if (ll[j]==null)
+							{
+								System.out.println("vai");
+							}
 							target[i+counter+j]=dd[j];
 						}
 						counter+=ss.length;//record the shift due to the second CA 
@@ -316,6 +328,10 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				{
 					source[insert.length+j]=s[j];
 					label[insert.length+j]=l[j];
+					if (l[j]==null)
+					{
+						System.out.println("vai");
+					}
 					target[insert.length+j]=d[j];
 				}
 				counter+=s.length; //record the shift due to the first CA 
@@ -326,6 +342,10 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				{
 					source[insert.length+counter+j]=ss[j];
 					label[insert.length+counter+j]=ll[j];
+					if (ll[j]==null)
+					{
+						System.out.println("vai");
+					}
 					target[insert.length+counter+j]=dd[j];
 				}
 			}
@@ -340,6 +360,27 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			int[] target = new int[insert.length+s.length];
 			String[] label = new String[insert.length+s.length];
 			int counter=0;
+			for (int i=0;i<insert.length;i++)
+			{
+				if (i==firstprinci)
+				{
+					for (int j=0;j<s.length;j++)
+					{
+						source[i+j]=s[j];
+						label[i+j]=l[j];
+						target[i+j]=d[j];
+					}
+					counter+=s.length; //record the shift due to the first CA 
+					i--;
+					firstprinci=-1;
+				}
+				else
+				{
+					source[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
+					target[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
+					label[i+counter]=CATransition.idle;
+				}
+			}
 			if (firstprinci==insert.length)//case limit, the first CA is the last of aut
 			{
 				for (int j=0;j<s.length;j++)
@@ -348,31 +389,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					label[insert.length+j]=l[j];
 					target[insert.length+j]=d[j];
 				}
-				//counter+=s.length; //record the shift due to the first CA 
-			}
-			else
-			{
-				for (int i=0;i<insert.length;i++)
-				{
-					if (i==firstprinci)
-					{
-						for (int j=0;j<s.length;j++)
-						{
-							source[i+j]=s[j];
-							label[i+j]=l[j];
-							target[i+j]=d[j];
-						}
-						counter+=s.length; //record the shift due to the first CA 
-						i--;
-						firstprinci=-1;
-					}
-					else
-					{
-						source[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
-						target[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
-						label[i+counter]=CATransition.idle;
-					}
-				}
+				counter+=s.length; //record the shift due to the first CA 
 			}
 			return new FMCATransition(new CAState(source),label,new CAState(target),((FMCATransition) t).getType());	
 		}
