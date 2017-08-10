@@ -1,0 +1,30 @@
+Rank: 3
+Number of states: [13, 14, 14]
+Initial state: [0, 0, 0]
+Final states: [[103, 203][103, 203][103, 203]]
+Transitions: 
+
+([0, 0, 0],[!dummy, -, -],[100, 100, 100])
+([0, 0, 0],[!dummy, -, -],[200, 200, 200])
+!G([102, 102, 100],[?invoice, !invoice, -],[103, 103, 100])
+([101, 101, 100],[!card, ?card, -],[102, 102, 100])
+([106, 106, 100],[?noFreeCancellation, !noFreeCancellation, -],[109, 105, 100])
+!U([100, 100, 100],[?singleRoom, !singleRoom, -],[106, 106, 100])
+([109, 105, 100],[?privateBathroom, !privateBathroom, -],[101, 101, 100])
+!G([103, 102, 102],[-, !invoice, ?invoice],[103, 103, 103])
+([103, 101, 101],[-, ?card, !card],[103, 102, 102])
+([103, 105, 105],[-, !sharedBathroom, ?sharedBathroom],[103, 101, 101])
+!L([103, 103, 100],[-, !singleRoom, ?singleRoom],[103, 106, 107])
+([103, 106, 107],[-, !noFreeCancellation, ?noFreeCancellation],[103, 105, 105])
+!G([202, 202, 200],[?invoice, !invoice, -],[203, 203, 200])
+([201, 201, 200],[!card, ?card, -],[202, 202, 200])
+([206, 206, 200],[?noFreeCancellation, !noFreeCancellation, -],[209, 205, 200])
+!U([200, 200, 200],[?singleRoom, !singleRoom, -],[206, 206, 200])
+([209, 205, 200],[?privateBathroom, !privateBathroom, -],[201, 201, 200])
+!G([203, 202, 202],[-, !invoice, ?invoice],[203, 203, 203])
+([203, 201, 201],[-, ?card, !card],[203, 202, 202])
+([203, 208, 208],[-, !noFreeCancellation, ?noFreeCancellation],[203, 205, 205])
+([203, 205, 205],[-, !sharedBathroom, ?sharedBathroom],[203, 201, 201])
+!L([203, 203, 200],[-, !sharedRoom, ?sharedRoom],[203, 208, 208])
+!L([203, 203, 200],[-, !singleRoom, ?singleRoom],[203, 206, 207])
+([203, 206, 207],[-, !noFreeCancellation, ?noFreeCancellation],[203, 205, 205])

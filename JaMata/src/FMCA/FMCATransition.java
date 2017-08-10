@@ -39,11 +39,11 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	{
 		super(initial,label2,fina);
 		this.type=type;
-		for (int i=0;i<label2.length;i++)
-		{
-			if (label2[i]==null)
-				System.out.println("debug");
-		}
+//		for (int i=0;i<label2.length;i++)
+//		{
+//			if (label2[i]==null)
+//				System.out.println("debug");
+//		}
 	}
 	
 	

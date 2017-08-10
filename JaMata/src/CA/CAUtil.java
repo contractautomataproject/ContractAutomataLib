@@ -256,10 +256,10 @@ public class CAUtil
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
 			CATransition t=(CATransition)finalTr[ind];
 			int[] source = t.getSourceP().getState();
-			if (ind==5)
-			{
-				System.out.println("debug");
-			}
+//			if (ind==5)
+//			{
+//				System.out.println("debug");
+//			}
 			boolean found=false; //source state must not have been already visited (and inserted in either reachable or unreachable)
 			for (int i=0;i<unreachablepointer;i++)
 			{

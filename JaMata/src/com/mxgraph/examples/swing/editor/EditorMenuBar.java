@@ -1358,16 +1358,21 @@ public class EditorMenuBar extends JMenuBar
 				{
 					//aut.printToFile(filename);
 					int[] vp= pf.getFamily().validProducts(aut);
-					Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
-					pf=editor.getProductFrame();
-					if (pf!=null)
+					if (vp!=null && vp.length>0)
 					{
-						editor.setProductFrame(null);
-						pf.dispose();
+						Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
+						pf=editor.getProductFrame();
+						if (pf!=null)
+						{
+							editor.setProductFrame(null);
+							pf.dispose();
+						}
+						
+						pf= new ProductFrame(new Family(vpp), (JPanel)editor);
+				        editor.setProductFrame(pf);
 					}
-					
-					pf= new ProductFrame(new Family(vpp), (JPanel)editor);
-			        editor.setProductFrame(pf);
+					else
+						JOptionPane.showMessageDialog(null,"No valid products!","Empty",JOptionPane.WARNING_MESSAGE);
 				}
 				else 
 				{

@@ -158,7 +158,13 @@ public class Family {
 		int newdepth[][] = new int[maxdepth+1][];
 		for (int i=0;i<newdepth.length;i++)
 		{
+			try
+			{
 			newdepth[i]= new int[depthcount[i]];
+			} catch (Exception e) {
+				System.out.println("debug"); 
+				e.printStackTrace();
+				}
 			for (int j=0;j<newdepth[i].length;j++)
 			{
 				newdepth[i][j]=depth[i][j];
