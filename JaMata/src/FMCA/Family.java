@@ -74,6 +74,20 @@ public class Family {
 		return this.pointerToLevel;
 	}
 	
+	/**
+	 * 
+	 * @return the maximum number of features available for a product i.e. the maximum depth of the po tree
+	 */
+	public int getMaximumDepth()
+	{
+		int max=0;
+		for (int i=0;i<this.elements.length;i++)
+		{
+			if (max<elements[i].getForbiddenAndRequiredNumber())
+				max = elements[i].getForbiddenAndRequiredNumber();
+		}
+		return max+1; //also consider products with zero features
+	}
 	
 	/**
 	 * generate po of products, no transitive closure!
@@ -82,8 +96,15 @@ public class Family {
 	protected void generatePO()
 	{
 		Product[] p=this.elements;
-		depth=new int[p.length][p.length];//TODO upper bounds;	
-		int[] depthcount=new int[p.length];//TODO upperbound  count the number of products at each level of depth
+		
+		//warning: the level of depth is determined by the number of features. There could be only one product 
+		//at level of depth 3 if it has 3 features and it is the only valid product
+				
+		int maximumDepth = this.getMaximumDepth();
+		
+		depth=new int[maximumDepth][p.length];
+		int[] depthcount=new int[maximumDepth]; 
+		
 		for (int i=0;i<depthcount.length;i++)
 			depthcount[i]=0;
 		
@@ -96,17 +117,18 @@ public class Family {
 		int maxdepth=0;
 		for (int i=0;i<p.length;i++)
 		{
+			//TODO: there should be no need anymore to compute the maximum depth 
 			if (p[i].getForbiddenAndRequiredNumber()>maxdepth)
 				maxdepth=p[i].getForbiddenAndRequiredNumber();
-			//try{
+			try{
 				depth[p[i].getForbiddenAndRequiredNumber()][depthcount[p[i].getForbiddenAndRequiredNumber()]]=i;
-			//}
-			//catch (Exception e)
-			//{
-			//	int debug=p[i].getForbiddenAndRequiredNumber();
-			//	int debug2=depthcount[debug];
-			//	int x;
-			//}
+			}
+			catch (Exception e)
+			{
+				int debug=p[i].getForbiddenAndRequiredNumber();
+				int debug2=depthcount[debug];
+				int x;
+			}
 			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
 
 			depthcount[p[i].getForbiddenAndRequiredNumber()]+=1;

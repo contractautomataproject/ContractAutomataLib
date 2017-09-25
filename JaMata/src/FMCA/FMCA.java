@@ -1079,6 +1079,8 @@ public class FMCA  extends CA implements java.io.Serializable
 		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
 		//and this operation affects the set of uncontrollable transitions in K_i
 		FMCATransition[] trcopy=a.copyTransition();
+		
+		
 		for (int i=0;i<tr.length;i++)
 		{
 		//	System.out.println("transition "+i);
@@ -1088,12 +1090,17 @@ public class FMCA  extends CA implements java.io.Serializable
 				trcopy[i] = null;
 				removed++;
 			}
+			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
+			}
 		}
 		
 		tr=trcopy;
 		tr=  FMCAUtil.removeHoles(tr, removed);		
 		a.setTransition(tr); //K_0 
-
+		
 		//computing R_0
 		for (int i=0;i<tr.length;i++)
 		{
