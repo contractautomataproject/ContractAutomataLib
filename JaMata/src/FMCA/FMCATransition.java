@@ -316,8 +316,8 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 					}	
 					else 
 					{
-						source[i+counter]=  ((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0];//insert[i]; //TODO modify here!
-						target[i+counter]=  ((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0];//insert[i];	//TODO modify here!
+						source[i+counter]=  ((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0];//insert[i]; //TODO modify here! this should have been fixed
+						target[i+counter]=  ((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0];//insert[i];	//TODO modify here! this should have been fixed
 						label[i+counter]=CATransition.idle;
 					}
 				}
@@ -376,9 +376,14 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				}
 				else
 				{
-					source[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
-					target[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here!
+					try{
+					source[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here! this should have been fixed
+					target[i+counter]=((FMCA)aut[i+counter]).getState()[insert[i]].getState()[0]; //insert[i];//TODO modify here! this should have been fixed
 					label[i+counter]=CATransition.idle;
+					} catch (NullPointerException e) 
+					{
+						System.out.println("prova");
+					}
 				}
 			}
 			if (firstprinci==insert.length)//case limit, the first CA is the last of aut

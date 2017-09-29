@@ -534,9 +534,10 @@ public class CAUtil
 				}	
 			}
 		}
-		CATransition[] tr = aut[0].createArrayTransition(productNumberOfStatesExceptIandII); 
+		CATransition[] tr = aut[0].createArrayTransition(productNumberOfStatesExceptIandII); //TODO: check if it is the right upperbound
 		
-		aut=CAUtil.extractAllPrincipals(aut); //TODO this must be shift to method composition, to be called only once!
+		aut=CAUtil.extractAllPrincipals(aut); 
+		//TODO this must be shift to method composition, to be called only once!
 		
 		
 		if(prodrank!=0)
@@ -664,14 +665,19 @@ public class CAUtil
 		int allprincipals=0;
 		for (int j=0;j<principals.length;j++)
 		{
-			principals[j]= aut[j].allPrincipals();
+			principals[j]= aut[j].allPrincipals(); //TODO: there are idle transitions in principals, to be fixed in the future, 
+												   //now this method is only used for the states of principals not their transitions
 			allprincipals+=principals[j].length;
 		}
 		CA[] onlyprincipal = new CA[allprincipals];
+		int countonlyprincipal=0;
 		for (int j=0;j<principals.length;j++)
 		{
 			for (int z=0;z<principals[j].length;z++)
-				onlyprincipal[j+z]=principals[j][z];
+			{
+				onlyprincipal[countonlyprincipal]=principals[j][z];
+				countonlyprincipal++;
+			}
 		}
 		return onlyprincipal;
 	}
