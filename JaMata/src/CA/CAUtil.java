@@ -71,6 +71,12 @@ public class CAUtil
 		for (int i=0;i<prodtr.length;i++)// for all the automaton in the product
 		{
 			CATransition[] t = prodtr[i];
+
+//			if (t[0].getLabelP()[0].contains("invoice"))
+//			{
+//				System.out.println("Debug!");
+//			}
+		
 			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{
 				CATransition[][] temp = aut[0].createArrayTransition2(trlength*(trlength-1)); //new CATransition[trlength*(trlength-1)][];

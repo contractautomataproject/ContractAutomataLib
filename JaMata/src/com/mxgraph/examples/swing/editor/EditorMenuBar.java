@@ -1219,7 +1219,20 @@ public class EditorMenuBar extends JMenuBar
 						String message=cp.length + " Top Products Found:\n";
 						for (int i=0;i<cp.length;i++)
 							message+= pid[i]+" : \n"+cp[i].toString()+"\n";
-						JOptionPane.showMessageDialog(null,message,"Top Products",JOptionPane.PLAIN_MESSAGE);
+						  JTextArea textArea = new JTextArea(200,200);
+						  textArea.setText(message);
+					      textArea.setEditable(true);
+					      
+					     JScrollPane scrollPane = new JScrollPane(textArea);
+					     JDialog jd = new JDialog(pf);
+					      jd.add(scrollPane);
+					      jd.setTitle("Top Products");
+					      jd.setResizable(true);
+					      jd.setVisible(true);
+
+							jd.setSize(500,500);
+							jd.setLocationRelativeTo(null);
+						//JOptionPane.showMessageDialog(null,message,"Top Products",JOptionPane.PLAIN_MESSAGE);
 					}
 					else
 						JOptionPane.showMessageDialog(null,"No Top Products","Empty",JOptionPane.WARNING_MESSAGE);
