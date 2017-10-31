@@ -1507,7 +1507,8 @@ public class FMCA  extends CA implements java.io.Serializable
 		 for (int i=0; i<fs.length; i++)
 		 {
 			 CAState f = CAState.getCAStateWithValue(fs[i], this.getState());
-			 reverseVisit(f);
+			 if (f!=null)//not all combinations of final states could be available (in case a controller is checked)
+				 reverseVisit(f);
 		 }
 	 }
 	 

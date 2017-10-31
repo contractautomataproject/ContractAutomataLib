@@ -660,6 +660,89 @@ public class EditorMenuBar extends JMenuBar
 				}
 			}
 		});
+		
+		item = menu.add(new JMenuItem("Add handles to edges"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+
+				ProductFrame pf=editor.getProductFrame();
+					
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
+				
+				
+				File file=null;
+				if (aut!=null)
+				{
+					file=aut.exportToXML(absfilename);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(absfilename));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));
+						*/
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+						lastaut=aut;
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+					
+			}
+		});
+
 
 		menu.addSeparator();
 
