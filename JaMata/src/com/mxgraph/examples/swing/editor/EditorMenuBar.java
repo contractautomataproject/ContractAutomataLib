@@ -2,23 +2,17 @@ package com.mxgraph.examples.swing.editor;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -29,19 +23,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
 import FMCA.FMCATGUI;
-import FMCA.FMCAUtil;
 import FMCA.Family;
 import FMCA.Product;
-import FSA.Transition;
 import CA.CAUtil;
 
 import com.mxgraph.analysis.StructuralException;
@@ -50,61 +40,23 @@ import com.mxgraph.analysis.mxAnalysisGraph;
 import com.mxgraph.analysis.mxGraphProperties;
 import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.analysis.mxTraversal;
-import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.canvas.mxSvgCanvas;
 import com.mxgraph.costfunction.mxCostFunction;
-import com.mxgraph.examples.swing.editor.EditorActions.AlignCellsAction;
-import com.mxgraph.examples.swing.editor.EditorActions.AutosizeAction;
-import com.mxgraph.examples.swing.editor.EditorActions.BackgroundAction;
-import com.mxgraph.examples.swing.editor.EditorActions.BackgroundImageAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ColorAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ExitAction;
-import com.mxgraph.examples.swing.editor.EditorActions.GridColorAction;
-import com.mxgraph.examples.swing.editor.EditorActions.GridStyleAction;
 import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ImportAction;
-import com.mxgraph.examples.swing.editor.EditorActions.KeyValueAction;
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
-import com.mxgraph.examples.swing.editor.EditorActions.PageBackgroundAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PageSetupAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
-import com.mxgraph.examples.swing.editor.EditorActions.PromptPropertyAction;
-import com.mxgraph.examples.swing.editor.EditorActions.PromptValueAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SaveAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ScaleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SelectShortestPathAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SelectSpanningTreeAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SetLabelPositionAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SetStyleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.StyleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.StylesheetAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleConnectModeAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleCreateTargetItem;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleDirtyAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleGridItem;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleOutlineItem;
-import com.mxgraph.examples.swing.editor.EditorActions.TogglePropertyItem;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleRulersItem;
-import com.mxgraph.examples.swing.editor.EditorActions.WarningAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ZoomPolicyAction;
 import com.mxgraph.io.mxCodec;
-import com.mxgraph.io.mxGdCodec;
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxGraphActions;
-import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxDomUtils;
-import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
-import com.mxgraph.util.mxCellRenderer.CanvasFactory;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
@@ -802,6 +754,8 @@ public class EditorMenuBar extends JMenuBar
 							
 							fc.setFileFilter(defaultFilter);
 							
+							fc.setDialogTitle("Select an FMCA to be composed");
+							
 							FMCA[] aut = new FMCA[50]; //TODO upperbound to 50
 							String[] names= new String[50];
 							int fmcacount = 0;
@@ -809,7 +763,8 @@ public class EditorMenuBar extends JMenuBar
 							int rc = fc.showDialog(null,
 									mxResources.get("openFile"));
 
-							while (rc == JFileChooser.APPROVE_OPTION)
+							boolean done=false;
+							do 
 							{
 								lastDir = fc.getSelectedFile().getParent();
 								try
@@ -830,7 +785,13 @@ public class EditorMenuBar extends JMenuBar
 											mxResources.get("error"),
 											JOptionPane.ERROR_MESSAGE);
 								}
-							}
+								done=(rc == JFileChooser.APPROVE_OPTION);
+								if (done)
+								{
+									int reply = JOptionPane.showConfirmDialog(null, "Select YES for computing the composition or NO for selecting other FMCA to be composed", "Composition", JOptionPane.YES_NO_OPTION);
+									done= (reply == JOptionPane.NO_OPTION);
+								}
+							} while (done);
 							String compositionname="(";
 							FMCA[] autWithoutTailsNull = new FMCA[fmcacount];
 							for (int i=0;i<fmcacount;i++)

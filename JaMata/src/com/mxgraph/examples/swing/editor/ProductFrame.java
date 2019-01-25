@@ -9,8 +9,6 @@ import FMCA.Product;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.*;
-
 public class ProductFrame extends JFrame{
 	private Family fam;
 	JButton[] nodes;
