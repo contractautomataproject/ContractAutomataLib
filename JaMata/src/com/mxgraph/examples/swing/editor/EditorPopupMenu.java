@@ -56,7 +56,7 @@ public class EditorPopupMenu extends JPopupMenu
 
 		add(editor.bind("Urgent", new FMCAAction("Urgent", mxConstants.STYLE_STROKECOLOR),""));
 				//"/com/mxgraph/examples/swing/images/linecolor.gif"));
-		add(editor.bind("Greedy", new FMCAAction("Greedy", mxConstants.STYLE_STROKECOLOR),""));
+		//add(editor.bind("Greedy", new FMCAAction("Greedy", mxConstants.STYLE_STROKECOLOR),""));  REMOVED!!
 		add(editor.bind("Lazy", new FMCAAction("Lazy", mxConstants.STYLE_STROKECOLOR),""));
 		add(editor.bind("Permitted", new FMCAAction("Permitted", mxConstants.STYLE_STROKECOLOR),""));
 		

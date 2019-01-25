@@ -1262,7 +1262,7 @@ public class EditorMenuBar extends JMenuBar
 		
 		menu.addSeparator();
 		
-		item = menu.add(new JMenuItem("Top Products"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Maximal Products"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -1299,7 +1299,7 @@ public class EditorMenuBar extends JMenuBar
 					if (cp!=null)
 					{
 						pf.setColorButtonProducts(pid, Color.GREEN);
-						String message=cp.length + " Top Products Found:\n";
+						String message=cp.length + " Maximal Products Found:\n";
 						for (int i=0;i<cp.length;i++)
 							message+= pid[i]+" : \n"+cp[i].toString()+"\n";
 						  JTextArea textArea = new JTextArea(200,200);
@@ -1309,16 +1309,16 @@ public class EditorMenuBar extends JMenuBar
 					     JScrollPane scrollPane = new JScrollPane(textArea);
 					     JDialog jd = new JDialog(pf);
 					      jd.add(scrollPane);
-					      jd.setTitle("Top Products");
+					      jd.setTitle("Maximal Products");
 					      jd.setResizable(true);
 					      jd.setVisible(true);
 
 							jd.setSize(500,500);
 							jd.setLocationRelativeTo(null);
-						//JOptionPane.showMessageDialog(null,message,"Top Products",JOptionPane.PLAIN_MESSAGE);
+						//JOptionPane.showMessageDialog(null,message,"Maximal Products",JOptionPane.PLAIN_MESSAGE);
 					}
 					else
-						JOptionPane.showMessageDialog(null,"No Top Products","Empty",JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null,"No Maximal Products","Empty",JOptionPane.WARNING_MESSAGE);
 					
 					/*pf=editor.getProductFrame();
 					if (pf!=null)

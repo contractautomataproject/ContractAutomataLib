@@ -583,7 +583,7 @@ public class Family {
 	
 	/**
 	 * 
-	 * the valid product method exploit the partial order so it starts from top products
+	 * the valid product method exploit the partial order so it starts from maximal products
 	 * 
 	 * @param aut
 	 * @return a new family with only products valid in aut
@@ -669,7 +669,7 @@ public class Family {
 	
 	/**
 	 * 
-	 * @return all top products p s.t. there not exists p'>p
+	 * @return all maximal products p s.t. there not exists p'>p
 	 */
 	public int[] getTopProducts()
 	{

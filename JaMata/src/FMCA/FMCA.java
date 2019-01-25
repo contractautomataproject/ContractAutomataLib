@@ -5,27 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Scanner;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
