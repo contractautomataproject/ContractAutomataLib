@@ -72,7 +72,7 @@ public class EditorAboutFrame extends JDialog
 				.createEmptyBorder(8, 8, 12, 8)));
 
 		// Adds title
-		JLabel titleLabel = new JLabel("about FMCAT");//mxResources.get("aboutGraphEditor"));
+		JLabel titleLabel = new JLabel("about FMCAT");
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
 		titleLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 		titleLabel.setOpaque(false);
@@ -80,7 +80,7 @@ public class EditorAboutFrame extends JDialog
 
 		// Adds optional subtitle
 		JLabel subtitleLabel = new JLabel(
-				"Featured Modal Contract Automata Tool, GUI based on mxGraph");//"For more information visit http://www.mxgraph.com/");
+				"Featured Modal Contract Automata Tool, GUI based on mxGraph");
 		subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
 		subtitleLabel.setOpaque(false);
 		panel.add(subtitleLabel, BorderLayout.CENTER);
@@ -91,13 +91,6 @@ public class EditorAboutFrame extends JDialog
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 		content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-//		content.add(new JLabel("JGraph X - The Swing Portion of mxGraph"));
-//		content.add(new JLabel(" "));
-//
-//		content.add(new JLabel("mxGraph Version " + mxGraph.VERSION));
-//		content.add(new JLabel("Copyright (C) 2009 by JGraph Ltd."));
-//		content.add(new JLabel("All rights reserved."));
-//		content.add(new JLabel(" "));
 
 		try
 		{

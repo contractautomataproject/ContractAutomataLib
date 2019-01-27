@@ -1,6 +1,5 @@
 package com.mxgraph.examples.swing.editor;
 
-import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.TransferHandler;
 
