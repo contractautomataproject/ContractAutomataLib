@@ -792,6 +792,10 @@ public class EditorMenuBar extends JMenuBar
 									done= (reply == JOptionPane.NO_OPTION);
 								}
 							} while (done);
+							String fileName =fc.getSelectedFile().toString();
+							aut[fmcacount]=FMCA.importFromXML(fileName);
+							names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
+							fmcacount++;
 							String compositionname="(";
 							FMCA[] autWithoutTailsNull = new FMCA[fmcacount];
 							for (int i=0;i<fmcacount;i++)
@@ -802,12 +806,19 @@ public class EditorMenuBar extends JMenuBar
 									compositionname+="x";
 							}
 							compositionname+=")";
+							long start = System.currentTimeMillis();
 							FMCA composition = (FMCA) CAUtil.composition(autWithoutTailsNull);	
+							long elapsedTime = System.currentTimeMillis() - start;
+							
 							File file=null;
 							if (composition!=null)
 							{
 								file=composition.exportToXML(lastDir+"\\"+compositionname);
-								JOptionPane.showMessageDialog(null,"The composition has been stored with filename "+lastDir+"\\"+compositionname,"Success!",JOptionPane.WARNING_MESSAGE);
+								String message = "The composition has been stored with filename "+lastDir+"\\"+compositionname
+										+"\n Elapsed time : "+elapsedTime + " milliseconds"
+										+"\n Number of states : "+composition.getStates();
+										;
+								JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 							}
 							else
 							{
