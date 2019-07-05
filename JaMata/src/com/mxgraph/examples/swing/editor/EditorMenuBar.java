@@ -1,29 +1,24 @@
 package com.mxgraph.examples.swing.editor;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
-import javax.swing.AbstractAction;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 
 import org.w3c.dom.Document;
@@ -60,7 +55,7 @@ import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
-public class EditorMenuBar extends JMenuBar
+public class EditorMenuBar extends JMenuBar implements PropertyChangeListener 
 {
 	String lastDir;
 	
@@ -71,6 +66,11 @@ public class EditorMenuBar extends JMenuBar
 	 */
 	private static final long serialVersionUID = 4060203894740766714L;
 
+	private ProgressMonitor progressMonitor;
+	private JTextArea taskOutput;
+    private Task task;
+	
+	
 	public enum AnalyzeType
 	{
 		IS_CONNECTED, IS_SIMPLE, IS_CYCLIC_DIRECTED, IS_CYCLIC_UNDIRECTED, COMPLEMENTARY, REGULARITY, COMPONENTS, MAKE_CONNECTED, MAKE_SIMPLE, IS_TREE, ONE_SPANNING_TREE, IS_DIRECTED, GET_CUT_VERTEXES, GET_CUT_EDGES, GET_SOURCES, GET_SINKS, PLANARITY, IS_BICONNECTED, GET_BICONNECTED, SPANNING_TREE, FLOYD_ROY_WARSHALL
@@ -810,6 +810,7 @@ public class EditorMenuBar extends JMenuBar
 							FMCA composition = (FMCA) CAUtil.composition(autWithoutTailsNull);	
 							long elapsedTime = System.currentTimeMillis() - start;
 							
+												
 							File file=null;
 							if (composition!=null)
 							{
@@ -1463,10 +1464,11 @@ public class EditorMenuBar extends JMenuBar
 			 */
 			public void actionPerformed(ActionEvent e)
 			{
-				String filename;
+			//	String filename;
 				try
 				{
-					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					//filename =
+							editor.getCurrentFile().getName();//.getAbsolutePath();
 					
 				}
 				catch(Exception ex)
@@ -1867,13 +1869,23 @@ public class EditorMenuBar extends JMenuBar
 				
 				Family f=pf.getFamily();
 				aut.setFamily(f); //inutile
+				
+				long start = System.currentTimeMillis();
 				FMCA controller = f.getMPCofFamily(aut);
+				long elapsedTime = System.currentTimeMillis() - start;
 				//controller.printToFile("test");
 				File file=null;
 				if (controller!=null)
 				{
 					String K="K_family_"+filename;
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"\\"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					String message = "The mpc has been stored with filename "+lastDir+"\\"
+									+ K
+									+ "\n Elapsed time : "+elapsedTime + " milliseconds"
+									+ "\n Number of states : "+controller.getStates();
+									;
+									
+					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+					
 					file=controller.exportToXML(lastDir+"\\"+K);
 					try
 					{								
@@ -1914,6 +1926,111 @@ public class EditorMenuBar extends JMenuBar
 		});
 		
 		
+		item = menu.add(new JMenuItem("Most Permissive Controller of Family (without PO)"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+
+				ProductFrame pf=editor.getProductFrame();
+				if (pf==null)
+				{
+					JOptionPane.showMessageDialog(null,"No product family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+					
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
+				
+				
+				Family f=pf.getFamily();
+				aut.setFamily(f); //inutile
+				
+				JOptionPane.showMessageDialog(null,"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
+				
+				
+				long start = System.currentTimeMillis();
+			    FMCA controller = f.getMPCofFamilyWithoutPO(aut, pf);
+				long elapsedTime = System.currentTimeMillis() - start;
+				//controller.printToFile("test");
+				File file=null;
+				if (controller!=null)
+				{
+					String K="K_family_"+filename;
+					String message = "The mpc has been stored with filename "+lastDir+"\\"+K
+									+"\n Elapsed time : "+elapsedTime + " milliseconds"
+									+"\n Number of states : "+controller.getStates();
+									;
+					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+					
+					file=controller.exportToXML(lastDir+"\\"+K);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(lastDir+"\\"+K));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));
+						*/
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+						lastaut=controller;
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+
+
+			}
+		});
+
 		item = menu.add(new JMenuItem("Most Permissive Controller of a Product (insert manually)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
@@ -1972,7 +2089,11 @@ public class EditorMenuBar extends JMenuBar
 					F=new String[0];
 				
 				Product p=new Product(R,F);
+				
+				long start = System.currentTimeMillis();
 				FMCA controller = aut.mpc(p);
+
+				long elapsedTime = System.currentTimeMillis() - start;
 //
 				//FMCA controller = aut.clone();
 				//FMCA controller=aut;
@@ -1981,7 +2102,12 @@ public class EditorMenuBar extends JMenuBar
 				{
 					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
 					file=controller.exportToXML(lastDir+"//"+K);
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"//"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					String message = "The mpc has been stored with filename "+lastDir+"//"+K
+							+"\n Elapsed time : "+elapsedTime + " milliseconds"
+							+"\n Number of states : "+controller.getStates();
+							;
+
+   				    JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 					try
 					{								
 						
@@ -2073,13 +2199,22 @@ public class EditorMenuBar extends JMenuBar
 					return;
 				
 				Product p=f.getProducts()[Integer.parseInt(S)];
+				long start = System.currentTimeMillis();
+				
 				FMCA controller = aut.mpc(p);
+				long elapsedTime = System.currentTimeMillis() - start;
+				//
 				File file=null;
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
 					file=controller.exportToXML(lastDir+"\\"+K);
-					JOptionPane.showMessageDialog(null,"The mpc has been stored with filename "+lastDir+"\\"+K,"Success!",JOptionPane.WARNING_MESSAGE);
+					String message = "The mpc has been stored with filename "+lastDir+"//"+K
+							+"\n Elapsed time : "+elapsedTime + " milliseconds"
+							+"\n Number of states : "+controller.getStates();
+							;
+
+   				    JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 					try
 					{								
 						
@@ -2903,5 +3038,56 @@ public class EditorMenuBar extends JMenuBar
 				}
 			}
 		}
-	};
-};
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		 if ("progress" == evt.getPropertyName() ) {
+	            int progress = (Integer) evt.getNewValue();
+	            progressMonitor.setProgress(progress);
+	            String message =
+	                String.format("Completed %d%%.\n", progress);
+	            progressMonitor.setNote(message);
+	            taskOutput.append(message);
+	            if (progressMonitor.isCanceled() || task.isDone()) {
+	                Toolkit.getDefaultToolkit().beep();
+	                if (progressMonitor.isCanceled()) {
+	                    task.cancel(true);
+	                    taskOutput.append("Task canceled.\n");
+	                } else {
+	                    taskOutput.append("Task completed.\n");
+	                }
+	               
+	            }
+	        }
+	}
+	
+	class Task extends SwingWorker<Void, Void> {
+	    @Override
+	    public Void doInBackground() {
+	        Random random = new Random();
+	        int progress = 0;
+	        setProgress(0);
+	        try {
+	            Thread.sleep(1000);
+	            while (progress < 100 && !isCancelled()) {
+	                //Sleep for up to one second.
+	                Thread.sleep(random.nextInt(1000));
+	                //Make random progress.
+	                progress += random.nextInt(10);
+	                setProgress(Math.min(progress, 100));
+	            }
+	        } catch (InterruptedException ignore) {}
+	        return null;
+	    }
+
+	    @Override
+	    public void done() {
+	        Toolkit.getDefaultToolkit().beep();
+	        progressMonitor.setProgress(0);
+	    }
+	}
+
+}
+

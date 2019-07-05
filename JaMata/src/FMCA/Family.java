@@ -1,6 +1,8 @@
 package FMCA;
 
-import java.awt.Color;
+import java.awt.Toolkit;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -9,9 +11,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.function.IntPredicate;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,15 +35,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.mxgraph.examples.swing.editor.ProductFrame;
+
 import CA.CAState;
 
 public class Family {
+	
 	private Product[] elements;
 	private int[][] po; //matrix po[i][j]==1 iff elements[i]<elements[j]
 	private int[][] reversepo; //matrix po[i][j]==1 iff elements[i]>elements[j]
 	private int[][] depth; //depth[i] level i -- list of products, depth[i][j] index to elements
 	private int[] pointerToLevel; //i index to elements, pointerLevel[i] index to depth[totfeatures i]
 	private boolean[] hasParents;// hasParents[i]==true iff there exists j s.t. reversepo[i][j]=1
+
+	JTextArea textArea;
+	
 	public Family(Product[] elements, int[][] po)
 	{
 		this.elements=elements;
@@ -127,7 +146,6 @@ public class Family {
 			{
 				int debug=p[i].getForbiddenAndRequiredNumber();
 				int debug2=depthcount[debug];
-				int x;
 			}
 			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
 
@@ -176,7 +194,7 @@ public class Family {
 			}
 		}
 		
-		//remove tails null
+		//remove tail null
 		int newdepth[][] = new int[maxdepth+1][];
 		for (int i=0;i<newdepth.length;i++)
 		{
@@ -329,7 +347,7 @@ public class Family {
 					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1), eq); 
 					boolean alreadyinserted=false;
 					/**
-					 * product generation of featureide may generate duplicate product!
+					 * product generation of featureide may generate duplicate products!
 					 */
 					for (int z=0;z<prlength;z++) 
 					{
@@ -583,7 +601,7 @@ public class Family {
 	
 	/**
 	 * 
-	 * the valid product method exploit the partial order so it starts from maximal products
+	 * the valid product method exploits the partial order so it starts from maximal products
 	 * 
 	 * @param aut
 	 * @return a new family with only products valid in aut
@@ -703,9 +721,11 @@ public class Family {
 		FMCA[] K= new FMCA[p.length];
 		int nonemptylength=0;
 		int[] nonemptyindex= new int[p.length];
+		
+		//compute the non-empty list of mpc for maximal (aka top) products
 		for (int i=0;i<ind.length;i++)
 		{
-			Product ppp=p[ind[i]];
+			//Product ppp=p[ind[i]];
 			K[ind[i]]=aut.mpc(p[ind[i]]);
 			if (K[ind[i]]!=null)
 			{
@@ -736,7 +756,7 @@ public class Family {
 				for (int j=i+1;j<nonemptylength;j++)
 				{
 					/**
-					 * The quotient class consider all products with the same set of forbidden features, ignoring 
+					 * The quotient class considers all products with the same set of forbidden features, ignoring 
 					 * those features that are never displayed in the automaton
 					 */
 					String[] act=aut.getActions();
@@ -773,7 +793,99 @@ public class Family {
 	public FMCA getMPCofFamily(FMCA aut)
 	{
 		FMCA[] mpcf=new FMCA[1];
-		this.getCanonicalProducts(aut, mpcf,true,new int[1][]);
+		this.getCanonicalProducts(aut, mpcf,true,new int[1][]); //as side effect the mpc is computed
 		return mpcf[0];
 	}
+	
+	/**
+	 * compute the MPC of family of all valid total products
+	 * @param aut
+	 * @param progressMonitor
+	 * @return
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 */
+	public FMCA getMPCofFamilyWithoutPO(FMCA aut, ProductFrame pf) 
+	{
+		int[] tot = depth[this.getMaximumDepth()-1]; //total are at maximum depth
+		Product[] p = this.getProducts();
+		//compute the non-empty list of mpc
+		FMCA K[] = new FMCA[tot.length];
+
+		int ind=0;
+    	
+		for (int i=0;i<tot.length;i++)
+		{	
+    		System.out.println(i);	
+    		//setProgress(i);
+			K[ind]=aut.mpc(p[tot[i]]);
+			if (K[ind]!=null)
+			{
+				ind++;
+			}
+		}
+		K = Arrays.copyOf(K, ind);	
+		
+		
+		return FMCAUtil.union(K);
+	}
 }
+
+/*
+class Task  extends JPanel implements PropertyChangeListener, Runnable {
+	*//**
+	 * 
+	 *//*
+	private static final long serialVersionUID = 1L;
+	private Family f;
+	private JTextArea textArea;
+	private JFrame frame;
+	
+	public Task(Family f)
+	{
+		super();
+		this.f = f;
+
+	}
+    
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+			 if ("progress" == evt.getPropertyName() ) {
+		            int progress = (Integer) evt.getNewValue();
+		            String message =
+		                String.format("Computing mpc of product : %d.\n", progress);
+		            textArea.append(message);
+		            
+		        }
+	}
+
+	@Override
+	public void run() {
+		f.addPropertyChangeListener(this);
+		
+		 textArea = new JTextArea(200,200);
+		  textArea.setText("");
+	      textArea.setEditable(false);
+	      
+	  	
+		 frame = new JFrame("Frame");
+		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		      
+	      //Create and set up the content pane.
+	        this.setOpaque(true); //content panes must be opaque
+	        frame.setContentPane(this);
+
+		 JDialog jd = new JDialog(frame);
+	     JScrollPane scrollPane = new JScrollPane(textArea);
+	     jd.add(scrollPane);
+	     jd.setTitle("Computing...");
+	     jd.setResizable(true);
+	     jd.setVisible(true);
+		jd.setSize(500,500);
+		jd.setLocationRelativeTo(null);
+		 //Display the window.
+       frame.pack();
+       frame.setVisible(true);
+	}
+}*/

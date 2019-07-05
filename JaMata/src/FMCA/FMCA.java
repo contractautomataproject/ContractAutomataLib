@@ -1312,9 +1312,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	@Override
 	public int getStates()
 	{
-		int[][] states = this.allStates();
-		
-		return 0;
+		return this.allStates().length;
 	}
 	
 	public int[][][] allNonFinalAndFinalStates()

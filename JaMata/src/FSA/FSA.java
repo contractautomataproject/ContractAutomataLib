@@ -186,6 +186,7 @@ public class FSA implements java.io.Serializable{
 	{
 		this.tra=tra;
 	}
+	
 	/**
 	 * 
 	 * @return	the number of states

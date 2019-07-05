@@ -1299,6 +1299,14 @@ public class FMCAUtil extends CAUtil
 			r[i]=q[i];
 		return r;
 	}
+	
+	public static <T> T[] removeTailsNull(T[] q, T[] r)
+	{
+		for (int i=0;i<r.length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	
 	protected static int[][] removeHoles(int[][] l, int holes )
 	{
 		/**
