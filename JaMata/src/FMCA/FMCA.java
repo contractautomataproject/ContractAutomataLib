@@ -1448,7 +1448,36 @@ public class FMCA  extends CA implements java.io.Serializable
 		else
 			return null;
 	}
+
+	private int[] getIndexOfLazyTransitions()
+	{
+		
+		FMCATransition[] tr = this.getTransition();
+		int[] arr = new int[tr.length];
+		int count=0;
+		for (int i=0;i< tr.length;i++)
+		{
+			if (tr[i].isLazy())
+			{
+				arr[count]=i;
+				count++;
+			}
+		}
+		arr = FMCAUtil.removeTailsNull(arr, count);
+		return arr;
+	}
 	
+	public String removeLazy()
+	{
+		int[] arr = this.getIndexOfLazyTransitions();
+		int l = arr.length;
+		long ll = (long) Math.pow(2.0, (double)arr.length);
+		long ns = this.getStates()+1;
+		//FMCA[] aut = new FMCA[(int)Math.pow(2.0, (double)arr.length)];
+		return "The automaton contains the following number of lazy transitions : "+l+" \n"
+				+"There are 2^"+l+" possible combinations of pruning such transitions.\n"
+				+"The resulting automaton will have the following number of states "+ns+" * 2^"+l;
+	}
 	 public static void morphGraph(final mxGraph graph,
               mxGraphComponent graphComponent) 
 	 {
