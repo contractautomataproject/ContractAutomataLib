@@ -1475,8 +1475,8 @@ public class FMCA  extends CA implements java.io.Serializable
 		long ns = this.getStates()+1;
 		//FMCA[] aut = new FMCA[(int)Math.pow(2.0, (double)arr.length)];
 		return "The automaton contains the following number of lazy transitions : "+l+" \n"
-				+"There are 2^"+l+" possible combinations of pruning such transitions.\n"
-				+"The resulting automaton will have the following number of states "+ns+" * 2^"+l;
+				//+"There are 2^"+l+" possible combinations of removing such transitions.\n"
+				+"The resulting automaton with only urgent transitions will have the following number of states ("+ns+") * (2^"+l+"-1)";
 	}
 	 public static void morphGraph(final mxGraph graph,
               mxGraphComponent graphComponent) 

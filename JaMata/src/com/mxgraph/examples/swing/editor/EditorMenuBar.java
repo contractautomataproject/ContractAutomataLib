@@ -1275,7 +1275,10 @@ public class EditorMenuBar extends JMenuBar
 				
 					//aut.printToFile(filename);
 					Family fam= pf.getFamily();
+					
+					long start = System.currentTimeMillis();
 					int[] pid = fam.getTopProducts();
+					long elapsedTime = System.currentTimeMillis() - start;
 					Product[] cp=fam.subsetOfProductsFromIndex(pid);
 					if (cp!=null)
 					{
@@ -1283,19 +1286,22 @@ public class EditorMenuBar extends JMenuBar
 						String message=cp.length + " Maximal Products Found:\n";
 						for (int i=0;i<cp.length;i++)
 							message+= pid[i]+" : \n"+cp[i].toString()+"\n";
-						  JTextArea textArea = new JTextArea(200,200);
+						
+						message += "Elapsed time : "+elapsedTime;
+						  
+						JTextArea textArea = new JTextArea(200,200);
 						  textArea.setText(message);
-					      textArea.setEditable(true);
-					      
-					     JScrollPane scrollPane = new JScrollPane(textArea);
-					     JDialog jd = new JDialog(pf);
-					      jd.add(scrollPane);
-					      jd.setTitle("Maximal Products");
-					      jd.setResizable(true);
-					      jd.setVisible(true);
-
-							jd.setSize(500,500);
-							jd.setLocationRelativeTo(null);
+						  textArea.setEditable(true);
+						  
+						  JScrollPane scrollPane = new JScrollPane(textArea);
+						  JDialog jd = new JDialog(pf);
+						  jd.add(scrollPane);
+						  jd.setTitle("Maximal Products");
+						  jd.setResizable(true);
+						  jd.setVisible(true);
+						
+						  jd.setSize(500,500);
+						  jd.setLocationRelativeTo(null);
 						//JOptionPane.showMessageDialog(null,message,"Maximal Products",JOptionPane.PLAIN_MESSAGE);
 					}
 					else
@@ -1350,15 +1356,25 @@ public class EditorMenuBar extends JMenuBar
 				if (aut!=null)
 				{
 					//aut.printToFile(filename);
+					
+					long start = System.currentTimeMillis();
+					
 					int[] vp= pf.getFamily().validProducts(aut);
+					
+					long elapsedTime= System.currentTimeMillis() - start;
+					
 					Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 					if (vp!=null)
 					{
 						pf.setColorButtonProducts(vp, Color.BLUE);
 						String message=vp.length + " Valid Products Found:\n";
+						
+						
 						for (int i=0;i<vp.length;i++)
 							message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
-						  JTextArea textArea = new JTextArea(200,200);
+						
+						message += "Elapsed Time " + elapsedTime;
+						JTextArea textArea = new JTextArea(200,200);
 						  textArea.setText(message);
 					      textArea.setEditable(true);
 					      
@@ -1509,7 +1525,13 @@ public class EditorMenuBar extends JMenuBar
 				
 				Family fam= editor.getProductFrame().getFamily();
 				int[][] ind=new int[1][];
+				
+				long start = System.currentTimeMillis();
 				Product[] cp=fam.getCanonicalProducts(aut,null,false,ind);
+				long elapsedTime= System.currentTimeMillis() - start;
+				
+				
+				
 				if (cp!=null)
 				{
 					pf.setColorButtonProducts(ind[0], Color.ORANGE);
@@ -1517,6 +1539,7 @@ public class EditorMenuBar extends JMenuBar
 					for (int i=0;i<cp.length;i++)
 						message+= ind[0][i]+" : \n"+cp[i].toString()+"\n";
 					
+					message += "Elapsed time : "+elapsedTime;
 					JTextArea textArea = new JTextArea(200,200);
 					textArea.setText(message);
 				    textArea.setEditable(true);
@@ -1533,7 +1556,7 @@ public class EditorMenuBar extends JMenuBar
 					//JOptionPane.showMessageDialog(null,message,"Empty",JOptionPane.PLAIN_MESSAGE);
 				}
 				else
-					JOptionPane.showMessageDialog(null,"No Canonical Products","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"No Canonical Products"+"\n Elapsed time : "+elapsedTime,"Empty",JOptionPane.WARNING_MESSAGE);
 					
 			}
 		});
@@ -1580,7 +1603,10 @@ public class EditorMenuBar extends JMenuBar
 					return;
 				}
 		
+				long start = System.currentTimeMillis();
 				int[] vp= pf.getFamily().productsWithNonEmptyMPC(aut);
+				long elapsedTime = System.currentTimeMillis() - start;
+				
 				Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 				if (vp!=null)
 				{
@@ -1588,7 +1614,9 @@ public class EditorMenuBar extends JMenuBar
 					String message=vp.length + " Products With Non-empty MPC Found:\n";
 					for (int i=0;i<vp.length;i++)
 						message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
-					  JTextArea textArea = new JTextArea(200,200);
+					
+					message += "Elapsed time : " + elapsedTime;
+					JTextArea textArea = new JTextArea(200,200);
 					  textArea.setText(message);
 				      textArea.setEditable(true);
 				      
@@ -1605,7 +1633,7 @@ public class EditorMenuBar extends JMenuBar
 					  //JOptionPane.showMessageDialog(null,message,"Valid Products",JOptionPane.PLAIN_MESSAGE);
 				}
 				else
-					JOptionPane.showMessageDialog(null,"No Products With Non-empty MPC","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"No Products With Non-empty MPC"+ "\nElapsed time : "+elapsedTime,"Empty",JOptionPane.WARNING_MESSAGE);
 			
 					
 				
@@ -1928,7 +1956,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				}
 					
 			}
@@ -2044,7 +2072,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				}
 					
 			}
@@ -2151,7 +2179,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				}
 					
 			}
@@ -2212,17 +2240,28 @@ public class EditorMenuBar extends JMenuBar
 				
 				
 				long start = System.currentTimeMillis();
-			    FMCA controller = f.getMPCofFamilyWithoutPO(aut, pf);
+			    int[][] vpdummy = new int[1][];
+				FMCA controller = f.getMPCofFamilyWithoutPO(aut, pf, vpdummy);
+				int[] vp = vpdummy[0];
 				long elapsedTime = System.currentTimeMillis() - start;
 				//controller.printToFile("test");
 				File file=null;
+				Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
+				
 				if (controller!=null)
 				{
 					String K="K_familyWithoutPO_"+filename;
-					String message = "The mpc has been stored with filename "+lastDir+"\\"+K
-									+"\n Elapsed time : "+elapsedTime + " milliseconds"
-									+"\n Number of states : "+controller.getStates();
-									;
+					String message = "The mpc has been stored with filename "+lastDir+"\\"+K;
+									
+					message+= "\n" + vp.length + " Total Products With Non-empty MPC Found:\n";
+					for (int i=0;i<vp.length;i++)
+						message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
+					
+					message+="\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+controller.getStates();
+					;
+
+									
 					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 					
 					file=controller.exportToXML(lastDir+"\\"+K);
@@ -2258,7 +2297,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				}
 
 
@@ -2303,7 +2342,7 @@ public class EditorMenuBar extends JMenuBar
 					return;
 				}		
 				
-				long start = System.currentTimeMillis();
+				//long start = System.currentTimeMillis();
 				
 				JOptionPane.showMessageDialog(null,aut.removeLazy(),"Result",JOptionPane.WARNING_MESSAGE);
 				

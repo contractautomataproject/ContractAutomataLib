@@ -801,19 +801,20 @@ public class Family {
 	 * compute the MPC of family of all valid total products
 	 * @param aut
 	 * @param progressMonitor
+	 * @param pr[]   -- side effect, pr[0] indexes of total products with non-empty mpc
 	 * @return
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public FMCA getMPCofFamilyWithoutPO(FMCA aut, ProductFrame pf) 
+	public FMCA getMPCofFamilyWithoutPO(FMCA aut, ProductFrame pf, int[][] pr) 
 	{
 		int[] tot = depth[this.getMaximumDepth()-1]; //total are at maximum depth
 		Product[] p = this.getProducts();
 		//compute the non-empty list of mpc
 		FMCA K[] = new FMCA[tot.length];
-
+		pr[0] = new int[tot.length]; 
 		int ind=0;
-    	
+		
 		for (int i=0;i<tot.length;i++)
 		{	
     		System.out.println(i);	
@@ -821,11 +822,13 @@ public class Family {
 			K[ind]=aut.mpc(p[tot[i]]);
 			if (K[ind]!=null)
 			{
+				pr[0][ind]=i;
 				ind++;
+				
 			}
 		}
 		K = Arrays.copyOf(K, ind);	
-		
+		pr[0]=FMCAUtil.removeTailsNull(pr[0], ind);
 		
 		return FMCAUtil.union(K);
 	}
