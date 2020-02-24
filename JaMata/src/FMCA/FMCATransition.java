@@ -12,7 +12,6 @@ import java.util.Arrays;
 import CA.CA;
 import CA.CAState;
 import CA.CATransition;
-import FSA.Transition;
 
 
 
@@ -252,7 +251,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * 					 the field CAState[] states must be instantiated --> not modified
 	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
 	 */
-	public FMCATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
+	public FMCATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
 	{
 		//TODO I should replace the composition of CA with a forward visit of the automaton
 		

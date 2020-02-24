@@ -3,7 +3,7 @@ package CA;
 
 import java.util.Arrays;
 
-import FSA.Transition;
+//import FSA.Transition;
 
 
 
@@ -14,7 +14,8 @@ import FSA.Transition;
  *
  */
 @SuppressWarnings("serial")
-public class CATransition extends Transition implements java.io.Serializable{ 
+public class CATransition //extends Transition
+		implements java.io.Serializable{ 
 	private CAState source;
 	private CAState target;
 	private String[] label;
@@ -25,7 +26,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * 
 	 */
 	public CATransition(CAState source, String[] label, CAState target){
-		super(0,0,0);
+		//super(0,0,0);
 		
 		this.source=source;
 		this.target=target;
@@ -300,7 +301,7 @@ public class CATransition extends Transition implements java.io.Serializable{
 	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
 	 */
 	//deprecated for FMCA
-	public CATransition generateATransition(Transition t, Transition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
+	public CATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
 	{
 		if (tt!=null)
 		{

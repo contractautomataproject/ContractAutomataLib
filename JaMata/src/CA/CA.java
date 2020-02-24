@@ -6,8 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import FSA.FSA;
-import FSA.Transition;
+//import FSA.FSA;
 
 
 /** 
@@ -16,13 +15,14 @@ import FSA.Transition;
  *
  */
 @SuppressWarnings("serial")
-public class CA  extends FSA implements java.io.Serializable
+public class CA  //extends FSA 
+			implements java.io.Serializable
 {
 	private int rank;
 	private CAState initial;
 	private int[] states;
 	private int[][] finalstates; 
-	//private CATransition[] tra;
+	private CATransition[] tra;
 	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
 			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
@@ -31,18 +31,18 @@ public class CA  extends FSA implements java.io.Serializable
 	 */
 	public CA()
 	{
-		super(message);
+		//super(message);
 		try{
 			System.out.println();
 	        this.rank = 1;
 	        this.states = new int[1];
-	        this.states[0] = super.getStates();
+	      //  this.states[0] = super.getStates();
 	        int[] ini= new int[1]; ini[0]=0;
 	        this.initial = new CAState(ini);
 	        this.initial.setInitial(true);
 	       
-	        finalstates = new int[1][super.getFinalStates().length];
-	        finalstates[0]= super.getFinalStates();
+	        finalstates = new int[1][1];//super.getFinalStates().length];
+	        finalstates[0]= new int[1];//super.getFinalStates();
 	       // this.tra=(CATransition[])super.getTransition();
 	        //super.write(this);
 	        this.printToFile("");
@@ -52,12 +52,23 @@ public class CA  extends FSA implements java.io.Serializable
 	
 	public CA(int rank, CAState initial, int[] states, int[][] finalstates,CATransition[] tra)
 	{
-		super(tra);
+		//super(tra);
+		this.tra=tra;
 		this.rank=rank;
 		this.initial=initial;
 		this.states=states;
 		this.finalstates=finalstates;
 	}
+	
+	/**
+	 * 
+	 * @param tra initialize the variable Transition
+	 */
+	public void setTransition(CATransition[] tra)
+	{
+		this.tra=tra;
+	}
+	
 	
 	/**
 	 * Print in output a description of the automaton
@@ -75,7 +86,7 @@ public class CA  extends FSA implements java.io.Serializable
 			System.out.print(Arrays.toString(finalstates[i]));
 		System.out.print("]\n");
 		System.out.println("Transitions: \n");
-		Transition[] t = this.getTransition();
+		CATransition[] t = this.getTransition();
 		if (t!=null)
 		{
 			for (int i=0;i<t.length;i++)
@@ -114,7 +125,7 @@ public class CA  extends FSA implements java.io.Serializable
 				 pr.print(Arrays.toString(finalstates[i]));
 			 pr.print("]\n");
 			 pr.println("Transitions: \n");
-			 Transition[] t = this.getTransition();
+			 CATransition[] t = this.getTransition();
 			 if (t!=null)
 			 {
 				 for (int i=0;i<t.length;i++)
@@ -387,11 +398,12 @@ public class CA  extends FSA implements java.io.Serializable
 	 */
 	public CATransition[] getTransition()
 	{
-		Transition[] temp = super.getTransition();
+		/*Transition[] temp = super.getTransition();
 		CATransition[] t = new CATransition[temp.length];
 		for (int i=0;i<temp.length;i++)
 				t[i]=(CATransition)temp[i];
-		return t;
+		return t;*/
+		return tra;
 	}
 	
 	/**

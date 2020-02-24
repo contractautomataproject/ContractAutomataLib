@@ -42,7 +42,6 @@ import CA.CATransition;
 import FMCA.FMCA;
 import FMCA.FMCATransition;
 import FMCA.FMCAUtil;
-import FSA.Transition;
 
 
 /** 
@@ -865,7 +864,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	public  FMCATransition[] getTransition()
 	{
-		Transition[] temp = super.getTransition();
+		CATransition[] temp = super.getTransition();
 		FMCATransition[] t = new FMCATransition[temp.length];
 		for (int i=0;i<temp.length;i++)
 				t[i]=(FMCATransition)temp[i];
@@ -1309,7 +1308,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		return s;
 	}
 	
-	@Override
+	
 	public int getStates()
 	{
 		return this.allStates().length;
