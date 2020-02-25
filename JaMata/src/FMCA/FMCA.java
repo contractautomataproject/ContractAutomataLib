@@ -273,7 +273,7 @@ public class FMCA  extends CA implements java.io.Serializable
 //								  Scanner s = new Scanner(ss[ind]);
 //								  s.useDelimiter("");
 
-								  String[] arr2=arr[ind].split("[,|\\[]"); 
+								  String[] arr2=arr[ind].split("[,|\\[]"); //TODO BUG with this parseInt failes with spaces
 								  try{
 									  //Integer.parseInt(arr2[0]); //check if we are reading states!
 									  int innerindex=0;
@@ -281,7 +281,7 @@ public class FMCA  extends CA implements java.io.Serializable
 									  for(int ind2=0;ind2<arr2.length;ind2++)
 									  {
 										  try{
-											  int num=Integer.parseInt(arr2[ind2]);
+											  int num=Integer.parseInt(arr2[ind2].trim());
 											  tf[innerindex] = num;
 											  innerindex++;
 										  }catch(NumberFormatException e){}  //exceptions should never be thrown this way
