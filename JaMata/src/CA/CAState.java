@@ -96,15 +96,17 @@ public class CAState {
 		return new CAState(Arrays.copyOf(state,state.length),x,y,initial,finalstate);
 	}
 	
+	
 	public boolean equals(CAState c)
 	{
 		return  (Arrays.equals(state,c.getState())
-				&& this.x==c.getX()
-				&& this.y==c.getY()
+				//&& this.x==c.getX()							
+				//&& this.y==c.getY()
 				&& this.initial == c.isInitial()
 				&& this.finalstate == c.isFinalstate()
-				&& this.isReachable == c.isReachable()
-				&& this.isSuccessfull == c.isSuccessfull());
+				//&& this.isReachable == c.isReachable()		//reachable and successful are updated when computing the dangling states
+				//&& this.isSuccessfull == c.isSuccessfull()	//thus two equal states may become different if I check this variables
+				);
 	}
 	
 	
@@ -150,5 +152,17 @@ public class CAState {
 			}
 		}
 		return states;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String s="";
+		if (this.isInitial())
+			s=s+"Initial ";
+		if (this.isFinalstate())
+			s=s+"Final ";
+			
+		return s+Arrays.toString(this.state);
 	}
 }

@@ -686,10 +686,10 @@ public class EditorMenuBar extends JMenuBar
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else
+				/*else
 				{
 					JOptionPane.showMessageDialog(null,"The mpc is empty","Empty",JOptionPane.WARNING_MESSAGE);
-				}
+				}*/
 					
 			}
 		});
@@ -2351,6 +2351,126 @@ public class EditorMenuBar extends JMenuBar
 			}
 		});
 
+		menu.addSeparator();
+
+		item = menu.add(new JMenuItem("Choreography"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(new ActionListener()
+		{
+			/*
+			 * (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			public void actionPerformed(ActionEvent e)
+			{
+				String filename;
+				try
+				{
+					filename =editor.getCurrentFile().getName();//.getAbsolutePath();
+					
+				}
+				catch(Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				lastDir=editor.getCurrentFile().getParent();
+				String absfilename =editor.getCurrentFile().getAbsolutePath();
+				FMCA aut= FMCA.importFromXML(absfilename);
+				
+				if (aut==null)
+				{
+					String message ="States or labels contain errors.\n "
+							+ 		"Please, check that each state has following format:\n"
+							+		"[INTEGER, ..., INTEGER]\n" 
+							+		"and  each label has the following format:\n"
+							+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
+					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
+					return;
+				}	
+				
+				/*
+				//aut.printToFile(filename);
+				String S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Required features separated by colon",
+						JOptionPane.PLAIN_MESSAGE);
+				if (S==null)
+					return;
+				String[] R;
+				R=S.split(",");
+				
+				if (R[0].equals(""))
+					R=new String[0];
+					
+				S= (String) JOptionPane.showInputDialog(null, 
+						"Insert Forbidden actions separated by semicolon",
+						JOptionPane.PLAIN_MESSAGE);
+				if (S==null)
+					return;
+				String[] F=S.split(",");
+				if (F[0].equals(""))
+					F=new String[0];
+			
+				Product p=new Product(new String[0],new String[0]); 
+*/					
+				
+				//no products for choreography
+				
+				long start = System.currentTimeMillis();
+				FMCA controller = aut.choreography();
+
+				long elapsedTime = System.currentTimeMillis() - start;
+//
+				//FMCA controller = aut.clone();
+				//FMCA controller=aut;
+				File file=null;
+				if (controller!=null)
+				{
+					String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
+									filename;
+					file=controller.exportToXML(lastDir+"//"+K);
+					String message = "The choreography has been stored with filename "+lastDir+"//"+K
+							+"\n Elapsed time : "+elapsedTime + " milliseconds"
+							+"\n Number of states : "+controller.getStates();
+							;
+
+   				    JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+					try
+					{								
+						
+						Document document = mxXmlUtils
+									.parseXml(mxUtils.readFile(lastDir+"//"+K));
+											/*mxUtils.readFile(fc
+																			.getSelectedFile()
+																			.getAbsolutePath()));*/
+						
+						mxCodec codec = new mxCodec(document);
+						codec.decode(
+								document.getDocumentElement(),
+								graph.getModel());
+						editor.setCurrentFile(file);
+						
+						editor.setModified(false);
+						editor.getUndoManager().clear();
+						editor.getGraphComponent().zoomAndCenter();
+						lastaut=controller;
+					}
+					catch (IOException ex)
+					{
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(
+								editor.getGraphComponent(),
+								ex.toString(),
+								mxResources.get("error"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				}
+					
+			}
+		});
 
 		// Creates a developer menu
 		/*menu = add(new JMenu("Generate"));

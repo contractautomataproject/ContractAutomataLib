@@ -127,6 +127,35 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}
 
 
+	/**
+	 * aka  controllable lazy request  --- request should be swapped by offer, in choreography offers can be necessary. 
+	 * Moreover it checks that the transition that matches has the same source state of this
+	 * @return	true if the  lazy transition request is matched 
+	 */
+	protected  boolean isMatchedChoreography(FMCA aut)
+	{
+		FMCATransition[] tr = aut.getTransition();
+		if ((this.isRequest()&&this.isLazy()))
+		{
+			CAState[] R=aut.getDanglingStates();
+			for (int j=0;j<tr.length;j++)	
+			{
+				if ((tr[j].isMatch())
+					&&(tr[j].isLazy()&&this.isLazy())//the same type (greedy or lazy)
+					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
+					&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==this.getSourceP().getState()[this.getReceiver()]) //the same source state					
+					&&(tr[j].getLabelP()[tr[j].getReceiver()].equals(this.getLabelP()[this.getReceiver()])) //the same request
+					&&(tr[j].getSourceP().equals(this.getSourceP())) //the same source state because it is a semi-controllable for choreography
+					&&(!FMCAUtil.contains(this.getSourceP(), R)) //source state is not redundant
+					&&(!FMCAUtil.contains(tr[j].getTargetP(), R))) //target state is not redundant
+					{
+						return true;
+					}
+			}
+			return false;
+		}
+		return true; // trivially matched, it is not a request or it is not lazy
+	}
 
 	/**
 	 * 
@@ -171,6 +200,31 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			return false;
 	}
 	
+
+	/**
+	 * aka uncontrollable lazy match, it differs just because it calls the method matched choreography 
+	 * 
+	 * @return	true if the  lazy match transition is lazy unmatchable in aut
+	 */
+	protected  boolean isLazyUnmatchableChoreography(FMCA aut)
+	{
+		FMCATransition[] tr = aut.getTransition();
+		if ((this.isMatch())
+			&&(this.isLazy()))
+		{
+			for (int j=0;j<tr.length;j++)	
+			{
+				if (this.equals(tr[j]))
+					return false; //the transition must not be in aut
+			}
+			FMCATransition t= this.extractRequestFromMatch(); //extract the request transition from this
+			return !t.isMatchedChoreography(aut); 
+		}
+		else
+			return false;
+	}
+	
+	
 	/**
 	 * 
 	 * @param aut
@@ -179,6 +233,18 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	protected boolean isUncontrollable(FMCA aut)
 	{
 		return this.isUrgent()||(this.isMatch()&&this.isGreedy())||!this.isMatched(aut)||this.isLazyUnmatchable(aut);
+		
+	}
+	
+	/**
+	 * Readapted for a choreography,
+	 * 
+	 * @param aut
+	 * @return	true if the transition is uncontrollable in aut
+	 */
+	protected boolean isUncontrollableChoreography(FMCA aut)
+	{
+		return !this.isMatchedChoreography(aut)||this.isLazyUnmatchableChoreography(aut);
 		
 	}
 	
@@ -225,6 +291,33 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		for (int i=0;i<t.length;i++)
 		{
 			if ((!t[i].isMatched(aut))||(t[i].isLazyUnmatchable(aut)))
+			{
+				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
+				{
+					s[pointer]=t[i].getSourceP();
+					pointer++;
+				}
+			}
+		}
+		s=FMCAUtil.removeTailsNull(s, pointer);
+		return s;
+	}
+	
+	/**
+	 * 
+	 * it differs from areUnmatchedOrLazyUnmatchable because it calls the Choreography version methods 
+	 * 
+	 * @param t
+	 * @param aut
+	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
+	 */
+	protected static CAState[] areUnmatchedOrLazyUnmatchableChoreography(FMCATransition[] t, FMCA aut)
+	{
+		CAState[] s= new CAState[t.length];
+		int pointer=0;
+		for (int i=0;i<t.length;i++)
+		{
+			if ((!t[i].isMatchedChoreography(aut))||(t[i].isLazyUnmatchableChoreography(aut)))
 			{
 				if (!FMCAUtil.contains(t[i].getSourceP(), s)) //if the source state was not already inserted previously
 				{

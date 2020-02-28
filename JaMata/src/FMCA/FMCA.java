@@ -1,32 +1,29 @@
 package FMCA;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.util.mxEvent;
@@ -34,14 +31,9 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
 
-import java.io.File;
-
 import CA.CA;
 import CA.CAState;
 import CA.CATransition;
-import FMCA.FMCA;
-import FMCA.FMCATransition;
-import FMCA.FMCAUtil;
 
 
 /** 
@@ -552,7 +544,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			int[][] states=all[0];
 			Element[] statese=new Element[states.length];
 			
-			//TODO: smart graph display
+			//TODO: smart graph display -- I think I did it
 			for (int i=0;i<states.length;i++)
 			{
 				if (this.fstates!=null)
@@ -1032,13 +1024,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	
-	/**
-	 * compute the most permissive controller of product p
-	 * the algorithm is different from the corresponding of MSCA
-	 * 
-	 * @return the most permissive controller for modal agreement
-	 */
-	public FMCA mpc(Product p)
+/*	public FMCA mpcold(Product p)
 	{
 		FMCA a = this.clone();
 		FMCATransition[] tr = a.getTransition();
@@ -1134,7 +1120,8 @@ public class FMCA  extends CA implements java.io.Serializable
 								trcheckpointer++;
 							}
 						}
-						else if (!tr[i].isUncontrollable(a)&&(FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
+						else if //(!tr[i].isUncontrollable(a)&&
+								(FMCAUtil.contains(tr[i].getTargetP(), R)) //remove controllable with bad target
 						{
 							rem[removed]=tr[i]; //solo per testing
 							trcopy[i]=null;
@@ -1199,7 +1186,428 @@ public class FMCA  extends CA implements java.io.Serializable
 		
 		return a;
 	}
+*/	
+	/**
+	 * compute the most permissive controller of product p
+	 * the algorithm is different from the corresponding of MSCA
+	 * 
+	 * @return the most permissive controller for modal agreement
+	 */
+	public FMCA mpc(Product p)
+	{
+		FMCA a = this.clone();
+		FMCATransition[] tr = a.getTransition();
+		FMCATransition[] rem = new FMCATransition[tr.length];  //solo per testing
+		//int[][] fs=a.allFinalStates();
+		int removed = 0;
 		
+		//I need to store the transitions, to check later on 
+		//if some controllable transition becomes uncontrollable
+		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
+		int potentiallyUncontrollableCounter = 0;
+		
+		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
+		int badtransitioncounter=0;
+		
+		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+		//and this operation affects the set of uncontrollable transitions in K_i
+		FMCATransition[] trcopy=a.copyTransition();
+		
+		
+		for (int i=0;i<tr.length;i++)
+		{
+		//	System.out.println("transition "+i);
+			if (!tr[i].isUncontrollable(a)) //controllable and bad
+			{
+				if (tr[i].isRequest()||tr[i].isForbidden(p))
+				{
+					rem[removed]=tr[i]; //solo per testing
+					trcopy[i] = null;
+					removed++;
+				}
+			}
+			else 
+			{	
+				if (tr[i].isRequest()||tr[i].isForbidden(p))
+				{
+					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+					badtransitioncounter++;		
+				}
+	
+			}
+			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
+			}
+		}
+		
+		tr=trcopy;
+		tr=  FMCAUtil.removeHoles(tr, removed);		
+		a.setTransition(tr); //K_0 
+		
+/*		//computing R_0
+		for (int i=0;i<tr.length;i++)
+		{
+			if (tr[i].isUncontrollable(a)) 	//uncontrollable and bad
+			{	
+				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
+				{
+					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+					badtransitioncounter++;		
+				}
+			}
+			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
+			}
+		}
+*/
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
+		
+		//
+		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
+		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
+		boolean update=false;
+		if (R.length>0)
+		{
+			do{
+				update=false;
+				FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
+				int trcheckpointer=0;
+				removed=0;
+				rem= new FMCATransition[tr.length]; 
+				
+				//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+				//and this operation affects the set of uncontrollable transitions in K_i
+				trcopy=a.copyTransition();
+				for (int i=0;i<tr.length;i++)  //for all transitions
+				{
+					if (!(tr[i]==null))
+					{
+						if (tr[i].isUncontrollable(a)) 
+						{   
+							if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
+							{
+								rem[removed]=tr[i];//solo per testing
+								trcopy[i]=null;
+								removed++;
+								update=true;
+							}
+							else
+							{
+								trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state
+								trcheckpointer++;
+							}
+						}
+						else if //(!tr[i].isUncontrollable(a)&&   you already know that this is true because of the else
+								(FMCAUtil.contains(tr[i].getTargetP(), R)) //remove controllable with bad target
+						{
+							rem[removed]=tr[i]; //solo per testing
+							trcopy[i]=null;
+							removed++;
+							update=true;
+						}
+					}
+				} 
+				tr=trcopy;
+				tr=  FMCAUtil.removeHoles(tr, removed);
+				a.setTransition(tr);  //K_i
+				//
+				//
+				// building R_i
+				//
+				//
+				CAState[] danglingStates = a.getDanglingStates();
+				CAState[] newR=new CAState[trcheckpointer];
+				int newRpointer=0;
+				
+				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state
+				{
+					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
+					// setUnion removes duplicates we could skip the check
+					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
+					{
+						newR[newRpointer]=trcheck[i].getSourceP();
+						newRpointer++;
+					}
+				}
+				//add dangling states to R
+				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
+				
+				if (RwithDang.length!=R.length)
+				{
+					R = RwithDang;
+					update = true;
+				}
+				
+				//add source states of uncontrollable transitions with redundant target to R
+				if (newRpointer>0)
+				{
+					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
+					update=true;
+				}
+				
+				//add source states of uncontrollable transitions that were previously controllable
+				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
+				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
+				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
+				{
+					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
+					R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
+					update=true;
+				}
+				
+			}while(update);
+		}
+		
+		//a.getDanglingStates();
+		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
+		
+		//if initial state is bad or not all required actions are fired
+		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
+			return null;
+		
+		return a;
+	}
+		
+
+	/**
+	 * compute the choreography
+	 * 
+	 * 
+	 * @return the choreography for strong agreement
+	 */
+	public FMCA choreography()
+	{
+		FMCA a = this.clone();
+		FMCATransition[] tr = a.getTransition();
+		FMCATransition[] rem = new FMCATransition[tr.length];  //only for testing
+		//int[][] fs=a.allFinalStates();
+		int removed = 0;
+		
+		//I need to store the transitions, to check later on 
+		//if some controllable transition becomes uncontrollable
+		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
+		int potentiallyUncontrollableCounter = 0;
+		
+		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
+		int badtransitioncounter=0;
+		
+		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+		//and this operation affects the set of uncontrollable transitions in K_i
+		FMCATransition[] trcopy=a.copyTransition();
+		
+		//computing K_0 and R_0
+		for (int i=0;i<tr.length;i++)
+		{
+		//	System.out.println("transition "+i);
+
+			if (!tr[i].isUncontrollable(a)) //controllable and bad
+			{
+				if (!tr[i].isMatch())
+				{
+					rem[removed]=tr[i]; //solo per testing
+					trcopy[i] = null;
+					removed++;
+				}
+			}
+			else 
+			{	
+				if (!tr[i].isMatch())
+				{
+					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+					badtransitioncounter++;		
+				}
+	
+			}
+	
+			if(	//(tr[i].isGreedy()&&tr[i].isRequest())	||	
+					(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
+			}
+		}
+		
+		tr=trcopy;
+		tr=  FMCAUtil.removeHoles(tr, removed);		
+		a.setTransition(tr); //K_0 
+		
+		/*//computing R_0
+		for (int i=0;i<tr.length;i++)
+		{
+			if (tr[i].isUncontrollableChoreography(a) && (!tr[i].isMatch()))//||tr[i].isForbidden(p))) 	//uncontrollable and bad
+			{	
+				badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				badtransitioncounter++;		
+			}
+			if(	//(tr[i].isGreedy()&&tr[i].isRequest())	||	
+					(tr[i].isLazy()))
+			{
+				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
+				potentiallyUncontrollableCounter++;		
+			}
+		}*/
+
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
+		
+		//
+		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
+		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
+		boolean update=false;
+		if (R.length>0)
+		{
+			do{
+				update=false;
+				FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
+				int trcheckpointer=0;
+				removed=0;
+				rem= new FMCATransition[tr.length]; 
+				
+				//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+				//and this operation affects the set of uncontrollable transitions in K_i
+				trcopy=a.copyTransition();
+				for (int i=0;i<tr.length;i++)  //for all transitions
+				{
+					if (!(tr[i]==null))
+					{
+						if (tr[i].isUncontrollableChoreography(a)) 
+						{   
+							if (FMCAUtil.contains(tr[i].getSourceP(), R)||this.violatesBranchingCondition(tr[i],tr,R)) 
+										//remove if uncontrollable with bad source or violates branching condition
+							{
+								rem[removed]=tr[i];//solo per testing
+								trcopy[i]=null;
+								removed++;
+								update=true;
+							}
+							else
+							{
+								trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state and that do not violates branching condition
+								trcheckpointer++;
+							}
+						}
+						else if //(!tr[i].isUncontrollableChoreography(a) 
+								//&&
+								((FMCAUtil.contains(tr[i].getTargetP(), R))||this.violatesBranchingCondition(tr[i],tr,R)) //remove controllable with bad target
+						{
+							rem[removed]=tr[i]; //solo per testing
+							trcopy[i]=null;
+							removed++;
+							update=true;
+						}
+					}
+				} 
+				tr=trcopy;
+				tr=  FMCAUtil.removeHoles(tr, removed);
+				a.setTransition(tr);  //K_i
+				//
+				//
+				// building R_i
+				//
+				//
+				CAState[] danglingStates = a.getDanglingStates();
+				CAState[] newR=new CAState[trcheckpointer];
+				int newRpointer=0;
+				
+				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state and that do not violates branching condition
+				{
+					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
+					// setUnion removes duplicates we could skip the check
+					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
+					{
+						newR[newRpointer]=trcheck[i].getSourceP();
+						newRpointer++;
+					}
+				}
+				//add dangling states to R
+				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
+				if (RwithDang.length!=R.length)
+				{
+					R = RwithDang;
+					update=true;
+				}
+				
+				//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
+				if (newRpointer>0)
+				{
+					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
+					update=true;
+				}
+				
+				//add source states of uncontrollable transitions that were previously controllable
+				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchableChoreography(potentiallyUncontrollable, a);
+				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
+				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
+				{
+					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
+					R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
+					update=true;
+				}
+				
+			}while(update);
+		}
+		
+		//a.getDanglingStates();
+		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
+		
+		//if initial state is bad or [not all required actions are fired [deprecated]]
+		if (FMCAUtil.contains(a.getInitialCA(), R))//||(!p.checkRequired(a.getTransition())))
+			return null;
+		
+		return a;
+	}
+	
+	
+	/**
+	 * 
+	 * @param t
+	 * @return true if transition t violates the branching condition
+	 */
+	public boolean violatesBranchingCondition(CATransition t, CATransition[] tr, CAState[] R) 
+	{
+		
+	//	CAState[] dang = this.getDanglingStates();
+		CAState[] reach = this.getState();
+		
+		//int[][] reach = this.reachableStates();
+		if (t.isMatch())
+		{
+
+			int sender = t.getReceiver();  // TODO swapping requests and offers, for the case of choreography!
+			String[] label=t.getLabelP();
+			for (int j=0;j<reach.length;j++)
+			{
+				//see if there exists a reachable state with the sender in the same state as in t
+				if (    reach[j].isReachable()   		    //is reachable  TODO: this may not be updated (i.e. a state could be in reality unreachable!)
+						&& !FMCAUtil.contains(reach[j], R)  //is not bad  
+						&&(!Arrays.equals(reach[j].getState(),t.getSourceP().getState())) //it's not the same state
+						&&(reach[j].getState()[sender]==t.getSourceP().getState()[sender])) //but sender is in the same state
+						
+				{
+					int z=0;
+					boolean found = false;
+					while ((!found)&&(z<tr.length)) //see if from that reachable state there exists the transition with same label
+					{
+						found=Arrays.equals(reach[j].getState(), tr[z].getSourceP().getState())
+								&& Arrays.equals(tr[z].getLabelP(), label);
+						z++;
+					}
+					if (!found)
+					{
+						return true;  //if not branching condition is violated
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+
 	
 	/**
 	 * an array containing the number of  states of each principal
@@ -1212,6 +1620,9 @@ public class FMCA  extends CA implements java.io.Serializable
 		for (int i=0;i<rank.length;i++)
 		{
 			int[] principalstates=new int[states.length];//upperbound
+			for (int ind=0; ind<principalstates.length;ind++)
+				principalstates[ind] = -1;    //the next loop will not work otherwise because 0 is the initialization value but can also be a state
+			
 			int count=0;
 			for (int j=0;j<principalstates.length;j++)
 			{
@@ -1252,16 +1663,21 @@ public class FMCA  extends CA implements java.io.Serializable
 		int rank=states[0].length;
 		int[] count=new int[rank];
 		int[][] pfs=new int[rank][states.length];
+
+		for (int ind=0; ind<pfs.length;ind++)
+			for (int ind2=0; ind2<pfs[ind].length;ind2++)
+			pfs[ind][ind2] = -1;    //the check FMCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
+
 		for (int j=0;j<rank;j++)
 		{
 			pfs[j][0]=states[0][j];
-			count[j]=1;
+			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
 		}
 		for (int i=1;i<states.length;i++)
 		{
 			for (int j=0;j<rank;j++)
 			{
-				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )
+				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
 				{
 					pfs[j][count[j]]=states[i][j];
 					count[j]++;

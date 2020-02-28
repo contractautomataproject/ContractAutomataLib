@@ -389,6 +389,13 @@ public class FMCAUtil extends CAUtil
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param q
+	 * @param listq
+	 * @param listlength
+	 * @return true if in the first listlength of listq elements there is  q
+	 */
 	protected static boolean contains(int q, int[] listq,int listlength)
 	{
 		for (int i=0;i<listlength;i++)
@@ -421,6 +428,12 @@ public class FMCAUtil extends CAUtil
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param q
+	 * @param e
+	 * @return index of element e in q
+  	 */
 	protected static int getIndex(int[] q, int e)
 	{
 		for (int i=0;i<q.length;i++)

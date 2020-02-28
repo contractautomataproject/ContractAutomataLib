@@ -784,7 +784,7 @@ public class CA  //extends FSA
 	 * @return all the reachable states 
 	 */
 	// DEPRECATED IN FMCA
-	private int[][] reachableStates()
+	protected int[][] reachableStates()
 	{
 		CA aut=this.clone();
 		aut = CAUtil.removeUnreachableTransitions(aut);
@@ -817,6 +817,7 @@ public class CA  //extends FSA
 	
 	/**
 	 * 
+	 * 
 	 * @return all the final states of the CA
 	 */
 	public  int[][] allFinalStates()
@@ -838,7 +839,9 @@ public class CA  //extends FSA
 		int[] indmod = new int[1];
 		indmod[0]= 0; 
 		//CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
-		CAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);
+		
+		
+		CAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);  
 		return modif;
 	}
 	
