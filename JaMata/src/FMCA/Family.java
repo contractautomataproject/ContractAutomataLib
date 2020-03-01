@@ -1,8 +1,5 @@
 package FMCA;
 
-import java.awt.Toolkit;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,20 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
-import java.util.function.IntPredicate;
 
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.ProgressMonitor;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,7 +131,7 @@ public class Family {
 			catch (Exception e)
 			{
 				int debug=p[i].getForbiddenAndRequiredNumber();
-				int debug2=depthcount[debug];
+			//	int debug2=depthcount[debug];
 			}
 			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
 
