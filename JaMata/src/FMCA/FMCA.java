@@ -37,7 +37,7 @@ import CA.CATransition;
 
 
 /** 
- * Class implementing a Modal Service Contract Automaton and its functionalities
+ * Class implementing a Featured Modal Service Contract Automaton and its functionalities
  * The class is under construction, some functionalities are not yet updated
  * 
  * 
