@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import FMCA.FMCATransition;
-
 
 /**
  * Utilities for CA: product, aproduct

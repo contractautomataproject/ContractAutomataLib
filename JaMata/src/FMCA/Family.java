@@ -130,7 +130,7 @@ public class Family {
 			}
 			catch (Exception e)
 			{
-				int debug=p[i].getForbiddenAndRequiredNumber();
+			//	int debug=p[i].getForbiddenAndRequiredNumber();
 			//	int debug2=depthcount[debug];
 			}
 			pointerToLevel[i]=depthcount[p[i].getForbiddenAndRequiredNumber()];
@@ -408,10 +408,10 @@ public class Family {
 						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
 						{
 							//debug
-							if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9))
-							{
-								boolean debug=true;
-							}
+							/*
+							 * if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9)) { boolean
+							 * debug=true; }
+							 */
 							
 							
 							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level && pl[level-1][prodcompare].containFeature(features[removedfeature])) 

@@ -1886,7 +1886,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	{
 		int[] arr = this.getIndexOfLazyTransitions();
 		int l = arr.length;
-		long ll = (long) Math.pow(2.0, (double)arr.length);
+	//	long ll = (long) Math.pow(2.0, (double)arr.length);
 		long ns = this.getStates()+1;
 		//FMCA[] aut = new FMCA[(int)Math.pow(2.0, (double)arr.length)];
 		return "The automaton contains the following number of lazy transitions : "+l+" \n"

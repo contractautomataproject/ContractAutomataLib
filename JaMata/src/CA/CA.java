@@ -23,8 +23,8 @@ public class CA  //extends FSA
 	private int[] states;
 	private int[][] finalstates; 
 	private CATransition[] tra;
-	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
-			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
+	//private static String message = "*** CA ***\n The alphabet is represented by integers: " +
+	//		" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
