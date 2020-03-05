@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -55,7 +56,6 @@ public class FMCA  extends CA implements java.io.Serializable
 //	private static String message = "*** CA ***\n The alphabet is represented by integers: " +
 //			" negative numbers are request actions, positive are offer actions, 0 stands for idle\n";
 	
-	//TODO: add feature constraint
 	
 	/*float[] xstate=null;		
 	float[] ystate;
@@ -63,7 +63,9 @@ public class FMCA  extends CA implements java.io.Serializable
 	float[] yfinalstate;
 	*/
 	private CAState[] fstates=null;
-	private Family family;
+	private Family family; 
+	//TODO: add feature constraint, the family contains all valid products, they can be imported from a feature model in FeatureIDE
+	
 	/**
 	 * Invoke the super constructor and take in input the added new parameters of the automaton
 	 */
@@ -269,7 +271,7 @@ public class FMCA  extends CA implements java.io.Serializable
 								  try{
 									  //Integer.parseInt(arr2[0]); //check if we are reading states!
 									  int innerindex=0;
-									  int[] tf = new int[states[innerindex]]; //upper bound
+									  int[] tf = new int[states[outerindex]]; //upper bound
 									  for(int ind2=0;ind2<arr2.length;ind2++)
 									  {
 										  try{
@@ -937,7 +939,6 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		else
 		{
-			//this is used when a composition is computed and fstates are not yet generated
 			//TODO probably this should be fixed
 			FMCATransition[] at = this.getTransition();
 			FMCATransition[] finalTr = new FMCATransition[at.length];
@@ -1405,7 +1406,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		{
 		//	System.out.println("transition "+i);
 
-			if (!tr[i].isUncontrollable(a)) //controllable and bad
+			if (!tr[i].isUncontrollableChoreography(a)) //controllable and bad
 			{
 				if (!tr[i].isMatch())
 				{
@@ -1459,98 +1460,127 @@ public class FMCA  extends CA implements java.io.Serializable
 		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
 		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
 		boolean update=false;
-		if (R.length>0)
-		{
-			do{
-				update=false;
-				FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
-				int trcheckpointer=0;
-				removed=0;
-				rem= new FMCATransition[tr.length]; 
-				
-				//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-				//and this operation affects the set of uncontrollable transitions in K_i
-				trcopy=a.copyTransition();
-				for (int i=0;i<tr.length;i++)  //for all transitions
+		do{
+			update=false;
+			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
+			int trcheckpointer=0;
+			removed=0;
+			rem= new FMCATransition[tr.length]; 
+			
+			//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
+			//and this operation affects the set of uncontrollable transitions in K_i
+			trcopy=a.copyTransition();
+			for (int i=0;i<tr.length;i++)  //for all transitions
+			{
+				if (!(tr[i]==null))
 				{
-					if (!(tr[i]==null))
-					{
-						if (tr[i].isUncontrollableChoreography(a)) 
-						{   
-							if (FMCAUtil.contains(tr[i].getSourceP(), R)||this.violatesBranchingCondition(tr[i],tr,R)) 
-										//remove if uncontrollable with bad source or violates branching condition
-							{
-								rem[removed]=tr[i];//solo per testing
-								trcopy[i]=null;
-								removed++;
-								update=true;
-							}
-							else
-							{
-								trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state and that do not violates branching condition
-								trcheckpointer++;
-							}
-						}
-						else if //(!tr[i].isUncontrollableChoreography(a) 
-								//&&
-								((FMCAUtil.contains(tr[i].getTargetP(), R))||this.violatesBranchingCondition(tr[i],tr,R)) //remove controllable with bad target
+					if (tr[i].isUncontrollableChoreography(a)) 
+					{   
+						if (FMCAUtil.contains(tr[i].getSourceP(), R)) 
+									//remove if uncontrollable with bad source 
 						{
-							rem[removed]=tr[i]; //solo per testing
+							rem[removed]=tr[i];//solo per testing
 							trcopy[i]=null;
 							removed++;
 							update=true;
 						}
+						else
+						{
+							trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state 
+							trcheckpointer++;
+						}
 					}
-				} 
-				tr=trcopy;
-				tr=  FMCAUtil.removeHoles(tr, removed);
-				a.setTransition(tr);  //K_i
-				//
-				//
-				// building R_i
-				//
-				//
-				CAState[] danglingStates = a.getDanglingStates();
-				CAState[] newR=new CAState[trcheckpointer];
-				int newRpointer=0;
-				
-				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state and that do not violates branching condition
-				{
-					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
-					// setUnion removes duplicates we could skip the check
-					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
+					else if //(!tr[i].isUncontrollableChoreography(a) 
+							//&&
+							((FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
 					{
-						newR[newRpointer]=trcheck[i].getSourceP();
-						newRpointer++;
+						rem[removed]=tr[i]; //solo per testing
+						trcopy[i]=null;
+						removed++;
+						update=true;
 					}
 				}
-				//add dangling states to R
-				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
-				if (RwithDang.length!=R.length)
+			}
+			
+			/**
+			 * a transition violating the branching condition is pruned after all other transitions have been pruned in that state.
+			 */
+			tr=trcopy;
+			tr=  FMCAUtil.removeHoles(tr, removed);
+			a.setTransition(tr);
+			
+			removed=0;
+			rem= new FMCATransition[tr.length]; 
+			trcopy=a.copyTransition();
+			
+			for (int i=0;i<tr.length;i++)  //for all transitions
+			{
+				if (!(tr[i]==null))
 				{
-					R = RwithDang;
-					update=true;
-				}
-				
-				//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
-				if (newRpointer>0)
+					boolean violatesBranchingCondition = this.violatesBranchingCondition(tr[i],tr,R, a);
+					if (violatesBranchingCondition) //remove if violates branching condition
+					{
+						rem[removed]=tr[i];//solo per testing
+						trcopy[i]=null;
+						this.violatesBranchingCondition(tr[i],tr,R, a);
+						removed++;
+						update=true;
+						break;
+					}
+				}	
+			}
+			
+			tr=trcopy;
+			tr=  FMCAUtil.removeHoles(tr, removed);
+			a.setTransition(tr);  //K_i
+			
+			
+			//
+			//
+			// building R_i
+			//
+			//
+			CAState[] danglingStates = a.getDanglingStates();
+			CAState[] newR=new CAState[trcheckpointer];
+			int newRpointer=0;
+			
+			for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state and that do not violates branching condition
+			{
+				//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
+				// setUnion removes duplicates we could skip the check
+				if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
 				{
-					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
-					update=true;
+					newR[newRpointer]=trcheck[i].getSourceP();
+					newRpointer++;
 				}
-				
-				//add source states of uncontrollable transitions that were previously controllable
-				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchableChoreography(potentiallyUncontrollable, a);
-				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
-				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
-				{
-					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
-					R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
-					update=true;
-				}
-				
-			}while(update);
-		}
+			}
+			//add dangling states to R
+			CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
+			if (RwithDang.length!=R.length)
+			{
+				R = RwithDang;
+				update=true;
+			}
+			
+			//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
+			if (newRpointer>0)
+			{
+				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
+				update=true;
+			}
+			
+			//add source states of uncontrollable transitions that were previously controllable
+			CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchableChoreography(potentiallyUncontrollable, a);
+			CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
+			if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
+			{
+				unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
+				R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
+				update=true;
+			}
+			
+		}while(update);
+		
 		
 		//a.getDanglingStates();
 		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
@@ -1568,32 +1598,35 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * @param t
 	 * @return true if transition t violates the branching condition
 	 */
-	public boolean violatesBranchingCondition(CATransition t, CATransition[] tr, CAState[] R) 
+	public boolean violatesBranchingCondition(CATransition t, CATransition[] tr, CAState[] R, FMCA a) 
 	{
 		
-	//	CAState[] dang = this.getDanglingStates();
-		CAState[] reach = this.getState();
+		CAState[] dang = a.getDanglingStates();
+		CAState[] bad = FMCAUtil.setUnion(dang, R);
+		if (FMCAUtil.contains(t.getSourceP(), bad) || FMCAUtil.contains(t.getTargetP(), bad))
+			return false;		//ignore this transition because it is going to be pruned
 		
-		//int[][] reach = this.reachableStates();
+		
+		ArrayList<CAState> visit = FMCAUtil.setDifference(this.getState(), bad); 
 		if (t.isMatch())
 		{
 
-			int sender = t.getReceiver();  // TODO swapping requests and offers, for the case of choreography!
+			int sender = t.getSender();  
 			String[] label=t.getLabelP();
-			for (int j=0;j<reach.length;j++)
+			for (CAState e : visit)
 			{
-				//see if there exists a reachable state with the sender in the same state as in t
-				if (    reach[j].isReachable()   		    //is reachable  TODO: this may not be updated (i.e. a state could be in reality unreachable!)
-						&& !FMCAUtil.contains(reach[j], R)  //is not bad  
-						&&(!Arrays.equals(reach[j].getState(),t.getSourceP().getState())) //it's not the same state
-						&&(reach[j].getState()[sender]==t.getSourceP().getState()[sender])) //but sender is in the same state
+				int[] state= e.getState();
+
+				//for all (good) states with the sender in the same state as in t
+				if (   (!Arrays.equals(state,t.getSourceP().getState())) //it's not the same state
+						&&(state[sender]==t.getSourceP().getState()[sender])) //but sender is in the same state
 						
 				{
 					int z=0;
 					boolean found = false;
-					while ((!found)&&(z<tr.length)) //see if from that reachable state there exists the transition with same label
+					while ((!found)&&(z<tr.length)) //see if from that state there exists the transition with same label
 					{
-						found=Arrays.equals(reach[j].getState(), tr[z].getSourceP().getState())
+						found=Arrays.equals(state, tr[z].getSourceP().getState())
 								&& Arrays.equals(tr[z].getLabelP(), label);
 						z++;
 					}

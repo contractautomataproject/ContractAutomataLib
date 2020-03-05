@@ -2,6 +2,7 @@ package FMCA;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import CA.CAState;
@@ -533,7 +534,7 @@ public class FMCAUtil extends CAUtil
 		int[][] m= new int[q1.length][];
 		for (int i=0;i<m.length;i++)
 		{
-			if (!contains(q1[i],q2))
+			if (!contains(q1[i],q2)&&!contains(q1[i],m))
 			{
 				m[p]=q1[i];
 				p++;
@@ -557,21 +558,8 @@ public class FMCAUtil extends CAUtil
 		m=removeTailsNull(m,p);
 		return m;
 	}
-	protected static String[] setDifference(String[] q1, String[] q2)
-	{
-		int p=0;
-		String[] m= new String[q1.length];
-		for (int i=0;i<m.length;i++)
-		{
-			if (!contains(q1[i],q2))
-			{
-				m[p]=q1[i];
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p);
-		return m;
-	}
+		
+	
 	protected static String[] setIntersection(String[] q1, String[] q2)
 	{
 		int p=0;
@@ -773,6 +761,49 @@ public class FMCAUtil extends CAUtil
 			if(n[i]>max)
 				max=n[i];
 		return max;
-		
+	}
+	
+	/**
+	 * 
+	 * @param q1
+	 * @param q2
+	 * @return  q1 / q2
+	 */
+	protected static <T> ArrayList<T> setDifference(T[] q1, T[] q2)
+	{
+		ArrayList<T> m = new ArrayList<>(q1.length);
+		int p=0;
+		//T[] m= new T[q1.length];
+		for (int i=0;i<q1.length;i++)
+		{
+			if (!contains(q1[i],q2)
+					&&!contains(q1[i],m.toArray()))
+			{
+				m.add(p,q1[i]);    
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p);
+		return m;
+	}
+	
+
+	protected static <T> boolean contains(T q, T[] listq)
+	{
+		for (int i=0;i<listq.length;i++)
+		{
+			if (listq[i]!=null)
+				if (listq[i].equals(q))
+					return true;
+		}
+		return false;
+	}
+	
+	protected static <T> ArrayList<T> removeTailsNull(ArrayList<T> q,int length)
+	{
+		ArrayList<T> r = new ArrayList<>(length);
+		for (int i=0;i<length;i++)
+			r.add(i, q.get(i));
+		return r;
 	}
 }

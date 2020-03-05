@@ -330,7 +330,7 @@ public class Family {
 						System.out.println();
 					}
 */					String[] f1 = lines.toArray(new String[lines.size()]); //required features
-					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1), eq); 
+					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1).toArray(new String[1]), eq); 
 					boolean alreadyinserted=false;
 					/**
 					 * product generation of featureide may generate duplicate products!
@@ -428,10 +428,11 @@ public class Family {
 								}
 */								String[] rf=new String[1];
 								rf[0]=features[removedfeature];
-								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf),
-										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
-								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf),
-										FMCAUtil.setDifference(pl[level-1][prodcompare].getForbidden(),rf));
+								
+								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf).toArray(new String[1]),
+										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf).toArray(new String[1]));
+								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf).toArray(new String[1]),
+										FMCAUtil.setDifference(pl[level-1][prodcompare].getForbidden(),rf).toArray(new String[1]));
 								if (p1.equals(p2))
 								{	//featuresremoved[newprodind]=features[removedfeature];
 									boolean alreadyinserted=false;

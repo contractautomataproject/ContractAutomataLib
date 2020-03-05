@@ -55,6 +55,8 @@ public class CAUtil
 		 * scan all pair of transitions, if there is a match
 		 * then generate the match in all possible contexts		 
 		 * it also generates the independent moves, then clean from invalid transitions 
+		 * 
+		 * TODO it could be possible to avoid to generate invalid transitions, in an on-the-fly way
 		 */
 		CATransition[][] prodtr = aut[0].createArrayTransition2(aut.length); //new CATransition[aut.length][];
 		int trlength = 0;
@@ -70,10 +72,6 @@ public class CAUtil
 		{
 			CATransition[] t = prodtr[i];
 
-//			if (t[0].getLabelP()[0].contains("invoice"))
-//			{
-//				System.out.println("Debug!");
-//			}
 		
 			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{

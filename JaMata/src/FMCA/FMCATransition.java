@@ -128,23 +128,23 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 
 
 	/**
-	 * aka  controllable lazy request  --- request should be swapped by offer, in choreography offers can be necessary. 
+	 * aka  controllable lazy offer?  
 	 * Moreover it checks that the transition that matches has the same source state of this
 	 * @return	true if the  lazy transition request is matched 
 	 */
 	protected  boolean isMatchedChoreography(FMCA aut)
 	{
 		FMCATransition[] tr = aut.getTransition();
-		if ((this.isRequest()&&this.isLazy()))
+		if ((this.isOffer()&&this.isLazy()))
 		{
 			CAState[] R=aut.getDanglingStates();
 			for (int j=0;j<tr.length;j++)	
 			{
 				if ((tr[j].isMatch())
-					&&(tr[j].isLazy()&&this.isLazy())//the same type (greedy or lazy)
-					&&(tr[j].getReceiver()==this.getReceiver())	//the same principal
-					&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==this.getSourceP().getState()[this.getReceiver()]) //the same source state					
-					&&(tr[j].getLabelP()[tr[j].getReceiver()].equals(this.getLabelP()[this.getReceiver()])) //the same request
+					&&(tr[j].isLazy()&&this.isLazy())//the same type (lazy)
+					&&(tr[j].getSender()==this.getSender())	//the same principal
+					&&(tr[j].getSourceP().getState()[tr[j].getSender()]==this.getSourceP().getState()[this.getSender()]) //the same source state					
+					&&(tr[j].getLabelP()[tr[j].getSender()].equals(this.getLabelP()[this.getSender()])) //the same offer (different from orchestration!)
 					&&(tr[j].getSourceP().equals(this.getSourceP())) //the same source state because it is a semi-controllable for choreography
 					&&(!FMCAUtil.contains(this.getSourceP(), R)) //source state is not redundant
 					&&(!FMCAUtil.contains(tr[j].getTargetP(), R))) //target state is not redundant
@@ -154,7 +154,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			}
 			return false;
 		}
-		return true; // trivially matched, it is not a request or it is not lazy
+		return true; // trivially matched, it is not an offer or it is not lazy
 	}
 
 	/**
@@ -173,6 +173,25 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		target.getState()[sender]=source.getState()[sender];  //the sender is now idle
 		request[sender]=CATransition.idle;  //swapping offer to idle
 		return new FMCATransition(source,request,target,this.type); //returning the request transition
+		
+	}
+
+	/**
+	 * 
+	 * @return a new request transition where the sender of the match is idle
+	 */
+	public FMCATransition extractOfferFromMatch()
+	{
+		if (!this.isMatch())
+			return null;
+		//int length=this.getSourceP().length;
+		int receiver=this.getReceiver();
+		CAState source= this.getSourceP().clone();
+		CAState target= this.getTargetP().clone();
+		String[] offer=Arrays.copyOf(this.getLabelP(), this.getLabelP().length);
+		target.getState()[receiver]=source.getState()[receiver];  
+		offer[receiver]=CATransition.idle;  //swapping request to idle, and target state equal source state. The receiver is now idle
+		return new FMCATransition(source,offer,target,this.type); //returning the request transition
 		
 	}
 	
@@ -217,7 +236,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				if (this.equals(tr[j]))
 					return false; //the transition must not be in aut
 			}
-			FMCATransition t= this.extractRequestFromMatch(); //extract the request transition from this
+			FMCATransition t= this.extractOfferFromMatch(); //extract the offer transition from this
 			return !t.isMatchedChoreography(aut); 
 		}
 		else
@@ -360,10 +379,20 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 			int[] target = new int[insert.length+s.length+ss.length];
 			String[] label = new String[insert.length+s.length+ss.length];
 			action type;
-			if (((FMCATransition) t).isRequest())
+		/*	
+		    changed in case offers are necessary instead of requests
+		 
+		 	
+		    if (((FMCATransition) t).isRequest())
 				type=((FMCATransition) t).getType();
 			else
 				type=((FMCATransition) tt).getType();
+		*/		
+			if (((FMCATransition) t).getType()== action.PERMITTED)
+				type=((FMCATransition) tt).getType();
+			else
+				type=((FMCATransition) t).getType(); //TODO here I assume that it is not the case that both offers and requests are necessary!
+			
 			int counter=0;
 			for (int i=0;i<insert.length;i++)
 			{
