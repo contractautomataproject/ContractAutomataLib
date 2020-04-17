@@ -1,9 +1,7 @@
 package CA;
 
 public class State {
-	
 	private boolean accepting;
-	
 	private boolean initial;
 	
 	
