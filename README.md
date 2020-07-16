@@ -23,7 +23,7 @@ Software developed with Eclipse and JavaSE-1.8, 1.7
 
 
 
-<h3>Tutorials</h3>
+<h1>Tutorials</h1>
 A first video tutorial is available at https://www.youtube.com/watch?v=LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
@@ -32,7 +32,7 @@ The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation o
 The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
 
 
-<h1>References</h1>
+<h1>Documentation</h1>
 
 Further documentation for this tool and Featured Modal Contract Automata is available at:
 
