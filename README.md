@@ -12,12 +12,11 @@ The tool is still prototypical and under development.
 At the actual stage, it has been mainly used by the author for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
 
 I am working (when I have free time) on improving its usability for potential users and I am  searching for some developer to help me on this topic.
-Also, the code should be reorganised and cleaned, the current version is a result of quick incremental patches made over the years, with the goal of performing empirical evaluation of the theory and algorithms under development. 
+Also, the code should be reorganised and cleaned, the current version is a result of quick incremental patches made over the years, with the goal of performing empirical evaluations of the theory and algorithms under development. 
+
 If you have any question or want to help contact me on davide.basile@isti.cnr.it.
 
 FMCAT features both a GUI (based on mxGraph) and a command line interface (deprecated). 
-
-
 Software developed with Eclipse and JavaSE-1.8, 1.7
 
 
