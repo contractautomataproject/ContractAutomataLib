@@ -158,7 +158,7 @@ required actions must be available in the orchestration, and none of the
 forbidden actions is available.
 **Orchestration of a Service Product Line** Through FMCAT it is also
 possible to compute the orchestration of a whole service product line.
-By exploiting theoretical results from @techrepFMCA, the orchestration
+By exploiting theoretical results from FMCA (see references(, the orchestration
 can be computed without iterating through each product. In particular,
 the orchestration of the service product line is the union of the
 orchestrations of all canonical products. The FMCA in
