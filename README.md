@@ -39,9 +39,8 @@ Further documentation for this tool and Featured Modal Contract Automata is avai
 Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, 187, p.102344.
 https://www.sciencedirect.com/science/article/pii/S0167642318302260
 
-
-Basile, Davide, Maurice H. ter Beek, and Rosario Pugliese. "Bridging the gap between supervisory control and coordination of services: synthesis of orchestrations and choreographies." In International Conference on Coordination Languages and Models, pp. 129-147. Springer, Cham, 2019.
-https://arxiv.org/abs/1910.00849
+Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, 16.
+https://lmcs.episciences.org/6527
 
 
 Basile, D., Beek, M.H.T. and Gnesi, S., 2018, September. Modelling and analysis with featured modal contract automata. In Proceedings of the 22nd International Systems and Software Product Line Conference-Volume 2 (pp. 11-16).
@@ -53,6 +52,9 @@ https://doi.org/10.1145/3109729.3109760
 
 Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of dynamic service product lines with featured modal contract automata. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 117-122).
 https://doi.org/10.1145/3109729.3109741
+
+Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In MODELSWARD (pp. 679-686).
+https://www.scitepress.org/Link.aspx?doi=10.5220/0006291106790686
 
 
 
