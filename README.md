@@ -27,11 +27,11 @@ We consider a simple franchise of Hotel reservation systems and model it
 as a service product line. Such a system consists of clients (either
 business or economy) interested in booking a room in a Hotel, which
 offers either credit card or cash payments and possibly emits an invoice
-according to the Hotel feature model depicted in Fig. [fig:featuremodel]
-(cf. @techrepFMCA for more details on this example). The *orchestration*
-for the composition
-`EconomyClient`$\otimes$`Hotel`$\otimes$`BusinessClient` computed with
- is depicted in Figure [fig:fmcatatwork], specifically for the product
+according to the Hotel feature model depicted in the top figure
+(cf. references below for more details on this example).
+The *orchestration* for the composition
+`EconomyClient` X `Hotel` X `BusinessClient` computed with
+ is depicted in the top figure, specifically for the product
 requiring features *invoice* and *card* while forbidding feature *cash*
 (cf. product `p2` below), i.e. payments can only be made through credit
 card and invoices are required. This orchestration dictates how the
@@ -48,31 +48,28 @@ are prefixed by `?`. In our example, the room request (`?room`) of
 lazy, accordingly in their orchestration the urgent request is served
 before the lazy one.
 
-FMCAT exploits FMCA @techrepFMCA (see Definition [def:contract]), and in
-particular it uses results from Supervisory Control Theory @RW87 to
+FMCAT exploits FMCA , and in particular it uses results from Supervisory Control Theory  to
 build a safe orchestration of services as the *most permissive
 controller* (mpc) of the composition of FMCA. Permitted and necessary
 actions are interpreted as controllable and uncontrollable actions,
 respectively. Controllable actions can be blocked by the mpc, while this
 is not possible for the uncontrollable ones. Indeed, necessary
 requirements of all service contracts must be fulfilled for obtaining a
-safe orchestration of services (see Section [sect:synthesis]). The main
+safe orchestration of services. The main
 functionalities provided by FMCAT are listed below:
 
-![FMCAT at work](images/snapshot2.jpg "fig:") [fig:fmcatatwork]
 
 **Import/Export FMCA** FMCAT features both a command-line interface and
 a GUI. Accordingly, an FMCA can be specified either through a text file
 (extension `*.data`) or through the GUI (extension `*.mxe`). It is
 possible to import textual descriptions of FMCA directly into the XML
 format for the GUI and vice-versa. In the actual version of the tool,
-the graphical arrangement of an FMCA (e.g. Figure [fig:fmcatatwork]) is
+the graphical arrangement of an FMCA is
 not exported to the textual description, where only the information
 about states and transitions is kept.
 
 **Contract Composition** the operation of contract composition is an
-adaptation of the one available for contract automata @forte2016 (see
-Definition [def:composition]). FMCA are composable, and an automaton can
+adaptation of the one available for contract automata. FMCA are composable, and an automaton can
 specify either a single service or a service composition. Indeed,
 through FMCA it is possible to specify dynamic service product line,
 where new services can be added to the whole composition at binding
@@ -80,10 +77,8 @@ time. The operator of composition basically interleaves all the actions
 of principals, with the only restriction being the case in which two
 principals are ready on their corresponding request/offer action: in
 this case only their synchronization (called match) will be available.
-The FMCA in Figure [fig:fmcatatwork] is a composition of three
+The FMCA in top figure is a composition of three
 principals.\
-
-[fig:featuremodel]
 
 **Generation of Partial Order of Products** An FMCA consists of a
 behavioural description of a service (i.e. the automaton) together with
@@ -91,11 +86,10 @@ a feature model describing the product line. In particular, in FMCA a
 text file (extension .prod) specifies each product through its set of
 *required* and *forbidden* actions that are, respectively, true and
 false atoms of the formula (feature constraints) representing the
-feature model (see Definition [def:subproduct]). An example of family
-description is below, corresponding to the feature model in
-Figure [fig:featuremodel], also identified by the formula
-$ \varphi=((card \wedge \neg cash) \vee (cash \wedge \neg card)) \wedge (\neg cash \vee invoice)$.
-Three products satisfying $\varphi$ are listed below:
+feature model. An example of family
+description is below, corresponding to the feature model identified by the formula
+phi=((card && !cash) || (cash && !card)) && (!cash ||invoice). 
+Three products satisfying phi are listed below:
 
     p2: R={card,invoice} F={cash}; p3: R={card} 
     F={cash,invoice}; p4: R={cash,invoice} F={card}
@@ -104,31 +98,30 @@ Note that in FMCA the leaves of the corresponding feature model are
 features, and are a subset of service actions. Moreover, FMCAT considers
 products where not all variability has been resolved (aka sub-families),
 but sufficient to decide whether the formula is satisfied or not. In
-this case, the interpretation function (i.e. product) `card`$=true$,
-`cash`$=f\!alse$ satisfies $\varphi$ and has to solve the variability
+this case, the interpretation function (i.e. product) `card`=true,
+`cash`=false satisfies phi and has to solve the variability
 related to the `invoice` feature: this is the product
 `p1: R={card} F={cash}`, identified as a *super-*product of both
-$\texttt{p2}$ and $\texttt{p3}$. Indeed, required and forbidden actions
+`p2` and `p3`. Indeed, required and forbidden actions
 of `p1` are included in its sub-products; and the two “top” products are
-`p1` and `p4` (see Definition [def:po]). FMCAT exploits this ordering
+`p1` and `p4`. FMCAT exploits this ordering
 relation (i.e. set inclusion) among products to efficiently verify the
-service product line. In Figure [fig:po] the partial order of the above
-products is depicted, and it is automatically generated by FMCAT.\
-**Verification of Valid Products** Once an FMCA $\mathcal A$ has been
+service product line. The partial order of the above
+products is automatically generated by FMCAT.\
+**Verification of Valid Products** Once an FMCA A has been
 loaded or imported, together with its partial order of products, all
-products that are valid in the FMCA $\mathcal A$ can identified, i.e.
+products that are valid in the FMCA A can identified, i.e.
 those where all required features (i.e. actions) are available in
-$\mathcal A$, and none of the forbidden features is (see
-Definition [def:validinA]). By relying on the theory of FMCA, it is
+$\mathcal A$, and none of the forbidden features is. By relying on the theory of FMCA, it is
 possible to identify all such products, potentially exponential in
 number, without performing the check for each one of them. Indeed, FMCAT
 internally represents the products through a tree data-structure. The
 algorithm for this operation basically performs a top-down breadth-first
 visit of the tree, where sub-trees rooted in products non-valid in
 $\mathcal A$ are pruned. It is known that validity of a product of an
-FMCA implies validity of all its super-products @techrepFMCA. Given the
-FMCA depicted in Figure [fig:fmcatatwork] and the products in
-Figure [fig:po], the products valid in the FMCA are `p1` and `p2` only.\
+FMCA implies validity of all its super-products. Given the
+FMCA depicted in top figure  and the products in
+phi, the products valid in the FMCA are `p1` and `p2` only.\
 **Computing Canonical Products** Canonical products are those
 characterising the whole service product line. All other services of the
 given family can be obtained by refinement of some canonical product.
@@ -141,7 +134,7 @@ line. Indeed, the orchestration of `p2` is contained into the one of
 **Orchestration of a Product** An orchestration of services is the
 maximal sub-portion of the FMCA that is *safe*, i.e. all requests of
 services are matched by corresponding offers (e.g. the FMCA in
-Figure [fig:fmcatatwork] is safe). The orchestration, being the mpc from
+top figure is safe). The orchestration, being the mpc from
 Supervisory Control Theory, tries to keep the maximum number of
 permitted actions, while necessary requests must be matched for reaching
 a non-empty orchestration. Urgent, greedy and lazy necessary requests
@@ -149,12 +142,12 @@ characterise “when” the request can be matched, and give rise to
 different priorities. Urgent requests do not allow delays (due to
 interleavings generated by the composition), i.e. they are
 uncontrollable. For example, the red transition in
-Figure [fig:fmcatatwork] is matched in the initial state. Greedy
+top figure is matched in the initial state. Greedy
 (orange) requests can be delayed as soon as the first match is
 available, that is, greedy matches are uncontrollable. Lazy
 matches/requests can be controlled by the orchestration, provided that
 at least one match is available. For example, in
-Figure [fig:fmcatatwork], the green request of the first principal
+top figure, the green request of the first principal
 (`EconomyClient`) is served after the red request of the third principal
 (`BusinessClient`).
 
@@ -167,9 +160,9 @@ By exploiting theoretical results from @techrepFMCA, the orchestration
 can be computed without iterating through each product. In particular,
 the orchestration of the service product line is the union of the
 orchestrations of all canonical products. The FMCA in
-Figure [fig:fmcatatwork] is the orchestration of the canonical product
+top figure is the orchestration of the canonical product
 `p1` and hence it is also the orchestration of the whole service product
-line, identified by the feature model in Figure [fig:featuremodel].
+line, identified by the feature model in phi.
 Indeed, the orchestration of `p2`, in this case, is exactly the one of
 `p1` (in general it could be a sub-automaton). If, for example, we would
 add a fifth product `p5: R={receipt,invoice}, F={taxi}` (obtained by
@@ -177,8 +170,6 @@ modifying the feature model), then this would be another canonical
 product and the union of the orchestrations of `p1` and `p5` would be
 the mpc of the service product line.
 
-![A partial order of products generated by
-FMCAT](images/SnapshotProduct.jpg "fig:") [fig:po]
 
 
 <h1>Tutorials</h1>
