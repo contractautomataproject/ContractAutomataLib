@@ -9,7 +9,7 @@ FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing 
 The tool is still prototypical and under development. 
 At the actual stage, it has been mainly used by the authors for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
 
-We are working  on improving its usability for potential users and we are searching for developer working on this matter.
+We are working  on improving its usability for potential users and we are searching for developers helping on this topic.
 
 FMCAT features both a GUI (based on mxGraph) and a command line interface (deprecated). 
 
