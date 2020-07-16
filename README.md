@@ -3,7 +3,24 @@
 
 <h1>Info</h1>
 
-The directory JaMaTa contains the FMCA Tool, and contains a Readme. 
+The directory JaMaTa contains the FMCA Tool. 
+
+FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
+The tool is still prototypical and under development. 
+At the actual stage, it has been mainly used by the authors for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
+
+We are working  on improving its usability for potential users and we are searching for developer working on this matter.
+
+FMCAT features both a GUI (based on mxGraph) and a command line interface (deprecated). 
+
+
+Software developed with Eclipse and JavaSE-1.8, 1.7
+
+
+- FMCA (Featured Modal Service Contract Automata) extends CA
+- CA (Contract Automata) see CAT repository for more informations on CA
+
+
 
 
 <h3>Tutorials</h3>
