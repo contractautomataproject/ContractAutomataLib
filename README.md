@@ -61,10 +61,10 @@ can dynamically adapt to the discovery of new services and to services
 that are no longer available.
 
 Featured modal contract automata (FMCA) have been introduced
-in  for modelling contract-based dynamic service product
+  for modelling contract-based dynamic service product
 lines, and are an extension of modal service contract
-automata and and contract
-automat. An FMCA can model either single
+automata  and contract
+automata. An FMCA can model either single
 services (called *principals*) or compositions of services based on an
 orchestrated coordination . The goal of each principal is to
 reach an accepting (final) state by matching its requests with
@@ -87,7 +87,7 @@ number of permitted requests that could be fulfilled without spoiling
 the service composition. Contracts adapt to the overall agreement by
 renouncing to unsatisfiable, yet permitted requirements.
 
-In this paper we present FMCAT: a prototypical tool implementing the
+FMCAT is a prototypical tool implementing the
 theory of FMCA . FMCAT organises the products into a partial
 order, to efficiently compute all valid products and the orchestration
 of the service product line from only a subset of products. FMCAT also
