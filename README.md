@@ -9,10 +9,11 @@ The directory JaMaTa contains the FMCA Tool.
 
 FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
 The tool is still prototypical and under development. 
-At the actual stage, it has been mainly used by the authors for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
+At the actual stage, it has been mainly used by the author for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
 
-We are working  on improving its usability for potential users and we are searching for developers helping on this topic.
-Also, the code should be reorganised and cleaned, the current version is a result of quick incremental patches over the years.
+I am working (when I have free time) on improving its usability for potential users and I am  searching for some developer to help me on this topic.
+Also, the code should be reorganised and cleaned, the current version is a result of quick incremental patches made over the years, with the goal of performing empirical evaluation of the theory and algorithms under development. 
+If you have any question or want to help contact me on davide.basile@isti.cnr.it.
 
 FMCAT features both a GUI (based on mxGraph) and a command line interface (deprecated). 
 
