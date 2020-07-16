@@ -23,6 +23,78 @@ Software developed with Eclipse and JavaSE-1.8, 1.7
 - CA (Contract Automata) see CAT repository for more informations on CA
 
 
+<h1>Tutorials</h1>
+A first video tutorial is available at https://www.youtube.com/watch?v=LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
+The directory demoJSCP contains an executable jar and the models used in this tutorial.
+
+
+The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
+The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
+
+
+
+
+<h1>FMCAT</h1>
+
+Service-oriented computing (SOC)  is a paradigm for distributed
+applications based on the publication, discovery and orchestration of
+*services*. Services are composed to provide Web applications and can be
+reused in different configurations over time.
+
+Through SOC it is possible to build dynamic service-based applications
+capable of adapting to changes in the environment or to the resources of
+the devices on which they run. Services are usually programmed with
+little or no knowledge about clients and other services before being
+loosely coupled into networks of collaborating end-user applications.
+Therefore the idea to organise them into *dynamic service product lines*
+has been explored at different SPLC conferences,
+leading to applications for Web stores, smart grids and services as used
+in scientific workflows and grid computing  
+and interest has been recently revived . Concerning SOC,
+*service contracts*  have been
+introduced to formally describe the behaviour of services in terms of
+their obligations (i.e. *offers* of the service) and their requirements
+(i.e. *requests* by the service). Contracts characterise an *agreement*
+among services as an orchestration (i.e. a composition) of them based on
+the satisfaction of all requirements through obligations. Orchestrations
+can dynamically adapt to the discovery of new services and to services
+that are no longer available.
+
+Featured modal contract automata (FMCA) have been introduced
+in  for modelling contract-based dynamic service product
+lines, and are an extension of modal service contract
+automata and and contract
+automat. An FMCA can model either single
+services (called *principals*) or compositions of services based on an
+orchestrated coordination . The goal of each principal is to
+reach an accepting (final) state by matching its requests with
+corresponding offers of other principals. Through service contracts it
+is possible to characterise the behaviour of an ensemble of services. An
+execution is considered safe if all requests are matched by
+corresponding offers. Variability mechanisms are available to
+distinguish *necessary*  from *permitted* requests. Offers are only
+permitted as dictated by agreement. Necessary service requests can be
+urgent, greedy or lazy and have, in decreasing order of relevance,
+further restrictions on their satisfiability.
+
+Features are identified as service actions, and each  represents a
+behavioural product line of services equipped with feature constraints.
+Feature models are described as usual, where each product of the product
+line is identified as a truth assignment satisfying the corresponding
+feature constraints. Contract agreement guarantees the fulfilment of all
+feature constraints, all variants of necessary requests and the maximum
+number of permitted requests that could be fulfilled without spoiling
+the service composition. Contracts adapt to the overall agreement by
+renouncing to unsatisfiable, yet permitted requirements.
+
+In this paper we present FMCAT: a prototypical tool implementing the
+theory of FMCA . FMCAT organises the products into a partial
+order, to efficiently compute all valid products and the orchestration
+of the service product line from only a subset of products. FMCAT also
+allows to compute the orchestration of a single product and features
+both a GUI and a command-line prompt. 
+
+
 <h1>FMCAT functionalities</h1>
 
 We consider a simple franchise of Hotel reservation systems and model it
@@ -229,16 +301,6 @@ computing the partial order of products and the canonical product. It is
 also used by the `FMCA` class for computing the orchestration of the
 service product line (i.e. the union of the mpc of the canonical
 products).
-
-
-<h1>Tutorials</h1>
-A first video tutorial is available at https://www.youtube.com/watch?v=LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
-The directory demoJSCP contains an executable jar and the models used in this tutorial.
-
-
-The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
-The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
-
 
 <h1>Documentation</h1>
 
