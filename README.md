@@ -200,7 +200,9 @@ visit of the tree, where sub-trees rooted in products non-valid in
 FMCA implies validity of all its super-products. Given the
 FMCA depicted in Figure [fig:architecture]  and the products in
 phi, the products valid in the FMCA are `p1` and `p2` only.
-**Computing CanonicFigure [fig:architecture]al Products** Canonical products are those
+
+
+**Computing Canonical Products** Canonical products are those
 characterising the whole service product line. All other services of the
 given family can be obtained by refinement of some canonical product.
 Canonical products are all valid “top” products of the given partial
