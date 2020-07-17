@@ -25,7 +25,7 @@ Software developed with Eclipse and JavaSE-1.8, 1.7
 
 
 <h1>Tutorials</h1>
-A first video tutorial is available at https://www.youtube.com/watch?v=LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
+A first video tutorial is available at https://youtu.be/LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
 
