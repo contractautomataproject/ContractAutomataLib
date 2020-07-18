@@ -62,7 +62,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	float[] xfinalstate;
 	float[] yfinalstate;
 	*/
-	private CAState[] fstates=null;
+	private CAState[] fstates;
 	private Family family; 
 	//TODO: add feature constraint, the family contains all valid products, they can be imported from a feature model in FeatureIDE
 	
@@ -148,6 +148,9 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	/**
 	 * load a FMCA described in a text file, compared to CA it also loads the must transitions
+	 * 
+	 * this method is now only used  in the import phase
+	 * 
 	 * @param the name of the file
 	 * @return	the CA loaded
 	 */
