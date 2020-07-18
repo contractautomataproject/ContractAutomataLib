@@ -5,6 +5,8 @@
 
 <h1>Info</h1>
 
+The directory JaMaTa contains the FMCA Tool. 
+
 FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
 The tool is still prototypical and under development. 
 At the actual stage, it has been mainly used by the author for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
@@ -35,7 +37,7 @@ The directory demoLMCS2020 contains an executable jar and the models used in thi
 
 <h1>FMCAT</h1>
 
-Service-oriented computing (SOC)Â  is a paradigm for distributed
+Service-oriented computing (SOC)  is a paradigm for distributed
 applications based on the publication, discovery and orchestration of
 *services*. Services are composed to provide Web applications and can be
 reused in different configurations over time.
@@ -48,35 +50,35 @@ loosely coupled into networks of collaborating end-user applications.
 Therefore the idea to organise them into *dynamic service product lines*
 has been explored at different SPLC conferences,
 leading to applications for Web stores, smart grids and services as used
-in scientific workflows and grid computingÂ  
-and interest has been recently revivedÂ . Concerning SOC,
-*service contracts*Â  have been
+in scientific workflows and grid computing  
+and interest has been recently revived . Concerning SOC,
+*service contracts*  have been
 introduced to formally describe the behaviour of services in terms of
-their obligations (i.e.Â *offers* of the service) and their requirements
-(i.e.Â *requests* by the service). Contracts characterise an *agreement*
-among services as an orchestration (i.e.Â a composition) of them based on
+their obligations (i.e. *offers* of the service) and their requirements
+(i.e. *requests* by the service). Contracts characterise an *agreement*
+among services as an orchestration (i.e. a composition) of them based on
 the satisfaction of all requirements through obligations. Orchestrations
 can dynamically adapt to the discovery of new services and to services
 that are no longer available.
 
 Featured modal contract automata (FMCA) have been introduced
-Â  for modelling contract-based dynamic service product
+  for modelling contract-based dynamic service product
 lines, and are an extension of modal service contract
-automata Â and contract
+automata  and contract
 automata. An FMCA can model either single
 services (called *principals*) or compositions of services based on an
-orchestrated coordinationÂ . The goal of each principal is to
+orchestrated coordination . The goal of each principal is to
 reach an accepting (final) state by matching its requests with
 corresponding offers of other principals. Through service contracts it
 is possible to characterise the behaviour of an ensemble of services. An
 execution is considered safe if all requests are matched by
 corresponding offers. Variability mechanisms are available to
-distinguish *necessary*Â  from *permitted* requests. Offers are only
+distinguish *necessary*  from *permitted* requests. Offers are only
 permitted as dictated by agreement. Necessary service requests can be
 urgent, greedy or lazy and have, in decreasing order of relevance,
 further restrictions on their satisfiability.
 
-Features are identified as service actions, and each Â represents a
+Features are identified as service actions, and each  represents a
 behavioural product line of services equipped with feature constraints.
 Feature models are described as usual, where each product of the product
 line is identified as a truth assignment satisfying the corresponding
@@ -87,7 +89,7 @@ the service composition. Contracts adapt to the overall agreement by
 renouncing to unsatisfiable, yet permitted requirements.
 
 FMCAT is a prototypical tool implementing the
-theory of FMCAÂ . FMCAT organises the products into a partial
+theory of FMCA . FMCAT organises the products into a partial
 order, to efficiently compute all valid products and the orchestration
 of the service product line from only a subset of products. FMCAT also
 allows to compute the orchestration of a single product and features
@@ -101,12 +103,12 @@ as a service product line. Such a system consists of clients (either
 business or economy) interested in booking a room in a Hotel, which
 offers either credit card or cash payments and possibly emits an invoice
 according to the Hotel feature model described by the formula phi below
-(cf.Â references for more details on this example).
+(cf. references for more details on this example).
 The *orchestration* for the composition
 `EconomyClient` `X` `Hotel` `X` `BusinessClient` computed with
-Â is depicted in the [fig:architecture], specifically for the product
+ is depicted in the [fig:architecture], specifically for the product
 requiring features *invoice* and *card* while forbidding feature *cash*
-(cf.Â product `p2` below), i.e. payments can only be made through credit
+(cf. product `p2` below), i.e. payments can only be made through credit
 card and invoices are required. This orchestration dictates how the
 computation evolves: at each transition the states of principals and
 their actions are identified, e.g. `BusinessClient` (third service) is
@@ -121,7 +123,7 @@ are prefixed by `?`. In our example, the room request (`?room`) of
 lazy, accordingly in their orchestration the urgent request is served
 before the lazy one.
 
-FMCAT exploits FMCAÂ , and in particular it uses results from Supervisory Control TheoryÂ  to
+FMCAT exploits FMCA , and in particular it uses results from Supervisory Control Theory  to
 build a safe orchestration of services as the *most permissive
 controller* (mpc) of the composition of FMCA. Permitted and necessary
 actions are interpreted as controllable and uncontrollable actions,
@@ -151,7 +153,7 @@ time. The operator of composition basically interleaves all the actions
 of principals, with the only restriction being the case in which two
 principals are ready on their corresponding request/offer action: in
 this case only their synchronization (called match) will be available.
-The FMCA in FigureÂ [fig:architecture] is a composition of three
+The FMCA in Figure [fig:architecture] is a composition of three
 principals.
 
 **Generation of Partial Order of Products** An FMCA consists of a
@@ -177,7 +179,7 @@ this case, the interpretation function (i.e. product) `card`=true,
 related to the `invoice` feature: this is the product
 `p1: R={card} F={cash}`, identified as a *super-*product of both
 `p2` and `p3`. Indeed, required and forbidden actions
-of `p1` are included in its sub-products; and the two â€œtopâ€� products are
+of `p1` are included in its sub-products; and the two “top” products are
 `p1` and `p4`. FMCAT exploits this ordering
 relation (i.e. set inclusion) among products to efficiently verify the
 service product line. The partial order of the above
@@ -196,16 +198,16 @@ algorithm for this operation basically performs a top-down breadth-first
 visit of the tree, where sub-trees rooted in products non-valid in
   A are pruned. It is known that validity of a product of an
 FMCA implies validity of all its super-products. Given the
-FMCA depicted in FigureÂ [fig:architecture]  and the products in
+FMCA depicted in Figure [fig:architecture]  and the products in
 phi, the products valid in the FMCA are `p1` and `p2` only.
 
 
 **Computing Canonical Products** Canonical products are those
 characterising the whole service product line. All other services of the
 given family can be obtained by refinement of some canonical product.
-Canonical products are all valid â€œtopâ€� products of the given partial
+Canonical products are all valid “top” products of the given partial
 order, quotiented by their set of forbidden features. FMCAT allows to
-identify all canoniFigureÂ [fig:architecture]cal products from an FMCA and its products. In the
+identify all canoniFigure [fig:architecture]cal products from an FMCA and its products. In the
 above example, `p1` is the only canonical product of the service product
 line. Indeed, the orchestration of `p2` is contained into the one of
 `p1`.
@@ -214,20 +216,20 @@ line. Indeed, the orchestration of `p2` is contained into the one of
 **Orchestration of a Product** An orchestration of services is the
 maximal sub-portion of the FMCA that is *safe*, i.e. all requests of
 services are matched by corresponding offers (e.g. the FMCA in
-FigureÂ [fig:architecture] is safe). The orchestration, being the mpc from
+Figure [fig:architecture] is safe). The orchestration, being the mpc from
 Supervisory Control Theory, tries to keep the maximum number of
 permitted actions, while necessary requests must be matched for reaching
 a non-empty orchestration. Urgent, greedy and lazy necessary requests
-characterise â€œwhenâ€� the request can be matched, and give rise to
-different FigureÂ [fig:architecture]. Urgent requests do not allow delays (due to
+characterise “when” the request can be matched, and give rise to
+different Figure [fig:architecture]. Urgent requests do not allow delays (due to
 interleavings generated by the composition), i.e. they are
 uncontrollable. For example, the red transition in
-FigureÂ [fig:architecture] is matched in the initial state. Greedy
+Figure [fig:architecture] is matched in the initial state. Greedy
 (orange) requests can be delayed as soon as the first match is
 available, that is, greedy matches are uncontrollable. Lazy
 matches/requests can be controlled by the orchestration, provided that
 at least one match is available. For example, in
-FigureÂ [fig:architecture], the green request of the first principal
+Figure [fig:architecture], the green request of the first principal
 (`EconomyClient`) is served after the red request of the third principal
 (`BusinessClient`).
 
@@ -238,11 +240,11 @@ forbidden actions is available.
 
 **Orchestration of a Service Product Line** Through FMCAT it is also
 possible to compute the orchestration of a whole service product line.
-By exploiting theoretical results fromÂ FMCA (see references(, the orchestration
+By exploiting theoretical results from FMCA (see references(, the orchestration
 can be computed without iterating through each product. In particular,
 the orchestration of the service product line is the union of the
 orchestrations of all canonical products. The FMCA in
-FigureÂ [fig:architecture] is the orchestration of the canonical product
+Figure [fig:architecture] is the orchestration of the canonical product
 `p1` and hence it is also the orchestration of the whole service product
 line, identified by the feature model in phi.
 Indeed, the orchestration of `p2`, in this case, is exactly the one of
@@ -262,7 +264,7 @@ which it inherited some basic functionalities for storing and printing
 automata.
 
 A Diagram showing the architecture of FMCAT is depicted in
-FigureÂ [fig:architecture], and it is composed of three main modules:
+Figure [fig:architecture], and it is composed of three main modules:
 
 
 **User Interface** This module contains the two Java classes
