@@ -72,8 +72,8 @@ public class EditorMenuBar extends JMenuBar
 	 */
 	private static final long serialVersionUID = 4060203894740766714L;
 
-	private ProgressMonitor progressMonitor;
-	private JTextArea taskOutput;
+//	private ProgressMonitor progressMonitor;
+//	private JTextArea taskOutput;
 	
 	
 	public enum AnalyzeType

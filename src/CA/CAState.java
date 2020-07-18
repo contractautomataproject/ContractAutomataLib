@@ -6,6 +6,7 @@ import FMCA.FMCAUtil;
 
 public class CAState {
 	private int[] state;
+	
 	private float x;
 	private float y;
 	private boolean initial;
@@ -15,6 +16,7 @@ public class CAState {
 	public enum type {
 		INITIAL, FINAL, BOTH
 	}
+	
 	public CAState(int[] state)
 	{
 		setInitial(false);
@@ -47,7 +49,7 @@ public class CAState {
 		this.setX(x);
 		this.setY(y);		
 	}
-	public CAState(int[] state, float x, float y,boolean initial, boolean finalstate)
+	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
 	{
 		this.setState(state);
 		this.setX(x);
@@ -108,7 +110,6 @@ public class CAState {
 				//&& this.isSuccessfull == c.isSuccessfull()	//thus two equal states may become different if I check this variables
 				);
 	}
-	
 	
 	public boolean isSuccessfull() {
 		return isSuccessfull;
