@@ -83,7 +83,7 @@ public class CA  implements java.io.Serializable
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
-	protected static CATransition loadTransition(String str, int rank)
+	public static CATransition loadTransition(String str, int rank)
 	{
 		  int what=0;
 		  String[] ss=str.split("]");

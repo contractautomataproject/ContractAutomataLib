@@ -23,6 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import CA.CA;
 import CA.CAState;
 import CA.CATransition;
 
@@ -190,7 +191,7 @@ public class FMCAIO {
 						  }
 						  case "(": //a may transition
 						  {
-							  CATransition temp=loadTransition(strLine,rank);
+							  CATransition temp=CA.loadTransition(strLine,rank);
 							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),FMCATransition.action.PERMITTED);
 							  pointert++;
 							  break;
@@ -205,7 +206,7 @@ public class FMCAIO {
 							  	case "G": type=FMCATransition.action.GREEDY;break;
 							  	case "L": type=FMCATransition.action.LAZY;break;
 							  }
-							  CATransition temp=loadTransition(strLine,rank);
+							  CATransition temp=CA.loadTransition(strLine,rank);
 							  t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),type);
 							  pointert++;				 
 							  break;
@@ -403,11 +404,11 @@ public class FMCAIO {
 
 	
 	/**
-	 * write the FMCA as a mxGraphModel for the GUI
+	 * write the FMCA aut as a mxGraphModel for the GUI
 	 * @param fileName	write the automaton into fileName
 	 * @return
 	 */
-	public File exportToXML(String fileName)
+	public static File exportToXML(String fileName, FMCA aut)
 	{
 		try{
 			DocumentBuilderFactory dbFactory =
@@ -433,15 +434,16 @@ public class FMCAIO {
 			//TODO this could be improved: it generates all combinations of states, 
 			// but in case CAState[] fstates !=null we already have all fstates instantiated
 			// there is no need to generate them again
-			int[][][] all=this.allNonFinalAndFinalStates();
+			int[][][] all=aut.allNonFinalAndFinalStates();
 			int[][] states=all[0];
+			CAState[] fstates=aut.getState();
 			Element[] statese=new Element[states.length];
 			
 			//TODO: smart graph display -- I think I did it
 			for (int i=0;i<states.length;i++)
 			{
-				if (this.fstates!=null)
-					statese[i]=createElementState(doc, root,Integer.toString(i+2), this.fstates,states[i]);
+				if (fstates!=null)
+					statese[i]=createElementState(doc, root,Integer.toString(i+2), states,states[i]);
 				else
 				{	
 					CAState[] dum= new CAState[1];
@@ -454,8 +456,8 @@ public class FMCAIO {
 			Element[] statesef=new Element[statesf.length];
 			for (int i=0;i<statesf.length;i++)
 			{
-				if (this.fstates!=null)
-					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), this.fstates,statesf[i]);
+				if (fstates!=null)
+					statesef[i]=createElementFinalState(doc, root,Integer.toString(i+2+states.length), fstates,statesf[i]);
 				else
 				{	
 					CAState[] dum= new CAState[1];
@@ -465,7 +467,7 @@ public class FMCAIO {
 				}
 					
 			}
-			FMCATransition t[]= this.getTransition();
+			FMCATransition t[]= aut.getTransition();
 			for (int i=0;i<t.length;i++)
 			{
 				Element s; Element ta;
