@@ -42,26 +42,26 @@ public class Product {
 		for (int i=0;i<f.length;i++)
 			fp[i]=CATransition.getUnsignedAction(f[i]);
 
-		int countreq=0;
-		int countforb=0;
-		
+//		int countreq=0;
+//		int countforb=0;
+//		
 		for (int i=0;i<eq.length;i++)
 		{
 			if (FMCAUtil.contains(eq[i][0], rp)&&FMCAUtil.contains(eq[i][1], rp))
 			{
 				int index=FMCAUtil.getIndex(rp, eq[i][1]);
 				rp[index]=null;
-				countreq++;
+				//countreq++;
 			}
 			else if (FMCAUtil.contains(eq[i][0], fp)&&FMCAUtil.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
 			{
 				int index=FMCAUtil.getIndex(fp, eq[i][1]);
 				fp[index]=null;
-				countforb++;
+				//countforb++;
 			}
 		}
-		rp=FMCAUtil.removeHoles(rp, countreq);
-		fp=FMCAUtil.removeHoles(fp, countforb);
+		rp=FMCAUtil.removeHoles(rp).toArray(rp); //countreq
+		fp=FMCAUtil.removeHoles(fp).toArray(fp); //countforb
 		this.required=rp;
 		this.forbidden=fp;
 	}

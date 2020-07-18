@@ -9,6 +9,9 @@ import FMCA.Product;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
 public class ProductFrame extends JFrame{
 	private Family fam;
 	JButton[] nodes;
@@ -37,7 +40,8 @@ public class ProductFrame extends JFrame{
         int[] deleng=new int[depth.length];
         for (int i=0;i<rows;i++)
         	deleng[i]=depth[i].length;
-        int columns = FMCAUtil.max(deleng);
+        
+        int columns = Collections.max(Arrays.stream(deleng).boxed().collect(Collectors.toList()));  // FMCAUtil.max(deleng);
         GridLayout gl = new GridLayout(rows,columns);
         panel.setLayout(gl);
         gl.setHgap(10);

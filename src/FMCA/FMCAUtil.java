@@ -866,15 +866,6 @@ public class FMCAUtil
 			 if (!(items[i].startsWith("!")||items[i].startsWith("?")||items[i].startsWith("-")))
 				 throw new Exception();
 		 }
-		 /*int[] results = new int[items.length];
-
-		 for (int ii = 0; ii < items.length; ii++) {
-		     try {
-		         results[ii] = Integer.parseInt(items[ii]);
-		     } catch (NumberFormatException nfe) {
-		         nfe.printStackTrace();
-		     };
-		 }*/
 		 return items;
 	}
 	
@@ -1023,7 +1014,7 @@ public class FMCAUtil
 				p++;
 			}
 		}
-		m=removeTailsNull(m,p);
+		m=removeTailsNull(m,p).toArray(m);
 		return m;
 	}
 	public static int[][] removeDuplicates(int[][] m)
@@ -1058,7 +1049,7 @@ public class FMCAUtil
 				}
 			}
 		}
-		m= (CAState[])removeHoles(m,removed);
+		m= (CAState[])removeHoles(m).toArray(m); //,removed);
 		return m;
 			
 	}
@@ -1076,17 +1067,11 @@ public class FMCAUtil
 				}
 			}
 		}
-		m= (String[])removeHoles(m,removed);
+		m=  removeHoles(m).toArray(m); //,removed);
 		return m;
 			
 	}
-	public static CAState[] removeTailsNull(CAState[] q,int length)
-	{
-		CAState[] r=new CAState[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
+	
 	public static int[] removeTailsNull(int[] q,int length)
 	{
 		int[] r=new int[length];
@@ -1094,6 +1079,7 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
+	
 	public static float[] removeTailsNull(float[] q,int length)
 	{
 		float[] r=new float[length];
@@ -1108,34 +1094,7 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
-	public static String[] removeTailsNull(String[] q,int length)
-	{
-		String[] r=new String[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
-	public static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
-	{
-		FMCATransition[] r=new FMCATransition[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
-	public static Product[] removeTailsNull(Product[] q,int length)
-	{
-		Product[] r=new Product[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
 	
-	public static <T> T[] removeTailsNull(T[] q, T[] r)
-	{
-		for (int i=0;i<r.length;i++)
-			r[i]=q[i];
-		return r;
-	}
 	
 	public static int[][] removeHoles(int[][] l, int holes )
 	{
@@ -1154,72 +1113,9 @@ public class FMCAUtil
 		}
 		return fin;
 	}
-	public static CAState[] removeHoles(CAState[] l, int holes )
-	{
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		CAState[] fin = new CAState[l.length-holes];
-		for (int ind=0;ind<l.length;ind++)
-		{
-			if (l[ind]!=null)
-			{
-				fin[pointer]=l[ind];
-				pointer++;
-			}
-		}
-		return fin;
-	}
-	public static String[] removeHoles(String[] l, int holes )
-	{
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		String[] fin = new String[l.length-holes];
-		for (int ind=0;ind<l.length;ind++)
-		{
-			if (l[ind]!=null)
-			{
-				fin[pointer]=l[ind];
-				pointer++;
-			}
-		}
-		return fin;
-	}
 	
-	public static FMCATransition[] removeHoles(FMCATransition[] l, int holes )
-	{
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		FMCATransition[] fin = new FMCATransition[l.length-holes];
-		for (int ind=0;ind<l.length;ind++)
-		{
-			if (l[ind]!=null)
-			{
-				fin[pointer]=l[ind];
-				pointer++;
-			}
-		}
-		return fin;
-	}
-	
-	public static int max(int[] n)
-	{
-		int max=0;
-		for (int i=0;i<n.length;i++)
-			if(n[i]>max)
-				max=n[i];
-		return max;
-	}
 	
 	/**
-	 * 
-	 * @param q1
-	 * @param q2
 	 * @return  q1 / q2
 	 */
 	public static <T> List<T> setDifference(T[] q1, T[] q2)
@@ -1239,9 +1135,9 @@ public class FMCAUtil
 		return Arrays.asList(listq).subList(0, listlength).indexOf(q)!=-1;
 	}
 	
-	public static <T> List<T> removeTailsNull(List<T> q, int length)
+	public static <T> List<T> removeTailsNull(T[] q, int length)
 	{
-		return q.subList(0, q.size()-length);
+		return Arrays.asList(q).subList(0, q.length -length);
 	}
 	
 	public static <T> List<T> removeHoles(T[] l)
@@ -1249,7 +1145,8 @@ public class FMCAUtil
 		return Arrays.asList(l).stream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
-	
+
+}
 	
 //	public static boolean contains(FMCATransition t, FMCATransition[] listq)
 //	{
@@ -1301,6 +1198,93 @@ public class FMCAUtil
 //		return false;
 //	}
 //	
-	
-
-}
+//	public static CAState[] removeHoles(CAState[] l, int holes )
+//	{
+//		/**
+//		 * remove holes (null) in t
+//		 */
+//		int pointer=0;
+//		CAState[] fin = new CAState[l.length-holes];
+//		for (int ind=0;ind<l.length;ind++)
+//		{
+//			if (l[ind]!=null)
+//			{
+//				fin[pointer]=l[ind];
+//				pointer++;
+//			}
+//		}
+//		return fin;
+//	}
+//	public static String[] removeHoles(String[] l, int holes )
+//	{
+//		/**
+//		 * remove holes (null) in t
+//		 */
+//		int pointer=0;
+//		String[] fin = new String[l.length-holes];
+//		for (int ind=0;ind<l.length;ind++)
+//		{
+//			if (l[ind]!=null)
+//			{
+//				fin[pointer]=l[ind];
+//				pointer++;
+//			}
+//		}
+//		return fin;
+//	}
+//	
+//	public static FMCATransition[] removeHoles(FMCATransition[] l, int holes )
+//	{
+//		/**
+//		 * remove holes (null) in t
+//		 */
+//		int pointer=0;
+//		FMCATransition[] fin = new FMCATransition[l.length-holes];
+//		for (int ind=0;ind<l.length;ind++)
+//		{
+//			if (l[ind]!=null)
+//			{
+//				fin[pointer]=l[ind];
+//				pointer++;
+//			}
+//		}
+//		return fin;
+//	}
+//		
+//
+//public static int max(int[] n)
+//{
+//	int max=0;
+//	for (int i=0;i<n.length;i++)
+//		if(n[i]>max)
+//			max=n[i];
+//	return max;
+//}
+//public static String[] removeTailsNull(String[] q,int length)
+//{
+//	String[] r=new String[length];
+//	for (int i=0;i<length;i++)
+//		r[i]=q[i];
+//	return r;
+//}
+//public static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
+//{
+//	FMCATransition[] r=new FMCATransition[length];
+//	for (int i=0;i<length;i++)
+//		r[i]=q[i];
+//	return r;
+//}
+//public static Product[] removeTailsNull(Product[] q,int length)
+//{
+//	Product[] r=new Product[length];
+//	for (int i=0;i<length;i++)
+//		r[i]=q[i];
+//	return r;
+//}
+//public static CAState[] removeTailsNull(CAState[] q,int length)
+//{
+//	CAState[] r=new CAState[length];
+//	for (int i=0;i<length;i++)
+//		r[i]=q[i];
+//	return r;
+//}

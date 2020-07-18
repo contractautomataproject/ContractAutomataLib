@@ -293,7 +293,7 @@ public class Family {
 				counteq++;
 			}
 		}
-		features=FMCAUtil.removeHoles(features,counteq);
+		features=FMCAUtil.removeHoles(features).toArray(features); //,counteq);
 		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
 		currentdir+="\\products\\";
 		File folder = new File(currentdir);
@@ -350,7 +350,7 @@ public class Family {
 					}
 				}		      
 		    }
-		pr=FMCAUtil.removeTailsNull(pr, prlength);
+		pr=FMCAUtil.removeTailsNull(pr, prlength).toArray(pr);
 		return generateSuperProducts(pr,features);
 	}
 	
@@ -459,7 +459,7 @@ public class Family {
 			}
 			if (newprodind>0)
 			{
-				newproducts=FMCAUtil.removeTailsNull(newproducts, newprodind);
+				newproducts=FMCAUtil.removeTailsNull(newproducts, newprodind).toArray(newproducts);
 				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
 				pl[level-2]=newproducts;
 			}
@@ -508,7 +508,7 @@ public class Family {
 	               ind++;
 	            }       
 	        }
-	        features=FMCAUtil.removeTailsNull(features, ind);
+	        features=FMCAUtil.removeTailsNull(features, ind).toArray(features);
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
 	      } catch (SAXException e) {

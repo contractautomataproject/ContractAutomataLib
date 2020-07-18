@@ -233,7 +233,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 		}
 		
-		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer);
+		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer).toArray(transitionsprincipal);
 		CAState[] fstates = CAState.extractCAStatesFromTransitions(transitionsprincipal);
 		int[] init=new int[1]; init[0]=0;
 		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
@@ -321,29 +321,11 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		
 		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr, removed);		
+		tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);		
 		a.setTransition(tr); //K_0 
-		
-/*		//computing R_0
-		for (int i=0;i<tr.length;i++)
-		{
-			if (tr[i].isUncontrollable(a)) 	//uncontrollable and bad
-			{	
-				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
-				{
-					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-					badtransitioncounter++;		
-				}
-			}
-			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
-		}
-*/
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
+	
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter).toArray(badtransitions);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter).toArray(potentiallyUncontrollable);
 		
 		//
 		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
@@ -391,7 +373,7 @@ public class FMCA  extends CA implements java.io.Serializable
 					}
 				} 
 				tr=trcopy;
-				tr=  FMCAUtil.removeHoles(tr, removed);
+				tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
 				a.setTransition(tr);  //K_i
 				//
 				//
@@ -424,7 +406,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				//add source states of uncontrollable transitions with redundant target to R
 				if (newRpointer>0)
 				{
-					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
+					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer).toArray(newR));
 					update=true;
 				}
 				
@@ -511,7 +493,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		
 		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr, removed);		
+		tr=  FMCAUtil.removeHoles(tr).toArray(tr); //removed);		
 		a.setTransition(tr); //K_0 
 		
 		/*//computing R_0
@@ -530,8 +512,8 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 		}*/
 
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter).toArray(badtransitions);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter).toArray(potentiallyUncontrollable);
 		
 		//
 		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
@@ -583,7 +565,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			 * a transition violating the branching condition is pruned after all other transitions have been pruned in that state.
 			 */
 			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr, removed);
+			tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
 			a.setTransition(tr);
 			
 			removed=0;
@@ -608,7 +590,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 			
 			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr, removed);
+			tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
 			a.setTransition(tr);  //K_i
 			
 			
@@ -642,7 +624,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
 			if (newRpointer>0)
 			{
-				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
+				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer).toArray(newR));
 				update=true;
 			}
 			
@@ -954,7 +936,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				dangcounter++;
 			}	
 		}
-		return FMCAUtil.removeTailsNull(dang, dangcounter);
+		return FMCAUtil.removeTailsNull(dang, dangcounter).toArray(dang);
 	}
 	
 	/**
@@ -996,7 +978,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		if (pointer>0)
 		{
-			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer);
+			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer).toArray(unmatch);
 			return unmatch;
 		}
 		else

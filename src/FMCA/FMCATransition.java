@@ -294,7 +294,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				pointer++;
 			}
 		}
-		s=FMCAUtil.removeTailsNull(s, pointer);
+		s=FMCAUtil.removeTailsNull(s, pointer).toArray(s);
 		return s;
 	}
 
@@ -318,7 +318,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				}
 			}
 		}
-		s=FMCAUtil.removeTailsNull(s, pointer);
+		s=FMCAUtil.removeTailsNull(s, pointer).toArray(s);
 		return s;
 	}
 	
@@ -345,7 +345,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 				}
 			}
 		}
-		s=FMCAUtil.removeTailsNull(s, pointer);
+		s=FMCAUtil.removeTailsNull(s, pointer).toArray(s);
 		return s;
 	}
 	
@@ -538,7 +538,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		}
 		if (j==0)
 			return new FMCATransition[0];
-		newtr = FMCAUtil.removeTailsNull(newtr, j);
+		newtr = FMCAUtil.removeTailsNull(newtr, j).toArray(newtr);
 		return newtr;
 	}
 	
@@ -558,7 +558,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		}
 		if (j==0)
 			return new FMCATransition[0];
-		newtr = FMCAUtil.removeTailsNull(newtr, j);
+		newtr = FMCAUtil.removeTailsNull(newtr, j).toArray(newtr);
 		return newtr;
 	}
 }
