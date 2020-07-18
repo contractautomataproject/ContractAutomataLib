@@ -38,7 +38,7 @@ import CA.CAState;
 import CA.CATransition;
 
 /**
- * Input/Output and GUI
+ * Input/Output 
  * 
  * @author Davide
  *
@@ -800,7 +800,11 @@ public class FMCAIO {
 		return mxcell1;		
 	}
 
-
+	/**
+	 * utility for arranging the graphical display of the automaton
+	 * @param graph
+	 * @param graphComponent
+	 */
 	public static void morphGraph(final mxGraph graph,
 			mxGraphComponent graphComponent) 
 	{

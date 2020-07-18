@@ -1,6 +1,7 @@
 package FMCA;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import CA.CA;
 import CA.CAState;
@@ -683,7 +684,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			return false;		//ignore this transition because it is going to be pruned
 		
 		
-		ArrayList<CAState> visit = FMCAUtil.setDifference(this.getState(), bad); 
+		List<CAState> visit = FMCAUtil.setDifference(this.getState(), bad); 
 		if (t.isMatch())
 		{
 

@@ -2,6 +2,12 @@ package FMCA;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import CA.CA;
 import CA.CAState;
@@ -834,7 +840,7 @@ public class FMCAUtil
 		return new FMCA(rank, finitial, states, finalstates, uniontr, ufst);
 	}
 	
-	// from now on all methods are utilities not available in CAUtil
+	// from now on all methods are utilities that were not available in CAUtil
 	
 	public static int[] getArray(String arr)
 	{
@@ -900,28 +906,6 @@ public class FMCAUtil
 		return false;
 	}
 	
-	public static boolean contains(CAState q, CAState[] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (listq[i]!=null)
-				if (q.equals(listq[i])) 
-					return true;
-		}
-		return false;
-	}
-	
-	public static boolean contains(String q, String[] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (listq[i]!=null)
-				if (q.equals(listq[i]))
-					return true;
-		}
-		return false;
-	}
-	
 	/**
 	 * 
 	 * @param q
@@ -947,6 +931,7 @@ public class FMCAUtil
 		}
 		return -1;
 	}
+	
 	public static int indexContains(int[] q, int[][] listq)
 	{
 		for (int i=0;i<listq.length;i++)
@@ -955,33 +940,6 @@ public class FMCAUtil
 					return i;
 		}
 		return -1;
-	}
-	public static boolean contains(FMCATransition t, FMCATransition[] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (t.equals(listq[i]))
-					return true;
-		}
-		return false;
-	}
-	public static boolean contains(FMCATransition t, FMCATransition[] listq, int listlength)
-	{
-		for (int i=0;i<listlength;i++)
-		{
-			if (t.equals(listq[i]))
-					return true;
-		}
-		return false;
-	}
-	public static boolean contains(CAState t, CAState[] listq, int listlength)
-	{
-		for (int i=0;i<listlength;i++)
-		{
-			if (t.equals(listq[i]))
-					return true;
-		}
-		return false;
 	}
 	public static int[][] setUnion(int[][] q1, int[][] q2)
 	{
@@ -1230,6 +1188,7 @@ public class FMCAUtil
 		}
 		return fin;
 	}
+	
 	public static FMCATransition[] removeHoles(FMCATransition[] l, int holes )
 	{
 		/**
@@ -1247,6 +1206,7 @@ public class FMCAUtil
 		}
 		return fin;
 	}
+	
 	public static int max(int[] n)
 	{
 		int max=0;
@@ -1262,40 +1222,85 @@ public class FMCAUtil
 	 * @param q2
 	 * @return  q1 / q2
 	 */
-	public static <T> ArrayList<T> setDifference(T[] q1, T[] q2)
+	public static <T> List<T> setDifference(T[] q1, T[] q2)
 	{
-		ArrayList<T> m = new ArrayList<>(q1.length);
-		int p=0;
-		//T[] m= new T[q1.length];
-		for (int i=0;i<q1.length;i++)
-		{
-			if (!contains(q1[i],q2)
-					&&!contains(q1[i],m.toArray()))
-			{
-				m.add(p,q1[i]);    
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p);
-		return m;
+		return Arrays.asList(q1).stream()
+				.filter(x -> Arrays.asList(q2).indexOf(x)!=-1)
+				.collect(Collectors.toList());
 	}
 
 	public static <T> boolean contains(T q, T[] listq)
 	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (listq[i]!=null)
-				if (listq[i].equals(q))
-					return true;
-		}
-		return false;
+		return Arrays.asList(listq).indexOf(q)!=-1;
 	}
 	
-	public static <T> ArrayList<T> removeTailsNull(ArrayList<T> q,int length)
+	public static <T> boolean contains(T q, T[] listq, int listlength)
 	{
-		ArrayList<T> r = new ArrayList<>(length);
-		for (int i=0;i<length;i++)
-			r.add(i, q.get(i));
-		return r;
+		return Arrays.asList(listq).subList(0, listlength).indexOf(q)!=-1;
 	}
+	
+	public static <T> List<T> removeTailsNull(List<T> q, int length)
+	{
+		return q.subList(0, q.size()-length);
+	}
+	
+	public static <T> List<T> removeHoles(T[] l)
+	{
+		return Arrays.asList(l).stream().filter(Objects::nonNull).collect(Collectors.toList());
+	}
+	
+	
+	
+//	public static boolean contains(FMCATransition t, FMCATransition[] listq)
+//	{
+//		for (int i=0;i<listq.length;i++)
+//		{
+//			if (t.equals(listq[i]))
+//					return true;
+//		}
+//		return false;
+//	}
+//	public static boolean contains(FMCATransition t, FMCATransition[] listq, int listlength)
+//	{
+//		for (int i=0;i<listlength;i++)
+//		{
+//			if (t.equals(listq[i]))
+//					return true;
+//		
+//		return false;
+//	}
+//	public static boolean contains(CAState t, CAState[] listq, int listlength)
+//	{
+//		for (int i=0;i<listlength;i++)
+//		{
+//			if (t.equals(listq[i]))
+//					return true;
+//		}
+//		return false;
+//	}
+
+//	public static boolean contains(CAState q, CAState[] listq)
+//	{
+//		for (int i=0;i<listq.length;i++)
+//		{
+//			if (listq[i]!=null)
+//				if (q.equals(listq[i])) 
+//					return true;
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean contains(String q, String[] listq)
+//	{
+//		for (int i=0;i<listq.length;i++)
+//		{
+//			if (listq[i]!=null)
+//				if (q.equals(listq[i]))
+//					return true;
+//		}
+//		return false;
+//	}
+//	
+	
+
 }
