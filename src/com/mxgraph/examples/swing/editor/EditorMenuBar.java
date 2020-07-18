@@ -56,6 +56,7 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
 import FMCA.FMCA;
+import FMCA.FMCAIO;
 import FMCA.FMCATGUI;
 import FMCA.FMCAUtil;
 import FMCA.Family;
@@ -534,8 +535,8 @@ public class EditorMenuBar extends JMenuBar
 								{
 
 									String fileName =fc.getSelectedFile().toString();
-									FMCA aut=FMCA.load(fileName);
-									File file=aut.exportToXML(fileName);
+									FMCA aut=FMCAIO.load(fileName);
+									File file= FMCAIO.exportToXML(fileName,aut);
 									fileName=file.getAbsolutePath();
 									
 										Document document = mxXmlUtils
@@ -553,7 +554,7 @@ public class EditorMenuBar extends JMenuBar
 										mxGraph mg=new mxGraph(mgm);
 										mxGraphComponent mgc = new mxGraphComponent(mg);
 									    					    					    
-									    FMCA.morphGraph(mgc.getGraph(), mgc);
+									    FMCAIO.morphGraph(mgc.getGraph(), mgc);
 					            								
 						                codec = new mxCodec();
 										String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
@@ -600,10 +601,10 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(filename);
+				FMCA aut= FMCAIO.importFromXML(filename);
 				if (aut!=null)
 				{
-					aut.printToFile(filename);
+					FMCAIO.printToFile(filename,aut);
 					JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
 				}
 				else 
@@ -644,7 +645,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 
 				if (aut==null)
 				{
@@ -661,7 +662,7 @@ public class EditorMenuBar extends JMenuBar
 				File file=null;
 				if (aut!=null)
 				{
-					file=aut.exportToXML(absfilename);
+					file=FMCAIO.exportToXML(absfilename,aut);
 					try
 					{								
 						
@@ -775,7 +776,7 @@ public class EditorMenuBar extends JMenuBar
 								try
 								{
 									String fileName =fc.getSelectedFile().toString();
-									aut[fmcacount]=FMCA.importFromXML(fileName);
+									aut[fmcacount]=FMCAIO.importFromXML(fileName);
 									names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 									fmcacount++;
 									rc = fc.showDialog(null,
@@ -806,7 +807,7 @@ public class EditorMenuBar extends JMenuBar
 								}
 							} while (done);
 							String fileName =fc.getSelectedFile().toString();
-							aut[fmcacount]=FMCA.importFromXML(fileName);
+							aut[fmcacount]=FMCAIO.importFromXML(fileName);
 							names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 							fmcacount++;
 							String compositionname="(";
@@ -827,7 +828,7 @@ public class EditorMenuBar extends JMenuBar
 							File file=null;
 							if (composition!=null)
 							{
-								file=composition.exportToXML(lastDir+"\\"+compositionname);
+								file=FMCAIO.exportToXML(lastDir+"\\"+compositionname,composition);
 								String message = "The composition has been stored with filename "+lastDir+"\\"+compositionname
 										+"\n Elapsed time : "+elapsedTime + " milliseconds"
 										+"\n Number of states : "+composition.getStates();
@@ -862,7 +863,7 @@ public class EditorMenuBar extends JMenuBar
 									mxGraph mg=new mxGraph(mgm);
 									mxGraphComponent mgc = new mxGraphComponent(mg);
 								    					    					    
-								    FMCA.morphGraph(mgc.getGraph(), mgc);
+								    FMCAIO.morphGraph(mgc.getGraph(), mgc);
 				            								
 					                codec = new mxCodec();
 									String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
@@ -1358,7 +1359,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				if (aut!=null)
 				{
 					//aut.printToFile(filename);
@@ -1452,7 +1453,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				if (aut!=null)
 				{
 					//aut.printToFile(filename);
@@ -1517,7 +1518,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				if (aut==null)
 				{
 					String message ="States or labels contain errors.\n "
@@ -1589,7 +1590,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				
 				if (aut==null)
 				{
@@ -1678,7 +1679,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				if (aut!=null)
 				{
 					//aut.printToFile(filename);
@@ -1896,7 +1897,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 
 				if (aut==null)
 				{
@@ -1929,7 +1930,7 @@ public class EditorMenuBar extends JMenuBar
 									
 					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 					
-					file=controller.exportToXML(lastDir+"\\"+K);
+					file=FMCAIO.exportToXML(lastDir+"\\"+K,controller);
 					try
 					{								
 						
@@ -1991,7 +1992,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				
 				if (aut==null)
 				{
@@ -2039,7 +2040,7 @@ public class EditorMenuBar extends JMenuBar
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
-					file=controller.exportToXML(lastDir+"//"+K);
+					file=FMCAIO.exportToXML(lastDir+"//"+K,controller);
 					String message = "The mpc has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getStates();
@@ -2106,7 +2107,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				
 				if (aut==null)
 				{
@@ -2146,7 +2147,7 @@ public class EditorMenuBar extends JMenuBar
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
-					file=controller.exportToXML(lastDir+"\\"+K);
+					file=FMCAIO.exportToXML(lastDir+"\\"+K,controller);
 					String message = "The mpc has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getStates();
@@ -2225,7 +2226,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 
 				if (aut==null)
 				{
@@ -2270,7 +2271,7 @@ public class EditorMenuBar extends JMenuBar
 									
 					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 					
-					file=controller.exportToXML(lastDir+"\\"+K);
+					file=FMCAIO.exportToXML(lastDir+"\\"+K,controller);
 					try
 					{								
 						
@@ -2335,7 +2336,7 @@ public class EditorMenuBar extends JMenuBar
 					
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 
 				if (aut==null)
 				{
@@ -2381,7 +2382,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCA.importFromXML(absfilename);
+				FMCA aut= FMCAIO.importFromXML(absfilename);
 				
 				if (aut==null)
 				{
@@ -2433,7 +2434,7 @@ public class EditorMenuBar extends JMenuBar
 				{
 					String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
 									filename;
-					file=controller.exportToXML(lastDir+"//"+K);
+					file= FMCAIO.exportToXML(lastDir+"//"+K,controller);
 					String message = "The choreography has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getStates();

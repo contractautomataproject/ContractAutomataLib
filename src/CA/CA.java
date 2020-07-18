@@ -1,8 +1,4 @@
 package CA;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Scanner;
 
 //import FSA.FSA;
@@ -42,46 +38,6 @@ public class CA  implements java.io.Serializable
 		this.tra=tra;
 	}
 	
-	/**
-	 * print the description of the CA to a file
-	 */
-	public void printToFile(String filename)
-	{
-		String name=null;
-		InputStreamReader reader = new InputStreamReader(System.in);
-        BufferedReader myInput = new BufferedReader(reader);
-		try {
-			if (filename=="")
-			{
-				System.out.println("Do you want to save this automaton? (write yes or no, default yes)");
-				if (!myInput.readLine().equals("no"))
-				{	
-					System.out.println("Write the name of this automaton");
-					name= myInput.readLine();
-				}
-				else return;
-			}
-			else
-				name=filename;
-			 
-			PrintWriter pr = new PrintWriter(name+".data"); 
-			 pr.println("Rank: "+this.rank);
-			 pr.println("Number of states: "+Arrays.toString(this.getStatesCA()));
-			 pr.println("Initial state: " +Arrays.toString(this.getInitialCA().getState()));
-			 pr.print("Final states: [");
-			 for (int i=0;i<finalstates.length;i++)
-				 pr.print(Arrays.toString(finalstates[i]));
-			 pr.print("]\n");
-			 pr.println("Transitions: \n");
-			 CATransition[] t = this.getTransition();
-			 if (t!=null)
-			 {
-				 for (int i=0;i<t.length;i++)
-					 pr.println(t[i].toString());
-			 }
-			 pr.close();
-		}catch(Exception e){e.printStackTrace();}
-	}
 	
 	public static CATransition loadTransition(String str, int rank)
 	{

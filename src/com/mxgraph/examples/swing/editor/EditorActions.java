@@ -45,6 +45,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.w3c.dom.Document;
 
 import FMCA.FMCA;
+import FMCA.FMCAIO;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
@@ -1549,8 +1550,8 @@ public class EditorActions
 							{
 
 								String fileName =fc.getSelectedFile().toString();
-								FMCA aut=FMCA.load(fileName);
-								File file=aut.exportToXML(fileName);
+								FMCA aut=FMCAIO.load(fileName);
+								File file=FMCAIO.exportToXML(fileName,aut);
 								fileName=file.getAbsolutePath();
 								/*if (fc.getSelectedFile().getAbsolutePath()
 										.toLowerCase().endsWith(".png"))

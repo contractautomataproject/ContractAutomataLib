@@ -1,36 +1,6 @@
 package FMCA;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.util.mxMorphing;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.view.mxGraph;
 
 import CA.CA;
 import CA.CAState;
@@ -1061,41 +1031,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				//+"There are 2^"+l+" possible combinations of removing such transitions.\n"
 				+"The resulting automaton with only urgent transitions will have the following number of states ("+ns+") * (2^"+l+"-1)";
 	}
-	 public static void morphGraph(final mxGraph graph,
-              mxGraphComponent graphComponent) 
-	 {
-      // define layout
-      mxIGraphLayout layout = new mxFastOrganicLayout(graph);
-
-      ((mxFastOrganicLayout) layout).setForceConstant(100);
-      ((mxFastOrganicLayout) layout).setDisableEdgeStyle( false); 
-      //mxGraphModel mg=(mxGraphModel) graph.getModel();
-      //mxCell cell = (mxCell) ((mxGraphModel)mg).getCell("3");
-      
-      // layout using morphing
-      graph.getModel().beginUpdate();
-      try {
-              layout.execute(graph.getDefaultParent());
-      } finally {
-              mxMorphing morph = new mxMorphing(graphComponent, 20, 1.5, 20);
-
-              morph.addListener(mxEvent.DONE, new mxIEventListener() {
-
-                      @Override
-                      public void invoke(Object arg0, mxEventObject arg1) {
-                              graph.getModel().endUpdate();
-                              // fitViewport();
-                      }
-
-				
-
-              });
-
-              morph.startAnimation();
-      }
-
-	 }
-	
+		
 	 public void setReachableAndSuccessfulStates()
 	 {
 		 visit(this.getInitialCA()); //firstly reachability must be set !
