@@ -1,8 +1,5 @@
 package CA;
 
-
-import java.util.Arrays;
-
 //import FSA.Transition;
 
 
@@ -22,39 +19,13 @@ public class CATransition //extends Transition
 	public static  String idle="-";
 	public static  String offer="!";
 	public static  String request="?";
-	/**
-	 * 
-	 */
+	
 	public CATransition(CAState source, String[] label, CAState target){
-		//super(0,0,0);
-		
 		this.source=source;
 		this.target=target;
 		this.label =label;
 	}
 	
-	
-	/**
-	 * Take as input a transition
-	 * @param i			the index of the transition to be showed as a message to the user
-	 */
-/*	public CATransition(int i)
-	{
-		super(i,true);
-		this.source = new int[1];
-		this.target = new int[1];
-		this.label = new int[1];
-		source[0]=super.getSource();
-		target[0]=super.getTarget();
-		if (super.getLabel()==0)
-		{
-			System.out.println("Error, principals do not have silent transitions, the label is automatically set to 1");
-			label[0]=1;
-		}
-		else
-			label[0]=super.getLabel();
-	}
-	*/
 	/**
 	 * 
 	 * @return		the source state of the transition
@@ -254,23 +225,6 @@ public class CATransition //extends Transition
 	}
 	
 	/**
-	 * override of toString
-	 */
-	public String toString()
-	{
-		return "("+Arrays.toString(source.getState())+","+Arrays.toString(label)+","+Arrays.toString(target.getState())+")";
-	}
-
-	public boolean equals(Object t)
-	{
-		CATransition tr=(CATransition) t;
-		int[] ip =tr.getSourceP().getState();
-		String[] lp=tr.getLabelP();
-		int[] dp=tr.getTargetP().getState();
-		return ( Arrays.equals(ip,source.getState()))&&(Arrays.equals(lp,label))&&(Arrays.equals(dp,target.getState()));
-	}	
-	
-	/**
 	 * check if labels l and ll are in match
 	 * @param l
 	 * @param ll
@@ -288,131 +242,5 @@ public class CATransition //extends Transition
 		if (t1.isRequest()&&t2.isRequest())
 			return false;
 		return isMatch(t1.getAction(),t2.getAction());
-	}
-	
-	/**
-	 * 
-	 * @param t				first transition to move
-	 * @param tt			second transition to move only in case of match
-	 * @param firstprinci  the index to start to copy the principals in t
-	 * @param firstprincii the index to start to copy the principals in tt
-	 * @param insert		the states of all other principals who stays idle
-	 * @param aut			unused here, necessary in FMCATransition
-	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
-	 */
-	//deprecated for FMCA
-	public CATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
-	{
-		if (tt!=null)
-		{
-			int[] s=((CATransition) t).getSourceP().getState();
-			String[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getTargetP().getState();
-			int[] ss = ((CATransition) tt).getSourceP().getState();
-			String[] ll=((CATransition) tt).getLabelP();
-			int[] dd =((CATransition) tt).getTargetP().getState();
-			int[] initial = new int[insert.length+s.length+ss.length];
-			int[] dest = new int[insert.length+s.length+ss.length];
-			String[] label = new String[insert.length+s.length+ss.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else 
-				{
-					if (i==firstprincii)
-					{
-						for (int j=0;j<ss.length;j++)
-						{
-							initial[i+counter+j]=ss[j];
-							label[i+counter+j]=ll[j];
-							dest[i+counter+j]=dd[j];
-						}
-						counter+=ss.length;//record the shift due to the second CA 
-						i--;
-						firstprincii=-1;
-					}	
-					else 
-					{
-						initial[i+counter]=insert[i];
-						dest[i+counter]=insert[i];
-						label[i+counter]=idle;
-					}
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			if (firstprincii==insert.length) //case limit, the second CA was the last of aut
-			{
-				for (int j=0;j<ss.length;j++)
-				{
-					initial[insert.length+counter+j]=ss[j];
-					label[insert.length+counter+j]=ll[j];
-					dest[insert.length+counter+j]=dd[j];
-				}
-			}
-			return new CATransition(new CAState(initial),label,new CAState(dest));	
-		}
-		else
-		{
-			int[] s=((CATransition) t).getSourceP().getState();
-			String[] l=((CATransition) t).getLabelP();
-			int[] d=((CATransition) t).getTargetP().getState();
-			int[] initial = new int[insert.length+s.length];
-			int[] dest = new int[insert.length+s.length];
-			String[] label = new String[insert.length+s.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						initial[i+j]=s[j];
-						label[i+j]=l[j];
-						dest[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else
-				{
-					initial[i+counter]=insert[i];
-					dest[i+counter]=insert[i];
-					label[i+counter]=idle;
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					initial[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					dest[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			return  new CATransition(new CAState(initial),label,new CAState(dest));		
-		}
 	}
 }

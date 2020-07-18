@@ -1,38 +1,38 @@
 package com.mxgraph.examples.swing.editor;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
+import javax.swing.AbstractAction;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ProgressMonitor;
+import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 
 import org.w3c.dom.Document;
 
-import FMCA.FMCA;
-import FMCA.FMCATGUI;
-import FMCA.Family;
-import FMCA.Product;
-import CA.CAUtil;
-
 import com.mxgraph.analysis.StructuralException;
-import com.mxgraph.analysis.mxGraphProperties.GraphType;
 import com.mxgraph.analysis.mxAnalysisGraph;
 import com.mxgraph.analysis.mxGraphProperties;
+import com.mxgraph.analysis.mxGraphProperties.GraphType;
 import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.analysis.mxTraversal;
 import com.mxgraph.costfunction.mxCostFunction;
@@ -54,6 +54,12 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
+
+import FMCA.FMCA;
+import FMCA.FMCATGUI;
+import FMCA.FMCAUtil;
+import FMCA.Family;
+import FMCA.Product;
 
 public class EditorMenuBar extends JMenuBar 
 {
@@ -814,7 +820,7 @@ public class EditorMenuBar extends JMenuBar
 							}
 							compositionname+=")";
 							long start = System.currentTimeMillis();
-							FMCA composition = (FMCA) CAUtil.composition(autWithoutTailsNull);	
+							FMCA composition = (FMCA) FMCAUtil.composition(autWithoutTailsNull);	
 							long elapsedTime = System.currentTimeMillis() - start;
 							
 												

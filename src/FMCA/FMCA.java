@@ -85,29 +85,13 @@ public class FMCA  extends CA implements java.io.Serializable
 		super(rank,initial,states,finalstates,trans);
 		this.family=f;
 	}
-	
-/*	public FMCA(int rank, int[] initial, int[] states, float[] xstate, float[] ystate, int[][] finalstates, float[] xfinalstate, float[] yfinalstate, FMCATransition[] trans)
-	{
 
-		super(rank,initial,states,finalstates,trans);
-		this.xstate=xstate;
-		this.ystate=ystate;
-		this.xfinalstate=xfinalstate;
-		this.yfinalstate=yfinalstate;
-	}
-*/
 	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstates)
 	{
 
 		super(rank,initial,states,finalstates,trans);
 		this.fstates=fstates;
 	}
-
-	/*public FMCA(int rank, int[] initial, int[][] states, int[][] finalstates,FMCATransition[] trans)
-	{
-		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates)),
-				FMCA.principalsFinalStates(finalstates),trans);
-	}*/
 	
 	public FMCA(int rank, CAState initial, int[][] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstate)
 	{
@@ -742,6 +726,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
+	
 	/**
 	 * this method retrieves the coordinates from CAState[] states
 	 * @param doc
@@ -751,7 +736,6 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * @param state
 	 * @return
 	 */
-	
 	private static Element createElementState(Document doc, Element root,String id, CAState[] states,int[] state)
 	{
 		Attr parent=doc.createAttribute("parent");
@@ -1027,170 +1011,21 @@ public class FMCA  extends CA implements java.io.Serializable
 		return new FMCA(1,initialstateprincipal,numberofstatesprincipal,finalstatesprincipal,transitionsprincipal,fstates); 
 	}
 	
-	
-/*	public FMCA mpcold(Product p)
+	/**
+	 * used by extractAllPrincipals in CAUtil
+	 * @return
+	 */
+	public FMCA[] allPrincipals()
 	{
-		FMCA a = this.clone();
-		FMCATransition[] tr = a.getTransition();
-		FMCATransition[] rem = new FMCATransition[tr.length];  //solo per testing
-		//int[][] fs=a.allFinalStates();
-		int removed = 0;
 		
-		//I need to store the transitions, to check later on 
-		//if some controllable transition becomes uncontrollable
-		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
-		int potentiallyUncontrollableCounter = 0;
-		
-		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
-		int badtransitioncounter=0;
-		
-		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-		//and this operation affects the set of uncontrollable transitions in K_i
-		FMCATransition[] trcopy=a.copyTransition();
-		
-		
-		for (int i=0;i<tr.length;i++)
+		FMCA[] principals = new FMCA[this.getRank()];
+		for (int i=0;i<principals.length;i++)
 		{
-		//	System.out.println("transition "+i);
-			if (!tr[i].isUncontrollable(a)&&(tr[i].isRequest()||tr[i].isForbidden(p))) //controllable and bad
-			{
-				rem[removed]=tr[i]; //solo per testing
-				trcopy[i] = null;
-				removed++;
-			}
-			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
+			principals[i] = this.proj(i);
 		}
-		
-		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr, removed);		
-		a.setTransition(tr); //K_0 
-		
-		//computing R_0
-		for (int i=0;i<tr.length;i++)
-		{
-			if (tr[i].isUncontrollable(a)) 	//uncontrollable and bad
-			{	
-				if ((tr[i].isRequest()||tr[i].isForbidden(p)))
-				{
-					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-					badtransitioncounter++;		
-				}
-			}
-			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
-		}
-
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
-		
-		// TODO now CAState are fully compared, check if computing dangling states makes two equal states different
-		//
-		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
-		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions)); //R_0
-		boolean update=false;
-		if (R.length>0)
-		{
-			do{
-				FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
-				int trcheckpointer=0;
-				removed=0;
-				rem= new FMCATransition[tr.length]; 
-				
-				//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-				//and this operation affects the set of uncontrollable transitions in K_i
-				trcopy=a.copyTransition();
-				for (int i=0;i<tr.length;i++)  //for all transitions
-				{
-					if (!(tr[i]==null))
-					{
-						if (tr[i].isUncontrollable(a)) 
-						{   
-							if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
-							{
-								rem[removed]=tr[i];//solo per testing
-								trcopy[i]=null;
-								removed++;
-							}
-							else
-							{
-								trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state
-								trcheckpointer++;
-							}
-						}
-						else if //(!tr[i].isUncontrollable(a)&&
-								(FMCAUtil.contains(tr[i].getTargetP(), R)) //remove controllable with bad target
-						{
-							rem[removed]=tr[i]; //solo per testing
-							trcopy[i]=null;
-							removed++;
-						}
-					}
-				} 
-				tr=trcopy;
-				tr=  FMCAUtil.removeHoles(tr, removed);
-				a.setTransition(tr);  //K_i
-				//
-				//
-				// building R_i
-				//
-				//
-				CAState[] danglingStates = a.getDanglingStates();
-				CAState[] newR=new CAState[trcheckpointer];
-				int newRpointer=0;
-				
-				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state
-				{
-					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
-					// setUnion removes duplicates we could skip the check
-					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
-					{
-						newR[newRpointer]=trcheck[i].getSourceP();
-						newRpointer++;
-					}
-				}
-				//add dangling states to R
-				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates);
-				update = (RwithDang.length!=R.length);
-				if (update)
-					R = RwithDang;
-				
-				//add source states of uncontrollable transitions with redundant target to R
-				if (newRpointer>0)
-				{
-					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
-					update=true;
-				}
-				
-				//add source states of uncontrollable transitions that were previously controllable
-				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
-				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su);
-				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
-				{
-					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
-					R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable);
-					update=true;
-				}
-				
-			}while(update);
-		}
-		
-		//a.getDanglingStates();
-		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
-		
-		//if initial state is bad or not all required actions are fired
-		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
-			return null;
-		
-		return a;
+		return principals;
 	}
-*/	
+	
 	/**
 	 * compute the most permissive controller of product p
 	 * the algorithm is different from the corresponding of MSCA
@@ -1642,7 +1477,6 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		return false;
 	}
-	
 
 	
 	/**
@@ -1764,6 +1598,36 @@ public class FMCA  extends CA implements java.io.Serializable
 	public int getStates()
 	{
 		return this.allStates().length;
+	}
+	
+
+	/**
+	 * 
+	 * 
+	 * @return all the final states of the CA
+	 */
+	public  int[][] allFinalStates()
+	{
+//		if (rank==1)
+//			return finalstates;
+		int[][] finalstates = this.getFinalStatesCA();
+		int[] states=new int[finalstates.length];
+		int comb=1;
+		int[] insert= new int[states.length];
+		for (int i=0;i<states.length;i++)
+		{
+			states[i]=finalstates[i].length;
+			comb*=states[i];
+			insert[i]=0;
+		}
+		int[][] modif = new int[comb][];
+		int[] indstates = new int[1];
+		indstates[0]= states.length-1;
+		int[] indmod = new int[1];
+		indmod[0]= 0; 
+		
+		FMCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);  
+		return modif;
 	}
 	
 	public int[][][] allNonFinalAndFinalStates()
@@ -2044,43 +1908,3 @@ public class FMCA  extends CA implements java.io.Serializable
 		return new FMCA(rank,initial,states,finalstates,(FMCATransition[])tra);
 	}
 }
-
-
-
-
-///**
-// * 
-// * similar to the corresponding method in CA class, with CATransition swapped with MSCATransition and CA swapped with MSCA  
-// * @return all the final states of the CA
-// */
-//public  int[][] allFinalStates()
-//{
-////	if (rank==1)
-////		return finalstates;
-//
-//	int[][] finalstates=getFinalStatesCA();
-//	int[] states=new int[finalstates.length];
-//	int comb=1;
-//	int[] insert= new int[states.length];
-//	for (int i=0;i<states.length;i++)
-//	{
-//		states[i]=finalstates[i].length;
-//		comb*=states[i];
-//		insert[i]=0;
-//	}
-//	int[][] modif = new int[comb][];
-//	int[] indstates = new int[1];
-//	indstates[0]= states.length-1;
-//	int[] indmod = new int[1];
-//	indmod[0]= 0; 
-//	//CAUtil.recGen(finalstates, modif,  states, 0, states.length-1, insert);
-//	MSCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);
-//	return modif;
-//}
-/*	public FMCA mpcConstraints(int[][][] products,int[][] L)
-{
-	int[][][][] statesToVisit= new int[this.numberOfStates()][][][];
-	statesToVisit[0]=products;
-	return null;
-}*/
-
