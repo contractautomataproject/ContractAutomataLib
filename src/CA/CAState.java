@@ -6,11 +6,13 @@ import FMCA.FMCAUtil;
 
 public class CAState {
 	private int[] state;
+	//private List<CAState> states; 
+	
+	private boolean initial;
+	private boolean finalstate;
 	
 	private float x;
 	private float y;
-	private boolean initial;
-	private boolean finalstate;
 	private boolean isReachable=false;
 	private boolean isSuccessfull=false;
 	public enum type {
@@ -23,6 +25,7 @@ public class CAState {
 		setFinalstate(false);
 		this.setState(state);
 	}
+	
 	public CAState(int[] state, type t)
 	{
 		if (t == type.INITIAL)
@@ -41,6 +44,7 @@ public class CAState {
 		}
 		this.setState(state);
 	}
+	
 	public CAState(int[] state, float x, float y)
 	{
 		setInitial(false);
@@ -49,6 +53,7 @@ public class CAState {
 		this.setX(x);
 		this.setY(y);		
 	}
+	
 	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
 	{
 		this.setState(state);
@@ -57,42 +62,55 @@ public class CAState {
 		this.setInitial(initial);
 		this.setFinalstate(finalstate);
 	}
+	
 	public int[] getState() {
 		return state;
 	}
+	
 	public void setState(int[] state) {
 		this.state = state;
 	}
+	
 	public float getX() {
 		return x;
 	}
+	
 	public void setX(float x) {
 		this.x = x;
 	}
+	
 	public float getY() {
 		return y;
 	}
+	
 	public void setY(float y) {
 		this.y = y;
 	}
+	
 	public boolean isInitial() {
 		return initial;
 	}
+	
 	public void setInitial(boolean initial) {
 		this.initial = initial;
 	}
+	
 	public boolean isFinalstate() {
 		return finalstate;
 	}
+	
 	public void setFinalstate(boolean finalstate) {
 		this.finalstate = finalstate;
 	}
+	
 	public boolean isReachable() {
 		return isReachable;
 	}
+	
 	public void setReachable(boolean setReachable) {
 		this.isReachable = setReachable;
 	}
+	
 	public CAState clone()
 	{
 		return new CAState(Arrays.copyOf(state,state.length),x,y,initial,finalstate);
@@ -114,6 +132,7 @@ public class CAState {
 	public boolean isSuccessfull() {
 		return isSuccessfull;
 	}
+	
 	public void setSuccessfull(boolean isSuccessfull) {
 		this.isSuccessfull = isSuccessfull;
 	}

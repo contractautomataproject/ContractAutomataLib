@@ -62,15 +62,16 @@ public class FMCAUtil
 		 * 
 		 * TODO it could be possible to avoid to generate invalid transitions, in an on-the-fly way
 		 */
-		FMCATransition[][] prodtr = aut[0].createArrayTransition2(aut.length); //new CATransition[aut.length][];
+		FMCATransition[][] prodtr = new FMCATransition[aut.length][];
 		int trlength = 0;
 		for(int i=0;i<aut.length;i++)
 		{
 			prodtr[i]= aut[i].getTransition();
 			trlength += prodtr[i].length;
 		}
-		FMCATransition[] transprod = aut[0].createArrayTransition((trlength*(trlength-1)*totnumstates)); // new CATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
-		//int pointertemp = 0;
+		FMCATransition[] transprod = new FMCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
+
+	   //int pointertemp = 0;
 		int pointertransprod = 0;
 		for (int i=0;i<prodtr.length;i++)// for all the automaton in the product
 		{
@@ -79,7 +80,7 @@ public class FMCAUtil
 		
 			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{
-				CATransition[][] temp = aut[0].createArrayTransition2(trlength*(trlength-1)); //new CATransition[trlength*(trlength-1)][];
+				CATransition[][] temp = new FMCATransition[trlength*(trlength-1)][];
 				//Transition[] trtemp = new CATransition[trlength*(trlength-1)];//stores the other transition involved in the match in temp
 				int pointertemp=0; //reinitialized each new transition
 				boolean match=false;
@@ -185,11 +186,11 @@ public class FMCAUtil
 		/**
 		 * remove all unused space in transProd (null at the end of the array)
 		 */
-		CATransition[] finalTr = aut[0].createArrayTransition(pointertransprod); 
+		FMCATransition[] finalTr = new FMCATransition[pointertransprod];
 		for (int ind=0;ind<pointertransprod;ind++)
-			finalTr[ind]= (CATransition)transprod[ind];
+			finalTr[ind]= transprod[ind];
 		
-		FMCA prod = aut[0].createNew(prodrank,new CAState(initialprod, CAState.type.INITIAL),statesprod,finalstatesprod,finalTr);
+		FMCA prod = new FMCA(prodrank,new CAState(initialprod, CAState.type.INITIAL),statesprod,finalstatesprod, finalTr);
 		
 		if (debug)
 			System.out.println("Remove unreachable ...");
@@ -481,10 +482,9 @@ public class FMCAUtil
 				}	
 			}
 		}
-		FMCATransition[] tr = aut[0].createArrayTransition(productNumberOfStatesExceptIandII); //TODO: check if it is the right upperbound
+		FMCATransition[] tr = new FMCATransition[productNumberOfStatesExceptIandII];//TODO: check if it is the right upperbound
 		
-		aut= FMCAUtil.extractAllPrincipals(aut); 
-		//TODO this must be shift to method composition, to be called only once!
+		aut= FMCAUtil.extractAllPrincipals(aut);//TODO this must be shift to method composition, to be called only once!
 		
 		
 		if(prodrank!=0)

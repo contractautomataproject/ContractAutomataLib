@@ -22,28 +22,6 @@ public class CA  implements java.io.Serializable
 	private int[][] finalstates; 
 	private CATransition[] tra;
 	
-	/**
-	 * Invoke the super constructor and take in input the added new parameters of the automaton
-	 */
-	public CA()
-	{
-		try{
-			System.out.println();
-	        this.rank = 1;
-	        this.states = new int[1];
-	      //  this.states[0] = super.getStates();
-	        int[] ini= new int[1]; ini[0]=0;
-	        this.initial = new CAState(ini);
-	        this.initial.setInitial(true);
-	       
-	        finalstates = new int[1][1];//super.getFinalStates().length];
-	        finalstates[0]= new int[1];//super.getFinalStates();
-	       // this.tra=(CATransition[])super.getTransition();
-	        //super.write(this);
-	        this.printToFile("");
-		}
-		catch (Exception e){System.out.println("Errore inserimento");}
-	}
 	
 	public CA(int rank, CAState initial, int[] states, int[][] finalstates,CATransition[] tra)
 	{
