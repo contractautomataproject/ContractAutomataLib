@@ -1,12 +1,7 @@
 package FMCA;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import CA.CA;
@@ -15,6 +10,8 @@ import CA.CATransition;
 
 /**
  * Utilities for FMCA
+ * 
+ * the unchecked suppression warnings are necessary because of toArray method
  * 
  * @author Davide Basile
  *
@@ -26,6 +23,8 @@ public class FMCAUtil
 
 
 	/**
+	 * this is the most important method of the tool, computing the composition.
+	 * 
 	 * compute the product automaton of the CA given in aut
 	 * @param aut the operands of the product
 	 * @return the composition of aut
@@ -218,7 +217,7 @@ public class FMCAUtil
 		/**
 		 * remove unreachable transitions
 		 */
-		int removed=0;
+		//int removed=0;
 		int reachablepointer=1; //era messo a uno forse per lo stato iniziale, ma viene cmq letto nelle transizioni
 		int unreachablepointer=0;
 		int[][] reachable = new int[at.prodStates()][]; 
@@ -237,7 +236,7 @@ public class FMCAUtil
 				{
 					found=true;
 					finalTr[ind]=null;
-					removed++;
+			//		removed++;
 					break;
 				}
 			}
@@ -267,7 +266,7 @@ public class FMCAUtil
 				if(!amIReachable(source,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,reachablepointer,unreachablepointer))
 				{
 					finalTr[ind]=null;
-					removed++;
+			//		removed++;
 					unreachable[unreachablepointer]=source;
 					unreachablepointer++;
 				}
@@ -283,7 +282,7 @@ public class FMCAUtil
 		 * remove holes (null) in finalTr2
 		 */
 		
-		finalTr= FMCAUtil.removeHoles(finalTr, removed);
+		finalTr= FMCAUtil.removeHoles(finalTr); //, removed);
 		aut.setTransition(finalTr);
 		return aut;
 	}
@@ -354,7 +353,8 @@ public class FMCAUtil
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
 
-	//TODO pointerunreachable is never updated, probably is not needed. In case this method is called multiple times from another method, substitute 
+	//TODO pointerunreachable is never updated, probably is not needed. 
+	// In case this method is called multiple times from another method, substitute 
 	//it with a method which computes a forward visit of the graph only once
 	public static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
@@ -488,6 +488,7 @@ public class FMCAUtil
 				}	
 			}
 		}
+		
 		FMCATransition[] tr = new FMCATransition[productNumberOfStatesExceptIandII];//TODO: check if it is the right upperbound
 		
 		aut= FMCAUtil.extractAllPrincipals(aut);//TODO this must be shift to method composition, to be called only once!
@@ -641,23 +642,6 @@ public class FMCAUtil
 		return onlyprincipal;
 	}
 	
-	protected static CATransition[] removeHoles(CATransition[] l, int holes )
-	{
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		CATransition[] fin = new CATransition[l.length-holes];
-		for (int ind=0;ind<l.length;ind++)
-		{
-			if (l[ind]!=null)
-			{
-				fin[pointer]=l[ind];
-				pointer++;
-			}
-		}
-		return fin;
-	}
 
 
 	public static float furthestNodesX(FMCA[] aut)
@@ -869,69 +853,8 @@ public class FMCAUtil
 		 return items;
 	}
 	
-	public static boolean contains(int[] q, int[][] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (listq[i]!=null)
-				if (Arrays.equals(q, listq[i]))
-					return true;
-		}
-		return false;
-	}
 	
-	/**
-	 * 
-	 * @param q
-	 * @param listq
-	 * @param listlength
-	 * @return true if in the first listlength of listq elements there is  q
-	 */
-	public static boolean contains(int q, int[] listq,int listlength)
-	{
-		for (int i=0;i<listlength;i++)
-		{
-				if (q==listq[i])
-					return true;
-		}
-		return false;
-	}
 	
-	/**
-	 * 
-	 * @param q
-	 * @param e
-	 * @return index of element e in q
-  	 */
-	public static int getIndex(int[] q, int e)
-	{
-		for (int i=0;i<q.length;i++)
-		{
-			if (q[i]==e)
-					return i;
-		}
-		return -1;
-	}
-	
-	public static int getIndex(String[] q, String e)
-	{
-		for (int i=0;i<q.length;i++)
-		{
-			if ((q[i]!=null) &&(q[i].equals(e)))
-					return i;
-		}
-		return -1;
-	}
-	
-	public static int indexContains(int[] q, int[][] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (Arrays.equals(q, listq[i]))
-					return i;
-		}
-		return -1;
-	}
 	public static int[][] setUnion(int[][] q1, int[][] q2)
 	{
 		int[][] m= new int[q1.length+q2.length][];
@@ -970,21 +893,8 @@ public class FMCAUtil
 		}
 		return m;
 	}
-	public static int[][] setDifference(int[][] q1, int[][] q2)
-	{
-		int p=0;
-		int[][] m= new int[q1.length][];
-		for (int i=0;i<m.length;i++)
-		{
-			if (!contains(q1[i],q2)&&!contains(q1[i],m))
-			{
-				m[p]=q1[i];
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p);
-		return m;
-	}
+	
+	
 	public static int[][] setIntersection(int[][] q1, int[][] q2)
 	{
 		int p=0;
@@ -1000,7 +910,6 @@ public class FMCAUtil
 		m=removeTailsNull(m,p);
 		return m;
 	}
-		
 	
 	public static String[] setIntersection(String[] q1, String[] q2)
 	{
@@ -1014,12 +923,13 @@ public class FMCAUtil
 				p++;
 			}
 		}
-		m=removeTailsNull(m,p).toArray(m);
+		m=removeTailsNull(m,p);
 		return m;
 	}
+	
 	public static int[][] removeDuplicates(int[][] m)
 	{
-		int removed=0;
+		//int removed=0;
 		for (int i=0;i<m.length;i++)
 		{
 			for (int j=i+1;j<m.length;j++)
@@ -1027,50 +937,14 @@ public class FMCAUtil
 				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
 				{
 					m[j]=null;
-					removed++;
+					//removed++;
 				}
 			}
 		}
-		m= (int[][])removeHoles(m,removed);
+		m= removeHoles(m);//,removed); 
 		return m;
 			
-	}
-	public static CAState[] removeDuplicates(CAState[] m)
-	{
-		int removed=0;
-		for (int i=0;i<m.length;i++)
-		{
-			for (int j=i+1;j<m.length;j++)
-			{
-				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
-				{
-					m[j]=null;
-					removed++;
-				}
-			}
-		}
-		m= (CAState[])removeHoles(m).toArray(m); //,removed);
-		return m;
-			
-	}
-	public static String[] removeDuplicates(String[] m)
-	{
-		int removed=0;
-		for (int i=0;i<m.length;i++)
-		{
-			for (int j=i+1;j<m.length;j++)
-			{
-				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
-				{
-					m[j]=null;
-					removed++;
-				}
-			}
-		}
-		m=  removeHoles(m).toArray(m); //,removed);
-		return m;
-			
-	}
+	}	
 	
 	public static int[] removeTailsNull(int[] q,int length)
 	{
@@ -1079,7 +953,7 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
-	
+
 	public static float[] removeTailsNull(float[] q,int length)
 	{
 		float[] r=new float[length];
@@ -1087,169 +961,144 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
-	public static int[][] removeTailsNull(int[][] q,int length)
+	
+		public static int indexContains(int[] q, int[][] listq)
 	{
-		int[][] r=new int[length][];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
+		for (int i=0;i<listq.length;i++)
+		{
+			if (Arrays.equals(q, listq[i]))
+					return i;
+		}
+		return -1;
 	}
 	
-	
-	public static int[][] removeHoles(int[][] l, int holes )
+
+	public static boolean contains(int q, int[] listq,int listlength)
 	{
-		/**
-		 * remove holes (null) in t
-		 */
-		int pointer=0;
-		int[][] fin = new int[l.length-holes][];
-		for (int ind=0;ind<l.length;ind++)
+		for (int i=0;i<listlength;i++)
 		{
-			if (l[ind]!=null)
-			{
-				fin[pointer]=l[ind];
-				pointer++;
-			}
+				if (q==listq[i])
+					return true;
 		}
-		return fin;
+		return false;
+	}
+	
+	public static int getIndex(int[] q, int e)
+	{
+		for (int i=0;i<q.length;i++)
+		{
+			if (q[i]==e)
+					return i;
+		}
+		return -1;
+	}
+
+	
+
+	public static <T> int getIndex(T[] q, T e)
+	{
+		if (e==null)
+			return -1;
+		else
+			return Arrays.asList(q)
+					.indexOf(e);
+	}
+	
+	public static <T> boolean contains(T q, T[] listq)
+	{
+		if (q==null) 
+			return false;
+		else if (q instanceof int[])
+		 	return Arrays.asList(listq).stream()
+					.filter(x -> Arrays.equals((int[])q, (int[])x))
+					.count()>0;
+		else
+			return Arrays.asList(listq)
+					.indexOf(q)!=-1;
+	}
+	
+
+	
+	public static <T> boolean contains(T q, T[] listq, int listlength)
+	{
+		return Arrays.asList(listq)
+				.subList(0, listlength)
+				.indexOf(q)!=-1;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static <T> T[] removeDuplicates(T[] m)
+	{
+		return (T[]) Arrays.asList(m).stream()
+				.distinct()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList())
+				.toArray();
 	}
 	
 	
 	/**
 	 * @return  q1 / q2
 	 */
-	public static <T> List<T> setDifference(T[] q1, T[] q2)
+	@SuppressWarnings("unchecked")
+	public static <T> T[] setDifference(T[] q1, T[] q2)
 	{
-		return Arrays.asList(q1).stream()
-				.filter(x -> Arrays.asList(q2).indexOf(x)!=-1)
-				.collect(Collectors.toList());
+		return (T[]) Arrays.asList(q1).stream()
+				.distinct()
+				.filter(x -> !contains(x,q2))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList())
+				.toArray();
 	}
 
-	public static <T> boolean contains(T q, T[] listq)
+
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T[] removeTailsNull(T[] q, int length)
 	{
-		return Arrays.asList(listq).indexOf(q)!=-1;
+		return (T[]) Arrays.asList(q).stream()
+				.limit(length)
+				.collect(Collectors.toList())
+				.toArray();
 	}
 	
-	public static <T> boolean contains(T q, T[] listq, int listlength)
+	@SuppressWarnings("unchecked")
+	public static <T> T[] removeHoles(T[] l)
 	{
-		return Arrays.asList(listq).subList(0, listlength).indexOf(q)!=-1;
-	}
-	
-	public static <T> List<T> removeTailsNull(T[] q, int length)
-	{
-		return Arrays.asList(q).subList(0, q.length -length);
-	}
-	
-	public static <T> List<T> removeHoles(T[] l)
-	{
-		return Arrays.asList(l).stream().filter(Objects::nonNull).collect(Collectors.toList());
+		return (T[]) Arrays.asList(l).stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList())
+				.toArray();
 	}
 	
 
+/**
+ * utilities for primitives require conversion
+ */
+//	public static int[] convertInt(Integer[] ar)
+//	{
+//		return Arrays.stream(ar).mapToInt(Integer::intValue).toArray();
+//	}
+//	
+//	public static Integer[] convertInt(int[] ar)
+//	{
+//		return Arrays.stream(ar).boxed().toArray(Integer[]::new);
+//	}
+//	
+//	public static double[] convertDouble(Double[] ar)
+//	{
+//		return Arrays.stream(ar).mapToDouble(Double::doubleValue).toArray();
+//	}
+//	
+//	public static Double[] convertDouble(double[] ar)
+//	{
+//		return Arrays.stream(ar).boxed().toArray(Double[]::new);
+//	}
+	
 }
 	
-//	public static boolean contains(FMCATransition t, FMCATransition[] listq)
-//	{
-//		for (int i=0;i<listq.length;i++)
-//		{
-//			if (t.equals(listq[i]))
-//					return true;
-//		}
-//		return false;
-//	}
-//	public static boolean contains(FMCATransition t, FMCATransition[] listq, int listlength)
-//	{
-//		for (int i=0;i<listlength;i++)
-//		{
-//			if (t.equals(listq[i]))
-//					return true;
-//		
-//		return false;
-//	}
-//	public static boolean contains(CAState t, CAState[] listq, int listlength)
-//	{
-//		for (int i=0;i<listlength;i++)
-//		{
-//			if (t.equals(listq[i]))
-//					return true;
-//		}
-//		return false;
-//	}
 
-//	public static boolean contains(CAState q, CAState[] listq)
-//	{
-//		for (int i=0;i<listq.length;i++)
-//		{
-//			if (listq[i]!=null)
-//				if (q.equals(listq[i])) 
-//					return true;
-//		}
-//		return false;
-//	}
-//	
-//	public static boolean contains(String q, String[] listq)
-//	{
-//		for (int i=0;i<listq.length;i++)
-//		{
-//			if (listq[i]!=null)
-//				if (q.equals(listq[i]))
-//					return true;
-//		}
-//		return false;
-//	}
-//	
-//	public static CAState[] removeHoles(CAState[] l, int holes )
-//	{
-//		/**
-//		 * remove holes (null) in t
-//		 */
-//		int pointer=0;
-//		CAState[] fin = new CAState[l.length-holes];
-//		for (int ind=0;ind<l.length;ind++)
-//		{
-//			if (l[ind]!=null)
-//			{
-//				fin[pointer]=l[ind];
-//				pointer++;
-//			}
-//		}
-//		return fin;
-//	}
-//	public static String[] removeHoles(String[] l, int holes )
-//	{
-//		/**
-//		 * remove holes (null) in t
-//		 */
-//		int pointer=0;
-//		String[] fin = new String[l.length-holes];
-//		for (int ind=0;ind<l.length;ind++)
-//		{
-//			if (l[ind]!=null)
-//			{
-//				fin[pointer]=l[ind];
-//				pointer++;
-//			}
-//		}
-//		return fin;
-//	}
-//	
-//	public static FMCATransition[] removeHoles(FMCATransition[] l, int holes )
-//	{
-//		/**
-//		 * remove holes (null) in t
-//		 */
-//		int pointer=0;
-//		FMCATransition[] fin = new FMCATransition[l.length-holes];
-//		for (int ind=0;ind<l.length;ind++)
-//		{
-//			if (l[ind]!=null)
-//			{
-//				fin[pointer]=l[ind];
-//				pointer++;
-//			}
-//		}
-//		return fin;
-//	}
 //		
 //
 //public static int max(int[] n)
@@ -1260,31 +1109,40 @@ public class FMCAUtil
 //			max=n[i];
 //	return max;
 //}
-//public static String[] removeTailsNull(String[] q,int length)
+
+//public static CAState[] removeDuplicates(CAState[] m)
 //{
-//	String[] r=new String[length];
-//	for (int i=0;i<length;i++)
-//		r[i]=q[i];
-//	return r;
+//	//int removed=0;
+//	for (int i=0;i<m.length;i++)
+//	{
+//		for (int j=i+1;j<m.length;j++)
+//		{
+//			if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
+//			{
+//				m[j]=null;
+//	//			removed++;
+//			}
+//		}
+//	}
+//	m= removeHoles(m); //,removed);
+//	return m;
+//		
 //}
-//public static FMCATransition[] removeTailsNull(FMCATransition[] q,int length)
+//public static String[] removeDuplicates(String[] m)
 //{
-//	FMCATransition[] r=new FMCATransition[length];
-//	for (int i=0;i<length;i++)
-//		r[i]=q[i];
-//	return r;
+//	//int removed=0;
+//	for (int i=0;i<m.length;i++)
+//	{
+//		for (int j=i+1;j<m.length;j++)
+//		{
+//			if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
+//			{
+//				m[j]=null;
+//	//			removed++;
+//			}
+//		}
+//	}
+//	m=  removeHoles(m); //,removed);
+//	return m;		
 //}
-//public static Product[] removeTailsNull(Product[] q,int length)
-//{
-//	Product[] r=new Product[length];
-//	for (int i=0;i<length;i++)
-//		r[i]=q[i];
-//	return r;
-//}
-//public static CAState[] removeTailsNull(CAState[] q,int length)
-//{
-//	CAState[] r=new CAState[length];
-//	for (int i=0;i<length;i++)
-//		r[i]=q[i];
-//	return r;
-//}
+

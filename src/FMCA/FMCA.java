@@ -1,5 +1,4 @@
 package FMCA;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -233,7 +232,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 		}
 		
-		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer).toArray(transitionsprincipal);
+		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer);
 		CAState[] fstates = CAState.extractCAStatesFromTransitions(transitionsprincipal);
 		int[] init=new int[1]; init[0]=0;
 		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
@@ -251,7 +250,6 @@ public class FMCA  extends CA implements java.io.Serializable
 	
 	
 	/**
-	 * used by extractAllPrincipals in CAUtil
 	 * @return
 	 */
 	public FMCA[] allPrincipals()
@@ -266,10 +264,9 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * compute the most permissive controller of product p
-	 * the algorithm is different from the corresponding of MSCA
+	 * compute the orchestration (as most permissive controller) of product p
 	 * 
-	 * @return the most permissive controller for modal agreement
+	 * @return the most permissive controller in agreement
 	 */
 	public FMCA mpc(Product p)
 	{
@@ -321,11 +318,11 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		
 		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);		
+		tr=  FMCAUtil.removeHoles(tr); //, removed);		
 		a.setTransition(tr); //K_0 
 	
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter).toArray(badtransitions);
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter).toArray(potentiallyUncontrollable);
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
 		
 		//
 		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
@@ -373,7 +370,7 @@ public class FMCA  extends CA implements java.io.Serializable
 					}
 				} 
 				tr=trcopy;
-				tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
+				tr=  FMCAUtil.removeHoles(tr); //, removed);
 				a.setTransition(tr);  //K_i
 				//
 				//
@@ -406,7 +403,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				//add source states of uncontrollable transitions with redundant target to R
 				if (newRpointer>0)
 				{
-					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer).toArray(newR));
+					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
 					update=true;
 				}
 				
@@ -438,7 +435,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * compute the choreography
 	 * 
 	 * 
-	 * @return the choreography for strong agreement
+	 * @return the choreography in strong agreement
 	 */
 	public FMCA choreography()
 	{
@@ -493,7 +490,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		
 		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr).toArray(tr); //removed);		
+		tr=  FMCAUtil.removeHoles(tr); //removed);		
 		a.setTransition(tr); //K_0 
 		
 		/*//computing R_0
@@ -512,8 +509,8 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 		}*/
 
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter).toArray(badtransitions);
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter).toArray(potentiallyUncontrollable);
+		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter);
+		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter);
 		
 		//
 		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
@@ -565,7 +562,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			 * a transition violating the branching condition is pruned after all other transitions have been pruned in that state.
 			 */
 			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
+			tr=  FMCAUtil.removeHoles(tr); //, removed);
 			a.setTransition(tr);
 			
 			removed=0;
@@ -590,7 +587,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 			
 			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr).toArray(tr); //, removed);
+			tr=  FMCAUtil.removeHoles(tr); //, removed);
 			a.setTransition(tr);  //K_i
 			
 			
@@ -624,7 +621,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
 			if (newRpointer>0)
 			{
-				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer).toArray(newR));
+				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer));
 				update=true;
 			}
 			
@@ -666,7 +663,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			return false;		//ignore this transition because it is going to be pruned
 		
 		
-		List<CAState> visit = FMCAUtil.setDifference(this.getState(), bad); 
+		List<CAState> visit = Arrays.asList(FMCAUtil.setDifference(this.getState(), bad)); //TODO conversion Array-List many times
 		if (t.isMatch())
 		{
 
@@ -878,7 +875,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	}
 	
 	/**
-	 * return redundant states who do not reach a final state or are unreachable
+	 * return dangling states who do not reach a final state or are unreachable
 	 * not inherited from CA
 	 * @return	redundant states of at
 	 */
@@ -936,7 +933,7 @@ public class FMCA  extends CA implements java.io.Serializable
 				dangcounter++;
 			}	
 		}
-		return FMCAUtil.removeTailsNull(dang, dangcounter).toArray(dang);
+		return FMCAUtil.removeTailsNull(dang, dangcounter);
 	}
 	
 	/**
@@ -978,7 +975,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		}
 		if (pointer>0)
 		{
-			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer).toArray(unmatch);
+			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer);
 			return unmatch;
 		}
 		else

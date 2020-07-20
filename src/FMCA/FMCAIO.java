@@ -436,8 +436,8 @@ public class FMCAIO {
 			states=FMCAUtil.removeTailsNull(states, statec);
 			xstate=FMCAUtil.removeTailsNull(xstate, statec);
 			ystate=FMCAUtil.removeTailsNull(ystate, statec);
-			fstates=FMCAUtil.removeTailsNull(fstates, fstatescount).toArray(fstates);
-			t=FMCAUtil.removeTailsNull(t, trc).toArray(t);
+			fstates=FMCAUtil.removeTailsNull(fstates, fstatescount);
+			t=FMCAUtil.removeTailsNull(t, trc);
 			int rank=states[0].length;
 			int[] initial = new int[rank];
 			for (int ind=0;ind<rank;ind++)

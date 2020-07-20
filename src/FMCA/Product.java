@@ -60,8 +60,8 @@ public class Product {
 				//countforb++;
 			}
 		}
-		rp=FMCAUtil.removeHoles(rp).toArray(rp); //countreq
-		fp=FMCAUtil.removeHoles(fp).toArray(fp); //countforb
+		rp=FMCAUtil.removeHoles(rp); //countreq
+		fp=FMCAUtil.removeHoles(fp); //countforb
 		this.required=rp;
 		this.forbidden=fp;
 	}

@@ -283,17 +283,17 @@ public class Family {
 	{	
 		String[] features=getFeatures(filename);
 		String[][] eq = detectDuplicates(filename);
-		int counteq=0;
+		//int counteq=0;
 		for (int i=0;i<eq.length;i++)
 		{
 			if (FMCAUtil.contains(eq[i][0], features)&&FMCAUtil.contains(eq[i][1], features))
 			{
 				int index=FMCAUtil.getIndex(features, eq[i][1]);
 				features[index]=null;
-				counteq++;
+		//		counteq++;
 			}
 		}
-		features=FMCAUtil.removeHoles(features).toArray(features); //,counteq);
+		features=FMCAUtil.removeHoles(features); //,counteq);
 		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
 		currentdir+="\\products\\";
 		File folder = new File(currentdir);
@@ -330,7 +330,7 @@ public class Family {
 						System.out.println();
 					}
 */					String[] f1 = lines.toArray(new String[lines.size()]); //required features
-					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1).toArray(new String[1]), eq); 
+					Product pro = new Product(FMCAUtil.setIntersection(f1, features), FMCAUtil.setDifference(features, f1), eq); 
 					boolean alreadyinserted=false;
 					/**
 					 * product generation of featureide may generate duplicate products!
@@ -350,7 +350,7 @@ public class Family {
 					}
 				}		      
 		    }
-		pr=FMCAUtil.removeTailsNull(pr, prlength).toArray(pr);
+		pr=FMCAUtil.removeTailsNull(pr, prlength);
 		return generateSuperProducts(pr,features);
 	}
 	
@@ -429,10 +429,10 @@ public class Family {
 */								String[] rf=new String[1];
 								rf[0]=features[removedfeature];
 								
-								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf).toArray(new String[1]),
-										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf).toArray(new String[1]));
-								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf).toArray(new String[1]),
-										FMCAUtil.setDifference(pl[level-1][prodcompare].getForbidden(),rf).toArray(new String[1]));
+								Product p1 = new Product(FMCAUtil.setDifference(pl[level-1][prodind].getRequired(),rf),
+										FMCAUtil.setDifference(pl[level-1][prodind].getForbidden(),rf));
+								Product p2 = new Product(FMCAUtil.setDifference(pl[level-1][prodcompare].getRequired(),rf),
+										FMCAUtil.setDifference(pl[level-1][prodcompare].getForbidden(),rf));
 								if (p1.equals(p2))
 								{	//featuresremoved[newprodind]=features[removedfeature];
 									boolean alreadyinserted=false;
@@ -459,7 +459,7 @@ public class Family {
 			}
 			if (newprodind>0)
 			{
-				newproducts=FMCAUtil.removeTailsNull(newproducts, newprodind).toArray(newproducts);
+				newproducts=FMCAUtil.removeTailsNull(newproducts, newprodind);
 				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
 				pl[level-2]=newproducts;
 			}
@@ -508,7 +508,7 @@ public class Family {
 	               ind++;
 	            }       
 	        }
-	        features=FMCAUtil.removeTailsNull(features, ind).toArray(features);
+	        features=FMCAUtil.removeTailsNull(features, ind);
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
 	      } catch (SAXException e) {
