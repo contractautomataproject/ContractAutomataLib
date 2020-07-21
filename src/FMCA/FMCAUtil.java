@@ -1,6 +1,8 @@
 package FMCA;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -282,7 +284,7 @@ public class FMCAUtil
 		 * remove holes (null) in finalTr2
 		 */
 		
-		finalTr= FMCAUtil.removeHoles(finalTr); //, removed);
+		finalTr= FMCAUtil.removeHoles(finalTr, new CATransition[] {}); //, removed);
 		aut.setTransition(finalTr);
 		return aut;
 	}
@@ -824,127 +826,115 @@ public class FMCAUtil
 		return new FMCA(rank, finitial, states, finalstates, uniontr, ufst);
 	}
 	
-	// from now on all methods are utilities that were not available in CAUtil
 	
-	public static int[] getArray(String arr)
+	
+	public static <T> T[] setUnion(T[] q1, T[] q2, T[] type)
 	{
-		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+		List<T> t=  Arrays.asList(q1);
+		t = new ArrayList<T>(t);
+		t.addAll(Arrays.asList(q2));
+		return removeDuplicates(q1,type);
+	}
+	
+	public static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
+	{
+		if (q1==null || q2==null)
+			return null;
+		return Arrays.asList(q1).stream()
+				.filter(Objects::nonNull)
+				.filter(x-> contains(x,q2))
+				.collect(Collectors.toList())
+				.toArray(type);
+	}
+	
 
-		 int[] results = new int[items.length];
+	/**
+	 * @return  q1 / q2
+	 */
+	public static <T> T[] setDifference(T[] q1, T[] q2, T[] type)
+	{
+		return Arrays.asList(q1).stream()
+				.distinct()
+				.filter(x -> !contains(x,q2))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList())
+				.toArray(type);
+	}
+	
+	
+	public static <T> int indexContains(T q, T[] listq)
+	{
+		if (q==null||listq==null) 
+			return -1;
+		return Arrays.asList(listq)
+					.indexOf(q);
+	}
 
-		 for (int ii = 0; ii < items.length; ii++) {
-		    // try {
-		         results[ii] = Integer.parseInt(items[ii]);
-		     /*} catch (NumberFormatException nfe) {
-		         nfe.printStackTrace();
-		     };*/
-		 }
-		 return results;
+	public static <T> int getIndex(T[] q, T e)
+	{
+		if (e==null||q==null)
+			return -1;
+		else
+			return Arrays.asList(q)
+					.indexOf(e);
 	}
 	
-	public static String[] getArrayString(String arr) throws Exception
+	public static <T> boolean contains(T q, T[] listq)
 	{
-		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-		 for (int i=0;i<items.length;i++)
-		 {
-			 if (!(items[i].startsWith("!")||items[i].startsWith("?")||items[i].startsWith("-")))
-				 throw new Exception();
-		 }
-		 return items;
+		if (q==null||listq==null) 
+			return false;
+		else if (q instanceof int[])
+		 	return Arrays.asList(listq).stream()
+					.filter(x -> Arrays.equals((int[])q, (int[])x))
+					.count()>0;
+		else
+			return Arrays.asList(listq)
+					.indexOf(q)!=-1;
 	}
 	
+
 	
-	
-	public static int[][] setUnion(int[][] q1, int[][] q2)
+	public static <T> boolean contains(T q, T[] listq, int listlength)
 	{
-		int[][] m= new int[q1.length+q2.length][];
-		for (int i=0;i<m.length;i++)
-		{
-			if (i<q1.length)
-				m[i]=q1[i];
-			else
-				m[i]=q2[i-q1.length];
-		}
-		m=removeDuplicates(m);
-		return m;
-	}
-	public static CAState[] setUnion(CAState[] q1, CAState[] q2)
-	{
-		CAState[] m= new CAState[q1.length+q2.length];
-		for (int i=0;i<m.length;i++)
-		{
-			if (i<q1.length)
-				m[i]=q1[i];
-			else
-				m[i]=q2[i-q1.length];
-		}
-		m=removeDuplicates(m);
-		return m;
-	}
-	public static Product[] concat(Product[] q1, Product[] q2)
-	{
-		Product[] m= new Product[q1.length+q2.length];
-		for (int i=0;i<m.length;i++)
-		{
-			if (i<q1.length)
-				m[i]=q1[i];
-			else
-				m[i]=q2[i-q1.length];
-		}
-		return m;
+		if (listq==null||q==null)
+			return false;
+		return Arrays.asList(listq)
+				.subList(0, listlength)
+				.indexOf(q)!=-1;
 	}
 	
-	
-	public static int[][] setIntersection(int[][] q1, int[][] q2)
+
+	public static <T> T[] removeDuplicates(T[] m, T[] type)
 	{
-		int p=0;
-		int[][] m= new int[q1.length][];
-		for (int i=0;i<m.length;i++)
-		{
-			if (contains(q1[i],q2))
-			{
-				m[p]=q1[i];
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p);
-		return m;
+		if (m==null) 
+			return null;
+		
+		return 	Arrays.asList(m).stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.collect(Collectors.toList())
+				.toArray(type);
+	}
+
+
+	public static <T> T[] removeTailsNull(T[] q, int length, T[] type)
+	{
+		return  Arrays.asList(q).stream()
+				.limit(length)
+				.collect(Collectors.toList())
+				.toArray(type);
 	}
 	
-	public static String[] setIntersection(String[] q1, String[] q2)
+	public static <T> T[] removeHoles(T[] l, T[] type)
 	{
-		int p=0;
-		String[] m= new String[q1.length];
-		for (int i=0;i<m.length;i++)
-		{
-			if (contains(q1[i],q2))
-			{
-				m[p]=q1[i];
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p);
-		return m;
+		if (l==null)
+			return null;
+		return (T[]) Arrays.asList(l).stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList())
+				.toArray(type);
 	}
 	
-	public static int[][] removeDuplicates(int[][] m)
-	{
-		//int removed=0;
-		for (int i=0;i<m.length;i++)
-		{
-			for (int j=i+1;j<m.length;j++)
-			{
-				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
-				{
-					m[j]=null;
-					//removed++;
-				}
-			}
-		}
-		m= removeHoles(m);//,removed); 
-		return m;
-			
-	}	
 	
 	public static int[] removeTailsNull(int[] q,int length)
 	{
@@ -961,28 +951,6 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
-	
-		public static int indexContains(int[] q, int[][] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (Arrays.equals(q, listq[i]))
-					return i;
-		}
-		return -1;
-	}
-	
-
-	public static boolean contains(int q, int[] listq,int listlength)
-	{
-		for (int i=0;i<listlength;i++)
-		{
-				if (q==listq[i])
-					return true;
-		}
-		return false;
-	}
-	
 	public static int getIndex(int[] q, int e)
 	{
 		for (int i=0;i<q.length;i++)
@@ -993,111 +961,109 @@ public class FMCAUtil
 		return -1;
 	}
 
-	
-
-	public static <T> int getIndex(T[] q, T e)
+	public static int indexContains(int[] q, int[][] listq)
 	{
-		if (e==null)
-			return -1;
-		else
-			return Arrays.asList(q)
-					.indexOf(e);
+		for (int i=0;i<listq.length;i++)
+		{
+			if (Arrays.equals(q, listq[i]))
+					return i;
+		}
+		return -1;
 	}
-	
-	public static <T> boolean contains(T q, T[] listq)
+	public static boolean contains(int q, int[] listq,int listlength)
 	{
-		if (q==null) 
-			return false;
-		else if (q instanceof int[])
-		 	return Arrays.asList(listq).stream()
-					.filter(x -> Arrays.equals((int[])q, (int[])x))
-					.count()>0;
-		else
-			return Arrays.asList(listq)
-					.indexOf(q)!=-1;
+		for (int i=0;i<listlength;i++)
+		{
+				if (q==listq[i])
+					return true;
+		}
+		return false;
 	}
-	
-
-	
-	public static <T> boolean contains(T q, T[] listq, int listlength)
-	{
-		return Arrays.asList(listq)
-				.subList(0, listlength)
-				.indexOf(q)!=-1;
-	}
-	
-
-	@SuppressWarnings("unchecked")
-	public static <T> T[] removeDuplicates(T[] m)
-	{
-		return (T[]) Arrays.asList(m).stream()
-				.distinct()
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList())
-				.toArray();
-	}
-	
 	
 	/**
-	 * @return  q1 / q2
+	 * difficult to convert as generic, using 
+	 * Array.asList().stream()....map(Arrays::asList)
+	 * was giving List<List<int[]>> instead of List<List<Integer>>
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T[] setDifference(T[] q1, T[] q2)
+	public static int[][] setIntersection(int[][] q1, int[][] q2)
 	{
-		return (T[]) Arrays.asList(q1).stream()
-				.distinct()
-				.filter(x -> !contains(x,q2))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList())
-				.toArray();
-	}
-
-
-	
-	@SuppressWarnings("unchecked")
-	public static <T> T[] removeTailsNull(T[] q, int length)
-	{
-		return (T[]) Arrays.asList(q).stream()
-				.limit(length)
-				.collect(Collectors.toList())
-				.toArray();
+		int p=0;
+		int[][] m= new int[q1.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=removeTailsNull(m,p, new int[][] {});
+		return m;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static <T> T[] removeHoles(T[] l)
+	public static int[][] setUnion(int[][] q1, int[][] q2)
 	{
-		return (T[]) Arrays.asList(l).stream()
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList())
-				.toArray();
+		int[][] m= new int[q1.length+q2.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		m=FMCAUtil.removeDuplicates(m);
+		return m;
 	}
 	
+	/**
+	 * 
+	 * with streams distinct() does not use Arrays equals
+	 * 
+	 * 	if (q1 instanceof int[][]) {
+			return removeDuplicates(q1);
+		}
+		does not work
+	 */
+	public static int[][] removeDuplicates(int[][] m)
+	{
+		//int removed=0;
+		for (int i=0;i<m.length;i++)
+		{
+			for (int j=i+1;j<m.length;j++)
+			{
+				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
+				{
+					m[j]=null;
+		//			removed++;
+				}
+			}
+		}
+		m= removeHoles(m, new int[][] {}); 
+		return m;
+	}	
 
-/**
- * utilities for primitives require conversion
- */
-//	public static int[] convertInt(Integer[] ar)
-//	{
-//		return Arrays.stream(ar).mapToInt(Integer::intValue).toArray();
-//	}
-//	
-//	public static Integer[] convertInt(int[] ar)
-//	{
-//		return Arrays.stream(ar).boxed().toArray(Integer[]::new);
-//	}
-//	
-//	public static double[] convertDouble(Double[] ar)
-//	{
-//		return Arrays.stream(ar).mapToDouble(Double::doubleValue).toArray();
-//	}
-//	
-//	public static Double[] convertDouble(double[] ar)
-//	{
-//		return Arrays.stream(ar).boxed().toArray(Double[]::new);
-//	}
-	
+
 }
 	
+//public static int[] convertInt(Integer[] ar)
+//{
+//	return Arrays.stream(ar).mapToInt(Integer::intValue).toArray();
+//}
+//
+//private static Integer[] convertInt(int[] ar)
+//{
+//	return Arrays.stream(ar).boxed().toArray(Integer[]::new);
+//}
+//
+//public static double[] convertDouble(Double[] ar)
+//{
+//	return Arrays.stream(ar).mapToDouble(Double::doubleValue).toArray();
+//}
+//
+//public static Double[] convertDouble(double[] ar)
+//{
+//	return Arrays.stream(ar).boxed().toArray(Double[]::new);
+//}
 
 //		
 //
@@ -1146,3 +1112,16 @@ public class FMCAUtil
 //	return m;		
 //}
 
+
+/*	public static Product[] concat(Product[] q1, Product[] q2)
+	{
+		Product[] m= new Product[q1.length+q2.length];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		return m;
+	}*/

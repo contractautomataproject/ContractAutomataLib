@@ -341,7 +341,7 @@ public class FMCAIO {
 							if (eElement.getAttribute("style").contains("terminate.png"))
 							{ 
 								idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
-								finalstates[finalstatec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+								finalstates[finalstatec]=getArray(eElement.getAttribute("value"));
 								NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
 								Element geo= (Element) g.item(0);
 								if (geo.hasAttribute("x"))
@@ -362,7 +362,7 @@ public class FMCAIO {
 							}
 							else{
 								idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
-								states[statec]=FMCAUtil.getArray(eElement.getAttribute("value"));
+								states[statec]=getArray(eElement.getAttribute("value"));
 								NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
 								Element geo= (Element) g.item(0);
 								if (geo.hasAttribute("x"))
@@ -415,7 +415,7 @@ public class FMCAIO {
 								target=finalstates[FMCAUtil.getIndex(idfinalstate, idtarget)];
 
 
-							String[] label=FMCAUtil.getArrayString(eElement.getAttribute("value"));
+							String[] label=getArrayString(eElement.getAttribute("value"));
 							if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
 								t[trc]=new FMCATransition(CAState.getCAStateWithValue(source, fstates),label,CAState.getCAStateWithValue(target, fstates),FMCATransition.action.URGENT);//red
 							else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
@@ -430,14 +430,14 @@ public class FMCAIO {
 				}
 			}
 
-			finalstates=FMCAUtil.removeTailsNull(finalstates, finalstatec);
+			finalstates=FMCAUtil.removeTailsNull(finalstates, finalstatec, new int[][] {});
 			xfinalstate=FMCAUtil.removeTailsNull(xstate, finalstatec);
 			yfinalstate=FMCAUtil.removeTailsNull(ystate, finalstatec);
-			states=FMCAUtil.removeTailsNull(states, statec);
+			states=FMCAUtil.removeTailsNull(states, statec, new int[][] {});
 			xstate=FMCAUtil.removeTailsNull(xstate, statec);
 			ystate=FMCAUtil.removeTailsNull(ystate, statec);
-			fstates=FMCAUtil.removeTailsNull(fstates, fstatescount);
-			t=FMCAUtil.removeTailsNull(t, trc);
+			fstates=FMCAUtil.removeTailsNull(fstates, fstatescount, new CAState[] {});
+			t=FMCAUtil.removeTailsNull(t, trc, new FMCATransition[] {});
 			int rank=states[0].length;
 			int[] initial = new int[rank];
 			for (int ind=0;ind<rank;ind++)
@@ -839,6 +839,36 @@ public class FMCAIO {
 		}
 
 	}
+	
+
+	private static String[] getArrayString(String arr) throws Exception
+	{
+		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+		 for (int i=0;i<items.length;i++)
+		 {
+			 if (!(items[i].startsWith("!")||items[i].startsWith("?")||items[i].startsWith("-")))
+				 throw new Exception();
+		 }
+		 return items;
+	}
+	
+	private static int[] getArray(String arr)
+	{
+		 String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+
+		 int[] results = new int[items.length];
+
+		 for (int ii = 0; ii < items.length; ii++) {
+		    // try {
+		         results[ii] = Integer.parseInt(items[ii]);
+		     /*} catch (NumberFormatException nfe) {
+		         nfe.printStackTrace();
+		     };*/
+		 }
+		 return results;
+	}
+	
+
 
 
 }

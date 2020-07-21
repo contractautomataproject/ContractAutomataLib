@@ -19,15 +19,21 @@ public class FMCAUtilTest {
 	public void removeHolesTest()
 	{
 		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, {1,0,2} };
-		assertEquals(FMCAUtilOld.removeHoles(test, 1),FMCAUtil.removeHoles(test));
+		assertEquals(FMCAUtilOld.removeHoles(test, 1),FMCAUtil.removeHoles(test, new int[][] {}));
 	}
 	
+	@Test
+	public void removeHolesStringTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3"};
+		assertEquals(FMCAUtilOld.removeHoles(test, 1),FMCAUtil.removeHoles(test, new String[] {}));
+	}
 	
 	@Test
 	public void removeTailsNullTest()
 	{
 		int[][] test = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}, {1,0,2}, null, null };
-		assertEquals(FMCAUtilOld.removeTailsNull(test, 2),FMCAUtil.removeTailsNull(test,2));
+		assertEquals(FMCAUtilOld.removeTailsNull(test, 2),FMCAUtil.removeTailsNull(test,2, new int[][] {}));
 	}
 	
 	@Test
@@ -52,12 +58,39 @@ public class FMCAUtilTest {
 	}
 	
 	@Test
+	public void containsFalseTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3"};
+		assertEquals(FMCAUtilOld.contains("5", test),FMCAUtil.contains("5",test));
+	}
+	
+	@Test
 	public void containsNullTest()
 	{
 		String[] test = new String[] {"0","1","3", null, "3"};
 		assertEquals(FMCAUtilOld.contains(null, test),FMCAUtil.contains(null,test));
 	}
 	
+	@Test
+	public void containsLTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3","5","0"};
+		assertEquals(FMCAUtilOld.contains("1", test,5),FMCAUtil.contains("1",test,5));
+	}
+	
+	@Test
+	public void containsLFalseTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3","5","0"};
+		assertEquals(FMCAUtilOld.contains("5", test,5),FMCAUtil.contains("5",test,5));
+	}
+	
+	@Test
+	public void containsLNullTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3","5","0"};
+		assertEquals(FMCAUtilOld.contains(null, test,5),FMCAUtil.contains(null,test,5));
+	}
 	
 	@Test
 	public void getIndexTest()
@@ -79,7 +112,7 @@ public class FMCAUtilTest {
 		int[][] test = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}, {1,0,4} };
 		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}};
 		
-		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2));
+		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2, new int[][] {}));
 	}
 	
 	@Test
@@ -88,9 +121,55 @@ public class FMCAUtilTest {
 		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
 		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}};
 		
-		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2));
+		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2, new int[][] {}));
 	}
+	
+	
+	@Test
+	public void removeDuplicatesStringTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3"};
+		//assertEquals(FMCAUtilOld.removeDuplicates(test),FMCAUtil.removeDuplicates(test));
+		assertEquals(new String[] {"0","1","3"},FMCAUtil.removeDuplicates(test, new String[] {}));
 
+	}
+	
+	@Test
+	public void setUnionTest()
+	{
+		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
+		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}};
+	
+		assertEquals(FMCAUtilOld.setUnion(test, test2),FMCAUtil.setUnion(test, test2));
+	}
+	
+	@Test
+	public void setUnion2Test()
+	{
+		int[][] test = new int[][] { {0,1,3}  };
+		int[][] test2 = new int[][] { {0,1,3} };
+	
+		assertEquals(FMCAUtilOld.setUnion(test, test2),FMCAUtil.setUnion(test, test2));
+	}
+	
+
+	@Test
+	public void setUnionStringTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3"};
+		String[] test2 = new String[] {"0", null, "3"};
+		
+		assertEquals(new String[] {"0","1","3"},FMCAUtil.setUnion(test, test2, new String[] {}));
+	}
+	
+	@Test
+	public void setIntersectionTest()
+	{
+		String[] test = new String[] {"0","1","3", null, "3"};
+		String[] test2 = new String[] {"0", null, "3"};
+		
+		assertEquals(FMCAUtilOld.setIntersection(test, test2),FMCAUtil.setIntersection(test, test2, new String[] {}));
+	}
 	
 }
 
@@ -112,9 +191,36 @@ class FMCAUtilOld {
 		}
 		return fin;
 	}
+	
+	protected static String[] removeHoles(String[] l, int holes )
+	{
+		/**
+		 * remove holes (null) in t
+		 */
+		int pointer=0;
+		String[] fin = new String[l.length-holes];
+		for (int ind=0;ind<l.length;ind++)
+		{
+			if (l[ind]!=null)
+			{
+				fin[pointer]=l[ind];
+				pointer++;
+			}
+		}
+		return fin;
+	}
+	
 	public static int[][] removeTailsNull(int[][] q,int length)
 	{
 		int[][] r=new int[length][];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	
+	public static String[] removeTailsNull(String[] q,int length)
+	{
+		String[] r=new String[length];
 		for (int i=0;i<length;i++)
 			r[i]=q[i];
 		return r;
@@ -170,5 +276,69 @@ class FMCAUtilOld {
 		}
 		return false;
 	}
+	
+	
+	//it does not remove duplicates null, but 
+	//remove holes remove nulls so there is a error there
+	public static String[] removeDuplicates(String[] m)
+	{
+		int removed=0;
+		for (int i=0;i<m.length;i++)
+		{
+			for (int j=i+1;j<m.length;j++)
+			{
+				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
+				{
+					m[j]=null;
+		 			removed++;
+				}
+			}
+		}
+		m=  removeHoles(m,removed);
+		return m;		
+	}
+	
+	public static String[] setIntersection(String[] q1, String[] q2)
+	{
+		int p=0;
+		String[] m= new String[q1.length];
+		for (int i=0;i<m.length;i++)
+		{
+			if (contains(q1[i],q2))
+			{
+				m[p]=q1[i];
+				p++;
+			}
+		}
+		m=FMCAUtilOld.removeTailsNull(m,p);
+		return m;
+	}
+	
+	protected static boolean contains(String t, String[] listq, int listlength)
+	{
+		if (t==null)
+			return false;
+		for (int i=0;i<listlength;i++)
+		{
+			if (t.equals(listq[i]))
+					return true;
+		}
+		return false;
+	}
+	
+	public static int[][] setUnion(int[][] q1, int[][] q2)
+	{
+		int[][] m= new int[q1.length+q2.length][];
+		for (int i=0;i<m.length;i++)
+		{
+			if (i<q1.length)
+				m[i]=q1[i];
+			else
+				m[i]=q2[i-q1.length];
+		}
+		m=FMCAUtil.removeDuplicates(m);
+		return m;
+	}
 }
+
 
