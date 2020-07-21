@@ -13,7 +13,7 @@ import CA.CATransition;
 /**
  * Utilities for FMCA
  * 
- * the unchecked suppression warnings are necessary because of toArray method
+ * Mainly the composition method and some accessory methods
  * 
  * @author Davide Basile
  *
@@ -21,8 +21,7 @@ import CA.CATransition;
 public class FMCAUtil 
 {
 
-	static boolean debug = true;
-
+	private static boolean debug = true;
 
 	/**
 	 * this is the most important method of the tool, computing the composition.
@@ -289,62 +288,6 @@ public class FMCAUtil
 		return aut;
 	}
 	
-	/**
-	 * remove transitions who do not reach a final state
-	 * @param at	the CA
-	 * @return	CA without hanged transitions
-	 */
-	public static CA removeDanglingTransitions(FMCA at)
-	{
-		FMCA aut = at.clone();
-		CATransition[] finalTr=aut.getTransition();
-		int removed=0;
-		int pointerreachable=0;
-		int pointerunreachable=0;
-		int[][] reachable = new int[at.prodStates()][]; 
-		int[][] unreachable = new int[at.prodStates()][];
-		int[][] fs = aut.allFinalStates();
-		
-		for (int ind=0;ind<finalTr.length;ind++)
-		{
-			// for each transition checks if the arrival state s is reachable from one of the final states of the ca
-			CATransition t=(CATransition)finalTr[ind];
-			int[] arr = t.getTargetP().getState();
-
-			boolean remove=true;
-			
-			for (int i=0;i<fs.length;i++)
-			{
-				int[] pointervisited = new int[1];
-				pointervisited[0]=0;
-				if(amIReachable(fs[i],aut,arr,new int[aut.prodStates()][],pointervisited,reachable,unreachable,pointerreachable,pointerunreachable)) //if final state fs[i] is reachable from arrival state arr
-					remove = false;
-			}
-			//if t does not reach any final state then remove
-			if(remove)
-			{
-				finalTr[ind]=null;
-				removed++;
-			}			
-		}
-			
-			
-		/**
-		 * remove holes (null) in finalTr2
-		 */
-		int pointer=0;
-		CATransition[] finalTr2 = new CATransition[finalTr.length-removed];
-		for (int ind=0;ind<finalTr.length;ind++)
-		{
-			if (finalTr[ind]!=null)
-			{
-				finalTr2[pointer]=finalTr[ind];
-				pointer++;
-			}
-		}
-		aut.setTransition(finalTr2);
-		return aut;
-	}
 	
 	/**
 	 * true if state[] is reachable from  from[]  in aut
@@ -354,11 +297,10 @@ public class FMCAUtil
 	 * @param pointervisited
 	 * @return  true if state[] is reachable from  from[]  in aut
 	 */
-
 	//TODO pointerunreachable is never updated, probably is not needed. 
 	// In case this method is called multiple times from another method, substitute 
 	//it with a method which computes a forward visit of the graph only once
-	public static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
+	private static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
 		if (Arrays.equals(state,from))
 			return true;
@@ -409,7 +351,7 @@ public class FMCAUtil
 	 * @param aut all the CA to be in the transition
 	 * @return an array of transitions where i (and ii) moves and the other stays idle in each possible state 
 	 */
-	protected static FMCATransition[] generateTransitions(FMCATransition t, FMCATransition tt, int i, int ii, FMCA[] aut)
+	private static FMCATransition[] generateTransitions(FMCATransition t, FMCATransition tt, int i, int ii, FMCA[] aut)
 	{
 		/**
 		 * preprocessing to the recursive method recgen:
@@ -613,51 +555,7 @@ public class FMCAUtil
 		}
 	}
 	
-	
-	/**
-	 * used by generateTransitions
-	 * (taken from CA)
-	 * 
-	 * @param aut
-	 * @return
-	 */
-	public static FMCA[] extractAllPrincipals(FMCA[] aut)
-	{
-		FMCA[][] principals = new FMCA[aut.length][];
-		int allprincipals=0;
-		for (int j=0;j<principals.length;j++)
-		{
-			principals[j]= aut[j].allPrincipals(); //TODO: there are idle transitions in principals, to be fixed in the future, 
-												   //now this method is only used for the states of principals not their transitions
-			allprincipals+=principals[j].length;
-		}
-		FMCA[] onlyprincipal = new FMCA[allprincipals];
-		int countonlyprincipal=0;
-		for (int j=0;j<principals.length;j++)
-		{
-			for (int z=0;z<principals[j].length;z++)
-			{
-				onlyprincipal[countonlyprincipal]=principals[j][z];
-				countonlyprincipal++;
-			}
-		}
-		return onlyprincipal;
-	}
-	
 
-
-	public static float furthestNodesX(FMCA[] aut)
-	{
-		float max=0;
-		for (int i=0;i<aut.length;i++)
-		{
-			float x=aut[i].furthestNodeX();
-			if (max<x)
-				max=x;
-		}
-		return max;
-	}
-	
 	/**
 	 * 
 	 * @param aut
@@ -827,6 +725,46 @@ public class FMCAUtil
 	}
 	
 	
+	/**
+	 * (taken from CA)
+	 * 
+	 * @param aut
+	 * @return
+	 */
+	private static FMCA[] extractAllPrincipals(FMCA[] aut)
+	{
+		FMCA[][] principals = new FMCA[aut.length][];
+		int allprincipals=0;
+		for (int j=0;j<principals.length;j++)
+		{
+			principals[j]= aut[j].allPrincipals(); //TODO: there are idle transitions in principals, to be fixed in the future, 
+												   //now this method is only used for the states of principals not their transitions
+			allprincipals+=principals[j].length;
+		}
+		FMCA[] onlyprincipal = new FMCA[allprincipals];
+		int countonlyprincipal=0;
+		for (int j=0;j<principals.length;j++)
+		{
+			for (int z=0;z<principals[j].length;z++)
+			{
+				onlyprincipal[countonlyprincipal]=principals[j][z];
+				countonlyprincipal++;
+			}
+		}
+		return onlyprincipal;
+	}
+	
+	private static float furthestNodesX(FMCA[] aut)
+	{
+		float max=0;
+		for (int i=0;i<aut.length;i++)
+		{
+			float x=aut[i].furthestNodeX();
+			if (max<x)
+				max=x;
+		}
+		return max;
+	}
 	
 	public static <T> T[] setUnion(T[] q1, T[] q2, T[] type)
 	{
@@ -847,7 +785,6 @@ public class FMCAUtil
 				.toArray(type);
 	}
 	
-
 	/**
 	 * @return  q1 / q2
 	 */
@@ -892,8 +829,6 @@ public class FMCAUtil
 					.indexOf(q)!=-1;
 	}
 	
-
-	
 	public static <T> boolean contains(T q, T[] listq, int listlength)
 	{
 		if (listq==null||q==null)
@@ -934,7 +869,9 @@ public class FMCAUtil
 				.collect(Collectors.toList())
 				.toArray(type);
 	}
-	
+
+	//from now onward are duplicate methods for primitive types
+	//TODO change arrays to collections
 	
 	public static int[] removeTailsNull(int[] q,int length)
 	{
@@ -1065,54 +1002,6 @@ public class FMCAUtil
 //{
 //	return Arrays.stream(ar).boxed().toArray(Double[]::new);
 //}
-
-//		
-//
-//public static int max(int[] n)
-//{
-//	int max=0;
-//	for (int i=0;i<n.length;i++)
-//		if(n[i]>max)
-//			max=n[i];
-//	return max;
-//}
-
-//public static CAState[] removeDuplicates(CAState[] m)
-//{
-//	//int removed=0;
-//	for (int i=0;i<m.length;i++)
-//	{
-//		for (int j=i+1;j<m.length;j++)
-//		{
-//			if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
-//			{
-//				m[j]=null;
-//	//			removed++;
-//			}
-//		}
-//	}
-//	m= removeHoles(m); //,removed);
-//	return m;
-//		
-//}
-//public static String[] removeDuplicates(String[] m)
-//{
-//	//int removed=0;
-//	for (int i=0;i<m.length;i++)
-//	{
-//		for (int j=i+1;j<m.length;j++)
-//		{
-//			if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
-//			{
-//				m[j]=null;
-//	//			removed++;
-//			}
-//		}
-//	}
-//	m=  removeHoles(m); //,removed);
-//	return m;		
-//}
-
 
 /*	public static Product[] concat(Product[] q1, Product[] q2)
 	{

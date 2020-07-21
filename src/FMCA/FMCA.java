@@ -24,13 +24,10 @@ public class FMCA  extends CA implements java.io.Serializable
 	//TODO: add generation of products from a feature constraint, 
 	//       the family now contains all valid products, they are generated and can be imported from a feature model in FeatureIDE
 	
-	
-	
 	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates,FMCATransition[] trans)
 	{
 		super(rank,initial,states,finalstates,trans);
 	}
-	
 	
 	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstates)
 	{
@@ -63,12 +60,10 @@ public class FMCA  extends CA implements java.io.Serializable
 		return this.fstates;
 	}
 	
-	
 	public Family getFamily()
 	{
 		return family;
 	}
-	
 	
 	public boolean containAction(String act)
 	{
@@ -277,7 +272,7 @@ public class FMCA  extends CA implements java.io.Serializable
 		int removed = 0;
 		
 		//I need to store the transitions, to check later on 
-		//if some controllable transition becomes uncontrollable
+		//if some controllable transition becomes uncontrollable (i.e. semi-controllable)
 		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
 		int potentiallyUncontrollableCounter = 0;
 		
@@ -296,7 +291,7 @@ public class FMCA  extends CA implements java.io.Serializable
 			{
 				if (tr[i].isRequest()||tr[i].isForbidden(p))
 				{
-					rem[removed]=tr[i]; //solo per testing
+					rem[removed]=tr[i]; //only for testing
 					trcopy[i] = null;
 					removed++;
 				}
@@ -362,7 +357,7 @@ public class FMCA  extends CA implements java.io.Serializable
 						else if //(!tr[i].isUncontrollable(a)&&   you already know that this is true because of the else
 								(FMCAUtil.contains(tr[i].getTargetP(), R)) //remove controllable with bad target
 						{
-							rem[removed]=tr[i]; //solo per testing
+							rem[removed]=tr[i]; //only for testing
 							trcopy[i]=null;
 							removed++;
 							update=true;

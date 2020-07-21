@@ -3,6 +3,8 @@ package FMCA;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -171,6 +173,14 @@ public class FMCAUtilTest {
 		assertEquals(FMCAUtilOld.setIntersection(test, test2),FMCAUtil.setIntersection(test, test2, new String[] {}));
 	}
 	
+	@Test
+	public void maxTest() {
+		int[] test = new int[] {0, 1, 2 ,3, 2, 1};
+		
+		//taken from ProductFrame.java
+		int columns = Collections.max(Arrays.stream(test).boxed().collect(Collectors.toList()));  // FMCAUtil.max(deleng);
+		assertEquals(columns, FMCAUtilOld.max(test));
+	}
 }
 
 class FMCAUtilOld {
@@ -339,6 +349,16 @@ class FMCAUtilOld {
 		m=FMCAUtil.removeDuplicates(m);
 		return m;
 	}
+	
+	public static int max(int[] n)
+	{
+		int max=0;
+		for (int i=0;i<n.length;i++)
+			if(n[i]>max)
+				max=n[i];
+		return max;
+	}
+
 }
 
 

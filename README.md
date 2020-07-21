@@ -5,7 +5,7 @@
 
 <h1>Info</h1>
 
-Code cleaning branch: I am working on cleaning code, using more Java 8 features
+Code cleaning branch: I am working on cleaning code: using Java Streams, Generics, to have less code. 
 
 FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
 The tool is still prototypical and under development. 
