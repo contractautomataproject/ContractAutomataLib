@@ -1001,6 +1001,12 @@ public class FMCAUtil
 		return m;
 	}
 	
+	/**
+	 * 	if (q1 instanceof int[][]) {
+			return removeDuplicates(q1);
+		}
+		does not work
+	 */
 	public static int[][] setUnion(int[][] q1, int[][] q2)
 	{
 		int[][] m= new int[q1.length+q2.length][];
@@ -1017,12 +1023,7 @@ public class FMCAUtil
 	
 	/**
 	 * 
-	 * with streams distinct() does not use Arrays equals
-	 * 
-	 * 	if (q1 instanceof int[][]) {
-			return removeDuplicates(q1);
-		}
-		does not work
+	 *  streams distinct() does not use Arrays equals
 	 */
 	public static int[][] removeDuplicates(int[][] m)
 	{
