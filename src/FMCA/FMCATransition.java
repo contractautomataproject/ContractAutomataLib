@@ -4,12 +4,6 @@ package FMCA;
 import java.util.Arrays;
 
 
-
-
-
-
-
-import CA.CA;
 import CA.CAState;
 import CA.CATransition;
 
@@ -96,10 +90,10 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}	
 	
 	/**
-	 * aka  controllable greedy/lazy request
+	 * matched also known as  controllable greedy/lazy request
 	 * @return	true if the  greedy/lazy transition request is matched 
 	 */
-	protected  boolean isMatched(FMCA aut)
+	private  boolean isMatched(FMCA aut)
 	{
 		FMCATransition[] tr = aut.getTransition();
 //		int[][] fs=aut.allFinalStates();
@@ -200,7 +194,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * aka uncontrollable lazy match
 	 * @return	true if the  lazy match transition is lazy unmatchable in aut
 	 */
-	protected  boolean isLazyUnmatchable(FMCA aut)
+	private  boolean isLazyUnmatchable(FMCA aut)
 	{
 		FMCATransition[] tr = aut.getTransition();
 //		int[][] fs=aut.allFinalStates();
@@ -304,7 +298,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
 	 */
-	protected static CAState[] areUnmatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
+	public static CAState[] areUnmatchedOrLazyUnmatchable(FMCATransition[] t, FMCA aut)
 	{
 		CAState[] s= new CAState[t.length];
 		int pointer=0;
@@ -331,7 +325,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * @param aut
 	 * @return   source states of transitions in t that are unmatched or lazy unmatchable in aut
 	 */
-	protected static CAState[] areUnmatchedOrLazyUnmatchableChoreography(FMCATransition[] t, FMCA aut)
+	public static CAState[] areUnmatchedOrLazyUnmatchableChoreography(FMCATransition[] t, FMCA aut)
 	{
 		CAState[] s= new CAState[t.length];
 		int pointer=0;
@@ -364,7 +358,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	 * 					 the field CAState[] states must be instantiated --> not modified
 	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
 	 */
-	public FMCATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,CA[] aut)
+	public FMCATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,FMCA[] aut)
 	{
 		//TODO I should replace the composition of CA with a forward visit of the automaton
 		

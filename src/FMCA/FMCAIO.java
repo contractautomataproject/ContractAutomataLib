@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,7 +34,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
 
-import CA.CA;
 import CA.CAState;
 import CA.CATransition;
 
@@ -48,7 +48,7 @@ public class FMCAIO {
 	/**
 	 * print the description of the CA to a file
 	 */
-	public static void printToFile(String filename, CA aut)
+	public static void printToFile(String filename, FMCA aut)
 	{
 		String name=null;
 		int rank= aut.getRank();
@@ -248,7 +248,7 @@ public class FMCAIO {
 					}
 					case "(": //a may transition
 					{
-						CATransition temp=CA.loadTransition(strLine,rank);
+						CATransition temp=loadTransition(strLine,rank);
 						t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),FMCATransition.action.PERMITTED);
 						pointert++;
 						break;
@@ -263,7 +263,7 @@ public class FMCAIO {
 						case "G": type=FMCATransition.action.GREEDY;break;
 						case "L": type=FMCATransition.action.LAZY;break;
 						}
-						CATransition temp=CA.loadTransition(strLine,rank);
+						CATransition temp=loadTransition(strLine,rank);
 						t[pointert]=new FMCATransition(temp.getSourceP(),temp.getLabelP(),temp.getTargetP(),type);
 						pointert++;				 
 						break;
@@ -283,6 +283,69 @@ public class FMCAIO {
 		catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
+	
+	private static CATransition loadTransition(String str, int rank)
+	{
+		  int what=0;
+		  String[] ss=str.split("]");
+		  int[][] store=new int[1][];
+		  String[] label = new String[rank];
+		  for (int i=0;i<ss.length;i++)
+			  //TODO check
+		  {
+			  int[] statestransition = new int[rank];
+			  Scanner s = new Scanner(ss[i]);
+			  s.useDelimiter(",|\\[| ");
+			  int j=0;
+			  while (s.hasNext())
+			  {
+				  if (what==0||what==2)//source or target
+				  {
+					  if (s.hasNextInt())
+					  {
+						  statestransition[j]=s.nextInt();
+						 j++;
+					  }
+					  else {
+						   s.next();
+					  }
+				  }
+				  else
+				  {
+					  if (s.hasNext())
+					  {
+						  String action=s.next();
+						  if (action.contains(CATransition.idle))
+							  label[j]=CATransition.idle;
+						  else if (action.contains(CATransition.offer))
+							  label[j]=action.substring(action.indexOf(CATransition.offer));
+						  else if (action.contains(CATransition.request))
+							  label[j]=action.substring(action.indexOf(CATransition.request));
+						  else
+							  j--; //trick for not increasing the counter j
+						  
+						  j++;
+					  }
+					  else {
+						   s.next();
+					  }
+				  }
+			  }
+			  s.close();
+			  if (what==2)
+			  {
+				  return new CATransition(new CAState(store[0]),label,new CAState(statestransition));
+			  }
+			  else
+			  {
+				  if (what==0)
+					  store[what]=statestransition; //the source state
+			  }
+			  what++;
+		  }
+		  return null;
+	}
+	
 
 	/**
 	 * parse the XML description of graphEditor into an FMCA object

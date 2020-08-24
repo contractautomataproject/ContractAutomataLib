@@ -2,7 +2,6 @@ package FMCA;
 import java.util.Arrays;
 import java.util.List;
 
-import CA.CA;
 import CA.CAState;
 import CA.CATransition;
 
@@ -16,8 +15,15 @@ import CA.CATransition;
  *
  */
 @SuppressWarnings("serial")
-public class FMCA  extends CA implements java.io.Serializable
+public class FMCA  implements java.io.Serializable
 {
+	
+	private int rank;
+	private CAState initial;
+	private int[] states; //number of states of each principal
+	private int[][] finalstates; //TODO this should be of type CAState[], these are the final states of each principal in the contract automaton
+	private FMCATransition[] tra;
+
 
 	private CAState[] fstates;
 	private Family family; 
@@ -27,25 +33,131 @@ public class FMCA  extends CA implements java.io.Serializable
 
 	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates,FMCATransition[] trans)
 	{
-		super(rank,initial,states,finalstates,trans);
+		this.tra=trans;
+		this.rank=rank;
+		this.initial=initial;
+		this.states=states;
+		this.finalstates=finalstates;
 	}
 
 	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstates)
 	{
 
-		super(rank,initial,states,finalstates,trans);
+		this(rank,initial,states,finalstates,trans);
 		this.fstates=fstates;
 	}
 
 	public FMCA(int rank, CAState initial, int[][] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstate)
 	{
 
-		super(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates, new int[][] {})),
+		this(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates, new int[][] {})),
 				FMCA.principalsFinalStates(finalstates),trans);
-		System.out.println("");
 		this.fstates=fstate;
 	}
 
+	/**
+	 * 
+	 * @param tra initialize the variable Transition
+	 */
+	public void setTransition(FMCATransition[] tra)
+	{
+		this.tra=tra;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return	the array of final states
+	 */
+	public int[][] getFinalStatesCA()
+	{
+		return finalstates;
+	}
+	
+	public void setFinalStatesCA(int[][] fs)
+	{
+		this.finalstates=fs;
+	}
+	
+	/**
+	 * 
+	 * @return	the array of states
+	 */
+	public int[] getStatesCA()
+	{
+		return states;
+	}
+	
+	/**
+	 * 
+	 * @return	the array of initial states
+	 */
+	public CAState getInitialCA()
+	{
+		return initial;
+	}
+	
+	public void setInitialCA(CAState i)
+	{
+		this.initial=i;
+	}
+	
+	/**
+	 * 
+	 * @return the rank of the Contract Automaton
+	 */
+	public int getRank()
+	{
+		return rank;
+	}
+	
+	
+	
+	/**
+	 * The sum all states of all principals
+	 * @return The sum all states of all principals
+	 */
+	public int sumStates()
+	{
+		int numstates=0;
+		for (int i=0;i<states.length;i++)
+		{
+			numstates+=states[i];
+		}
+		return numstates;
+	}
+	
+	/**
+	 * The product of the states of all principals
+	 * @return The product of the states of all principals
+	 */
+	public int prodStates()
+	{
+		int prodstates=1;
+		for (int i=0;i<states.length;i++)
+		{
+			prodstates*=states[i];
+		}
+		return prodstates;
+	}
+	
+	/**
+	 * 
+	 * @return the maximum number of states
+	 */
+	public int numberOfStates()
+	{
+		int n=1;
+		int[] states=this.getStatesCA();
+		for (int i=0;i<states.length;i++)
+		{
+			n*=(states[i]+1);
+		}
+		return n;
+	}
+	
+	
 	public void setFamily(Family f)
 	{
 		this.family=f;
@@ -78,11 +190,7 @@ public class FMCA  extends CA implements java.io.Serializable
 	 */
 	public  FMCATransition[] getTransition()
 	{
-		CATransition[] temp = super.getTransition();
-		FMCATransition[] t = new FMCATransition[temp.length];
-		for (int i=0;i<temp.length;i++)
-			t[i]=(FMCATransition)temp[i];
-		return t;
+		return tra;
 	}
 
 
@@ -789,9 +897,6 @@ public class FMCA  extends CA implements java.io.Serializable
 			}
 		}
 		s=FMCAUtil.removeTailsNull(s, pointer, new int[][] {});
-		//	    int[][] f = new int[pointer][];
-		//	    for (int i=0;i<pointer;i++)
-		//	    	f[i]=s[i];
 		return s;
 	}
 
@@ -803,15 +908,14 @@ public class FMCA  extends CA implements java.io.Serializable
 
 
 	/**
-	 * 
+	 * starting from the final states of each principal, it computes all their combinations to produce 
+	 * the final states of the contract automaton. Note that not all such combinations can be reached.
 	 * 
 	 * @return all the final states of the CA
 	 */
 	public  int[][] allFinalStates()
 	{
-		//		if (rank==1)
-		//			return finalstates;
-		int[][] finalstates = this.getFinalStatesCA();
+		int[][] finalstates = this.getFinalStatesCA(); //the final states of each principal
 		int[] states=new int[finalstates.length];
 		int comb=1;
 		int[] insert= new int[states.length];
@@ -831,6 +935,10 @@ public class FMCA  extends CA implements java.io.Serializable
 		return modif;
 	}
 
+	/**
+	 * 
+	 * @return r[0] of type int[][] contains all non final states, r[1] of the same type contains all final states
+	 */
 	public int[][][] allNonFinalAndFinalStates()
 	{
 		int[][][] r = new int[2][][];
@@ -857,52 +965,6 @@ public class FMCA  extends CA implements java.io.Serializable
 		return act;
 	}
 
-
-	/**
-	 * this method is not inherited from MSCA
-	 * @return	all the  must transitions request that are not matched 
-	 */
-	protected  FMCATransition[] getUnmatch()
-	{
-		FMCATransition[] tr = this.getTransition();
-		int[][] fs=this.allFinalStates();
-		int pointer=0;
-		CAState[] R=this.getDanglingStates();
-		FMCATransition[] unmatch = new FMCATransition[tr.length];
-		for (int i=0;i<tr.length;i++)
-		{
-			if ((tr[i].isRequest())
-					&&((tr[i].isNecessary())
-							&&(!FMCAUtil.contains(tr[i].getSourceP().getState(), fs)))) // if source state is not final
-			{
-				boolean matched=false;
-				for (int j=0;j<tr.length;j++)	
-				{
-					if ((tr[j].isMatch())
-							&&(tr[j].isNecessary())
-							&&(tr[j].getReceiver()==tr[i].getReceiver())	//the same principal
-							&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==tr[i].getSourceP().getState()[tr[i].getReceiver()]) //the same source state					
-							&&(tr[j].getLabelP()[tr[j].getReceiver()]==tr[i].getLabelP()[tr[i].getReceiver()]) //the same request
-							&&(!FMCAUtil.contains(tr[i].getSourceP(), R))) //source state is not redundant
-					{
-						matched=true; // the request is matched
-					}
-				}
-				if (!matched)
-				{
-					unmatch[pointer]=tr[i];
-					pointer++;
-				}
-			}
-		}
-		if (pointer>0)
-		{
-			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer, new FMCATransition[] {});
-			return unmatch;
-		}
-		else
-			return null;
-	}
 
 	private int[] getIndexOfLazyTransitions()
 	{
@@ -939,13 +1001,12 @@ public class FMCA  extends CA implements java.io.Serializable
 	 * return dangling states who do not reach a final state or are unreachable
 	 * 
 	 * TODO this method is called multiple times during synthesis, each time it performs a new visit of the automaton, it could 
-	 * be optimized
+	 * be optimized.
 	 * 
 	 * @return	dangling states of this
 	 */
 	public CAState[] getDanglingStates()
 	{
-		this.resetReachableAndSuccessfulStates();
 		this.setReachableAndSuccessfulStates();
 		CAState[] dang=new CAState[fstates.length];
 
@@ -963,25 +1024,27 @@ public class FMCA  extends CA implements java.io.Serializable
 
 	private void setReachableAndSuccessfulStates()
 	{
-		visit(this.getInitialCA()); //firstly reachability must be set !
-		//TODO record the set of final states this is a fix
+		//firstly all states' flags are reset
+		for (int i=0;i<fstates.length;i++)
+		{
+			fstates[i].setReachable(false);
+			fstates[i].setSuccessfull(false);
+		}
+		
+		visit(this.getInitialCA()); //firstly reachability must be set
+		
+		//TODO allFinalStates generate all possible combinations, it would be better to record in the FMCA the final states, 
+		// instead of generating them
 		int[][] fs = this.allFinalStates();
 		for (int i=0; i<fs.length; i++)
 		{
 			CAState f = CAState.getCAStateWithValue(fs[i], this.getState());
+			
 			if (f!=null)//not all combinations of final states could be available (in case a controller is checked)
 				reverseVisit(f);
 		}
 	}
 
-	private void resetReachableAndSuccessfulStates()
-	{
-		for (int i=0;i<fstates.length;i++)
-		{
-			fstates[i].setReachable(false);
-			fstates[i].setSuccessfull(false);
-		} 
-	}
 
 	/**
 	 * s = current state
@@ -1011,6 +1074,8 @@ public class FMCA  extends CA implements java.io.Serializable
 	private void reverseVisit(CAState currentstate)
 	{ 
 		currentstate.setSuccessfull(true);
+		if (!currentstate.isReachable())
+			return;
 		FMCATransition[] tr=FMCATransition.getTransitionTo(currentstate, this.getTransition());
 		for (int i=0;i<tr.length;i++)
 		{
@@ -1019,5 +1084,53 @@ public class FMCA  extends CA implements java.io.Serializable
 				reverseVisit(source);
 		}
 	}
+	
+
+//	/**
+//	 * this method is not inherited from MSCA
+//	 * @return	all the  must transitions request that are not matched 
+//	 */
+//	private  FMCATransition[] getUnmatch()
+//	{
+//		FMCATransition[] tr = this.getTransition();
+//		int[][] fs=this.allFinalStates();
+//		int pointer=0;
+//		CAState[] R=this.getDanglingStates();
+//		FMCATransition[] unmatch = new FMCATransition[tr.length];
+//		for (int i=0;i<tr.length;i++)
+//		{
+//			if ((tr[i].isRequest())
+//					&&((tr[i].isNecessary())
+//							&&(!FMCAUtil.contains(tr[i].getSourceP().getState(), fs)))) // if source state is not final
+//			{
+//				boolean matched=false;
+//				for (int j=0;j<tr.length;j++)	
+//				{
+//					if ((tr[j].isMatch())
+//							&&(tr[j].isNecessary())
+//							&&(tr[j].getReceiver()==tr[i].getReceiver())	//the same principal
+//							&&(tr[j].getSourceP().getState()[tr[j].getReceiver()]==tr[i].getSourceP().getState()[tr[i].getReceiver()]) //the same source state					
+//							&&(tr[j].getLabelP()[tr[j].getReceiver()]==tr[i].getLabelP()[tr[i].getReceiver()]) //the same request
+//							&&(!FMCAUtil.contains(tr[i].getSourceP(), R))) //source state is not redundant
+//					{
+//						matched=true; // the request is matched
+//					}
+//				}
+//				if (!matched)
+//				{
+//					unmatch[pointer]=tr[i];
+//					pointer++;
+//				}
+//			}
+//		}
+//		if (pointer>0)
+//		{
+//			unmatch = FMCAUtil.removeTailsNull(unmatch, pointer, new FMCATransition[] {});
+//			return unmatch;
+//		}
+//		else
+//			return null;
+//	}
+
 
 }

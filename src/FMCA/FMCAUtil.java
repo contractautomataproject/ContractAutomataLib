@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import CA.CA;
 import CA.CAState;
 import CA.CATransition;
 
@@ -220,8 +219,10 @@ public class FMCAUtil
 	 */
 	public static FMCA removeUnreachableTransitions(FMCA at)
 	{
+		//TODO substitute this method, now we compute reachability of states
+		
 		FMCA aut = at.clone();
-		CATransition[] finalTr=aut.getTransition();
+		FMCATransition[] finalTr=aut.getTransition();
 		
 		/**
 		 * remove unreachable transitions
@@ -235,7 +236,7 @@ public class FMCAUtil
 		for (int ind=0;ind<finalTr.length;ind++)
 		{
 			//for each transition t checks if the source state of t is reachable from the initial state of the CA
-			CATransition t=(CATransition)finalTr[ind];
+			FMCATransition t= finalTr[ind];
 			int[] source = t.getSourceP().getState();
 
 			boolean found=false; //source state must not have been already visited (and inserted in either reachable or unreachable)
@@ -291,7 +292,7 @@ public class FMCAUtil
 		 * remove holes (null) in finalTr2
 		 */
 		
-		finalTr= FMCAUtil.removeHoles(finalTr, new CATransition[] {}); //, removed);
+		finalTr= FMCAUtil.removeHoles(finalTr, new FMCATransition[] {}); //, removed);
 		aut.setTransition(finalTr);
 		return aut;
 	}
@@ -307,8 +308,9 @@ public class FMCAUtil
 	 */
 	//TODO pointerunreachable is never updated, probably is not needed. 
 	// In case this method is called multiple times from another method, substitute 
-	//it with a method which computes a forward visit of the graph only once
-	private static boolean amIReachable( int[] state, CA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
+	//it with a method which computes a forward visit of the graph only once.
+	// 
+	private static boolean amIReachable( int[] state, FMCA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
 	{
 		if (Arrays.equals(state,from))
 			return true;
@@ -485,7 +487,7 @@ public class FMCAUtil
 	 * @param insert    it is used to generate all the combinations of states of idle principals, the first must be all zero  -->modified at each iteration
 	 * @param aut		array of automata, it is used in generateATransition of FMCA to retrieve the states of idle principals using insert as pointer  --> not modified
 	 */
-	private static void recGen(FMCATransition t, FMCATransition tt, int fi, int fii, FMCATransition[] cat,  int[] states, int indcat, int indstates, int[] insert,CA[] aut)
+	private static void recGen(FMCATransition t, FMCATransition tt, int fi, int fii, FMCATransition[] cat,  int[] states, int indcat, int indstates, int[] insert, FMCA[] aut)
 	{
 		if (indstates==-1) //C4
 			return;
