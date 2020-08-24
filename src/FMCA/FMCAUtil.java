@@ -22,6 +22,14 @@ public class FMCAUtil
 {
 
 	private static boolean debug = true;
+	
+	public static FMCA BFScomposition(ArrayList<FMCA> aut)
+	{
+		/**
+		 * 
+		 */
+		return null;
+	}
 
 	/**
 	 * this is the most important method of the tool, computing the composition.
@@ -66,7 +74,7 @@ public class FMCAUtil
 		 * then generate the match in all possible contexts		 
 		 * it also generates the independent moves, then clean from invalid transitions 
 		 * 
-		 * TODO it could be possible to avoid to generate invalid transitions, in an on-the-fly way
+		 * TODO it could be possible to avoid to generate invalid transitions, in a BFS visit
 		 */
 		FMCATransition[][] prodtr = new FMCATransition[aut.length][];
 		int trlength = 0;
@@ -617,7 +625,7 @@ public class FMCAUtil
 				int[] value=Arrays.copyOf(fst[j].getState(),fst[j].getState().length);
 				for (int z=0;z<value.length;z++)
 					value[z]=value[z] + upperbound*(i+1); //rename state
-				newfst[j]=new CAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositinioning
+				newfst[j]=new CAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositioning
 						fst[j].isInitial(),fst[j].isFinalstate());			
 			}
 			aut[i].setState(newfst);

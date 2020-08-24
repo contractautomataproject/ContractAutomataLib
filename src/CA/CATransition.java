@@ -1,8 +1,5 @@
 package CA;
 
-//import FSA.Transition;
-
-
 
 /**
  * Transition of a contract automaton

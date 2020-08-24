@@ -28,6 +28,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 		PERMITTED,URGENT,GREEDY,LAZY
 	}
 	private action type;
+	
 	/**
 	 * 
 	 * @param initial		source state
@@ -58,7 +59,7 @@ public class FMCATransition extends CATransition implements java.io.Serializable
 	}
 	
 	
-	public boolean isMust()
+	public boolean isNecessary()
 	{
 		return (this.type!=action.PERMITTED);
 	}

@@ -14,8 +14,8 @@ public class CA  implements java.io.Serializable
 {
 	private int rank;
 	private CAState initial;
-	private int[] states;
-	private int[][] finalstates; 
+	private int[] states; //number of states of each principal
+	private int[][] finalstates; //TODO this should be of type CAState[] 
 	private CATransition[] tra;
 	
 	
