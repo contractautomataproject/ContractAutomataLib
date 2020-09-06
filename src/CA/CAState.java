@@ -1,12 +1,14 @@
 package CA;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import FMCA.FMCAUtil;
+import FMCA.FMCATransition;
 
 public class CAState {
-	private int[] state;
-	//private List<CAState> states; 
+	private int[] state; //TODO this should be a set of CAState 
+	//private Set<CAState> states; 
 	
 	private boolean initial;
 	private boolean finalstate;
@@ -14,10 +16,7 @@ public class CAState {
 	private float x;
 	private float y;
 	private boolean isReachable=false;
-	private boolean isSuccessfull=false;
-	public enum type {
-		INITIAL, FINAL, BOTH
-	}
+	private boolean isSuccessful=false;
 	
 	public CAState(int[] state)
 	{
@@ -26,35 +25,17 @@ public class CAState {
 		this.setState(state);
 	}
 	
-	public CAState(int[] state, type t)
-	{
-		if (t == type.INITIAL)
-		{
-			setInitial(true);
-			setFinalstate(false);
-		}
-		else if (t == type.FINAL)
-		{
-			setInitial(false);
-			setFinalstate(true);
-		} else if (t == type.BOTH)
-		{
-			setInitial(true);
-			setFinalstate(true);
-		}
-		this.setState(state);
-	}
-	
-	public CAState(int[] state, float x, float y)
-	{
-		setInitial(false);
-		setFinalstate(false);
-		this.setState(state);
-		this.setX(x);
-		this.setY(y);		
-	}
 	
 	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
+	{
+		this.setState(state);
+		this.setX(x);
+		this.setY(y);
+		this.setInitial(initial);
+		this.setFinalstate(finalstate);
+	}
+	
+	public CAState(int[] state, boolean initial, boolean finalstate)
 	{
 		this.setState(state);
 		this.setX(x);
@@ -111,12 +92,40 @@ public class CAState {
 		this.isReachable = setReachable;
 	}
 	
-	public CAState clone()
-	{
-		return new CAState(Arrays.copyOf(state,state.length),x,y,initial,finalstate);
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (finalstate ? 1231 : 1237);
+		result = prime * result + (initial ? 1231 : 1237);
+		result = prime * result + Arrays.hashCode(state);
+		return result;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CAState other = (CAState) obj;
+		if (finalstate != other.finalstate)
+			return false;
+		if (initial != other.initial)
+			return false;
+		if (!Arrays.equals(state, other.state))
+			return false;
+		return true;
+		
+		//&& this.x==c.getX()							
+		//&& this.y==c.getY()
+		//&& this.isReachable == c.isReachable()		//reachable and successful are updated when computing the dangling states
+		//&& this.isSuccessfull == c.isSuccessfull()	//thus two equal states may become different if I check this variables
+	}
+
 	public boolean equals(CAState c)
 	{
 		return  (Arrays.equals(state,c.getState())
@@ -129,60 +138,54 @@ public class CAState {
 				);
 	}
 	
-	public boolean isSuccessfull() {
-		return isSuccessfull;
+	public boolean isSuccessful() {
+		return isSuccessful;
 	}
 	
-	public void setSuccessfull(boolean isSuccessfull) {
-		this.isSuccessfull = isSuccessfull;
+	public void setSuccessful(boolean isSuccessful) {
+		this.isSuccessful = isSuccessful;
 	}
 	
-	public static CAState getCAStateWithValue(int[] value, CAState[] states)
+	public static CAState getCAStateWithValue(int[] value, Set<CAState> states)
 	{
-		for (int i=0;i<states.length;i++)
-		{
-			if (Arrays.equals(states[i].getState(), value))
-				return states[i];
-		}
-		return null;
+		return states.parallelStream()
+		.filter(x->Arrays.equals(x.getState(),value))
+		.findAny()
+		.orElseThrow(IllegalArgumentException::new);
 	}
 	
 	/**
-	 * 
 	 * @param tr
 	 * @return an array of CAStates containing all states of transitions tr
 	 */
-	public static CAState[] extractCAStatesFromTransitions(CATransition[] tr)
+	public static Set<CAState> extractCAStatesFromTransitions(Set<FMCATransition> tr)
 	{
-		CAState[] states = new CAState[tr.length*2];//upperbound
-		int count=0;
-		for (int i=0;i<tr.length;i++)
+		Set<CAState> s = new HashSet<CAState>();
+		for (FMCATransition t : tr)
 		{
-			CAState source=tr[i].getSourceP();
-			CAState target=tr[i].getTargetP();
-			if (!FMCAUtil.contains(source,states,count))
-			{
-				states[count]=source;
-				count++;
-			}
-			if (!FMCAUtil.contains(target,states,count))
-			{
-				states[count]=target;
-				count++;
-			}
+			s.add(t.getSource()); //no duplicates in set
+			s.add(t.getTarget());
 		}
-		return states;
+		
+		return s;
 	}
+	
 	
 	@Override
 	public String toString()
 	{
-		String s="";
+		StringBuilder sb = new StringBuilder();
 		if (this.isInitial())
-			s=s+"Initial ";
+			sb.append(" Initial ");
 		if (this.isFinalstate())
-			s=s+"Final ";
+			sb.append(" Final ");
+		if (this.isReachable)
+			sb.append(" Reachable ");
+		if (this.isSuccessful)
+			sb.append(" Successful ");
 			
-		return s+Arrays.toString(this.state);
+		sb.append(Arrays.toString(this.getState()));
+		
+		return sb.toString();
 	}
 }

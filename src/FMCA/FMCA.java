@@ -1,6 +1,11 @@
 package FMCA;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import CA.CAState;
 import CA.CATransition;
@@ -17,160 +22,120 @@ import CA.CATransition;
 @SuppressWarnings("serial")
 public class FMCA  implements java.io.Serializable
 {
-	
 	private int rank;
-	private CAState initial;
-	private int[] states; //number of states of each principal
-	private int[][] finalstates; //TODO this should be of type CAState[], these are the final states of each principal in the contract automaton
-	private FMCATransition[] tra;
-
-
-	private CAState[] fstates;
+	private int[][] finalstates; //these are the final states of the principal in the contract automaton
+								 //TODO there is loss of information in mxgraph XML and projection
+								 //this is the only information of the CAState we need
+								 //this cannot be retrieved from CAState[] states because of conjunction and the usage of int[] for 
+								 //composed state
+	
+	private Set<FMCATransition> tra;
+	private Set<CAState> states; //all the states of the automaton
 	private Family family; 
 	
 	//TODO: add generation of products from a feature constraint, 
 	//       the family now contains all valid products, they are generated and can be imported from a feature model in FeatureIDE
 
-	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates,FMCATransition[] trans)
+
+	public FMCA(int rank, CAState initial,  int[][] finalstates, Set<FMCATransition> tr, Set<CAState> states)
 	{
-		this.tra=trans;
 		this.rank=rank;
-		this.initial=initial;
-		this.states=states;
-		this.finalstates=finalstates;
+		setTransition(tr);
+		setStates(states);
+		setInitialCA(initial);
+		setFinalStatesofPrincipals(finalstates);
 	}
-
-	public FMCA(int rank, CAState initial, int[] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstates)
+	
+	public void setTransition(Set<FMCATransition> tr)
 	{
-
-		this(rank,initial,states,finalstates,trans);
-		this.fstates=fstates;
-	}
-
-	public FMCA(int rank, CAState initial, int[][] states, int[][] finalstates, FMCATransition[] trans, CAState[] fstate)
-	{
-
-		this(rank,initial,FMCA.numberOfPrincipalsStates(FMCAUtil.setUnion(states, finalstates, new int[][] {})),
-				FMCA.principalsFinalStates(finalstates),trans);
-		this.fstates=fstate;
-	}
-
-	/**
-	 * 
-	 * @param tra initialize the variable Transition
-	 */
-	public void setTransition(FMCATransition[] tra)
-	{
-		this.tra=tra;
+		this.tra=tr;
 	}
 	
 	
-	
-	/**
-	 * 
-	 * @return	the array of final states
-	 */
-	public int[][] getFinalStatesCA()
+	public  Set<FMCATransition> getTransition()
 	{
-		return finalstates;
+		return tra;
 	}
 	
-	public void setFinalStatesCA(int[][] fs)
+	public void setStates(Set<CAState> s)
 	{
-		this.finalstates=fs;
+		this.states=s;
 	}
-	
-	/**
-	 * 
-	 * @return	the array of states
-	 */
-	public int[] getStatesCA()
+
+	public Set<CAState> getStates()
 	{
 		return states;
 	}
+
+	public int[][] getFinalStatesofPrincipals()
+	{
+		return this.finalstates;
+		
+	}
+	
+	
+	public void setFinalStatesofPrincipals(int[][] finalstates)
+	{
+		 this.finalstates = finalstates;
+		 setFinalStatesCA();
+	}
+	
+	/**
+	 * set the final state flag to the states of the CA using the finalstates of each principal
+	 * @param fs  the array of final states of each principal
+	 */
+	private void setFinalStatesCA()
+	{
+		this.setStates(this.getStates().stream()
+		.peek(x -> x.setFinalstate((IntStream.range(0,x.getState().length)
+									.allMatch(i -> FMCAUtil.contains(new Integer(x.getState()[i]), 
+											IntStream.of(finalstates[i]).boxed().toArray())))))
+		.collect(Collectors.toSet()));
+	}
 	
 	/**
 	 * 
-	 * @return	the array of initial states
+	 * @return	the array of number of states of each principal
 	 */
+	int[] getNumStatesPrinc()
+	{	
+		return IntStream.range(0, rank)
+		.map(i -> new Long(this.getStates().parallelStream()
+						.map(x-> x.getState()[i])
+						.distinct()
+						.count()).intValue()
+			)
+		.toArray();
+	}
+	
 	public CAState getInitialCA()
 	{
-		return initial;
+		return this.getStates().parallelStream()
+				.filter(CAState::isInitial)
+				.findFirst().orElseThrow(NullPointerException::new);
 	}
 	
-	public void setInitialCA(CAState i)
+	public void setInitialCA(CAState initial)
 	{
-		this.initial=i;
+		this.getStates().parallelStream()
+					.filter(CAState::isInitial)
+					.findAny().ifPresent(x->x.setInitial(false));
+		
+		CAState init = this.getStates().parallelStream()
+				.filter(x->Arrays.equals(initial.getState(),x.getState()))
+				.findAny().orElseThrow(IllegalArgumentException::new);
+		
+		init.setInitial(true);
 	}
 	
-	/**
-	 * 
-	 * @return the rank of the Contract Automaton
-	 */
 	public int getRank()
 	{
 		return rank;
 	}
 	
-	
-	
-	/**
-	 * The sum all states of all principals
-	 * @return The sum all states of all principals
-	 */
-	public int sumStates()
-	{
-		int numstates=0;
-		for (int i=0;i<states.length;i++)
-		{
-			numstates+=states[i];
-		}
-		return numstates;
-	}
-	
-	/**
-	 * The product of the states of all principals
-	 * @return The product of the states of all principals
-	 */
-	public int prodStates()
-	{
-		int prodstates=1;
-		for (int i=0;i<states.length;i++)
-		{
-			prodstates*=states[i];
-		}
-		return prodstates;
-	}
-	
-	/**
-	 * 
-	 * @return the maximum number of states
-	 */
-	public int numberOfStates()
-	{
-		int n=1;
-		int[] states=this.getStatesCA();
-		for (int i=0;i<states.length;i++)
-		{
-			n*=(states[i]+1);
-		}
-		return n;
-	}
-	
-	
 	public void setFamily(Family f)
 	{
 		this.family=f;
-	}
-
-	public void setState(CAState[] s)
-	{
-		this.fstates=s;
-	}
-
-	public CAState[] getState()
-	{
-		return this.fstates;
 	}
 
 	public Family getFamily()
@@ -178,114 +143,9 @@ public class FMCA  implements java.io.Serializable
 		return family;
 	}
 
-	public boolean containAction(String act)
+	boolean containAction(String act)
 	{
-		String[] actions = this.getActions();
-		return FMCAUtil.contains(act, actions);
-	}
-
-
-	/**
-	 * @return	the array of transitions
-	 */
-	public  FMCATransition[] getTransition()
-	{
-		return tra;
-	}
-
-
-	/**
-	 * 
-	 * @return  the x coordinate of the furthest state (to the right)
-	 */
-	public float furthestNodeX()
-	{
-		float max=0;
-		for (int i=0;i<fstates.length;i++)
-		{
-			if (max<fstates[i].getX())
-				max=fstates[i].getX();
-		}
-		return max;
-	}
-
-	/**
-	 * @return	copy Transitions
-	 */
-	public  FMCATransition[] copyTransition()
-	{
-		FMCATransition[] at = this.getTransition();
-		FMCATransition[] finalTr = new FMCATransition[at.length];
-		for(int i=0;i<finalTr.length;i++)
-		{
-			CAState in=at[i].getSourceP();
-			String[] l=at[i].getLabelP();
-			CAState out= at[i].getTargetP();
-			//TODO this is not good, the CAState of transitions should point to fstates field of the FMCA,
-			//		I removed the clone operation, previously an Arrays.copy operation was also called
-			//finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
-			finalTr[i] = new FMCATransition(in,Arrays.copyOf(l,l.length),out,at[i].getType());
-		}
-		return finalTr;
-	}
-
-	/**
-	 * compared to CA this method also clones the must transitions
-	 * @return a new object CA clone
-	 */
-	public FMCA clone()
-	{
-		CAState[] clonefstates= this.getState();
-		if (fstates!=null)
-		{
-			for (int i=0;i<clonefstates.length;i++)
-			{
-				clonefstates[i]=clonefstates[i].clone();
-			}
-			//TODO: call copyTransitions method and use inherited method
-			FMCATransition[] at = this.getTransition();
-			FMCATransition[] finalTr = new FMCATransition[at.length];
-			for(int i=0;i<finalTr.length;i++)
-			{
-				CAState in=at[i].getSourceP();
-				String[] l=at[i].getLabelP();
-				CAState out= at[i].getTargetP();
-				in = CAState.getCAStateWithValue(in.getState(), clonefstates);  //retrieve cloned states
-				out = CAState.getCAStateWithValue(out.getState(), clonefstates);
-				finalTr[i] = new FMCATransition(in,Arrays.copyOf(l,l.length),out,at[i].getType());
-			}	
-			int[][] finalstates=getFinalStatesCA();
-			int[][] nf = new int[finalstates.length][];
-			for (int i=0;i<finalstates.length;i++)
-				nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
-			return new FMCA(getRank(),
-					CAState.getCAStateWithValue(getInitialCA().getState(),clonefstates), 
-					Arrays.copyOf(getStatesCA(), getStatesCA().length), 
-					finalstates,
-					finalTr,
-					clonefstates); 
-		}
-		else
-		{
-			//TODO probably this should be fixed
-			FMCATransition[] at = this.getTransition();
-			FMCATransition[] finalTr = new FMCATransition[at.length];
-			for(int i=0;i<finalTr.length;i++)
-			{
-				CAState in=at[i].getSourceP();
-				String[] l=at[i].getLabelP();
-				CAState f= at[i].getTargetP();
-				finalTr[i] = new FMCATransition(in.clone(),Arrays.copyOf(l,l.length),f.clone(),at[i].getType());
-			}	
-			int[][] finalstates=getFinalStatesCA();
-			int[][] nf = new int[finalstates.length][];
-			for (int i=0;i<finalstates.length;i++)
-				nf[i]=Arrays.copyOf(finalstates[i], finalstates[i].length);
-			return new FMCA(getRank(),getInitialCA().clone(), 
-					Arrays.copyOf(getStatesCA(), getStatesCA().length), 
-					finalstates,
-					finalTr);
-		}		
+		return FMCAUtil.contains(act, this.getActions());
 	}
 
 
@@ -293,26 +153,28 @@ public class FMCA  implements java.io.Serializable
 	 * compute the projection on the i-th principal
 	 * @param indexprincipal		index of the FMCA
 	 * @return		the ith principal
+	 * 
+	 * TODO remove this method, in stack of calls is used by generateATransition
 	 */
-	public FMCA proj(int indexprincipal)
+	FMCA proj(int indexprincipal)
 	{
-		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //check if the parameter i is in the rank of the FMCA
+		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //TODO check if the parameter i is in the rank of the FMCA
 			return null;
 		if (this.getRank()==1)
 			return this;
-		FMCATransition[] tra = this.getTransition();
-		int[] numberofstatesprincipal= new int[1];
-		numberofstatesprincipal[0]= this.getStatesCA()[indexprincipal];
+		FMCATransition[] tra = this.getTransition().toArray(new FMCATransition[] {});
+		//int[] numberofstatesprincipal= new int[1];
+		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
 		FMCATransition[] transitionsprincipal = new FMCATransition[tra.length];
 		int pointer=0;
 		for (int ind=0;ind<tra.length;ind++)
 		{
 			FMCATransition tt= ((FMCATransition)tra[ind]);
-			String label = tt.getLabelP()[indexprincipal];
+			String label = tt.getLabel()[indexprincipal];
 			if(label!=CATransition.idle)
 			{
-				int source =  tt.getSourceP().getState()[indexprincipal];
-				int dest = tt.getTargetP().getState()[indexprincipal];
+				int source =  tt.getSource().getState()[indexprincipal];
+				int dest = tt.getTarget().getState()[indexprincipal];
 				int[] sou = new int[1];
 				sou[0]=source;
 				int[] des = new int[1];
@@ -337,505 +199,134 @@ public class FMCA  implements java.io.Serializable
 		}
 
 		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer, new FMCATransition[] {});
-		CAState[] fstates = CAState.extractCAStatesFromTransitions(transitionsprincipal);
+		Set<FMCATransition> transitionprincipalset = new HashSet<FMCATransition>(Arrays.asList(transitionsprincipal));
+		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
 		int[] init=new int[1]; init[0]=0;
 		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
 		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
 		int[][] finalstatesprincipal = new int[1][];
-		finalstatesprincipal[0]=this.getFinalStatesCA()[indexprincipal];
+		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
 		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
 		{
 			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
 			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
 		}
 
-		return new FMCA(1,initialstateprincipal,numberofstatesprincipal,finalstatesprincipal,transitionsprincipal,fstates); 
+		return new FMCA(1,initialstateprincipal,
+				finalstatesprincipal,transitionprincipalset,fstates); 
 	}
 
 
-	/**
-	 * @return
-	 */
-	public FMCA[] allPrincipals()
-	{
-
-		FMCA[] principals = new FMCA[this.getRank()];
-		for (int i=0;i<principals.length;i++)
-		{
-			principals[i] = this.proj(i);
-		}
-		return principals;
-	}
 
 	/**
-	 * compute the orchestration (as most permissive controller) of product p
-	 * 
-	 * @return the most permissive controller in agreement
+	 * @return the synthesised orchestration/mpc of product p in agreement
 	 */
-	public FMCA mpc(Product p)
+	public FMCA orchestration(Product p)
 	{
-		FMCA a = this.clone();
-		FMCATransition[] tr = a.getTransition();
-		FMCATransition[] rem = new FMCATransition[tr.length];  //solo per testing
-		//int[][] fs=a.allFinalStates();
-		int removed = 0;
-
-		//I need to store the transitions, to check later on 
-		//if some controllable transition becomes uncontrollable (i.e. semi-controllable)
-		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
-		int potentiallyUncontrollableCounter = 0;
-
-		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
-		int badtransitioncounter=0;
-
-		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-		//and this operation affects the set of uncontrollable transitions in K_i
-		FMCATransition[] trcopy=a.copyTransition();
-
-
-		for (int i=0;i<tr.length;i++)
-		{
-			//	System.out.println("transition "+i);
-			if (!tr[i].isUncontrollable(a)) //controllable and bad
-			{
-				if (tr[i].isRequest()||tr[i].isForbidden(p))
-				{
-					rem[removed]=tr[i]; //only for testing
-					trcopy[i] = null;
-					removed++;
-				}
-			}
-			else 
-			{	
-				if (tr[i].isRequest()||tr[i].isForbidden(p))
-				{
-					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-					badtransitioncounter++;		
-				}
-
-			}
-			if(	(tr[i].isGreedy()&&tr[i].isRequest())	||	(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
-		}
-
-		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr,new FMCATransition[] {}); //, removed);		
-		a.setTransition(tr); //K_0 
-
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter, new FMCATransition[] {});
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter, new FMCATransition[] {});
-
-		//
-		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
-		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions), new CAState[] {}); //R_0
-		boolean update=false;
-		if (R.length>0)
-		{
-			do{
-				update=false;
-				FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
-				int trcheckpointer=0;
-				removed=0;
-				rem= new FMCATransition[tr.length]; 
-
-				//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-				//and this operation affects the set of uncontrollable transitions in K_i
-				trcopy=a.copyTransition();
-				for (int i=0;i<tr.length;i++)  //for all transitions
-				{
-					if (!(tr[i]==null))
-					{
-						if (tr[i].isUncontrollable(a)) 
-						{   
-							if (FMCAUtil.contains(tr[i].getSourceP(), R)) //remove uncontrollable with bad source
-							{
-								rem[removed]=tr[i];//solo per testing
-								trcopy[i]=null;
-								removed++;
-								update=true;
-							}
-							else
-							{
-								trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state
-								trcheckpointer++;
-							}
-						}
-						else if //(!tr[i].isUncontrollable(a)&&   you already know that this is true because of the else
-						(FMCAUtil.contains(tr[i].getTargetP(), R)) //remove controllable with bad target
-						{
-							rem[removed]=tr[i]; //only for testing
-							trcopy[i]=null;
-							removed++;
-							update=true;
-						}
-					}
-				} 
-				tr=trcopy;
-				tr=  FMCAUtil.removeHoles(tr,new FMCATransition[] {}); //, removed);
-				a.setTransition(tr);  //K_i
-				//
-				//
-				// building R_i
-				//
-				//
-				CAState[] danglingStates = a.getDanglingStates();
-				CAState[] newR=new CAState[trcheckpointer];
-				int newRpointer=0;
-
-				for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state
-				{
-					//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
-					// setUnion removes duplicates we could skip the check
-					if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
-					{
-						newR[newRpointer]=trcheck[i].getSourceP();
-						newRpointer++;
-					}
-				}
-				//add dangling states to R
-				CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates,new CAState[] {});
-
-				if (RwithDang.length!=R.length)
-				{
-					R = RwithDang;
-					update = true;
-				}
-
-				//add source states of uncontrollable transitions with redundant target to R
-				if (newRpointer>0)
-				{
-					R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer, new CAState[] {}),new CAState[] {});
-					update=true;
-				}
-
-				//add source states of uncontrollable transitions that were previously controllable
-				CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchable(potentiallyUncontrollable, a);
-				CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su,new CAState[] {});
-				if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
-				{
-					unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
-					R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable,new CAState[] {});
-					update=true;
-				}
-
-			}while(update);
-		}
-
-		//a.getDanglingStates();
-		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
-
-		//if initial state is bad or not all required actions are fired
-		if (FMCAUtil.contains(a.getInitialCA(), R)||(!p.checkRequired(a.getTransition())))
+		FMCA a = synthesis(x-> {return (t,bad) -> 
+									x.isRequest()||x.isForbidden(p)||bad.contains(x.getTarget());}, 
+				x -> x::isUncontrollableOrchestration);
+		
+		if (a!=null&&p.checkRequired(a.getTransition()))
+			return a;
+		else
 			return null;
-
-		return a;
+	}
+	
+	/**
+	 * @return the synthesised orchestration/mpc in agreement
+	 */
+	public FMCA orchestration()
+	{
+		return synthesis(x-> {return (t,bad) -> bad.contains(x.getTarget())|| x.isRequest();}, 
+				x -> x::isUncontrollableOrchestration);
 	}
 
-
+	
 	/**
-	 * compute the choreography
-	 * 
-	 * 
-	 * @return the choreography in strong agreement
+	 * @return the synthesised choreography in strong agreement, 
+	 * removing at each iteration all transitions violating branching condition
 	 */
-	public FMCA choreography()
+	public FMCA choreographySmaller()
 	{
-		FMCA a = this.clone();
-		FMCATransition[] tr = a.getTransition();
-		FMCATransition[] rem = new FMCATransition[tr.length];  //only for testing
-		//int[][] fs=a.allFinalStates();
-		int removed = 0;
-
-		//I need to store the transitions, to check later on 
-		//if some controllable transition becomes uncontrollable
-		FMCATransition[] potentiallyUncontrollable = new FMCATransition[tr.length]; 
-		int potentiallyUncontrollableCounter = 0;
-
-		FMCATransition[] badtransitions=new FMCATransition[tr.length]; 
-		int badtransitioncounter=0;
-
-		//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-		//and this operation affects the set of uncontrollable transitions in K_i
-		FMCATransition[] trcopy=a.copyTransition();
-
-		//computing K_0 and R_0
-		for (int i=0;i<tr.length;i++)
-		{
-			//	System.out.println("transition "+i);
-
-			if (!tr[i].isUncontrollableChoreography(a)) //controllable and bad
-			{
-				if (!tr[i].isMatch())
-				{
-					rem[removed]=tr[i]; //solo per testing
-					trcopy[i] = null;
-					removed++;
-				}
-			}
-			else 
-			{	
-				if (!tr[i].isMatch())
-				{
-					badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-					badtransitioncounter++;		
-				}
-
-			}
-
-			if(	//(tr[i].isGreedy()&&tr[i].isRequest())	||	
-					(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
-		}
-
-		tr=trcopy;
-		tr=  FMCAUtil.removeHoles(tr,new FMCATransition[] {}); //removed);		
-		a.setTransition(tr); //K_0 
-
-		/*//computing R_0
-		for (int i=0;i<tr.length;i++)
-		{
-			if (tr[i].isUncontrollableChoreography(a) && (!tr[i].isMatch()))//||tr[i].isForbidden(p))) 	//uncontrollable and bad
-			{	
-				badtransitions[badtransitioncounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				badtransitioncounter++;		
-			}
-			if(	//(tr[i].isGreedy()&&tr[i].isRequest())	||	
-					(tr[i].isLazy()))
-			{
-				potentiallyUncontrollable[potentiallyUncontrollableCounter]= new FMCATransition(tr[i].getSourceP(),tr[i].getLabelP(),tr[i].getTargetP(),tr[i].getType());
-				potentiallyUncontrollableCounter++;		
-			}
-		}*/
-
-		badtransitions=FMCAUtil.removeTailsNull(badtransitions, badtransitioncounter, new FMCATransition[] {});
-		potentiallyUncontrollable = FMCAUtil.removeTailsNull(potentiallyUncontrollable, potentiallyUncontrollableCounter, new FMCATransition[] {});
-
-		//
-		CAState[] unmatchedOrLazyunmatchable=new CAState[potentiallyUncontrollable.length];
-		CAState[] R=FMCAUtil.setUnion(a.getDanglingStates(), FMCATransition.getSources(badtransitions),new CAState[] {}); //R_0
+		return synthesis(x-> {return (t,bad) -> 
+					!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
+				x -> x::isUncontrollableChoreography);
+	}
+	
+	/**
+	 * @return the synthesised choreography in strong agreement, 
+	 * removing only one transition violating the branching condition each time no further updates are possible
+	 */
+	public FMCA choreographyLarger()
+	{
+		FMCA aut = this;
+		FMCATransition toRemove=null;
+		do 
+			{ aut = aut.synthesis(x-> {return (t,bad) -> 
+					!x.isMatch()||bad.contains(x.getTarget());},
+					x -> x::isUncontrollableChoreography);
+			  final Set<FMCATransition> trf = aut.getTransition();
+			  toRemove=(aut.getTransition().parallelStream()
+					  .filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
+					  .findAny()
+					  .orElse(null));
+			} while (aut.getTransition().remove(toRemove));
+		return aut;
+	}
+	
+	
+	private FMCA synthesis(Function<FMCATransition, BiPredicate<Set<FMCATransition>, Set<CAState>>> pruningPred, 
+						Function<FMCATransition, BiPredicate<Set<FMCATransition>, Set<CAState>>> forbiddenPred) 
+	{
+		Set<FMCATransition> trbackup = new HashSet<FMCATransition>(this.getTransition());
+		Set<CAState> R = new HashSet<CAState>(this.getDanglingStates());//R0
 		boolean update=false;
 		do{
-			update=false;
-			FMCATransition[] trcheck= new FMCATransition[tr.length*R.length];//used for storing all uncontrollable transitions without bad source state
-			int trcheckpointer=0;
-			removed=0;
-			rem= new FMCATransition[tr.length]; 
-
-			//I need a copy of the actual transitions of K_i because in the loop I remove transitions 
-			//and this operation affects the set of uncontrollable transitions in K_i
-			trcopy=a.copyTransition();
-			for (int i=0;i<tr.length;i++)  //for all transitions
-			{
-				if (!(tr[i]==null))
-				{
-					if (tr[i].isUncontrollableChoreography(a)) 
-					{   
-						if (FMCAUtil.contains(tr[i].getSourceP(), R)) 
-							//remove if uncontrollable with bad source 
-						{
-							rem[removed]=tr[i];//solo per testing
-							trcopy[i]=null;
-							removed++;
-							update=true;
-						}
-						else
-						{
-							trcheck[trcheckpointer]=tr[i]; //store all uncontrollable transitions without bad source state 
-							trcheckpointer++;
-						}
-					}
-					else if //(!tr[i].isUncontrollableChoreography(a) 
-					//&&
-					((FMCAUtil.contains(tr[i].getTargetP(), R))) //remove controllable with bad target
-					{
-						rem[removed]=tr[i]; //solo per testing
-						trcopy[i]=null;
-						removed++;
-						update=true;
-					}
-				}
-			}
-
-			/**
-			 * a transition violating the branching condition is pruned after all other transitions have been pruned in that state.
-			 */
-			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr,new FMCATransition[] {}); //, removed);
-			a.setTransition(tr);
-
-			removed=0;
-			rem= new FMCATransition[tr.length]; 
-			trcopy=a.copyTransition();
-
-			for (int i=0;i<tr.length;i++)  //for all transitions
-			{
-				if (!(tr[i]==null))
-				{
-					boolean violatesBranchingCondition = this.violatesBranchingCondition(tr[i],tr,R, a);
-					if (violatesBranchingCondition) //remove if violates branching condition
-					{
-						rem[removed]=tr[i];//solo per testing
-						trcopy[i]=null;
-						this.violatesBranchingCondition(tr[i],tr,R, a);
-						removed++;
-						update=true;
-						break;
-					}
-				}	
-			}
-
-			tr=trcopy;
-			tr=  FMCAUtil.removeHoles(tr,new FMCATransition[] {}); //, removed);
-			a.setTransition(tr);  //K_i
-
-
-			//
-			//
-			// building R_i
-			//
-			//
-			CAState[] danglingStates = a.getDanglingStates();
-			CAState[] newR=new CAState[trcheckpointer];
-			int newRpointer=0;
-
-			for (int i=0;i<trcheckpointer;i++)//for all uncontrollable transitions without bad source state and that do not violates branching condition
-			{
-				//if target state is bad,  add source state to R if it has not been already added, we know that source state is not in R
-				// setUnion removes duplicates we could skip the check
-				if ((FMCAUtil.contains(trcheck[i].getTargetP(), R)&&(!FMCAUtil.contains(trcheck[i].getSourceP(),R))))
-				{
-					newR[newRpointer]=trcheck[i].getSourceP();
-					newRpointer++;
-				}
-			}
-			//add dangling states to R
-			CAState[] RwithDang =	FMCAUtil.setUnion(R ,danglingStates, new CAState[] {});
-			if (RwithDang.length!=R.length)
-			{
-				R = RwithDang;
-				update=true;
-			}
-
-			//add source states of uncontrollable transitions with redundant (bad? dangling?) target to R
-			if (newRpointer>0)
-			{
-				R=FMCAUtil.setUnion(R, FMCAUtil.removeTailsNull(newR, newRpointer, new CAState[] {}),new CAState[] {});
-				update=true;
-			}
-
-			//add source states of uncontrollable transitions that were previously controllable
-			CAState[] su= FMCATransition.areUnmatchedOrLazyUnmatchableChoreography(potentiallyUncontrollable, a);
-			CAState[] newUnmatchedOrLazyunmatchable =	FMCAUtil.setUnion(unmatchedOrLazyunmatchable,su, new CAState[] {});
-			if (newUnmatchedOrLazyunmatchable.length!=unmatchedOrLazyunmatchable.length)
-			{
-				unmatchedOrLazyunmatchable=newUnmatchedOrLazyunmatchable;
-				R=FMCAUtil.setUnion(R, unmatchedOrLazyunmatchable, new CAState[] {});
-				update=true;
-			}
-
-		}while(update);
-
-
-		//a.getDanglingStates();
-		a = (FMCA) FMCAUtil.removeUnreachableTransitions(a);
-
-		//if initial state is bad or [not all required actions are fired [deprecated]]
-		if (FMCAUtil.contains(a.getInitialCA(), R))//||(!p.checkRequired(a.getTransition())))
-			return null;
-
-		return a;
-	}
-
-
-	/**
-	 * 
-	 * @param t
-	 * @return true if transition t violates the branching condition
-	 */
-	public boolean violatesBranchingCondition(CATransition t, CATransition[] tr, CAState[] R, FMCA a) 
-	{
-
-		CAState[] dang = a.getDanglingStates();
-		CAState[] bad = FMCAUtil.setUnion(dang, R, new CAState[] {});
-		if (FMCAUtil.contains(t.getSourceP(), bad) || FMCAUtil.contains(t.getTargetP(), bad))
-			return false;		//ignore this transition because it is going to be pruned
-
-
-		List<CAState> visit = Arrays.asList(FMCAUtil.setDifference(this.getState(), bad, new CAState[] {})); //TODO conversion Array-List many times
-		if (t.isMatch())
-		{
-
-			int sender = t.getSender();  
-			String[] label=t.getLabelP();
-			for (CAState e : visit)
-			{
-				int[] state= e.getState();
-
-				//for all (good) states with the sender in the same state as in t
-				if (   (!Arrays.equals(state,t.getSourceP().getState())) //it's not the same state
-						&&(state[sender]==t.getSourceP().getState()[sender])) //but sender is in the same state
-
-				{
-					int z=0;
-					boolean found = false;
-					while ((!found)&&(z<tr.length)) //see if from that state there exists the transition with same label
-					{
-						found=Arrays.equals(state, tr[z].getSourceP().getState())
-								&& Arrays.equals(tr[z].getLabelP(), label);
-						z++;
-					}
-					if (!found)
-					{
-						return true;  //if not branching condition is violated
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * 
-	 * @param states  all the states of the MSCA enumerated
-	 * @return an array containing the number of  states of each principal
-	 */
-	public static int[] numberOfPrincipalsStates(int[][] states)
-	{
-		int[] rank = new int[states[0].length];
-		for (int i=0;i<rank.length;i++)
-		{
-			int[] principalstates=new int[states.length];//upperbound
-			for (int ind=0; ind<principalstates.length;ind++)
-				principalstates[ind] = -1;    //the next loop will not work otherwise because 0 is the initialization value but can also be a state
-
-			int count=0;
-			for (int j=0;j<principalstates.length;j++)
-			{
-				if (!FMCAUtil.contains(states[j][i],principalstates,count))
-				{
-					principalstates[count]=states[j][i];
-					count++;
-				}
-			}
-			rank[i]=count;
-		}
+			final Set<CAState> Rf = new HashSet<CAState>(R); 
+			final Set<FMCATransition> trf= new HashSet<FMCATransition>(this.getTransition());
+			
+			if (this.getTransition().removeAll(this.getTransition().parallelStream()
+						.filter(x->pruningPred.apply(x).test(trf, Rf))
+						.collect(Collectors.toSet()))) //Ki
+				R.addAll(this.getDanglingStates());
+			
+			R.addAll(trbackup.parallelStream() 
+					.filter(x->forbiddenPred.apply(x).test(trbackup, Rf)) //x.isUncontrollable(trbackup, Rf)
+								//&&(Rf.contains(x.getTarget()))) //||invariant.test(x)))
+					.map(FMCATransition::getSource)
+					.collect(Collectors.toSet())); //Ri
 	
-		return rank;
+			update=Rf.size()!=R.size()|| trf.size()!=this.getTransition().size();
+		} while(update);
+
+		this.removeDanglingTransitions();
+		
+		if (R.contains(this.getInitialCA()))
+			return null;
+		
+		this.setStates(this.extractAllStatesFromTransitions());
+		return this;
 	}
 
+	/**
+	 * @return all  states that appear in at least one transition
+	 */
+	private Set<CAState> extractAllStatesFromTransitions()
+	{
+		return CAState.extractCAStatesFromTransitions(this.getTransition());
+	}
 
 	/**
+	 * this method is used when importing from XML, where no description of  principal final states is given 
+	 * and it is reconstructed
+	 * 
+	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
 	 * 
 	 * @param all final states of the composed automaton
 	 * @return the final states of each principal
 	 */
-	public static int[][] principalsFinalStates(int[][] states)
+	static int[][] principalsFinalStates(int[][] states)
 	{
 		if (states.length<=0)
 			return null;
@@ -868,227 +359,247 @@ public class FMCA  implements java.io.Serializable
 		return pfs;
 	}
 
-	/**
-	 * 
-	 * 
-	 * @return all  states that appear in at least one transition
-	 */
-	public int[][] allStates()
+	public int getNumStates()
 	{
-		FMCA aut=this.clone();
-		int[][] s = new int[this.prodStates()+1][]; //there could be a dummy initial state
-		s[0]=aut.getInitialCA().getState();
-		FMCATransition[] t = aut.getTransition();
-		int pointer=1;
-		for (int i=0;i<t.length;i++)
-		{
-			int[] start = t[i].getSourceP().getState();
-			int[] arr = t[i].getTargetP().getState();
-
-			if (!FMCAUtil.contains(arr, s))
-			{
-				s[pointer]=arr;
-				pointer++;
-			}
-			if (!FMCAUtil.contains(start, s))
-			{
-				s[pointer]=start;
-				pointer++;
-			}
-		}
-		s=FMCAUtil.removeTailsNull(s, pointer, new int[][] {});
-		return s;
-	}
-
-
-	public int getStates()
-	{
-		return this.allStates().length;
-	}
-
-
-	/**
-	 * starting from the final states of each principal, it computes all their combinations to produce 
-	 * the final states of the contract automaton. Note that not all such combinations can be reached.
-	 * 
-	 * @return all the final states of the CA
-	 */
-	public  int[][] allFinalStates()
-	{
-		int[][] finalstates = this.getFinalStatesCA(); //the final states of each principal
-		int[] states=new int[finalstates.length];
-		int comb=1;
-		int[] insert= new int[states.length];
-		for (int i=0;i<states.length;i++)
-		{
-			states[i]=finalstates[i].length;
-			comb*=states[i];
-			insert[i]=0;
-		}
-		int[][] modif = new int[comb][];
-		int[] indstates = new int[1];
-		indstates[0]= states.length-1;
-		int[] indmod = new int[1];
-		indmod[0]= 0; 
-
-		FMCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);  
-		return modif;
+		if (states==null)
+			throw new NullPointerException("The array of number of states of principals has not been initialised");
+		return this.states.size();
 	}
 
 	/**
-	 * 
-	 * @return r[0] of type int[][] contains all non final states, r[1] of the same type contains all final states
-	 */
-	public int[][][] allNonFinalAndFinalStates()
-	{
-		int[][][] r = new int[2][][];
-		int[][] states=this.allStates();
-		int[][] finalstates=FMCAUtil.setIntersection(states, this.allFinalStates());//only reachable final states
-		int[][] nonfinalstates=FMCAUtil.setDifference(states, finalstates, new int[][] {});
-
-		r[0]=nonfinalstates;
-		r[1]=finalstates;
-		return r;
-	}
-
-	/**
-	 * 
 	 * @return all actions present in the automaton
 	 */
-	public String[] getActions()
+	String[] getActions()
 	{
-		FMCATransition[] tr=this.getTransition();
-		String[] act = new String[tr.length];
-		for (int i=0;i<tr.length;i++)
-			act[i]=	CATransition.getUnsignedAction(tr[i].getAction());
-		act=FMCAUtil.removeDuplicates(act, new String[] {});
-		return act;
+		return this.getTransition().parallelStream()
+		.map(x->CATransition.getUnsignedAction(x.getAction()))
+		.collect(Collectors.toSet())
+		.toArray(new String[] {});
 	}
 
-
-	private int[] getIndexOfLazyTransitions()
+	
+	/**
+	 * @return a message on the expressiveness of lazy transitions
+	 */
+	public String infoExpressivenessLazyTransitions()
 	{
+		long l=this.getTransition()
+		.parallelStream()
+		.filter(FMCATransition::isLazy)
+		.count();
 
-		FMCATransition[] tr = this.getTransition();
-		int[] arr = new int[tr.length];
-		int count=0;
-		for (int i=0;i< tr.length;i++)
-		{
-			if (tr[i].isLazy())
-			{
-				arr[count]=i;
-				count++;
-			}
-		}
-		arr = FMCAUtil.removeTailsNull(arr, count);
-		return arr;
-	}
-
-	public String removeLazy()
-	{
-		int[] arr = this.getIndexOfLazyTransitions();
-		int l = arr.length;
-		//	long ll = (long) Math.pow(2.0, (double)arr.length);
-		long ns = this.getStates()+1;
-		//FMCA[] aut = new FMCA[(int)Math.pow(2.0, (double)arr.length)];
+		long ns = this.getNumStates()+1;
 		return "The automaton contains the following number of lazy transitions : "+l+" \n"
-				//+"There are 2^"+l+" possible combinations of removing such transitions.\n"
 				+"The resulting automaton with only urgent transitions will have the following number of states ("+ns+") * (2^"+l+"-1)";
 	}
 
-
 	/**
-	 * return dangling states who do not reach a final state or are unreachable
-	 * 
-	 * TODO this method is called multiple times during synthesis, each time it performs a new visit of the automaton, it could 
-	 * be optimized.
-	 * 
-	 * @return	dangling states of this
+	 * @return	states who do not reach a final state or are unreachable
 	 */
-	public CAState[] getDanglingStates()
+	private Set<CAState> getDanglingStates()
 	{
 		this.setReachableAndSuccessfulStates();
-		CAState[] dang=new CAState[fstates.length];
-
-		int dangcounter=0;
-		for (int i=0;i<dang.length;i++)
-		{
-			if (!(fstates[i].isReachable()&&fstates[i].isSuccessfull()))
-			{
-				dang[dangcounter]=fstates[i];
-				dangcounter++;
-			}	
-		}
-		return FMCAUtil.removeTailsNull(dang, dangcounter, new CAState[] {});
+		return this.getStates().parallelStream()
+		.filter(x->!(x.isReachable()&&x.isSuccessful()))
+		.collect(Collectors.toSet());
 	}
 
-	private void setReachableAndSuccessfulStates()
+	void setReachableAndSuccessfulStates() //TODO set to private if not used by composition
 	{
-		//firstly all states' flags are reset
-		for (int i=0;i<fstates.length;i++)
-		{
-			fstates[i].setReachable(false);
-			fstates[i].setSuccessfull(false);
-		}
+		//all states' flags are reset
+		this.getStates().forEach(s->{s.setReachable(false);	
+									s.setSuccessful(false);});
 		
-		visit(this.getInitialCA()); //firstly reachability must be set
-		
-		//TODO allFinalStates generate all possible combinations, it would be better to record in the FMCA the final states, 
-		// instead of generating them
-		int[][] fs = this.allFinalStates();
-		for (int i=0; i<fs.length; i++)
-		{
-			CAState f = CAState.getCAStateWithValue(fs[i], this.getState());
+		forwardVisit(this.getInitialCA()); 
 			
-			if (f!=null)//not all combinations of final states could be available (in case a controller is checked)
-				reverseVisit(f);
-		}
+		this.getStates().forEach(
+				x-> {if (x.isFinalstate()&&x.isReachable())
+					this.backwardVisit(x);});
 	}
 
-
-	/**
-	 * s = current state
-	 * forall t in FS(s)
-	 * 		if target(t) not visited
-	 * 			visited += target(t); iterate( target(t))
-	 * 		else
-	 * 			do nothing
-	 * 
-	 */
-	private void visit(CAState currentstate)
+	private void forwardVisit(CAState currentstate)
 	{ 
 		currentstate.setReachable(true);
-		FMCATransition[] tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
-		//		if (tr==null)
-		//		{
-		//			tr=FMCATransition.getTransitionFrom(currentstate, this.getTransition());
-		//		}
-		for (int i=0;i<tr.length;i++)
-		{
-			CAState target=tr[i].getTargetP();
-			if (!target.isReachable())
-				visit(target);
-		}
+		this.getForwardStar(currentstate).forEach(x->{
+			if (!x.getTarget().isReachable())
+				this.forwardVisit(x.getTarget());
+		});
 	}
 
-	private void reverseVisit(CAState currentstate)
+	private void backwardVisit(CAState currentstate)
 	{ 
-		currentstate.setSuccessfull(true);
-		if (!currentstate.isReachable())
-			return;
-		FMCATransition[] tr=FMCATransition.getTransitionTo(currentstate, this.getTransition());
-		for (int i=0;i<tr.length;i++)
-		{
-			CAState source=tr[i].getSourceP();
-			if (source.isReachable()&&!source.isSuccessfull()) //warning: it requires to compute reachability
-				reverseVisit(source);
-		}
+		currentstate.setSuccessful(true);
+		this.getBackwardStar(currentstate).forEach(x->{
+			if (!x.getSource().isSuccessful())
+				this.backwardVisit(x.getSource());
+		});
+	}
+
+	
+	/**
+	 * remove the unreachable transitions, needs to compute reachable and successful first
+	 */
+	void removeDanglingTransitions()
+	{
+		this.setTransition(this.getTransition().parallelStream()
+				.filter(x->x.getSource().isReachable()&&x.getTarget().isSuccessful())
+				.collect(Collectors.toSet()));
 	}
 	
+	
+	Set<FMCATransition> getForwardStar(CAState source)
+	{
+		return this.getTransition().parallelStream()
+					.filter(x->x.getSource().equals(source))
+					.collect(Collectors.toSet());
+	}
+	
+	private Set<FMCATransition> getBackwardStar(CAState target)
+	{
+		return this.getTransition().parallelStream()
+				.filter(x->x.getTarget().equals(target))
+				.collect(Collectors.toSet());
+	}
+}
 
+// END OF THE CLASS
+
+	
+//no one is using this one
+//public CAState[] getFinalStates()
+//{
+//	return Arrays.asList(states).parallelStream()
+//			.filter(CAState::isFinalstate)
+//			.collect(Collectors.toList())
+//			.toArray(new CAState[] {});
+//}
+	
+//	/**
+//	 * 
+//	 * @param state
+//	 * @return true if the successful value of state has changed
+//	 */
+//	private boolean forwardNeighbourVisit(CAState state)
+//	{	
+//		boolean b = state.isSuccessful();
+//		state.setSuccessful(Arrays.stream(this.getTransitionsWithSource(state))
+//				.map(FMCATransition::getTarget)
+//				.anyMatch(CAState::isSuccessful));
+//
+//		return b!=state.isSuccessful();
+//		
+//	}
+//	
+//	/**
+//	 * 
+//	 * @param state
+//	 * @return true if the reachable value of state has changed
+//	 */
+//	private boolean backwardNeighbourVisit(CAState state)
+//	{	
+//		boolean b = state.isReachable();
+//		
+//		state.setReachable(Arrays.stream(this.getTransitionsWithTarget(state))
+//				.map(FMCATransition::getSource)
+//				.anyMatch(CAState::isReachable));
+//		return b!=state.isReachable();
+//		
+//	}	
+	/**
+//	 * 
+//	 * @param states  all the states of the CA enumerated
+//	 * @return an array containing the number of  states of each principal
+//	 */
+//	public static int[] numberOfPrincipalsStates(int[][] states)
+//	{
+//		int[] rank = new int[states[0].length];
+//		for (int i=0;i<rank.length;i++)
+//		{
+//			int[] principalstates=new int[states.length];//upperbound
+//			for (int ind=0; ind<principalstates.length;ind++)
+//				principalstates[ind] = -1;    //the next loop will not work otherwise because 0 is the initialization value but can also be a state
+//
+//			int count=0;
+//			for (int j=0;j<principalstates.length;j++)
+//			{
+//				if (!FMCAUtil.contains(states[j][i],principalstates,count))
+//				{
+//					principalstates[count]=states[j][i];
+//					count++;
+//				}
+//			}
+//			rank[i]=count;
+//		}
+//	
+//		return rank;
+//	}
+
+//	public FMCA[] allPrincipals()
+//	{
+//
+//		FMCA[] principals = new FMCA[this.getRank()];
+//		for (int i=0;i<principals.length;i++)
+//		{
+//			principals[i] = this.proj(i);
+//		}
+//		return principals;
+//	}
+
+//	/**
+//	 * Starting from the final states of each principal, it computes all their combinations to produce 
+//	 * the final states of the contract automaton. Note that not all such combinations are reachable.
+//	 * This method is only needed when loading a textual (.data) description of the automaton, where only 
+//	 * the final states of the principals are identified.
+//	 * 
+//	 * 
+//	 * @return all the final states of the CA
+//	 */
+//	private  int[][] generateAllCombinationsOfFinalStates()
+//	{
+//		int[][] finalstates = this.getFinalStatesofPrincipals(); //the final states of each principal
+//		int[] states=new int[finalstates.length];
+//		int comb=1;
+//		int[] insert= new int[states.length];
+//		for (int i=0;i<states.length;i++)
+//		{
+//			states[i]=finalstates[i].length;
+//			comb*=states[i];
+//			insert[i]=0;
+//		}
+//		int[][] modif = new int[comb][];
+//		int[] indstates = new int[1];
+//		indstates[0]= states.length-1;
+//		int[] indmod = new int[1];
+//		indmod[0]= 0; 
+//
+//		FMCAUtil.recGen(finalstates, modif,  states, indmod, indstates, insert);  
+//		return modif;
+//	}
+//	/**
+//	 * used by synthesis to remember transitions in case they are removed for checking semi-controllability
+//	 * @return	copy Transitions
+//	 */
+//	private  FMCATransition[] copyTransition()
+//	{
+//		FMCATransition[] at = this.getTransition();
+//		FMCATransition[] finalTr = new FMCATransition[at.length];
+//		for(int i=0;i<finalTr.length;i++)
+//		{
+//			CAState in=at[i].getSourceP();
+//			String[] l=at[i].getLabelP();
+//			CAState out= at[i].getTargetP();
+//		
+//		
+//			
+//			//finalTr[i]=at[i]; probably this is enough
+//			finalTr[i] = new FMCATransition(in,Arrays.copyOf(l,l.length),out,at[i].getType());
+//		}
+//		return finalTr;
+//	}
 //	/**
 //	 * this method is not inherited from MSCA
 //	 * @return	all the  must transitions request that are not matched 
+//	 * 
 //	 */
 //	private  FMCATransition[] getUnmatch()
 //	{
@@ -1131,6 +642,34 @@ public class FMCA  implements java.io.Serializable
 //		else
 //			return null;
 //	}
+//
 
+	//
+//	/**
+//	 * 
+//	 * @return key true contains final states
+//	 * @TODO test this method
+//	 */
+//	public Map<Boolean, List<CAState>> partitionFinalAndNonFinalStates()
+//	{
+//		
+//		Map<Boolean, List<CAState>> map = Arrays.asList(states)
+//				.stream()
+//				.collect(Collectors.partitioningBy(x -> x.isFinalstate()));
+//		
+////		CAState[] finalstates= Arrays.asList(states).stream()
+////				.filter(x -> x.isFinalstate())
+////				.collect(Collectors.toList())
+////				.toArray(new CAState[] {});
+////				
+////				//FMCAUtil.setIntersection(states, this.generateAllCombinationsOfFinalStates());//only reachable final states
+////		CAState[] nonfinalstates=FMCAUtil.setDifference(states, finalstates, new CAState[] {});
+////
+////		r[0]=nonfinalstates;
+////		r[1]=finalstates;
+//		
+////		r[0]=map.get(false).toArray(new CAState[] {});
+////		r[1]=map.get(true).toArray(new CAState[] {});
+//		return map;
+//	}
 
-}

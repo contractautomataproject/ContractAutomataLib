@@ -604,17 +604,19 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			valid[i]=false; //initialise
 		int[] tv = getTopProducts();
-		if (aut.containAction("dummy")) //dummy is an epsilon move
+		if (aut.containAction("dummy")) //dummy is an epsilon move, it is only used in the union
 		{
 			CAState storeinitial=aut.getInitialCA();
 			for (int i=0;i<tv.length;i++)
 			{
-				aut.setInitialCA(storeinitial);
-				FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
-				for (int j=0;j<tr.length;j++)
+				//aut.setInitialCA(storeinitial); 
+				//FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
+				
+				//TODO I changed this without testing
+				for (FMCATransition t : aut.getForwardStar(storeinitial))
 				{	
-					aut.setInitialCA(tr[j].getTargetP());
-					FMCA newaut = aut.mpc(new Product(new String[0],new String[0]));
+					aut.setInitialCA(t.getTarget());//TODO check I changed the initial state representation
+					FMCA newaut = aut.orchestration(new Product(new String[0],new String[0]));
 					valid(valid,tv[i],newaut); //recursive method
 				}				
 			}
@@ -647,7 +649,7 @@ public class Family {
 		//TODO exploit theoretical results to speed up the computation (intersection of MPC, lattice)
 		for (int i=0;i<pr.length;i++)
 		{
-			if (aut.mpc(this.elements[i])!=null)
+			if (aut.orchestration(this.elements[i])!=null)
 			{
 				pr[count]=i;
 				count++;
@@ -718,10 +720,10 @@ public class Family {
 		for (int i=0;i<ind.length;i++)
 		{
 			//Product ppp=p[ind[i]];
-			K[ind[i]]=aut.mpc(p[ind[i]]);
+			K[ind[i]]=aut.orchestration(p[ind[i]]);
 			if (K[ind[i]]!=null)
 			{
-				aut.mpc(p[ind[i]]);
+				aut.orchestration(p[ind[i]]);
 				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
 				nonemptylength++;
 			}
@@ -811,7 +813,7 @@ public class Family {
 		{	
     		System.out.println(i);	
     		//setProgress(i);
-			K[ind]=aut.mpc(p[tot[i]]);
+			K[ind]=aut.orchestration(p[tot[i]]);
 			if (K[ind]!=null)
 			{
 				pr[0][ind]=i;

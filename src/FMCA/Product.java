@@ -1,6 +1,7 @@
 package FMCA;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import CA.CATransition;
 
@@ -149,14 +150,14 @@ public class Product {
 	 * @param t
 	 * @return true if all required actions are available in the transitions t
 	 */
-	public boolean checkRequired(FMCATransition[] t)
+	public boolean checkRequired(Set<FMCATransition> tr)
 	{
 		for (int i=0;i<this.required.length;i++)
 		{
 			boolean found=false;
-			for (int j=0;j<t.length;j++)
+			for (FMCATransition t : tr)
 			{
-				if (CATransition.getUnsignedAction(t[j].getAction()).equals(this.required[i]))  //do not differ between requests and offers
+				if (CATransition.getUnsignedAction(t.getAction()).equals(this.required[i]))  //do not differ between requests and offers
 					found=true;
 			}
 			if (!found)
@@ -170,14 +171,14 @@ public class Product {
 	 * @param t
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(FMCATransition[] t)
+	public boolean checkForbidden(Set<FMCATransition> tr)
 	{
 		
 		for (int i=0;i<this.forbidden.length;i++)
 		{
-			for (int j=0;j<t.length;j++)
+			for (FMCATransition t : tr)
 			{
-				if (CATransition.getUnsignedAction(t[j].getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
+				if (CATransition.getUnsignedAction(t.getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
 					return false;
 			}
 		}
@@ -187,7 +188,7 @@ public class Product {
 	
 	public boolean isValid(FMCA aut)
 	{
-		FMCATransition[] t=aut.getTransition();
+		Set<FMCATransition> t=aut.getTransition();
 		return this.checkForbidden(t)&&this.checkRequired(t);
 	}
 	

@@ -2,8 +2,10 @@ package FMCA;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import CA.CAState;
@@ -20,7 +22,7 @@ import CA.CATransition;
 public class FMCAUtil 
 {
 
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	public static FMCA BFScomposition(ArrayList<FMCA> aut)
 	{
@@ -49,7 +51,7 @@ public class FMCAUtil
 		{
 			prodrank = prodrank+(aut[i].getRank()); 
 		}
-		int[] statesprod = new int[prodrank];
+		int[] statesprod = new int[prodrank]; //TODO remove
 		int[][] finalstatesprod = new int[prodrank][];
 		int[] initialprod = new int[prodrank];
 		int totnumstates=1;
@@ -58,9 +60,9 @@ public class FMCAUtil
 		{
 			for (int j=0;j<aut[i].getRank();j++)
 			{
-				statesprod[pointerprodrank]= aut[i].getStatesCA()[j];		
+				statesprod[pointerprodrank]= aut[i].getNumStatesPrinc()[j];		
 				totnumstates *= statesprod[pointerprodrank];
-				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesCA()[j];
+				finalstatesprod[pointerprodrank] = aut[i].getFinalStatesofPrincipals()[j];
 				initialprod[pointerprodrank] = aut[i].getInitialCA().getState()[j];
 				pointerprodrank++;
 			}
@@ -79,7 +81,7 @@ public class FMCAUtil
 		int trlength = 0;
 		for(int i=0;i<aut.length;i++)
 		{
-			prodtr[i]= aut[i].getTransition();
+			prodtr[i]= aut[i].getTransition().toArray(new FMCATransition[] {});
 			trlength += prodtr[i].length;
 		}
 		FMCATransition[] transprod = new FMCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
@@ -104,7 +106,7 @@ public class FMCAUtil
 						FMCATransition[] tt = prodtr[ii];
 						for (int jj=0;jj<tt.length;jj++)    //for all transitions of other automatons
 						{
-							if (CATransition.match(t[j].getLabelP() ,tt[jj].getLabelP())) //match found
+							if (CATransition.match(t[j].getLabel() ,tt[jj].getLabel())) //match found
 							{
 								match=true;
 								FMCATransition[] gen;
@@ -151,7 +153,7 @@ public class FMCAUtil
 					 * and its state 
 					 */
 					CATransition tra = gen[0];
-					String[] lab = tra.getLabelP(); 
+					String[] lab = tra.getLabel(); 
 					int pr1=-1;
 					for (int ind2=0;ind2<lab.length;ind2++)
 					{
@@ -160,7 +162,7 @@ public class FMCAUtil
 							pr1=ind2; //principal
 						}
 					}
-					String label = tra.getLabelP()[pr1];  //the action of the principal who moves
+					String label = tra.getLabel()[pr1];  //the action of the principal who moves
 					for (int ind3=0;ind3<gen.length;ind3++)
 					{
 						for (int ind=0;ind<pointertemp;ind++)
@@ -168,8 +170,8 @@ public class FMCAUtil
 							{	
 								if(gen[ind3]!=null)
 								{
-									if (Arrays.equals(gen[ind3].getSourceP().getState(),temp[ind][ind2].getSourceP().getState()) &&  //the state is the same
-											label==temp[ind][ind2].getLabelP()[pr1]) //pr1 makes the same move
+									if (Arrays.equals(gen[ind3].getSource().getState(),temp[ind][ind2].getSource().getState()) &&  //the state is the same
+											label==temp[ind][ind2].getLabel()[pr1]) //pr1 makes the same move
 									{
 										gen[ind3]=null;
 									}
@@ -199,159 +201,22 @@ public class FMCAUtil
 		/**
 		 * remove all unused space in transProd (null at the end of the array)
 		 */
-		FMCATransition[] finalTr = new FMCATransition[pointertransprod];
+		Set<FMCATransition> finalTr = new HashSet<FMCATransition>(pointertransprod);
 		for (int ind=0;ind<pointertransprod;ind++)
-			finalTr[ind]= transprod[ind];
+			finalTr.add(transprod[ind]);
 		
-		FMCA prod = new FMCA(prodrank,new CAState(initialprod, CAState.type.INITIAL),statesprod,finalstatesprod, finalTr);
 		
-		if (debug)
-			System.out.println("Remove unreachable ...");
-		prod = removeUnreachableTransitions(prod);
+				
+		FMCA prod = new FMCA(prodrank,new CAState(initialprod, true,false),
+				finalstatesprod, finalTr,CAState.extractCAStatesFromTransitions(finalTr)); 
+		
+		prod.setReachableAndSuccessfulStates();
+		prod.removeDanglingTransitions();
 		
 		return prod;
 	}
 	
-	/**
-	 * remove the unreachable transitions from aut
-	 * @param at	the CA
-	 * @return	a new CA clone of aut with only reachable transitions
-	 */
-	public static FMCA removeUnreachableTransitions(FMCA at)
-	{
-		//TODO substitute this method, now we compute reachability of states
-		
-		FMCA aut = at.clone();
-		FMCATransition[] finalTr=aut.getTransition();
-		
-		/**
-		 * remove unreachable transitions
-		 */
-		//int removed=0;
-		int reachablepointer=1; //era messo a uno forse per lo stato iniziale, ma viene cmq letto nelle transizioni
-		int unreachablepointer=0;
-		int[][] reachable = new int[at.prodStates()][]; 
-		int[][] unreachable = new int[at.prodStates()][];
-		reachable[0]=aut.getInitialCA().getState();
-		for (int ind=0;ind<finalTr.length;ind++)
-		{
-			//for each transition t checks if the source state of t is reachable from the initial state of the CA
-			FMCATransition t= finalTr[ind];
-			int[] source = t.getSourceP().getState();
-
-			boolean found=false; //source state must not have been already visited (and inserted in either reachable or unreachable)
-			for (int i=0;i<unreachablepointer;i++)
-			{
-				if (Arrays.equals(unreachable[i],source))
-				{
-					found=true;
-					finalTr[ind]=null;
-			//		removed++;
-					break;
-				}
-			}
-			if (!found)
-			{
-				for (int i=0;i<reachablepointer;i++)
-				{
-					if (Arrays.equals(reachable[i],source))
-					{
-						found=true;
-						break;
-					}
-				}
-			}
 			
-			/**
-			int[] debugg = {0,0,1};
-			if (Arrays.equals(s,debugg))
-				System.out.println("debug");*/
-
-			if (!found)
-			{
-				int[] pointervisited = new int[1];
-				pointervisited[0]=0;
-				if (debug)
-					System.out.println("Checking Reachability state "+Arrays.toString(source));
-				if(!amIReachable(source,aut,aut.getInitialCA().getState(),new int[aut.prodStates()][],pointervisited,reachable,unreachable,reachablepointer,unreachablepointer))
-				{
-					finalTr[ind]=null;
-			//		removed++;
-					unreachable[unreachablepointer]=source;
-					unreachablepointer++;
-				}
-				else
-				{
-					reachable[reachablepointer]=source;
-					reachablepointer++;
-				}
-			}
-		}
-		
-		/**
-		 * remove holes (null) in finalTr2
-		 */
-		
-		finalTr= FMCAUtil.removeHoles(finalTr, new FMCATransition[] {}); //, removed);
-		aut.setTransition(finalTr);
-		return aut;
-	}
-	
-	
-	/**
-	 * true if state[] is reachable from  from[]  in aut
-	 * @param state
-	 * @param aut
-	 * @param visited
-	 * @param pointervisited
-	 * @return  true if state[] is reachable from  from[]  in aut
-	 */
-	//TODO pointerunreachable is never updated, probably is not needed. 
-	// In case this method is called multiple times from another method, substitute 
-	//it with a method which computes a forward visit of the graph only once.
-	// 
-	private static boolean amIReachable( int[] state, FMCA aut, int[] from, int[][] visited, int[] pointervisited,int[][] reachable,int[][] unreachable, int pointerreachable,int pointerunreachable )
-	{
-		if (Arrays.equals(state,from))
-			return true;
-		for (int i=0;i<pointerunreachable;i++)
-		{
-			if (Arrays.equals(unreachable[i],state))
-				return false;
-		}
-		for (int i=0;i<pointerreachable;i++)
-		{
-			if (Arrays.equals(reachable[i],state))
-				return true;
-		}
-		
-		for (int j=0;j<pointervisited[0];j++)
-		{
-			if (Arrays.equals(visited[j],state))
-			{
-				return false;		//detected a loop, state has not been reached 
-			}
-		}
-		visited[pointervisited[0]]=state;
-		pointervisited[0]++;
-		
-		//if (debug)
-		//	System.out.println("Visited "+pointervisited[0]+" "+Arrays.toString(visited[pointervisited[0]-1]));
-		CATransition[] t = aut.getTransition();
-		for (int i=0;i<t.length;i++)
-		{
-			if (t[i]!=null)
-			{
-				if (Arrays.equals(state,t[i].getTargetP().getState()))
-				{
-					if (amIReachable(t[i].getSourceP().getState(),aut,from,visited,pointervisited,reachable,unreachable,pointerreachable,pointerunreachable))
-						return true;
-				}
-			}
-		}
-		return false;
-	}
-		
 	/**
 	 * 
 	 * @param t  first transition made by one CA
@@ -401,7 +266,7 @@ public class FMCAUtil
 				{
 					if ((ind!=i)&&(ind!=ii)) 
 					{
-						int[] statesprinc=aut[ind].getStatesCA();
+						int[] statesprinc=aut[ind].getNumStatesPrinc();
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
 							{						
 								states[indstates]=statesprinc[ind2];
@@ -431,7 +296,7 @@ public class FMCAUtil
 				{
 					if (ind!=i)
 					{
-						int[] statesprinc=aut[ind].getStatesCA();
+						int[] statesprinc=aut[ind].getNumStatesPrinc();
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
 							{						
 								states[indstates]=statesprinc[ind2];
@@ -567,6 +432,7 @@ public class FMCAUtil
 	
 
 	/**
+	 * TODO this method needs to be tested again
 	 * 
 	 * @param aut
 	 * @return compute the union of the FMCA in aut
@@ -582,7 +448,7 @@ public class FMCAUtil
 		
 		for (int i=0;i<aut.length;i++)
 		{
-			int[][] fs=aut[i].getFinalStatesCA();
+			int[][] fs=aut[i].getFinalStatesofPrincipals();
 			int[][] newfs=new int[fs.length][];
 			for (int j=0;j<newfs.length;j++)
 			{
@@ -593,7 +459,7 @@ public class FMCAUtil
 				for (int z=0;z<newfs[j].length;z++)
 					newfs[j][z]+=upperbound*(i+1);
 			}
-			aut[i].setFinalStatesCA(newfs);
+			aut[i].setFinalStatesofPrincipals(newfs); //TODO I modified this method, not tested
 		}
 		for (int i=0;i<aut.length;i++)
 		{
@@ -601,36 +467,38 @@ public class FMCAUtil
 				return null;
 			
 			//renaming states of operands
-			CAState initial=aut[i].getInitialCA().clone();
-			for (int z=0;z<initial.getState().length;z++)
-				initial.getState()[z]=initial.getState()[z]+upperbound*(i+1);
-			aut[i].setInitialCA(initial);
-			FMCATransition[] t=aut[i].getTransition();
-			for (int j=0;j<t.length;j++)
+//			CAState initial=aut[i].getInitialCA().clone();
+//			for (int z=0;z<initial.getState().length;z++)
+//				initial.getState()[z]=initial.getState()[z]+upperbound*(i+1);
+//			aut[i].setInitialCA(initial); 
+			//TODO check I changed the setInitial method, now there is no more initial state instance variable
+			Set<FMCATransition> tr=aut[i].getTransition();
+			for (FMCATransition t : tr)
 			{
-				CAState source=t[j].getSourceP().clone();
-				CAState target=t[j].getTargetP().clone();
+				CAState source=t.getSource(); //TODO check this clone operations are decoupling the states of transitions
+														  //with the states of the FMCA
+				CAState target=t.getTarget();
 				for (int z=0;z<source.getState().length;z++)
 				{
 					source.getState()[z] = source.getState()[z] + upperbound*(i+1);
 					target.getState()[z] = target.getState()[z] + upperbound*(i+1);
 				}
-				t[j].setSourceP(source);
-				t[j].setTargetP(target);
+				t.setSource(source);
+				t.setTarget(target);
 			}
 			
 			//repositioning states and renaming
-			CAState[] fst=aut[i].getState();
+			CAState[] fst=aut[i].getStates().toArray(new CAState[] {});
 			CAState[] newfst=new CAState[fst.length];
 			for (int j=0;j<fst.length;j++)
 			{
 				int[] value=Arrays.copyOf(fst[j].getState(),fst[j].getState().length);
 				for (int z=0;z<value.length;z++)
-					value[z]=value[z] + upperbound*(i+1); //rename state
+					value[z]=value[z] + upperbound*(i+1); //rename state TODO this is already done if not cloned
 				newfst[j]=new CAState(value, fst[j].getX()+fur*(i)+25*i, fst[j].getY()+50, //repositioning
-						fst[j].isInitial(),fst[j].isFinalstate());			
+						fst[j].isInitial(),fst[j].isFinalstate()); //TODO not clear why I instantiate a new state	
 			}
-			aut[i].setState(newfst);
+			aut[i].setStates(new HashSet<CAState>(Arrays.asList(newfst)));
 		}
 	
 		int[] initial = new int[rank]; //special initial state
@@ -653,7 +521,7 @@ public class FMCAUtil
 		FMCATransition[][] tr=new FMCATransition[aut.length][];
 		for (int i=0;i<aut.length;i++)
 		{
-			tr[i]=aut[i].getTransition();
+			tr[i]=aut[i].getTransition().toArray(new FMCATransition[] {});
 			trlength+=tr[i].length;
 		}
 		FMCATransition[] uniontr=new FMCATransition[trlength];//union of all transitions
@@ -672,7 +540,7 @@ public class FMCAUtil
 			}
 		}
 		
-		int[] states = new int[rank];
+		int[] states = new int[rank]; //TODO remove
 		int[] finalstateslength = new int[rank];
 		for (int i=0;i<rank;i++)
 		{
@@ -682,11 +550,11 @@ public class FMCAUtil
 		int numoffstate=0; //the overall sum of fmcastates of all operands
 		for (int i=0;i<aut.length;i++)
 		{
-			numoffstate+=aut[i].getState().length;
-			int[][] fs = aut[i].getFinalStatesCA();
+			numoffstate+=aut[i].getStates().size();
+			int[][] fs = aut[i].getFinalStatesofPrincipals();
 			for (int j=0;j<rank;j++)
 			{
-				states[j]+= aut[i].getStatesCA()[j]; //sum of states		
+				states[j]+= aut[i].getNumStatesPrinc()[j]; //sum of states		
 				finalstateslength[j] += fs[j].length; //number of final states of operands
 			}
 		}
@@ -700,7 +568,7 @@ public class FMCAUtil
 		}
 		for (int i=0;i<aut.length;i++)
 		{
-			int[][] fs = aut[i].getFinalStatesCA();
+			int[][] fs = aut[i].getFinalStatesofPrincipals();
 			for (int j=0;j<rank;j++)
 			{		
 				for (int z=0;z<fs[j].length;z++)
@@ -716,7 +584,7 @@ public class FMCAUtil
 		int countfs=0;
 		for (int i=0;i<aut.length;i++)
 		{
-			CAState[] so = aut[i].getState();
+			CAState[] so = aut[i].getStates().toArray(new CAState[] {});
 			for (int j=0;j<so.length;j++)
 			{
 				ufst[countfs]=so[j];
@@ -731,12 +599,15 @@ public class FMCAUtil
 			
 		}*/
 	
-		return new FMCA(rank, finitial, states, finalstates, uniontr, ufst);
+		return new FMCA(rank, finitial, //states, 
+				finalstates, 
+				new HashSet<FMCATransition>(Arrays.asList(uniontr)), 
+				new HashSet<CAState>(Arrays.asList(ufst)));
 	}
 	
 	
 	/**
-	 * (taken from CA)
+	 * only used by generateTransitions
 	 * 
 	 * @param aut
 	 * @return
@@ -747,8 +618,14 @@ public class FMCAUtil
 		int allprincipals=0;
 		for (int j=0;j<principals.length;j++)
 		{
-			principals[j]= aut[j].allPrincipals(); //TODO: there are idle transitions in principals, to be fixed in the future, 
-												   //now this method is only used for the states of principals not their transitions
+			principals[j] = new FMCA[aut[j].getRank()]; //extracting principals of aut[j]
+			for (int i=0;i<principals[j].length;i++)
+			{
+				principals[j][i] = aut[j].proj(i);
+			}
+			
+			 //TODO: there are idle transitions in principals, to be fixed in the future,
+			//now this method is only used for the states of principals not their transitions
 			allprincipals+=principals[j].length;
 		}
 		FMCA[] onlyprincipal = new FMCA[allprincipals];
@@ -766,29 +643,33 @@ public class FMCAUtil
 	
 	private static float furthestNodesX(FMCA[] aut)
 	{
-		float max=0;
-		for (int i=0;i<aut.length;i++)
-		{
-			float x=aut[i].furthestNodeX();
-			if (max<x)
-				max=x;
-		}
-		return max;
+		return (float)Arrays.stream(aut)
+				.mapToDouble(x ->  x.getStates().parallelStream()
+									.mapToDouble(CAState::getX)
+									.max()
+									.getAsDouble()
+						)
+				.max()
+				.getAsDouble();
 	}
 	
 	public static <T> T[] setUnion(T[] q1, T[] q2, T[] type)
 	{
-		List<T> t=  Arrays.asList(q1);
-		t = new ArrayList<T>(t);
+		List<T> t= new ArrayList<T>(Arrays.asList(q1));
 		t.addAll(Arrays.asList(q2));
-		return removeDuplicates(q1,type);
+		
+		return t.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.collect(Collectors.toList())
+				.toArray(type);
 	}
 	
 	public static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
 	{
 		if (q1==null || q2==null)
 			return null;
-		return Arrays.asList(q1).stream()
+		return Arrays.stream(q1)
 				.filter(Objects::nonNull)
 				.filter(x-> contains(x,q2))
 				.collect(Collectors.toList())
@@ -800,10 +681,10 @@ public class FMCAUtil
 	 */
 	public static <T> T[] setDifference(T[] q1, T[] q2, T[] type)
 	{
-		return Arrays.asList(q1).stream()
+		return Arrays.stream(q1)
 				.distinct()
-				.filter(x -> !contains(x,q2))
 				.filter(Objects::nonNull)
+				.filter(x -> !contains(x,q2))
 				.collect(Collectors.toList())
 				.toArray(type);
 	}
@@ -831,7 +712,7 @@ public class FMCAUtil
 		if (q==null||listq==null) 
 			return false;
 		else if (q instanceof int[])
-		 	return Arrays.asList(listq).stream()
+		 	return Arrays.stream(listq)
 					.filter(x -> Arrays.equals((int[])q, (int[])x))
 					.count()>0;
 		else
@@ -854,7 +735,7 @@ public class FMCAUtil
 		if (m==null) 
 			return null;
 		
-		return 	Arrays.asList(m).stream()
+		return 	Arrays.stream(m)
 				.filter(Objects::nonNull)
 				.distinct()
 				.collect(Collectors.toList())
@@ -864,7 +745,7 @@ public class FMCAUtil
 
 	public static <T> T[] removeTailsNull(T[] q, int length, T[] type)
 	{
-		return  Arrays.asList(q).stream()
+		return  Arrays.stream(q)
 				.limit(length)
 				.collect(Collectors.toList())
 				.toArray(type);
@@ -874,7 +755,7 @@ public class FMCAUtil
 	{
 		if (l==null)
 			return null;
-		return (T[]) Arrays.asList(l).stream()
+		return (T[]) Arrays.stream(l)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList())
 				.toArray(type);

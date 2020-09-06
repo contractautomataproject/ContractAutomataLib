@@ -20,16 +20,22 @@ import com.mxgraph.examples.swing.editor.EditorMenuBar;
 import com.mxgraph.examples.swing.editor.EditorPalette;
 import com.mxgraph.examples.swing.editor.ProductFrame;
 import com.mxgraph.io.mxCodec;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.swing.util.mxSwingConstants;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUtils;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
@@ -363,4 +369,45 @@ public class FMCATGUI extends BasicGraphEditor
 		FMCATGUI editor = new FMCATGUI();
 		editor.createFrame(new EditorMenuBar(editor)).setVisible(true);
 	}
+	
+	/**
+	 * utility for arranging the graphical display of the automaton
+	 * @param graph
+	 * @param graphComponent
+	 */
+	public static void morphGraph(final mxGraph graph,
+			mxGraphComponent graphComponent) 
+	{
+		// define layout
+		mxIGraphLayout layout = new mxFastOrganicLayout(graph);
+
+		((mxFastOrganicLayout) layout).setForceConstant(100);
+		((mxFastOrganicLayout) layout).setDisableEdgeStyle( false); 
+		//mxGraphModel mg=(mxGraphModel) graph.getModel();
+		//mxCell cell = (mxCell) ((mxGraphModel)mg).getCell("3");
+
+		// layout using morphing
+		graph.getModel().beginUpdate();
+		try {
+			layout.execute(graph.getDefaultParent());
+		} finally {
+			mxMorphing morph = new mxMorphing(graphComponent, 20, 1.5, 20);
+
+			morph.addListener(mxEvent.DONE, new mxIEventListener() {
+
+				@Override
+				public void invoke(Object arg0, mxEventObject arg1) {
+					graph.getModel().endUpdate();
+					// fitViewport();
+				}
+
+
+
+			});
+
+			morph.startAnimation();
+		}
+
+	}
+
 }

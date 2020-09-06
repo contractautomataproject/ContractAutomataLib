@@ -1,5 +1,6 @@
 package CA;
 
+import java.util.Arrays;
 
 /**
  * Transition of a contract automaton
@@ -7,15 +8,13 @@ package CA;
  * @author Davide Basile
  *
  */
-@SuppressWarnings("serial")
-public class CATransition //extends Transition
-		implements java.io.Serializable{ 
+public class CATransition { 
 	private CAState source;
 	private CAState target;
 	private String[] label;
-	public static  String idle="-";
-	public static  String offer="!";
-	public static  String request="?";
+	final public static  String idle="-";
+	final public static  String offer="!";
+	final public static  String request="?";
 	
 	public CATransition(CAState source, String[] label, CAState target){
 		this.source=source;
@@ -23,16 +22,52 @@ public class CATransition //extends Transition
 		this.label =label;
 	}
 	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(label);
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CATransition other = (CATransition) obj;
+		if (!Arrays.equals(label, other.label))
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		return true;
+	}
+
+	
 	/**
 	 * 
 	 * @return		the source state of the transition
 	 */
-	public CAState getSourceP()
+	public CAState getSource()
 	{
 		return this.source;
 	}
 	
-	public void setSourceP(CAState s)
+	public void setSource(CAState s)
 	{
 		this.source=s;
 	}
@@ -42,12 +77,12 @@ public class CATransition //extends Transition
 	 * 
 	 * @return		the target state of the transition
 	 */
-	public CAState getTargetP()
+	public CAState getTarget()
 	{
 		return target;
 	}
 	
-	public void setTargetP(CAState t)
+	public void setTarget(CAState t)
 	{
 		this.target=t;
 	}
@@ -56,12 +91,12 @@ public class CATransition //extends Transition
 	 * 
 	 * @return the label of the transition
 	 */
-	public String[] getLabelP()
+	public String[] getLabel()
 	{
 		return label;
 	}
 	
-	public void setLabelP(String[] l)
+	public void setLabel(String[] l)
 	{
 		this.label=l;
 	}
@@ -113,7 +148,6 @@ public class CATransition //extends Transition
 	
 	private static boolean isMatch(String l1, String l2)
 	{
-		//TODO: check
 		return l1.substring(1).equals(l2.substring(1));
 	}
 	

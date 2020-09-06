@@ -1,6 +1,4 @@
-/*
- * Copyright (c) 2001-2012, JGraph Ltd
- */
+
 package com.mxgraph.examples.swing.editor;
 
 import java.awt.Color;
@@ -18,7 +16,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
@@ -31,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -44,7 +40,6 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.w3c.dom.Document;
 
-import FMCA.FMCA;
 import FMCA.FMCAIO;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
@@ -56,7 +51,6 @@ import com.mxgraph.io.mxGdCodec;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxIGraphModel;
-import com.mxgraph.shape.mxStencilShape;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxConnectionHandler;
@@ -236,23 +230,6 @@ public class EditorActions
 		}
 	}
 	
-	
-/*	*//**
-	 *
-	 *//*
-	@SuppressWarnings("serial")
-	public  class ImportAutomaAction extends Action
-	{
-		*//**
-		 * 
-		 *//*
-		public void actionPerformed(ActionEvent e)
-		{
-			if (e.getSource() instanceof mxGraphComponent)
-			{
-			}
-		}
-	}*/
 	
 
 	/**
@@ -1550,24 +1527,11 @@ public class EditorActions
 							{
 
 								String fileName =fc.getSelectedFile().toString();
-								FMCA aut=FMCAIO.load(fileName);
-								File file=FMCAIO.exportToXML(fileName,aut);
+								
+								File file=FMCAIO.loadFMCAAndWriteIntoXML(fileName);
+								
 								fileName=file.getAbsolutePath();
-								/*if (fc.getSelectedFile().getAbsolutePath()
-										.toLowerCase().endsWith(".png"))
-								{
-									openXmlPng(editor, fc.getSelectedFile());
-								}
-								else if (fc.getSelectedFile().getAbsolutePath()
-										.toLowerCase().endsWith(".txt"))
-								{
-									openGD(editor, fc.getSelectedFile(),
-											mxUtils.readFile(fc
-													.getSelectedFile()
-													.getAbsolutePath()));
-								}
-								else*/
-								//{
+								
 									Document document = mxXmlUtils
 											.parseXml(mxUtils.readFile(fileName));
 													/*mxUtils.readFile(fc
@@ -1581,7 +1545,7 @@ public class EditorActions
 									editor.setCurrentFile(file);
 
 									resetEditor(editor);
-								//}
+							
 							}
 							catch (IOException ex)
 							{
