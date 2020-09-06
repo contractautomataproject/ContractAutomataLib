@@ -3,15 +3,16 @@
 
 ![The Architecture of FMCAT and FMCAT at work](./FMCAT.png) [fig:architecture]
 
+**Note:** I am currently working on the code-cleaning branch, to clean off legacy parts from the tool CAT (see CAT repository), 
+and rewrite other parts in Java 8.
+
 <h1>Info</h1>
 
-Code cleaning branch: I am porting to Java 8, reducing source code and improve it. 
-
 FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
-The tool is still prototypical and under development. 
+The tool is still prototypical and under development.
 At the actual stage, it has been mainly used by the author for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
 
-I am working (when I have free time) on improving its usability for potential users and I am  searching for some developer to help me on this topic.
+I am working (when I have free time) on improving its usability for potential users.
 Also, the current version (though I am fixing it) is a result of quick incremental patches made over the years, with the goal of performing empirical evaluations of the theory and algorithms  being developed. 
 
 If you have any question or want to help contact me on davide.basile@isti.cnr.it.
@@ -37,6 +38,9 @@ The directory demoLMCS2020 contains an executable jar and the models used in thi
 
 <h1>FMCAT</h1>
 
+**What follows is an excerpt of SPLC 2017 publication (see References), recently the tool has been equipped with 
+ a choreography synthesis algorithm**
+ 
 Service-oriented computing (SOC)  is a paradigm for distributed
 applications based on the publication, discovery and orchestration of
 *services*. Services are composed to provide Web applications and can be
