@@ -149,73 +149,6 @@ public class FMCA  implements java.io.Serializable
 	}
 
 
-	/**
-	 * compute the projection on the i-th principal
-	 * @param indexprincipal		index of the FMCA
-	 * @return		the ith principal
-	 * 
-	 * TODO remove this method, in stack of calls is used by generateATransition
-	 */
-	FMCA proj(int indexprincipal)
-	{
-		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //TODO check if the parameter i is in the rank of the FMCA
-			return null;
-		if (this.getRank()==1)
-			return this;
-		FMCATransition[] tra = this.getTransition().toArray(new FMCATransition[] {});
-		//int[] numberofstatesprincipal= new int[1];
-		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
-		FMCATransition[] transitionsprincipal = new FMCATransition[tra.length];
-		int pointer=0;
-		for (int ind=0;ind<tra.length;ind++)
-		{
-			FMCATransition tt= ((FMCATransition)tra[ind]);
-			String label = tt.getLabel()[indexprincipal];
-			if(label!=CATransition.idle)
-			{
-				int source =  tt.getSource().getState()[indexprincipal];
-				int dest = tt.getTarget().getState()[indexprincipal];
-				int[] sou = new int[1];
-				sou[0]=source;
-				int[] des = new int[1];
-				des[0]=dest;
-				String[] lab = new String[1];
-				lab[0]=label;
-				FMCATransition selected = null;
-				if (label.substring(0,1).equals(CATransition.offer))
-				{
-					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),FMCATransition.action.PERMITTED);
-				}
-				else {
-					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
-				}
-
-				if (!FMCAUtil.contains(selected, transitionsprincipal, pointer))
-				{
-					transitionsprincipal[pointer]=selected;
-					pointer++;
-				}
-			}
-		}
-
-		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer, new FMCATransition[] {});
-		Set<FMCATransition> transitionprincipalset = new HashSet<FMCATransition>(Arrays.asList(transitionsprincipal));
-		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
-		int[] init=new int[1]; init[0]=0;
-		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
-		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
-		int[][] finalstatesprincipal = new int[1][];
-		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
-		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
-		{
-			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
-			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
-		}
-
-		return new FMCA(1,initialstateprincipal,
-				finalstatesprincipal,transitionprincipalset,fstates); 
-	}
-
 
 
 	/**
@@ -292,8 +225,7 @@ public class FMCA  implements java.io.Serializable
 				R.addAll(this.getDanglingStates());
 			
 			R.addAll(trbackup.parallelStream() 
-					.filter(x->forbiddenPred.apply(x).test(trbackup, Rf)) //x.isUncontrollable(trbackup, Rf)
-								//&&(Rf.contains(x.getTarget()))) //||invariant.test(x)))
+					.filter(x->forbiddenPred.apply(x).test(trbackup, Rf))
 					.map(FMCATransition::getSource)
 					.collect(Collectors.toSet())); //Ri
 	
@@ -460,6 +392,75 @@ public class FMCA  implements java.io.Serializable
 				.filter(x->x.getTarget().equals(target))
 				.collect(Collectors.toSet());
 	}
+	
+	/**
+	 * compute the projection on the i-th principal
+	 * @param indexprincipal		index of the FMCA
+	 * @return		the ith principal
+	 * 
+	 * TODO remove this method, in stack of calls is used by generateATransition
+	 */
+	FMCA proj(int indexprincipal)
+	{
+		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //TODO check if the parameter i is in the rank of the FMCA
+			return null;
+		if (this.getRank()==1)
+			return this;
+		FMCATransition[] tra = this.getTransition().toArray(new FMCATransition[] {});
+		//int[] numberofstatesprincipal= new int[1];
+		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
+		FMCATransition[] transitionsprincipal = new FMCATransition[tra.length];
+		int pointer=0;
+		for (int ind=0;ind<tra.length;ind++)
+		{
+			FMCATransition tt= ((FMCATransition)tra[ind]);
+			String label = tt.getLabel()[indexprincipal];
+			if(label!=CATransition.idle)
+			{
+				int source =  tt.getSource().getState()[indexprincipal];
+				int dest = tt.getTarget().getState()[indexprincipal];
+				int[] sou = new int[1];
+				sou[0]=source;
+				int[] des = new int[1];
+				des[0]=dest;
+				String[] lab = new String[1];
+				lab[0]=label;
+				FMCATransition selected = null;
+				if (label.substring(0,1).equals(CATransition.offer))
+				{
+					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),FMCATransition.action.PERMITTED);
+				}
+				else {
+					selected = new FMCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
+				}
+
+				if (!FMCAUtil.contains(selected, transitionsprincipal, pointer))
+				{
+					transitionsprincipal[pointer]=selected;
+					pointer++;
+				}
+			}
+		}
+
+		transitionsprincipal = FMCAUtil.removeTailsNull(transitionsprincipal, pointer, new FMCATransition[] {});
+		Set<FMCATransition> transitionprincipalset = new HashSet<FMCATransition>(Arrays.asList(transitionsprincipal));
+		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
+		int[] init=new int[1]; init[0]=0;
+		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
+		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
+		int[][] finalstatesprincipal = new int[1][];
+		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
+		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
+		{
+			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
+			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
+		}
+
+		return new FMCA(1,initialstateprincipal,
+				finalstatesprincipal,transitionprincipalset,fstates); 
+	}
+
+
 }
 
 // END OF THE CLASS
