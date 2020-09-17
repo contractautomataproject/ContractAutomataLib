@@ -1,6 +1,7 @@
 package CA;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Transition of a contract automaton
@@ -9,9 +10,9 @@ import java.util.Arrays;
  *
  */
 public class CATransition { 
-	private CAState source;
-	private CAState target;
-	private String[] label;
+	final private CAState source;
+	final private CAState target;
+	final private String[] label; //TODO only two integers+an action are needed
 	final public static  String idle="-";
 	final public static  String offer="!";
 	final public static  String request="?";
@@ -22,41 +23,28 @@ public class CATransition {
 		this.label =label;
 	}
 	
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(label);
-		result = prime * result + ((source == null) ? 0 : source.hashCode());
-		result = prime * result + ((target == null) ? 0 : target.hashCode());
-		return result;
+	/**
+	 * instantiate a transition by reconstructing the label
+	 * @param source
+	 * @param firstaction the first (i.e. with lower index) action occurring in label
+	 * @param target
+	 */
+	public CATransition(CAState source, String firstaction, CAState target){
+		this.source=source;
+		this.target=target;
+		this.label = new String[source.getState().length];
+		Arrays.fill(label, idle);
+		if (target!=null)//composition can initialise temporarily with null target
+		{
+			int[] index = IntStream.range(0, source.getState().length)
+									.filter(i->source.getState()[i]!=target.getState()[i])
+									.toArray();
+			label[index[0]]=firstaction; //request or offer
+			if (index.length>1)
+				label[index[1]]=getCoAction(firstaction); //match
+		}
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CATransition other = (CATransition) obj;
-		if (!Arrays.equals(label, other.label))
-			return false;
-		if (source == null) {
-			if (other.source != null)
-				return false;
-		} else if (!source.equals(other.source))
-			return false;
-		if (target == null) {
-			if (other.target != null)
-				return false;
-		} else if (!target.equals(other.target))
-			return false;
-		return true;
-	}
-
+	
 	
 	/**
 	 * 
@@ -67,10 +55,10 @@ public class CATransition {
 		return this.source;
 	}
 	
-	public void setSource(CAState s)
-	{
-		this.source=s;
-	}
+//	public void setSource(CAState s)
+//	{
+//		this.source=s;
+//	}
 	
 	
 	/**
@@ -82,10 +70,10 @@ public class CATransition {
 		return target;
 	}
 	
-	public void setTarget(CAState t)
-	{
-		this.target=t;
-	}
+//	public void setTarget(CAState t)
+//	{
+//		this.target=t;
+//	}
 	
 	/**
 	 * 
@@ -96,14 +84,13 @@ public class CATransition {
 		return label;
 	}
 	
-	public void setLabel(String[] l)
-	{
-		this.label=l;
-	}
+//	public void setLabel(String[] l)
+//	{
+//		this.label=l;
+//	}
 
 	/**
-	 * 
-	 * @return the action of the transition, in case of a match it returns the offer (positive)
+	 * @return the action of the transition, in case of a match it returns the offer
 	 */
 	public String getAction()
 	{
@@ -126,6 +113,16 @@ public class CATransition {
 		return null;
 	}
 	
+	/**
+	 * @return the action with lower index
+	 */ 
+	public String getFirstAction()
+	{
+		return Arrays.stream(label)
+		.filter(l->l!=idle)
+		.findFirst()
+		.orElseThrow(IllegalArgumentException::new);
+	}
 
 	/**
 	 * 
@@ -166,6 +163,16 @@ public class CATransition {
 			return label.substring(1);
 		else
 			return label;
+	}
+	
+	public static String getCoAction(String label)
+	{
+		if (label.startsWith("!"))
+			return "?"+label.substring(1);
+		else if (label.startsWith("?"))
+			return "!"+label.substring(1);
+		else
+			throw new IllegalArgumentException("The label is not an action");
 	}
 	
 	/**
@@ -255,6 +262,18 @@ public class CATransition {
 		return -1;
 	}
 	
+	public int getSenderOrReceiver()
+	{
+		if (this.isMatch())
+			throw new RuntimeException();
+		for (int i=0;i<label.length;i++)
+		{
+			if (!isIdle(label,i))
+				return i;
+		}
+		throw new RuntimeException();
+	}
+	
 	/**
 	 * check if labels l and ll are in match
 	 * @param l
@@ -274,4 +293,40 @@ public class CATransition {
 			return false;
 		return isMatch(t1.getAction(),t2.getAction());
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(label);
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CATransition other = (CATransition) obj;
+		if (!Arrays.equals(label, other.label))
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		return true;
+	}
+
 }

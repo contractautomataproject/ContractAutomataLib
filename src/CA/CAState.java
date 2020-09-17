@@ -2,13 +2,13 @@ package CA;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import FMCA.FMCATransition;
 
 public class CAState {
-	private int[] state; //TODO this should be a set of CAState 
-	//private Set<CAState> states; 
+	private int[] state; //TODO this should be a set of CAState?
 	
 	private boolean initial;
 	private boolean finalstate;
@@ -20,28 +20,32 @@ public class CAState {
 	
 	public CAState(int[] state)
 	{
-		setInitial(false);
-		setFinalstate(false);
 		this.setState(state);
-	}
-	
-	
-	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
-	{
-		this.setState(state);
-		this.setX(x);
-		this.setY(y);
-		this.setInitial(initial);
-		this.setFinalstate(finalstate);
 	}
 	
 	public CAState(int[] state, boolean initial, boolean finalstate)
 	{
-		this.setState(state);
-		this.setX(x);
-		this.setY(y);
+		this(state);
 		this.setInitial(initial);
 		this.setFinalstate(finalstate);
+	}
+	
+	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
+	{
+		this(state,initial,finalstate);
+		this.setX(x);
+		this.setY(y);
+	}
+	
+	public CAState(List<CAState> states)//TODO test
+	{
+		this(
+        states.stream().map(CAState::getState)
+        				.flatMapToInt(Arrays::stream)
+        				.toArray(),
+		states.parallelStream().allMatch(CAState::isInitial),
+		states.parallelStream().allMatch(CAState::isFinalstate)
+		);
 	}
 	
 	public int[] getState() {
@@ -124,18 +128,6 @@ public class CAState {
 		//&& this.y==c.getY()
 		//&& this.isReachable == c.isReachable()		//reachable and successful are updated when computing the dangling states
 		//&& this.isSuccessfull == c.isSuccessfull()	//thus two equal states may become different if I check this variables
-	}
-
-	public boolean equals(CAState c)
-	{
-		return  (Arrays.equals(state,c.getState())
-				//&& this.x==c.getX()							
-				//&& this.y==c.getY()
-				&& this.initial == c.isInitial()
-				&& this.finalstate == c.isFinalstate()
-				//&& this.isReachable == c.isReachable()		//reachable and successful are updated when computing the dangling states
-				//&& this.isSuccessfull == c.isSuccessfull()	//thus two equal states may become different if I check this variables
-				);
 	}
 	
 	public boolean isSuccessful() {

@@ -19,8 +19,7 @@ import CA.CATransition;
  * @author Davide Basile
  *
  */
-@SuppressWarnings("serial")
-public class FMCA  implements java.io.Serializable
+public class FMCA  
 {
 	private int rank;
 	private int[][] finalstates; //these are the final states of the principal in the contract automaton
@@ -115,6 +114,10 @@ public class FMCA  implements java.io.Serializable
 				.findFirst().orElseThrow(NullPointerException::new);
 	}
 	
+	/**
+	 * set the initial state in this.getState
+	 * @param initial the state to be set
+	 */
 	public void setInitialCA(CAState initial)
 	{
 		this.getStates().parallelStream()
@@ -143,14 +146,6 @@ public class FMCA  implements java.io.Serializable
 		return family;
 	}
 
-	boolean containAction(String act)
-	{
-		return FMCAUtil.contains(act, this.getActions());
-	}
-
-
-
-
 	/**
 	 * @return the synthesised orchestration/mpc of product p in agreement
 	 */
@@ -176,20 +171,21 @@ public class FMCA  implements java.io.Serializable
 	}
 
 	
-	/**
-	 * @return the synthesised choreography in strong agreement, 
-	 * removing at each iteration all transitions violating branching condition
-	 */
-	public FMCA choreographySmaller()
-	{
-		return synthesis(x-> {return (t,bad) -> 
-					!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
-				x -> x::isUncontrollableChoreography);
-	}
+//	/**
+//	 * @return the synthesised choreography in strong agreement, 
+//	 * removing at each iteration all transitions violating branching condition.
+//	 */
+//	public FMCA choreographySmaller()
+//	{
+//		return synthesis(x-> {return (t,bad) -> 
+//					!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
+//				x -> x::isUncontrollableChoreography);
+//	}
 	
-	/**
-	 * @return the synthesised choreography in strong agreement, 
-	 * removing only one transition violating the branching condition each time no further updates are possible
+	/** 
+	 * @return the synthesised choreography in strong agreement, removing only one transition violating the branching condition 
+	 * each time no further updates are possible. The transition to remove is chosen nondeterministically with findAny().
+	 * 
 	 */
 	public FMCA choreographyLarger()
 	{
@@ -202,7 +198,7 @@ public class FMCA  implements java.io.Serializable
 			  final Set<FMCATransition> trf = aut.getTransition();
 			  toRemove=(aut.getTransition().parallelStream()
 					  .filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
-					  .findAny()
+					  .findAny() 
 					  .orElse(null));
 			} while (aut.getTransition().remove(toRemove));
 		return aut;
@@ -249,48 +245,6 @@ public class FMCA  implements java.io.Serializable
 		return CAState.extractCAStatesFromTransitions(this.getTransition());
 	}
 
-	/**
-	 * this method is used when importing from XML, where no description of  principal final states is given 
-	 * and it is reconstructed
-	 * 
-	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
-	 * 
-	 * @param all final states of the composed automaton
-	 * @return the final states of each principal
-	 */
-	static int[][] principalsFinalStates(int[][] states)
-	{
-		if (states.length<=0)
-			return null;
-		int rank=states[0].length;
-		int[] count=new int[rank];
-		int[][] pfs=new int[rank][states.length];
-
-		for (int ind=0; ind<pfs.length;ind++)
-			for (int ind2=0; ind2<pfs[ind].length;ind2++)
-				pfs[ind][ind2] = -1;    //the check FMCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
-
-		for (int j=0;j<rank;j++)
-		{
-			pfs[j][0]=states[0][j];
-			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
-		}
-		for (int i=1;i<states.length;i++)
-		{
-			for (int j=0;j<rank;j++)
-			{
-				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
-				{
-					pfs[j][count[j]]=states[i][j];
-					count[j]++;
-				}
-			}
-		}
-		for (int j=0;j<rank;j++)
-			pfs[j]=FMCAUtil.removeTailsNull(pfs[j], count[j]);
-		return pfs;
-	}
-
 	public int getNumStates()
 	{
 		if (states==null)
@@ -301,12 +255,11 @@ public class FMCA  implements java.io.Serializable
 	/**
 	 * @return all actions present in the automaton
 	 */
-	String[] getActions()
+	Set<String> getActions()
 	{
 		return this.getTransition().parallelStream()
 		.map(x->CATransition.getUnsignedAction(x.getAction()))
-		.collect(Collectors.toSet())
-		.toArray(new String[] {});
+		.collect(Collectors.toSet());
 	}
 
 	
@@ -460,7 +413,47 @@ public class FMCA  implements java.io.Serializable
 				finalstatesprincipal,transitionprincipalset,fstates); 
 	}
 
+	/**
+	 * this method is used when importing from XML, where no description of  principal final states is given 
+	 * and it is reconstructed
+	 * 
+	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
+	 * 
+	 * @param all final states of the composed automaton
+	 * @return the final states of each principal
+	 */
+	static int[][] principalsFinalStates(int[][] states)
+	{
+		if (states.length<=0)
+			return null;
+		int rank=states[0].length;
+		int[] count=new int[rank];
+		int[][] pfs=new int[rank][states.length];
 
+		for (int ind=0; ind<pfs.length;ind++)
+			for (int ind2=0; ind2<pfs[ind].length;ind2++)
+				pfs[ind][ind2] = -1;    //the check FMCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
+
+		for (int j=0;j<rank;j++)
+		{
+			pfs[j][0]=states[0][j];
+			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
+		}
+		for (int i=1;i<states.length;i++)
+		{
+			for (int j=0;j<rank;j++)
+			{
+				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
+				{
+					pfs[j][count[j]]=states[i][j];
+					count[j]++;
+				}
+			}
+		}
+		for (int j=0;j<rank;j++)
+			pfs[j]=FMCAUtil.removeTailsNull(pfs[j], count[j]);
+		return pfs;
+	}
 }
 
 // END OF THE CLASS

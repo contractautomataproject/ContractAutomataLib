@@ -11,7 +11,7 @@ import CA.CATransition;
 
 
 /**
- * Transition of a contract automaton
+ * Transition of a featured modal contract automaton
  * 
  * @author Davide Basile
  *
@@ -22,15 +22,16 @@ public class FMCATransition extends CATransition {
 	}
 	private action type;
 	
-	/**
-	 * 
-	 * @param initial		source state
-	 * @param label2			label
-	 * @param fina			arrival state
-	 */
-	public FMCATransition(CAState initial, String[] label2, CAState fina, action type)
+	
+	public FMCATransition(CAState source, String[] label, CAState target, action type)
 	{
-		super(initial,label2,fina);
+		super(source,label,target);
+		this.type=type;
+	}
+	
+	public FMCATransition(CAState source, String firstaction, CAState target, action type)
+	{
+		super(source,firstaction,target);
 		this.type=type;
 	}
 	
@@ -104,7 +105,7 @@ public class FMCATransition extends CATransition {
 	
 	/**
 	 * 
-	 * @return	true if the  greedy/lazy transition request is matched 
+	 * @return	true if the  greedy/lazy transition request is controllable 
 	 */
 	boolean isControllableLazyRequest(Set<FMCATransition> tr, Set<CAState> badStates)
 	{
@@ -281,7 +282,6 @@ public class FMCATransition extends CATransition {
 	 */
 	public FMCATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,FMCA[] aut)
 	{
-		//TODO I should replace the composition of CA with a forward visit of the automaton
 		
 		if (tt!=null) //if it is a match
 		{
@@ -318,10 +318,6 @@ public class FMCATransition extends CATransition {
 					{
 						source[i+j]=s[j];
 						label[i+j]=l[j];
-						if (l[j]==null)
-						{
-							System.out.println("vai");
-						}
 						target[i+j]=d[j];
 					}
 					counter+=s.length; //record the shift due to the first CA 
@@ -336,10 +332,6 @@ public class FMCATransition extends CATransition {
 						{
 							source[i+counter+j]=ss[j];
 							label[i+counter+j]=ll[j];
-							if (ll[j]==null)
-							{
-								System.out.println("vai");
-							}
 							target[i+counter+j]=dd[j];
 						}
 						counter+=ss.length;//record the shift due to the second CA 
@@ -360,10 +352,6 @@ public class FMCATransition extends CATransition {
 				{
 					source[insert.length+j]=s[j];
 					label[insert.length+j]=l[j];
-					if (l[j]==null)
-					{
-						System.out.println("vai");
-					}
 					target[insert.length+j]=d[j];
 				}
 				counter+=s.length; //record the shift due to the first CA 

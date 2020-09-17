@@ -2,11 +2,19 @@ package FMCA;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import CA.CAState;
 import CA.CATransition;
@@ -23,14 +31,133 @@ public class FMCAUtil
 {
 
 	private static boolean debug = false;
-	
-	public static FMCA BFScomposition(ArrayList<FMCA> aut)
+
+	public static FMCA BFScomposition(ArrayList<FMCA> aut, Predicate<FMCATransition> pruningPred)
 	{
-		/**
-		 * 
-		 */
-		return null;
+		Set<FMCATransition> tr = new HashSet<FMCATransition>();
+		Queue<List<CAState>> toVisit = new LinkedList<List<CAState>>();
+		Queue<List<CAState>> visited = new LinkedList<List<CAState>>();
+		Map<List<CAState>, CAState> operandstat2compstat = new HashMap<List<CAState>, CAState>();
+		// used to avoid duplicate target states 
+		List<CAState> initial = aut.stream()  
+				.flatMap(x -> x.getStates().stream())
+				.filter(CAState::isInitial)
+				.collect(Collectors.toList()); //initial state
+		CAState initialstate = new CAState(initial);
+		toVisit.add(initial); 
+		operandstat2compstat.put(initial, initialstate);
+		do {
+			List<CAState> source=toVisit.remove(); //pop state to visit
+			if (visited.add(source)) //if states has not been visited so far
+			{
+				CAState sourcestate= operandstat2compstat.get(source);
+
+				// I use indexes to build target states, and to select first action in a match
+				// transition -> index in the automaton
+				Map<FMCATransition,Integer> trans2index = IntStream.range(0,aut.size())
+						.mapToObj(i->{return (Stream<Map.Entry<FMCATransition, Integer>>)
+								aut.get(i)
+								.getForwardStar(source.get(i))
+								.parallelStream()
+								.map(t->Map.entry(t,i));})
+						.flatMap(s->s)
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+				Map<FMCATransition,Entry<FMCATransition, Entry<List<CAState>,Integer>>> trans2reqof = IntStream.range(0,aut.size())
+						.mapToObj(i->(Stream<Map.Entry<FMCATransition, Integer>>)aut.get(i)
+								.getForwardStar(source.get(i))
+								.parallelStream()
+								.map(t->Map.entry(t,i)))
+						.flatMap(s->s)
+						.collect(Collectors.toMap(Map.Entry::getKey, e->{
+							List<CAState> targetlist = new ArrayList<CAState>(source);
+							targetlist.set(e.getValue(), e.getKey().getTarget());//key transition, value target state operands
+							return Map.entry(new FMCATransition(sourcestate, e.getKey().getFirstAction(), null,e.getKey().getType()),
+									Map.entry(targetlist,e.getValue()));}
+								));
+
+				Map<FMCATransition, List<Entry<FMCATransition, List<CAState>>>> trans2matchess=
+						trans2reqof.keySet().parallelStream()
+						.collect(Collectors.flatMapping(t -> trans2reqof.keySet().stream()
+								.filter(tt->trans2reqof.get(t).getValue().getValue()<
+										trans2reqof.get(tt).getValue().getValue()//avoid duplications
+										&& CATransition.match(t.getLabel(), tt.getLabel()))
+								.map(tt->{ 
+									FMCATransition t1 = trans2reqof.get(t).getKey();
+									List<CAState> targetlist = trans2reqof.get(t).getValue().getKey();
+									targetlist.set(trans2reqof.get(tt).getValue().getValue(), tt.getTarget());
+									t1=new FMCATransition(t1.getSource(),t1.getFirstAction(),null, 
+											t.isNecessary()?t.getType():tt.getType());
+									return Map.entry(tt, Map.entry(t1,targetlist));
+									}), 
+								Collectors.groupingByConcurrent(Entry::getKey, 
+										Collectors.mapping(Entry::getValue, Collectors.toList()))
+								));
+
+				//transition -> set of matching transitions
+				Map<FMCATransition, List<FMCATransition>> trans2matches=trans2reqof.keySet().parallelStream()
+						.collect(Collectors.toMap(t->t, 
+								t->{return trans2index.keySet().stream()
+										.filter(tt->trans2index.get(t)<trans2index.get(tt)//avoid duplications
+												&&CATransition.match(t.getLabel(), tt.getLabel()))
+										.collect(Collectors.toList());})
+								);	
+
+				//offer/requests transitions to add
+				Map<FMCATransition,List<CAState>> toAdd = trans2matches.entrySet().parallelStream()
+						.filter(e->e.getValue().isEmpty()) //no matches
+						.map(Entry::getKey)
+						.collect(Collectors.toMap(x->new FMCATransition(sourcestate, x.getFirstAction(), null,x.getType()),
+								x->{List<CAState> targetlist = new ArrayList<CAState>(source);
+								targetlist.set(trans2index.get(x), x.getTarget()); //key transition, value target state operands
+								return targetlist;}));
+
+				//match transitions to add
+				toAdd.putAll(trans2matches.entrySet().parallelStream()
+						.filter(e->!e.getValue().isEmpty()) //matches
+						.collect(Collectors.flatMapping(e->e.getValue().parallelStream()
+								.map(x-> Map.entry(x,e.getKey())), //pairs of matching transitions passed to downstream
+								Collectors.toMap((Entry<FMCATransition,FMCATransition> en)-> 
+								new FMCATransition(sourcestate, 
+										(trans2index.get(en.getKey())<trans2index.get(en.getValue()))
+										?en.getKey().getFirstAction()
+												:en.getValue().getFirstAction(),
+												null,
+												en.getKey().isNecessary()
+												?en.getKey().getType()
+														:en.getValue().getType()),
+								en->{List<CAState> targetlist = new ArrayList<CAState>(source);
+								targetlist.set(trans2index.get(en.getKey()), en.getKey().getTarget());
+								targetlist.set(trans2index.get(en.getValue()), en.getValue().getTarget());
+								return targetlist;}
+										))));
+				//adding transitions
+				toAdd.entrySet().stream()
+				.filter(x->!pruningPred.test(x.getKey())) // I cannot prune like this if trans is uncontrollable
+				.forEach(x->{ List<CAState> target = x.getValue(); 
+				CAState targetstate = operandstat2compstat.get(x.getValue());
+				if (targetstate==null) 
+				{
+					targetstate = new CAState(target);
+					operandstat2compstat.put(target, targetstate);
+				}
+				FMCATransition t=x.getKey();
+				tr.add(new FMCATransition(t.getSource(),t.getFirstAction(),targetstate,t.getType())); });
+			}
+		} while (!toVisit.isEmpty());
+		return new FMCA(aut.stream()
+				.map(FMCA::getRank)
+				.collect(Collectors.summingInt(Integer::intValue)), 
+				null, null, tr, 
+				operandstat2compstat.entrySet().parallelStream()
+				.map(Entry::getValue)
+				.collect(Collectors.toSet()) //states
+				);
 	}
+
+
+
+
 
 	/**
 	 * this is the most important method of the tool, computing the composition.
@@ -41,19 +168,19 @@ public class FMCAUtil
 	 */
 	public static FMCA composition(FMCA[] aut)
 	{
+		//		ArrayList<FMCA> aut = new ArrayList<FMCA>(Arrays.asList(aut));
 		if (aut.length==1)
 			return aut[0];
 		/**
 		 * compute rank, states, initial states, final states
 		 */
-		int prodrank = 0;
-		for (int i=0;i<aut.length;i++)
-		{
-			prodrank = prodrank+(aut[i].getRank()); 
-		}
-		int[] statesprod = new int[prodrank]; //TODO remove
-		int[][] finalstatesprod = new int[prodrank][];
-		int[] initialprod = new int[prodrank];
+		int rank = Arrays.asList(aut).stream()
+				.map(FMCA::getRank)
+				.collect(Collectors.summingInt(Integer::intValue));
+
+		int[] statesprod = new int[rank]; //TODO remove
+		int[][] finalstatesprod = new int[rank][];
+		int[] initialprod = new int[rank];
 		int totnumstates=1;
 		int pointerprodrank=0;
 		for (int i=0;i<aut.length;i++)
@@ -67,7 +194,7 @@ public class FMCAUtil
 				pointerprodrank++;
 			}
 		}
-		
+
 		/**
 		 * compute transitions, non associative
 		 * 
@@ -86,13 +213,13 @@ public class FMCAUtil
 		}
 		FMCATransition[] transprod = new FMCATransition[(trlength*(trlength-1)*totnumstates)]; //Integer.MAX_VALUE - 5];////upper bound to the total transitions 
 
-	   //int pointertemp = 0;
+		//int pointertemp = 0;
 		int pointertransprod = 0;
 		for (int i=0;i<prodtr.length;i++)// for all the automaton in the product
 		{
 			FMCATransition[] t = prodtr[i];
 
-		
+
 			for (int j=0;j<t.length;j++)  // for all transitions of automaton i
 			{
 				CATransition[][] temp = new FMCATransition[trlength*(trlength-1)][];
@@ -111,7 +238,7 @@ public class FMCAUtil
 								match=true;
 								FMCATransition[] gen;
 								if (i<ii)
-									 gen = generateTransitions(t[j],tt[jj],i,ii,aut);
+									gen = generateTransitions(t[j],tt[jj],i,ii,aut);
 								else
 									gen = generateTransitions(tt[jj],t[j],ii,i,aut);
 								temp[pointertemp]=gen; //temp is temporary used for comparing matches and offers/requests
@@ -143,7 +270,7 @@ public class FMCAUtil
 				}
 				/*insert only valid transitions of gen, that is a principle moves independently in a state only if it is not involved
 				  in matches. The idea is  that firstly all the independent moves are generated, and then we remove the invalid ones.  
-				  */	
+				 */	
 
 				FMCATransition[] gen = generateTransitions(t[j],null,i,-1,aut);
 				if ((match)&&(gen!=null))		
@@ -187,10 +314,10 @@ public class FMCAUtil
 					if (gen[ind]!=null)
 					{
 						try{
-						transprod[pointertransprod]=gen[ind];
+							transprod[pointertransprod]=gen[ind];
 						}catch(ArrayIndexOutOfBoundsException e){
 							e.printStackTrace();
-							}
+						}
 						if (debug)
 							System.out.println(gen[ind].toString());
 						pointertransprod++;
@@ -204,19 +331,19 @@ public class FMCAUtil
 		Set<FMCATransition> finalTr = new HashSet<FMCATransition>(pointertransprod);
 		for (int ind=0;ind<pointertransprod;ind++)
 			finalTr.add(transprod[ind]);
-		
-		
-				
-		FMCA prod = new FMCA(prodrank,new CAState(initialprod, true,false),
+
+
+
+		FMCA prod = new FMCA(rank,new CAState(initialprod, true,false),
 				finalstatesprod, finalTr,CAState.extractCAStatesFromTransitions(finalTr)); 
-		
+
 		prod.setReachableAndSuccessfulStates();
 		prod.removeDanglingTransitions();
-		
+
 		return prod;
 	}
-	
-			
+
+
 	/**
 	 * 
 	 * @param t  first transition made by one CA
@@ -237,7 +364,7 @@ public class FMCAUtil
 		int firstprincii=-1; //index of first principal in aut[ii] in the list of all principals in aut
 		int[] states=null; //the number of states of each principal, except i and ii
 		int productNumberOfStatesExceptIandII=1; //contains the product of the number of states of each principals, except for those of i and ii
-		
+
 
 		if (tt!= null) //if is a match
 		{			
@@ -255,7 +382,7 @@ public class FMCAUtil
 					else 
 						firstprincii=prodrank; //note that firstprinci and firstprincii could be equal
 				}
-					
+
 			}
 			if (prodrank!=0)
 			{				
@@ -268,11 +395,11 @@ public class FMCAUtil
 					{
 						int[] statesprinc=aut[ind].getNumStatesPrinc();
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
-							{						
-								states[indstates]=statesprinc[ind2];
-								productNumberOfStatesExceptIandII*=states[indstates];
-								indstates++;
-							}
+						{						
+							states[indstates]=statesprinc[ind2];
+							productNumberOfStatesExceptIandII*=states[indstates];
+							indstates++;
+						}
 					}
 				}		
 			}
@@ -281,7 +408,7 @@ public class FMCAUtil
 		{
 			for (int ind=0;ind<aut.length;ind++)
 			{
-				
+
 				if (ind!=i) 
 					prodrank = prodrank+(aut[ind].getRank()); 
 				else if (ind==i)
@@ -298,21 +425,21 @@ public class FMCAUtil
 					{
 						int[] statesprinc=aut[ind].getNumStatesPrinc();
 						for(int ind2=0;ind2<statesprinc.length;ind2++)
-							{						
-								states[indstates]=statesprinc[ind2];
-								productNumberOfStatesExceptIandII*=states[indstates];
-								indstates++;
-							}
+						{						
+							states[indstates]=statesprinc[ind2];
+							productNumberOfStatesExceptIandII*=states[indstates];
+							indstates++;
+						}
 					}
 				}	
 			}
 		}
-		
+
 		FMCATransition[] tr = new FMCATransition[productNumberOfStatesExceptIandII];//TODO: check if it is the right upperbound
-		
+
 		aut= FMCAUtil.extractAllPrincipals(aut);//TODO this must be shift to method composition, to be called only once!
-		
-		
+
+
 		if(prodrank!=0)
 		{
 			int[] insert= new int[states.length];
@@ -325,8 +452,8 @@ public class FMCAUtil
 			tr[0]=t.generateATransition(t,tt,0,0,new int[0],aut);
 		return tr;
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * recursive method that generates all combinations of transitions with all possible states of principals that are idle 
@@ -380,8 +507,8 @@ public class FMCAUtil
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * Generates all possible combinations of the states in fin, stored in modif. Here for indmod I used 
@@ -429,7 +556,7 @@ public class FMCAUtil
 			}
 		}
 	}
-	
+
 
 	/**
 	 * TODO this method needs to be tested again
@@ -443,9 +570,9 @@ public class FMCAUtil
 			return null;
 		int upperbound=100; //TODO upperbound check
 		int rank=aut[0].getRank(); //the aut must have all the same rank
-		
+
 		float fur=FMCAUtil.furthestNodesX(aut);
-		
+
 		for (int i=0;i<aut.length;i++)
 		{
 			int[][] fs=aut[i].getFinalStatesofPrincipals();
@@ -465,28 +592,28 @@ public class FMCAUtil
 		{
 			if (aut[i].getRank()!=rank)
 				return null;
-			
+
 			//renaming states of operands
-//			CAState initial=aut[i].getInitialCA().clone();
-//			for (int z=0;z<initial.getState().length;z++)
-//				initial.getState()[z]=initial.getState()[z]+upperbound*(i+1);
-//			aut[i].setInitialCA(initial); 
+			//			CAState initial=aut[i].getInitialCA().clone();
+			//			for (int z=0;z<initial.getState().length;z++)
+			//				initial.getState()[z]=initial.getState()[z]+upperbound*(i+1);
+			//			aut[i].setInitialCA(initial); 
 			//TODO check I changed the setInitial method, now there is no more initial state instance variable
 			Set<FMCATransition> tr=aut[i].getTransition();
 			for (FMCATransition t : tr)
 			{
-				CAState source=t.getSource(); //TODO check this clone operations are decoupling the states of transitions
-														  //with the states of the FMCA
+				CAState source=t.getSource(); 
+				//with the states of the FMCA
 				CAState target=t.getTarget();
 				for (int z=0;z<source.getState().length;z++)
 				{
 					source.getState()[z] = source.getState()[z] + upperbound*(i+1);
 					target.getState()[z] = target.getState()[z] + upperbound*(i+1);
 				}
-				t.setSource(source);
-				t.setTarget(target);
+				//t.setSource(source);
+				//t.setTarget(target);
 			}
-			
+
 			//repositioning states and renaming
 			CAState[] fst=aut[i].getStates().toArray(new CAState[] {});
 			CAState[] newfst=new CAState[fst.length];
@@ -500,7 +627,7 @@ public class FMCAUtil
 			}
 			aut[i].setStates(new HashSet<CAState>(Arrays.asList(newfst)));
 		}
-	
+
 		int[] initial = new int[rank]; //special initial state
 		String[] label = new String[rank];
 		label[0]="!dummy";				
@@ -539,7 +666,7 @@ public class FMCAUtil
 				count++;
 			}
 		}
-		
+
 		int[] states = new int[rank]; //TODO remove
 		int[] finalstateslength = new int[rank];
 		for (int i=0;i<rank;i++)
@@ -578,7 +705,7 @@ public class FMCAUtil
 				}
 			}
 		}
-		
+
 		// copying states of operands
 		CAState[] ufst = new CAState[numoffstate+1];
 		int countfs=0;
@@ -596,16 +723,16 @@ public class FMCAUtil
 		for (int i=0;i<rank;i++)
 		{
 			int[][] fs=aut[i].getFinalStatesCA();
-			
+
 		}*/
-	
+
 		return new FMCA(rank, finitial, //states, 
 				finalstates, 
 				new HashSet<FMCATransition>(Arrays.asList(uniontr)), 
 				new HashSet<CAState>(Arrays.asList(ufst)));
 	}
-	
-	
+
+
 	/**
 	 * only used by generateTransitions
 	 * 
@@ -623,8 +750,8 @@ public class FMCAUtil
 			{
 				principals[j][i] = aut[j].proj(i);
 			}
-			
-			 //TODO: there are idle transitions in principals, to be fixed in the future,
+
+			//TODO: there are idle transitions in principals, to be fixed in the future,
 			//now this method is only used for the states of principals not their transitions
 			allprincipals+=principals[j].length;
 		}
@@ -640,31 +767,23 @@ public class FMCAUtil
 		}
 		return onlyprincipal;
 	}
-	
+
 	private static float furthestNodesX(FMCA[] aut)
 	{
 		return (float)Arrays.stream(aut)
 				.mapToDouble(x ->  x.getStates().parallelStream()
-									.mapToDouble(CAState::getX)
-									.max()
-									.getAsDouble()
+						.mapToDouble(CAState::getX)
+						.max()
+						.getAsDouble()
 						)
 				.max()
 				.getAsDouble();
 	}
-	
-	public static <T> T[] setUnion(T[] q1, T[] q2, T[] type)
-	{
-		List<T> t= new ArrayList<T>(Arrays.asList(q1));
-		t.addAll(Arrays.asList(q2));
-		
-		return t.stream()
-				.filter(Objects::nonNull)
-				.distinct()
-				.collect(Collectors.toList())
-				.toArray(type);
-	}
-	
+
+
+
+	//TODO change arrays to collections and remove the utilities below
+
 	public static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
 	{
 		if (q1==null || q2==null)
@@ -675,7 +794,7 @@ public class FMCAUtil
 				.collect(Collectors.toList())
 				.toArray(type);
 	}
-	
+
 	/**
 	 * @return  q1 / q2
 	 */
@@ -688,15 +807,6 @@ public class FMCAUtil
 				.collect(Collectors.toList())
 				.toArray(type);
 	}
-	
-	
-	public static <T> int indexContains(T q, T[] listq)
-	{
-		if (q==null||listq==null) 
-			return -1;
-		return Arrays.asList(listq)
-					.indexOf(q);
-	}
 
 	public static <T> int getIndex(T[] q, T e)
 	{
@@ -706,21 +816,21 @@ public class FMCAUtil
 			return Arrays.asList(q)
 					.indexOf(e);
 	}
-	
+
 	public static <T> boolean contains(T q, T[] listq)
 	{
 		if (q==null||listq==null) 
 			return false;
 		else if (q instanceof int[])
-		 	return Arrays.stream(listq)
+			return Arrays.stream(listq)
 					.filter(x -> Arrays.equals((int[])q, (int[])x))
 					.count()>0;
-		else
-			return Arrays.asList(listq)
-					.indexOf(q)!=-1;
+					else
+						return Arrays.asList(listq)
+								.indexOf(q)!=-1;
 	}
-	
-	public static <T> boolean contains(T q, T[] listq, int listlength)
+
+	public static <T> boolean contains(T q, T[] listq, int listlength) //only used in projection
 	{
 		if (listq==null||q==null)
 			return false;
@@ -728,20 +838,6 @@ public class FMCAUtil
 				.subList(0, listlength)
 				.indexOf(q)!=-1;
 	}
-	
-
-	public static <T> T[] removeDuplicates(T[] m, T[] type)
-	{
-		if (m==null) 
-			return null;
-		
-		return 	Arrays.stream(m)
-				.filter(Objects::nonNull)
-				.distinct()
-				.collect(Collectors.toList())
-				.toArray(type);
-	}
-
 
 	public static <T> T[] removeTailsNull(T[] q, int length, T[] type)
 	{
@@ -750,7 +846,7 @@ public class FMCAUtil
 				.collect(Collectors.toList())
 				.toArray(type);
 	}
-	
+
 	public static <T> T[] removeHoles(T[] l, T[] type)
 	{
 		if (l==null)
@@ -762,8 +858,7 @@ public class FMCAUtil
 	}
 
 	//from now onward are duplicate methods for primitive types
-	//TODO change arrays to collections
-	
+
 	public static int[] removeTailsNull(int[] q,int length)
 	{
 		int[] r=new int[length];
@@ -779,101 +874,139 @@ public class FMCAUtil
 			r[i]=q[i];
 		return r;
 	}
+
 	public static int getIndex(int[] q, int e)
 	{
 		for (int i=0;i<q.length;i++)
 		{
 			if (q[i]==e)
-					return i;
+				return i;
 		}
 		return -1;
 	}
+}
 
-	public static int indexContains(int[] q, int[][] listq)
-	{
-		for (int i=0;i<listq.length;i++)
-		{
-			if (Arrays.equals(q, listq[i]))
-					return i;
-		}
-		return -1;
-	}
-	public static boolean contains(int q, int[] listq,int listlength)
-	{
-		for (int i=0;i<listlength;i++)
-		{
-				if (q==listq[i])
-					return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * difficult to convert as generic, using 
-	 * Array.asList().stream()....map(Arrays::asList)
-	 * was giving List<List<int[]>> instead of List<List<Integer>>
-	 */
-	public static int[][] setIntersection(int[][] q1, int[][] q2)
-	{
-		int p=0;
-		int[][] m= new int[q1.length][];
-		for (int i=0;i<m.length;i++)
-		{
-			if (contains(q1[i],q2))
-			{
-				m[p]=q1[i];
-				p++;
-			}
-		}
-		m=removeTailsNull(m,p, new int[][] {});
-		return m;
-	}
-	
-	/**
-	 * 	if (q1 instanceof int[][]) {
+//END OF THE CLASS
+
+//public static <T> T[] setUnion(T[] q1, T[] q2, T[] type)
+//{
+//	List<T> t= new ArrayList<T>(Arrays.asList(q1));
+//	t.addAll(Arrays.asList(q2));
+//	
+//	return t.stream()
+//			.filter(Objects::nonNull)
+//			.distinct()
+//			.collect(Collectors.toList())
+//			.toArray(type);
+//}
+
+
+//public static <T> int indexContains(T q, T[] listq)
+//{
+//	if (q==null||listq==null) 
+//		return -1;
+//	return Arrays.asList(listq)
+//				.indexOf(q);
+//}
+
+
+//public static <T> T[] removeDuplicates(T[] m, T[] type)
+//{
+//	if (m==null) 
+//		return null;
+//	
+//	return 	Arrays.stream(m)
+//			.filter(Objects::nonNull)
+//			.distinct()
+//			.collect(Collectors.toList())
+//			.toArray(type);
+//}
+
+
+//	public static int indexContains(int[] q, int[][] listq)
+//	{
+//		for (int i=0;i<listq.length;i++)
+//		{
+//			if (Arrays.equals(q, listq[i]))
+//					return i;
+//		}
+//		return -1;
+//	}
+//	public static boolean contains(int q, int[] listq,int listlength)
+//	{
+//		for (int i=0;i<listlength;i++)
+//		{
+//				if (q==listq[i])
+//					return true;
+//		}
+//		return false;
+//	}
+
+//	/**
+//	 * difficult to convert as generic, using 
+//	 * Array.asList().stream()....map(Arrays::asList)
+//	 * was giving List<List<int[]>> instead of List<List<Integer>>
+//	 */
+//	public static int[][] setIntersection(int[][] q1, int[][] q2)
+//	{
+//		int p=0;
+//		int[][] m= new int[q1.length][];
+//		for (int i=0;i<m.length;i++)
+//		{
+//			if (contains(q1[i],q2))
+//			{
+//				m[p]=q1[i];
+//				p++;
+//			}
+//		}
+//		m=removeTailsNull(m,p, new int[][] {});
+//		return m;
+//	}
+
+/**
+ * 	if (q1 instanceof int[][]) {
 			return removeDuplicates(q1);
 		}
 		does not work
-	 */
-	public static int[][] setUnion(int[][] q1, int[][] q2)
-	{
-		int[][] m= new int[q1.length+q2.length][];
-		for (int i=0;i<m.length;i++)
-		{
-			if (i<q1.length)
-				m[i]=q1[i];
-			else
-				m[i]=q2[i-q1.length];
-		}
-		m=FMCAUtil.removeDuplicates(m);
-		return m;
-	}
-	
-	/**
-	 * 
-	 *  streams distinct() does not use Arrays equals
-	 */
-	public static int[][] removeDuplicates(int[][] m)
-	{
-		//int removed=0;
-		for (int i=0;i<m.length;i++)
-		{
-			for (int j=i+1;j<m.length;j++)
-			{
-				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
-				{
-					m[j]=null;
-		//			removed++;
-				}
-			}
-		}
-		m= removeHoles(m, new int[][] {}); 
-		return m;
-	}	
+ */
+//	public static int[][] setUnion(int[][] q1, int[][] q2)
+//	{
+//		int[][] m= new int[q1.length+q2.length][];
+//		for (int i=0;i<m.length;i++)
+//		{
+//			if (i<q1.length)
+//				m[i]=q1[i];
+//			else
+//				m[i]=q2[i-q1.length];
+//		}
+//		m=FMCAUtil.removeDuplicates(m);
+//		return m;
+//	}
+
+//	/**
+//	 * 
+//	 *  streams distinct() does not use Arrays equals
+//	 */
+//	public static int[][] removeDuplicates(int[][] m)
+//	{
+//		//int removed=0;
+//		for (int i=0;i<m.length;i++)
+//		{
+//			for (int j=i+1;j<m.length;j++)
+//			{
+//				if ((m[i]!=null)&&(m[j]!=null)&&(Arrays.equals(m[i],m[j])))
+//				{
+//					m[j]=null;
+//		//			removed++;
+//				}
+//			}
+//		}
+//		m= removeHoles(m, new int[][] {}); 
+//		return m;
+//	}	
 
 
-}
-	
+
 //public static int[] convertInt(Integer[] ar)
 //{
 //	return Arrays.stream(ar).mapToInt(Integer::intValue).toArray();

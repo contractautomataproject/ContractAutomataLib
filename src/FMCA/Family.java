@@ -604,7 +604,7 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			valid[i]=false; //initialise
 		int[] tv = getTopProducts();
-		if (aut.containAction("dummy")) //dummy is an epsilon move, it is only used in the union
+		if (aut.getActions().contains("dummy")) //dummy is an epsilon move, it is only used in the union
 		{
 			CAState storeinitial=aut.getInitialCA();
 			for (int i=0;i<tv.length;i++)
@@ -753,7 +753,7 @@ public class Family {
 					 * The quotient class considers all products with the same set of forbidden features, ignoring 
 					 * those features that are never displayed in the automaton
 					 */
-					String[] act=aut.getActions();
+					String[] act=aut.getActions().toArray(new String[] {});
 					Product test1=new Product(new String[0],FMCAUtil.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
 					Product test2=new Product(new String[0],FMCAUtil.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
 					if (test1.containsForbiddenFeatures(test2)
