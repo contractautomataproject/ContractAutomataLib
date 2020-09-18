@@ -14,7 +14,6 @@ import org.junit.Test;
  *
  */
 
-@SuppressWarnings("deprecation")
 public class FMCAUtilTest {
 
 //	@Test

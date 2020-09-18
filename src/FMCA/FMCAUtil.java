@@ -62,7 +62,7 @@ public class FMCAUtil
 								.map(t->Map.entry(t,i));})
 						.flatMap(s->s)
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+				
 				Map<FMCATransition,Entry<FMCATransition, Entry<List<CAState>,Integer>>> trans2reqof = IntStream.range(0,aut.size())
 						.mapToObj(i->(Stream<Map.Entry<FMCATransition, Integer>>)aut.get(i)
 								.getForwardStar(source.get(i))
@@ -94,6 +94,10 @@ public class FMCAUtil
 										Collectors.mapping(Entry::getValue, Collectors.toList()))
 								));
 
+				
+				trans2reqof.keySet().parallelStream()
+				.collect(Collectors.teeing(null, null, null));
+				
 				//transition -> set of matching transitions
 				Map<FMCATransition, List<FMCATransition>> trans2matches=trans2reqof.keySet().parallelStream()
 						.collect(Collectors.toMap(t->t, 
