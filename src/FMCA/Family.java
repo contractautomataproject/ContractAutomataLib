@@ -780,7 +780,7 @@ public class Family {
 			K2[i]=K[quotient[i][0]]; 
 		}
 		if (getMpcOfFamily)
-			mpcOfFamily[0]=FMCAUtil.union(K2); //store the mpc of family if needed
+			mpcOfFamily[0]=FMCA.union(K2); //store the mpc of family if needed
 		return canonicalproducts;
 	}
 	
@@ -824,6 +824,6 @@ public class Family {
 		K = Arrays.copyOf(K, ind);	
 		pr[0]=FMCAUtil.removeTailsNull(pr[0], ind);
 		
-		return FMCAUtil.union(K);
+		return FMCA.union(K);
 	}
 }

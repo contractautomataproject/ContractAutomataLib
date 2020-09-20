@@ -1,7 +1,6 @@
 package CA;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * Transition of a contract automaton
@@ -16,36 +15,31 @@ public class CATransition {
 	final public static  String idle="-";
 	final public static  String offer="!";
 	final public static  String request="?";
-	
+
 	public CATransition(CAState source, String[] label, CAState target){
 		this.source=source;
 		this.target=target;
 		this.label =label;
 	}
+
 	
-	/**
-	 * instantiate a transition by reconstructing the label
-	 * @param source
-	 * @param firstaction the first (i.e. with lower index) action occurring in label
-	 * @param target
-	 */
-	public CATransition(CAState source, String firstaction, CAState target){
+	public CATransition(CAState source, Integer p1, String action, Integer p2, CAState target)
+	{
 		this.source=source;
 		this.target=target;
-		this.label = new String[source.getState().length];
-		Arrays.fill(label, idle);
-		if (target!=null)//composition can initialise temporarily with null target
+		if (source!=null && target!=null)//composition can initialise temporarily with null source and target
 		{
-			int[] index = IntStream.range(0, source.getState().length)
-									.filter(i->source.getState()[i]!=target.getState()[i])
-									.toArray();
-			label[index[0]]=firstaction; //request or offer
-			if (index.length>1)
-				label[index[1]]=getCoAction(firstaction); //match
+			this.label = new String[source.getState().length];
+			Arrays.fill(label, idle);
+		
+			label[p1]=action; //request or offer
+			if (p2!=null)
+				label[p2]=getCoAction(action); //match
 		}
+		else
+			this.label=null;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return		the source state of the transition
@@ -54,13 +48,8 @@ public class CATransition {
 	{
 		return this.source;
 	}
-	
-//	public void setSource(CAState s)
-//	{
-//		this.source=s;
-//	}
-	
-	
+
+
 	/**
 	 * 
 	 * @return		the target state of the transition
@@ -69,12 +58,7 @@ public class CATransition {
 	{
 		return target;
 	}
-	
-//	public void setTarget(CAState t)
-//	{
-//		this.target=t;
-//	}
-	
+
 	/**
 	 * 
 	 * @return the label of the transition
@@ -83,11 +67,7 @@ public class CATransition {
 	{
 		return label;
 	}
-	
-//	public void setLabel(String[] l)
-//	{
-//		this.label=l;
-//	}
+
 
 	/**
 	 * @return the action of the transition, in case of a match it returns the offer
@@ -112,16 +92,16 @@ public class CATransition {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the action with lower index
 	 */ 
 	public String getFirstAction()
 	{
 		return Arrays.stream(label)
-		.filter(l->l!=idle)
-		.findFirst()
-		.orElseThrow(IllegalArgumentException::new);
+				.filter(l->l!=idle)
+				.findFirst()
+				.orElseThrow(IllegalArgumentException::new);
 	}
 
 	/**
@@ -142,12 +122,12 @@ public class CATransition {
 		}
 		return (c==2)&&isMatch(s[0],s[1]);
 	}
-	
+
 	private static boolean isMatch(String l1, String l2)
 	{
 		return l1.substring(1).equals(l2.substring(1));
 	}
-	
+
 	public String getUnsignedAction()
 	{
 		String label=this.getAction();
@@ -156,7 +136,7 @@ public class CATransition {
 		else
 			return label;
 	}
-	
+
 	public static String getUnsignedAction(String label)
 	{
 		if (label.startsWith("!")||label.startsWith("?"))
@@ -164,7 +144,7 @@ public class CATransition {
 		else
 			return label;
 	}
-	
+
 	public static String getCoAction(String label)
 	{
 		if (label.startsWith("!"))
@@ -174,7 +154,7 @@ public class CATransition {
 		else
 			throw new IllegalArgumentException("The label is not an action");
 	}
-	
+
 	/**
 	 * 
 	 * @return true if the transition is an offer
@@ -193,7 +173,7 @@ public class CATransition {
 		}
 		return (c==1)&&isOffer(label, index);
 	}
-	
+
 	/**
 	 * 
 	 * @return true if the transition is a request
@@ -212,7 +192,7 @@ public class CATransition {
 		}
 		return (c==1)&&isRequest(label, index);
 	}
-	
+
 	/**
 	 * 
 	 * @param label
@@ -223,17 +203,17 @@ public class CATransition {
 	{
 		return l[i].contains(idle);
 	}
-	
+
 	private static boolean isRequest(String[] l, int i)
 	{
 		return l[i].substring(0,1).equals(request);
 	}
-	
+
 	private static boolean isOffer(String[] l, int i)
 	{
 		return  l[i].substring(0,1).equals(offer);
 	}
-	
+
 	/**
 	 * 
 	 * @return the index of the sender or -1 
@@ -247,7 +227,7 @@ public class CATransition {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * 
 	 * @return the index of the receiver or -1 
@@ -261,7 +241,7 @@ public class CATransition {
 		}
 		return -1;
 	}
-	
+
 	public int getSenderOrReceiver()
 	{
 		if (this.isMatch())
@@ -273,7 +253,7 @@ public class CATransition {
 		}
 		throw new RuntimeException();
 	}
-	
+
 	/**
 	 * check if labels l and ll are in match
 	 * @param l

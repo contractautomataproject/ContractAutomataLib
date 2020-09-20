@@ -443,7 +443,7 @@ public class FMCAIO {
 			
 			FMCA aut= new FMCA(rank, 
 					CAState.getCAStateWithValue(initial, castates),
-					FMCA.principalsFinalStates(finalstates),
+					principalsFinalStates(finalstates),
 					t,
 					castates);
 			return aut;
@@ -457,6 +457,50 @@ public class FMCAIO {
 
 		return null;
 	}
+	
+	/**
+	 * this method is used when importing from XML, where no description of  principal final states is given 
+	 * and it is reconstructed
+	 * 
+	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
+	 * 
+	 * @param all final states of the composed automaton
+	 * @return the final states of each principal
+	 */
+	private static int[][] principalsFinalStates(int[][] states)
+	{
+		if (states.length<=0)
+			return null;
+		int rank=states[0].length;
+		int[] count=new int[rank];
+		int[][] pfs=new int[rank][states.length];
+
+		for (int ind=0; ind<pfs.length;ind++)
+			for (int ind2=0; ind2<pfs[ind].length;ind2++)
+				pfs[ind][ind2] = -1;    //the check FMCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
+
+		for (int j=0;j<rank;j++)
+		{
+			pfs[j][0]=states[0][j];
+			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
+		}
+		for (int i=1;i<states.length;i++)
+		{
+			for (int j=0;j<rank;j++)
+			{
+				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
+				{
+					pfs[j][count[j]]=states[i][j];
+					count[j]++;
+				}
+			}
+		}
+		for (int j=0;j<rank;j++)
+			pfs[j]=FMCAUtil.removeTailsNull(pfs[j], count[j]);
+		return pfs;
+	}
+
+
 
 	/**
 	 * convert the FMCA aut as a mxGraphModel File

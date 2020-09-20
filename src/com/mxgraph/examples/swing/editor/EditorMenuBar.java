@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
@@ -57,7 +58,6 @@ import com.mxgraph.view.mxGraphView;
 import FMCA.FMCA;
 import FMCA.FMCAIO;
 import FMCA.FMCATGUI;
-import FMCA.FMCAUtil;
 import FMCA.Family;
 import FMCA.Product;
 
@@ -529,7 +529,9 @@ public class EditorMenuBar extends JMenuBar
 									}
 									compositionname+=")";
 									long start = System.currentTimeMillis();
-									FMCA composition = (FMCA) FMCAUtil.composition(autWithoutTailsNull);	
+									FMCA composition = (FMCA) FMCA.composition(List.of(autWithoutTailsNull),t->t.isRequest()
+											,100);	
+									//FMCA composition = (FMCA) FMCAUtil.composition(autWithoutTailsNull);	
 									long elapsedTime = System.currentTimeMillis() - start;
 
 
@@ -1736,15 +1738,12 @@ public class EditorMenuBar extends JMenuBar
 				if (F[0].equals(""))
 					F=new String[0];
 
-				Product p=new Product(R,F);
+				Product p=(R.length+F.length>0)?new Product(R,F):null;
 
 				long start = System.currentTimeMillis();
-				FMCA controller = aut.orchestration(p);
-
+				FMCA controller = (p!=null)?aut.orchestration(p):aut.orchestration();
 				long elapsedTime = System.currentTimeMillis() - start;
-				//
-				//FMCA controller = aut.clone();
-				//FMCA controller=aut;
+				
 				File file=null;
 				if (controller!=null)
 				{

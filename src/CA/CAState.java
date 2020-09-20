@@ -39,13 +39,12 @@ public class CAState {
 	
 	public CAState(List<CAState> states)//TODO test
 	{
-		this(
-        states.stream().map(CAState::getState)
-        				.flatMapToInt(Arrays::stream)
-        				.toArray(),
+		this(states.stream()
+				.map(CAState::getState)
+        		.flatMapToInt(Arrays::stream)
+        		.toArray(),
 		states.parallelStream().allMatch(CAState::isInitial),
-		states.parallelStream().allMatch(CAState::isFinalstate)
-		);
+		states.parallelStream().allMatch(CAState::isFinalstate));
 	}
 	
 	public int[] getState() {
