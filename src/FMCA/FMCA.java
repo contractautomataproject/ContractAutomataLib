@@ -389,8 +389,8 @@ public class FMCA
 		Set<FMCATransition> tr = new HashSet<FMCATransition>();
 		Queue<Entry<List<CAState>,Integer>> toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>();
 		Set<List<CAState>> visited = new HashSet<List<CAState>>();
-		ConcurrentMap<List<CAState>, CAState> operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>();
-		// used to avoid duplicate target states 
+		Queue<CAState> dontvisit = new ConcurrentLinkedQueue<CAState>();
+		ConcurrentMap<List<CAState>, CAState> operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>();//used to avoid duplicate target states 
 		List<CAState> initial = aut.stream()  
 				.flatMap(a -> a.getStates().stream())
 				.filter(CAState::isInitial)
@@ -404,6 +404,9 @@ public class FMCA
 			{
 				List<CAState> source =sourceEntry.getKey();
 				CAState sourcestate= operandstat2compstat.get(source);
+				if (dontvisit.remove(sourcestate))
+					continue;//was visited by a semicontrollable bad
+				
 				// I use indexes to build target states, and to select first action in a match
 				List<FMCATransitionIndex> trans2index = IntStream.range(0,aut.size())
 						.mapToObj(i->aut.get(i) //(Stream<Map.Entry<FMCATransition, Integer>>)
@@ -465,6 +468,11 @@ public class FMCA
 								toVisit.addAll(toVis.parallelStream()
 										.map(s->Map.entry(s,sourceEntry.getValue()+1))
 										.collect(toSet()));
+								if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
+									dontvisit.addAll(trans.parallelStream()
+												.filter(x->x.isSemiControllable()&&pruningPred.test(x))
+												.map(FMCATransition::getTarget)
+												.collect(toList()));
 								return null;
 							}));
 				}
@@ -480,11 +488,10 @@ public class FMCA
 			System.arraycopy(a.getFinalStatesofPrincipals(), 0, finalstates, pointer,a.getRank());
 			pointer+=a.getRank();
 		}
-		return new FMCA(rank, initialstate, finalstates, tr, 
-				visited.parallelStream()
+		Set<CAState> states =visited.parallelStream()
 				.map(l->operandstat2compstat.get(l))
-				.collect(Collectors.toSet()) //states
-				);
+				.collect(Collectors.toSet()) ;
+		return new FMCA(rank, initialstate, finalstates, tr, states);
 	}
 
 
@@ -781,7 +788,7 @@ public class FMCA
 //		return b!=state.isReachable();
 //		
 //	}	
-/**
+//**
 //	 * 
 //	 * @param states  all the states of the CA enumerated
 //	 * @return an array containing the number of  states of each principal

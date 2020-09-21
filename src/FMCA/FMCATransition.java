@@ -22,20 +22,17 @@ public class FMCATransition extends CATransition {
 	}
 	private action type;
 
-
 	public FMCATransition(CAState source, String[] label, CAState target, action type)//TODO remove String[]
 	{
 		super(source,label,target);
 		this.type=type;
 	}
 
-
 	public FMCATransition(CAState source, Integer p1, String action, Integer p2, CAState target, action type)
 	{
 		super(source,p1,action,p2,target);
 		this.type=type;
 	}
-
 
 	public boolean isUrgent()
 	{
@@ -183,7 +180,6 @@ public class FMCATransition extends CATransition {
 		target.getState()[sender]=source.getState()[sender];  //the sender is now idle
 		request[sender]=CATransition.idle;  //swapping offer to idle
 		return new FMCATransition(source,request,target,this.type); //returning the request transition
-
 	}
 
 	/**
@@ -201,7 +197,6 @@ public class FMCATransition extends CATransition {
 		target.getState()[receiver]=source.getState()[receiver];  
 		offer[receiver]=CATransition.idle;  //swapping request to idle, and target state equal source state. The receiver is now idle
 		return new FMCATransition(source,offer,target,this.type); //returning the request transition
-
 	}
 
 	/**
@@ -251,8 +246,6 @@ public class FMCATransition extends CATransition {
 				.collect(Collectors.toSet());
 	}
 
-
-
 	/**
 	 * used by choreography synthesis
 	 * @return true if violates the branching condition
@@ -276,159 +269,5 @@ public class FMCATransition extends CATransition {
 								&&Arrays.equals(x.getLabel(), this.getLabel()))
 						.count()>0  //for all such states there exists an outgoing transition with the same label of this
 						);
-	}
-
-	/**
-	 * This method is different from the corresponding one in CATransition class because it deals with modal actions. 
-	 * Moreover insert is changed.
-	 * 
-	 * 
-	 * @param t				first transition to move
-	 * @param tt			second transition to move only in case of match
-	 * @param firstprinci  the index to start to copy the principals in t
-	 * @param firstprincii the index to start to copy the principals in tt
-	 * @param insert		the states of all other principals who stays idle
-	 * @param aut		array of principals automata, used here to retrieve the states of idle principals using insert as pointer  
-	 * 					 the field CAState[] states must be instantiated --> not modified
-	 * @return				a new transition where only principals in t (and tt) moves while the other stays idle in their state given in insert[]
-	 */
-	public FMCATransition generateATransition(CATransition t, CATransition tt, int firstprinci, int firstprincii,int[] insert,FMCA[] aut)
-	{
-
-		if (tt!=null) //if it is a match
-		{
-			int[] s=((FMCATransition) t).getSource().getState();
-			String[] l=((FMCATransition) t).getLabel();
-			int[] d=((FMCATransition) t).getTarget().getState();
-			int[] ss = ((FMCATransition) tt).getSource().getState();
-			String[] ll=((FMCATransition) tt).getLabel();
-			int[] dd =((FMCATransition) tt).getTarget().getState();
-			int[] source = new int[insert.length+s.length+ss.length];
-			int[] target = new int[insert.length+s.length+ss.length];
-			String[] label = new String[insert.length+s.length+ss.length];
-			action type;
-			/*	
-		    changed in case offers are necessary instead of requests
-
-
-		    if (((FMCATransition) t).isRequest())
-				type=((FMCATransition) t).getType();
-			else
-				type=((FMCATransition) tt).getType();
-			 */		
-			if (((FMCATransition) t).getType()== action.PERMITTED)
-				type=((FMCATransition) tt).getType();
-			else
-				type=((FMCATransition) t).getType(); //TODO here I assume that it is not the case that both offers and requests are necessary!
-
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						source[i+j]=s[j];
-						label[i+j]=l[j];
-						target[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else 
-				{
-					if (i==firstprincii)
-					{
-						for (int j=0;j<ss.length;j++)
-						{
-							source[i+counter+j]=ss[j];
-							label[i+counter+j]=ll[j];
-							target[i+counter+j]=dd[j];
-						}
-						counter+=ss.length;//record the shift due to the second CA 
-						i--;
-						firstprincii=-1;
-					}	
-					else 
-					{
-						source[i+counter]=  ((FMCA)aut[i+counter]).getStates().toArray(new CAState[] {})[insert[i]].getState()[0];//insert[i]; //TODO modify here! this should have been fixed
-						target[i+counter]=  ((FMCA)aut[i+counter]).getStates().toArray(new CAState[] {})[insert[i]].getState()[0];//insert[i];	//TODO modify here! this should have been fixed
-						label[i+counter]=CATransition.idle;
-					}
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA was the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					source[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					target[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			if (firstprincii==insert.length) //case limit, the second CA was the last of aut
-			{
-				for (int j=0;j<ss.length;j++)
-				{
-					source[insert.length+counter+j]=ss[j];
-					label[insert.length+counter+j]=ll[j];
-					if (ll[j]==null)
-					{
-						System.out.println("vai");
-					}
-					target[insert.length+counter+j]=dd[j];
-				}
-			}
-			return new FMCATransition(new CAState(source),label,new CAState(target),type);	
-		}
-		else	//is not a match
-		{
-			int[] s=((FMCATransition) t).getSource().getState();
-			String[] l=((FMCATransition) t).getLabel();
-			int[] d=((FMCATransition) t).getTarget().getState();
-			int[] source = new int[insert.length+s.length];
-			int[] target = new int[insert.length+s.length];
-			String[] label = new String[insert.length+s.length];
-			int counter=0;
-			for (int i=0;i<insert.length;i++)
-			{
-				if (i==firstprinci)
-				{
-					for (int j=0;j<s.length;j++)
-					{
-						source[i+j]=s[j];
-						label[i+j]=l[j];
-						target[i+j]=d[j];
-					}
-					counter+=s.length; //record the shift due to the first CA 
-					i--;
-					firstprinci=-1;
-				}
-				else
-				{
-					try{
-						source[i+counter]=((FMCA)aut[i+counter]).getStates().toArray(new CAState[] {})[insert[i]].getState()[0]; //insert[i];//TODO modify here! this should have been fixed
-						target[i+counter]=((FMCA)aut[i+counter]).getStates().toArray(new CAState[] {})[insert[i]].getState()[0]; //insert[i];//TODO modify here! this should have been fixed
-						label[i+counter]=CATransition.idle;
-					} catch (NullPointerException e) 
-					{
-						System.out.println("prova");
-					}
-				}
-			}
-			if (firstprinci==insert.length)//case limit, the first CA is the last of aut
-			{
-				for (int j=0;j<s.length;j++)
-				{
-					source[insert.length+j]=s[j];
-					label[insert.length+j]=l[j];
-					target[insert.length+j]=d[j];
-				}
-				counter+=s.length; //record the shift due to the first CA 
-			}
-			return new FMCATransition(new CAState(source),label,new CAState(target),((FMCATransition) t).getType());	
-		}
 	}
 }
