@@ -8,14 +8,15 @@ import java.util.Set;
 import FMCA.FMCATransition;
 
 public class CAState {
-	private int[] state; //TODO this should be a set of CAState?
+	private int[] state; //TODO this should be a set of CAState? I would have many unused variables, still these are states identifiers, maybe an empty state class
 	
 	private boolean initial;
-	private boolean finalstate;
+	private boolean finalstate; //TODO this should be a list telling which one is final, instead of the instance variable in FMCA class
 	
-	private float x;
+	private float x;		//TODO check if these two variables should be removed and put into GUI and I/O methods as maps
 	private float y;
-	private boolean isReachable=false;
+	
+	private boolean isReachable=false; //TODO shift this information to getDanglingStates method where it is only used
 	private boolean isSuccessful=false;
 	
 	public CAState(int[] state)
@@ -37,7 +38,7 @@ public class CAState {
 		this.setY(y);
 	}
 	
-	public CAState(List<CAState> states)//TODO test
+	public CAState(List<CAState> states)
 	{
 		this(states.stream()
 				.map(CAState::getState)

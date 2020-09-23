@@ -34,9 +34,10 @@ import CA.CATransition;
  * @author Davide Basile
  *
  */
-public class FMCA  
-{
+public class FMCA  //TODO bring back MSCA class and remove Family from it
+{ 
 	private int rank;
+	
 	private int[][] finalstates; //these are the final states of the principal in the contract automaton
 	//TODO there is loss of information in mxgraph XML and projection
 	//this is the only information of the CAState we need
@@ -45,8 +46,8 @@ public class FMCA
 
 	private Set<FMCATransition> tra;
 	private Set<CAState> states; //all the states of the automaton
+	
 	private Family family; 
-
 	//TODO: add generation of products from a feature constraint, 
 	//       the family now contains all valid products, they are generated and can be imported from a feature model in FeatureIDE
 
@@ -185,18 +186,6 @@ public class FMCA
 		return synthesis(x-> {return (t,bad) -> bad.contains(x.getTarget())|| x.isRequest();}, 
 				x -> {return (t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableOrchestration(t, bad);});
 	}
-
-
-	//	/**
-	//	 * @return the synthesised choreography in strong agreement, 
-	//	 * removing at each iteration all transitions violating branching condition.
-	//	 */
-	//	public FMCA choreographySmaller()
-	//	{
-	//		return synthesis(x-> {return (t,bad) -> 
-	//					!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
-	//				x -> {return (t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad);});
-	//	}
 
 	/** 
 	 * @return the synthesised choreography in strong agreement, removing only one transition violating the branching condition 
@@ -378,7 +367,7 @@ public class FMCA
 	 */
 	public static FMCA composition(List<FMCA> aut, Predicate<FMCATransition> pruningPred, Integer bound)
 	{
-		class FMCATransitionIndex {//more readable than Entry
+		final class FMCATransitionIndex {//more readable than Entry
 			FMCATransition tra;
 			Integer ind;
 			public FMCATransitionIndex(FMCATransition tr, Integer i) {
@@ -386,18 +375,19 @@ public class FMCA
 				this.ind=i;
 			}
 		}
-		Set<FMCATransition> tr = new HashSet<FMCATransition>();
-		Queue<Entry<List<CAState>,Integer>> toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>();
-		Set<List<CAState>> visited = new HashSet<List<CAState>>();
-		Queue<CAState> dontvisit = new ConcurrentLinkedQueue<CAState>();
-		ConcurrentMap<List<CAState>, CAState> operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>();//used to avoid duplicate target states 
+		
 		List<CAState> initial = aut.stream()  
 				.flatMap(a -> a.getStates().stream())
 				.filter(CAState::isInitial)
-				.collect(Collectors.toList()); //initial state
+				.collect(Collectors.toList());
 		CAState initialstate = new CAState(initial);
-		toVisit.add(Map.entry(initial,0)); 
-		operandstat2compstat.put(initial, initialstate);
+		
+		Queue<Entry<List<CAState>,Integer>> toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>(List.of(Map.entry(initial,0)));
+		ConcurrentMap<List<CAState>, CAState> operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>(Map.of(initial, initialstate));//used to avoid duplicate target states 
+		Set<FMCATransition> tr = new HashSet<FMCATransition>();//transitions of the composed automaton to build
+		Set<List<CAState>> visited = new HashSet<List<CAState>>();
+		Queue<CAState> dontvisit = new ConcurrentLinkedQueue<CAState>();
+		
 		do {
 			Entry<List<CAState>,Integer> sourceEntry=toVisit.remove(); //pop state to visit
 			if (visited.add(sourceEntry.getKey())&&sourceEntry.getValue()<bound) //if states has not been visited so far
@@ -405,17 +395,17 @@ public class FMCA
 				List<CAState> source =sourceEntry.getKey();
 				CAState sourcestate= operandstat2compstat.get(source);
 				if (dontvisit.remove(sourcestate))
-					continue;//was visited by a semicontrollable bad
+					continue;//was target of a semicontrollable bad transition
 				
-				// I use indexes to build target states, and to select first action in a match
 				List<FMCATransitionIndex> trans2index = IntStream.range(0,aut.size())
-						.mapToObj(i->aut.get(i) //(Stream<Map.Entry<FMCATransition, Integer>>)
+						.mapToObj(i->aut.get(i)
 								.getForwardStar(source.get(i))
 								.parallelStream()
 								.map(t->new FMCATransitionIndex(t,i)))
 						.flatMap(Function.identity())
-						.collect(toList()); //indexing outgoing transitions of each operand
+						.collect(toList()); //indexing outgoing transitions of each operand, used for target states and labels
 
+				//firstly match transitions are generated
 				Map<FMCATransition, List<Entry<FMCATransition,List<CAState>>>> matchtransitions=
 						trans2index.parallelStream()
 						.collect(flatMapping(e -> trans2index.parallelStream()
@@ -432,12 +422,14 @@ public class FMCA
 														Map.entry(e.tra, Map.entry(tradd,targetlist));//match 
 									}//TODO check if targetlist is still needed in the entry
 									else
-										return (Entry<FMCATransition, Entry<FMCATransition,List<CAState>>>)//dummy, avoid duplications
+										return (Entry<FMCATransition, Entry<FMCATransition,List<CAState>>>)//dummy, ee.tra is matched
 												Map.entry(ee.tra, Map.entry(new FMCATransition(null,null,null,null,null,null),source));
 								}), 
 								groupingByConcurrent(Entry::getKey, 
 										mapping(Entry::getValue,toList()))//each principal transition can have more matches
 								));
+				
+				//collecting match transitions and adding unmatched transitions
 				Set<Entry<FMCATransition,List<CAState>>> trmap=
 						trans2index.parallelStream()
 						.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
@@ -454,17 +446,16 @@ public class FMCA
 										.collect(toSet()));
 								return trm;}));
 
-				if (trmap.parallelStream()
+				if (trmap.parallelStream()//don't visit target states if they are bad
 						.anyMatch(x->pruningPred!=null&&pruningPred.test(x.getKey())&&x.getKey().isUrgent()))
 					continue;
 				else {//adding transitions, updating states
-					trmap.parallelStream()
+					tr.addAll(trmap.parallelStream()
 					.filter(x->pruningPred==null||x.getKey().isNecessary()||pruningPred.negate().test(x.getKey()))//semicontrollable are not pruned
 					.collect(Collectors.teeing(
 							mapping((Entry<FMCATransition, List<CAState>> e)-> e.getKey(),toSet()), 
 							mapping((Entry<FMCATransition, List<CAState>> e)-> e.getValue(),toSet()), 
 							(trans,toVis)->{
-								tr.addAll(trans);
 								toVisit.addAll(toVis.parallelStream()
 										.map(s->Map.entry(s,sourceEntry.getValue()+1))
 										.collect(toSet()));
@@ -473,8 +464,8 @@ public class FMCA
 												.filter(x->x.isSemiControllable()&&pruningPred.test(x))
 												.map(FMCATransition::getTarget)
 												.collect(toList()));
-								return null;
-							}));
+								return trans;
+							})));
 				}
 			}
 		} while (!toVisit.isEmpty());
@@ -748,6 +739,17 @@ public class FMCA
 // END OF THE CLASS
 
 
+
+//	/**
+//	 * @return the synthesised choreography in strong agreement, 
+//	 * removing at each iteration all transitions violating branching condition.
+//	 */
+//	public FMCA choreographySmaller()
+//	{
+//		return synthesis(x-> {return (t,bad) -> 
+//					!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
+//				x -> {return (t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad);});
+//	}
 //no one is using this one
 //public CAState[] getFinalStates()
 //{

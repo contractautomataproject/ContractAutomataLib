@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class CATransition { 
 	final private CAState source;
 	final private CAState target;
-	final private String[] label; //TODO only two integers+an action are needed
+	final private String[] label; //TODO only two integers+an action are needed, use a class CALabel that is extensible
+	
 	final public static  String idle="-";
 	final public static  String offer="!";
 	final public static  String request="?";
