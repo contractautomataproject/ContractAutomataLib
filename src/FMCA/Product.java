@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import CA.CATransition;
+import MSCA.MSCATransition;
 
 public class Product {
 	private String[] required;
@@ -48,21 +49,21 @@ public class Product {
 //		
 		for (int i=0;i<eq.length;i++)
 		{
-			if (FMCAUtil.contains(eq[i][0], rp)&&FMCAUtil.contains(eq[i][1], rp))
+			if (FMCAUtils.contains(eq[i][0], rp)&&FMCAUtils.contains(eq[i][1], rp))
 			{
-				int index=FMCAUtil.getIndex(rp, eq[i][1]);
+				int index=FMCAUtils.getIndex(rp, eq[i][1]);
 				rp[index]=null;
 				//countreq++;
 			}
-			else if (FMCAUtil.contains(eq[i][0], fp)&&FMCAUtil.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
+			else if (FMCAUtils.contains(eq[i][0], fp)&&FMCAUtils.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
 			{
-				int index=FMCAUtil.getIndex(fp, eq[i][1]);
+				int index=FMCAUtils.getIndex(fp, eq[i][1]);
 				fp[index]=null;
 				//countforb++;
 			}
 		}
-		rp=FMCAUtil.removeHoles(rp, new String[] {}); //countreq
-		fp=FMCAUtil.removeHoles(fp, new String[] {}); //countforb
+		rp=FMCAUtils.removeHoles(rp, new String[] {}); //countreq
+		fp=FMCAUtils.removeHoles(fp, new String[] {}); //countforb
 		this.required=rp;
 		this.forbidden=fp;
 	}
@@ -92,10 +93,10 @@ public class Product {
 		String[] rp=p.getRequired();
 		String[] rf=p.getForbidden();
 		for(int i=0;i<rp.length;i++)
-			if (!FMCAUtil.contains(rp[i], this.required))
+			if (!FMCAUtils.contains(rp[i], this.required))
 				return false;
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtil.contains(rf[i], this.forbidden))
+			if (!FMCAUtils.contains(rf[i], this.forbidden))
 				return false;
 		
 		return true;
@@ -110,7 +111,7 @@ public class Product {
 	{
 		String[] rf=p.getForbidden();
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtil.contains(rf[i], this.forbidden))
+			if (!FMCAUtils.contains(rf[i], this.forbidden))
 				return false;
 		
 		return true;
@@ -125,7 +126,7 @@ public class Product {
 	{
 		String[] rf=p.getRequired();
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtil.contains(rf[i], this.required))
+			if (!FMCAUtils.contains(rf[i], this.required))
 				return false;
 		
 		return true;
@@ -150,12 +151,12 @@ public class Product {
 	 * @param t
 	 * @return true if all required actions are available in the transitions t
 	 */
-	public boolean checkRequired(Set<FMCATransition> tr)
+	public boolean checkRequired(Set<? extends MSCATransition> set)
 	{
 		for (int i=0;i<this.required.length;i++)
 		{
 			boolean found=false;
-			for (FMCATransition t : tr)
+			for (MSCATransition t : set)
 			{
 				if (CATransition.getUnsignedAction(t.getAction()).equals(this.required[i]))  //do not differ between requests and offers
 					found=true;
@@ -171,12 +172,12 @@ public class Product {
 	 * @param t
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<FMCATransition> tr)
+	public boolean checkForbidden(Set<? extends MSCATransition> tr)
 	{
 		
 		for (int i=0;i<this.forbidden.length;i++)
 		{
-			for (FMCATransition t : tr)
+			for (MSCATransition t : tr)
 			{
 				if (CATransition.getUnsignedAction(t.getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
 					return false;
@@ -188,7 +189,7 @@ public class Product {
 	
 	public boolean isValid(FMCA aut)
 	{
-		Set<FMCATransition> t=aut.getTransition();
+		Set<? extends MSCATransition> t=aut.getTransition();
 		return this.checkForbidden(t)&&this.checkRequired(t);
 	}
 	

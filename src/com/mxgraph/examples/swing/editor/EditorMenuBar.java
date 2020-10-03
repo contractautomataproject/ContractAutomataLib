@@ -56,16 +56,17 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
 import FMCA.FMCA;
-import FMCA.FMCAIO;
+import MSCA.MSCAIO;
 import FMCA.FMCATGUI;
 import FMCA.Family;
 import FMCA.Product;
+import MSCA.MSCA;
 
 public class EditorMenuBar extends JMenuBar 
 {
 	String lastDir;
 
-	FMCA lastaut; //it should be used to avoid to import the automaton from its xml description 
+	MSCA lastaut; //it should be used to avoid to import the automaton from its xml description 
 	// at each operation. 
 	/**
 	 * 
@@ -183,7 +184,7 @@ public class EditorMenuBar extends JMenuBar
 
 											String fileName =fc.getSelectedFile().toString();
 											
-											File file=FMCAIO.loadFMCAAndWriteIntoXML(fileName);
+											File file=MSCAIO.loadMSCAAndWriteIntoXML(fileName);
 											
 											fileName=file.getAbsolutePath();
 
@@ -248,10 +249,10 @@ public class EditorMenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				String filename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(filename); //TODO there is no need to parse the xml, aut should be shared
+				MSCA aut= MSCAIO.parseXMLintoMSCA(filename); //TODO there is no need to parse the xml, aut should be shared
 				if (aut!=null)
 				{
-					FMCAIO.printToFile(filename,aut);
+					MSCAIO.printToFile(filename,aut);
 					JOptionPane.showMessageDialog(null,"The FMCA has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
 				}
 				else 
@@ -353,7 +354,7 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
 
 				File file=null;
 				
@@ -369,7 +370,7 @@ public class EditorMenuBar extends JMenuBar
 				}	
 				else
 				{
-					file=FMCAIO.convertFMCAintoXML(absfilename,aut);
+					file=MSCAIO.convertMSCAintoXML(absfilename,aut);
 					//TODO there should be no need in parsing the xml and then converting to xml anymore
 					try
 					{								
@@ -470,7 +471,7 @@ public class EditorMenuBar extends JMenuBar
 
 									fc.setDialogTitle("Select an FMCA to be composed");
 
-									FMCA[] aut = new FMCA[50]; //TODO upperbound to 50
+									MSCA[] aut = new FMCA[50]; //TODO upperbound to 50
 									String[] names= new String[50];
 									int fmcacount = 0;
 
@@ -484,7 +485,7 @@ public class EditorMenuBar extends JMenuBar
 										try
 										{
 											String fileName =fc.getSelectedFile().toString();
-											aut[fmcacount]=FMCAIO.parseXMLintoFMCA(fileName);
+											aut[fmcacount]=MSCAIO.parseXMLintoMSCA(fileName);
 											names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 											fmcacount++;
 											rc = fc.showDialog(null,
@@ -515,11 +516,11 @@ public class EditorMenuBar extends JMenuBar
 										}
 									} while (done);
 									String fileName =fc.getSelectedFile().toString();
-									aut[fmcacount]=FMCAIO.parseXMLintoFMCA(fileName);
+									aut[fmcacount]=MSCAIO.parseXMLintoMSCA(fileName);
 									names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 									fmcacount++;
 									String compositionname="(";
-									FMCA[] autWithoutTailsNull = new FMCA[fmcacount];
+									MSCA[] autWithoutTailsNull = new FMCA[fmcacount];
 									for (int i=0;i<fmcacount;i++)
 									{
 										autWithoutTailsNull[i]=aut[i];
@@ -538,7 +539,7 @@ public class EditorMenuBar extends JMenuBar
 									File file=null;
 									if (composition!=null)
 									{
-										file=FMCAIO.convertFMCAintoXML(lastDir+"\\"+compositionname,composition);
+										file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+compositionname,composition);
 										String message = "The composition has been stored with filename "+lastDir+"\\"+compositionname
 												+"\n Elapsed time : "+elapsedTime + " milliseconds"
 												+"\n Number of states : "+composition.getNumStates();
@@ -1070,11 +1071,15 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
-				if (aut!=null)
+				//MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
+			
+				
+				MSCA a=MSCAIO.parseXMLintoMSCA(absfilename);
+				if (a!=null)
 				{
 					//aut.printToFile(filename);
 
+					FMCA aut = new FMCA(a, pf.getFamily());
 					long start = System.currentTimeMillis();
 
 					int[] vp= pf.getFamily().validProducts(aut);
@@ -1165,9 +1170,11 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
-				if (aut!=null)
+				MSCA a=MSCAIO.parseXMLintoMSCA(absfilename);
+				if (a!=null)
 				{
+					FMCA aut= new FMCA(a,pf.getFamily());
+					
 					//aut.printToFile(filename);
 					int[] vp= pf.getFamily().validProducts(aut);
 					if (vp!=null && vp.length>0)
@@ -1230,8 +1237,8 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
-				if (aut==null)
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
+				if (a==null)
 				{
 					String message ="States or labels contain errors.\n "
 							+ 		"Please, check that each state has following format:\n"
@@ -1243,6 +1250,8 @@ public class EditorMenuBar extends JMenuBar
 				}	
 
 				Family fam= editor.getProductFrame().getFamily();
+				
+				FMCA aut = new FMCA(a,fam);
 				int[][] ind=new int[1][];
 
 				long start = System.currentTimeMillis();
@@ -1303,9 +1312,9 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
 
-				if (aut==null)
+				if (a==null)
 				{
 					String message ="States or labels contain errors.\n "
 							+ 		"Please, check that each state has following format:\n"
@@ -1323,6 +1332,7 @@ public class EditorMenuBar extends JMenuBar
 					return;
 				}
 
+				FMCA aut = new FMCA(a,pf.getFamily());
 				long start = System.currentTimeMillis();
 				int[] vp= pf.getFamily().productsWithNonEmptyMPC(aut);
 				long elapsedTime = System.currentTimeMillis() - start;
@@ -1390,10 +1400,11 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
-				if (aut!=null)
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
+				if (a!=null)
 				{
 					//aut.printToFile(filename);
+					FMCA aut=new FMCA(a,pf.getFamily());
 					int[] vp= pf.getFamily().productsWithNonEmptyMPC(aut);
 					Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 					pf=editor.getProductFrame();
@@ -1608,9 +1619,9 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
 
-				if (aut==null)
+				if (a==null)
 				{
 					String message ="States or labels contain errors.\n "
 							+ 		"Please, check that each state has following format:\n"
@@ -1623,7 +1634,8 @@ public class EditorMenuBar extends JMenuBar
 
 
 				Family f=pf.getFamily();
-				aut.setFamily(f); //inutile
+				
+				FMCA aut=new FMCA(a,f);
 
 				long start = System.currentTimeMillis();
 				FMCA controller = f.getMPCofFamily(aut);
@@ -1641,7 +1653,7 @@ public class EditorMenuBar extends JMenuBar
 
 					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 
-					file=FMCAIO.convertFMCAintoXML(lastDir+"\\"+K,controller);
+					file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 					try
 					{								
 
@@ -1681,7 +1693,7 @@ public class EditorMenuBar extends JMenuBar
 		});
 
 
-		item = menu.add(new JMenuItem("Most Permissive Controller of a Product (insert manually)"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Orchestration of a Product (insert manually)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -1703,7 +1715,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
 
 				if (aut==null)
 				{
@@ -1715,7 +1727,6 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
 					return;
 				}	
-
 
 				//aut.printToFile(filename);
 				String S= (String) JOptionPane.showInputDialog(null, 
@@ -1739,16 +1750,27 @@ public class EditorMenuBar extends JMenuBar
 					F=new String[0];
 
 				Product p=(R.length+F.length>0)?new Product(R,F):null;
-
-				long start = System.currentTimeMillis();
-				FMCA controller = (p!=null)?aut.orchestration(p):aut.orchestration();
-				long elapsedTime = System.currentTimeMillis() - start;
+				
+				MSCA controller=null;
+				long elapsedTime;
+				if (p!=null)
+				{
+					long start = System.currentTimeMillis();
+					controller=new FMCA(aut,null).orchestration(p);
+				    elapsedTime = System.currentTimeMillis() - start;
+				}
+				else
+				{
+					long start = System.currentTimeMillis();
+					controller= aut.orchestration();
+				    elapsedTime = System.currentTimeMillis() - start;
+				}
 				
 				File file=null;
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
-					file=FMCAIO.convertFMCAintoXML(lastDir+"//"+K,controller);
+					file=MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
 					String message = "The mpc has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getNumStates();
@@ -1793,7 +1815,7 @@ public class EditorMenuBar extends JMenuBar
 			}
 		});
 
-		item = menu.add(new JMenuItem("Most Permissive Controller of a Product (product id)"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Orchestration of a Product (product id)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -1815,9 +1837,9 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
 
-				if (aut==null)
+				if (a==null)
 				{
 					String message ="States or labels contain errors.\n "
 							+ 		"Please, check that each state has following format:\n"
@@ -1835,10 +1857,10 @@ public class EditorMenuBar extends JMenuBar
 					return;
 				}
 
-
-
 				Family f=pf.getFamily();
 
+				FMCA aut = new FMCA(a, f);
+				
 				String S= (String) JOptionPane.showInputDialog(null, 
 						"Insert Product id",
 						JOptionPane.PLAIN_MESSAGE);
@@ -1855,7 +1877,7 @@ public class EditorMenuBar extends JMenuBar
 				if (controller!=null)
 				{
 					String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
-					file=FMCAIO.convertFMCAintoXML(lastDir+"\\"+K,controller);
+					file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 					String message = "The mpc has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getNumStates();
@@ -1903,7 +1925,7 @@ public class EditorMenuBar extends JMenuBar
 		menu.addSeparator();
 
 
-		item = menu.add(new JMenuItem("Most Permissive Controller of Family (without PO)"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Orchestration of Family (without PO)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(new ActionListener()
 		{
 			/*
@@ -1934,9 +1956,9 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA a= MSCAIO.parseXMLintoMSCA(absfilename);
 
-				if (aut==null)
+				if (a==null)
 				{
 					String message ="States or labels contain errors.\n "
 							+ 		"Please, check that each state has following format:\n"
@@ -1946,10 +1968,9 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.showMessageDialog(null,message,"Error!",JOptionPane.WARNING_MESSAGE);
 					return;
 				}	
-
-
 				Family f=pf.getFamily();
-				aut.setFamily(f); //inutile
+				
+				FMCA aut=new FMCA(a, f);
 
 				JOptionPane.showMessageDialog(null,"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
 
@@ -1979,7 +2000,7 @@ public class EditorMenuBar extends JMenuBar
 
 					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
 
-					file=FMCAIO.convertFMCAintoXML(lastDir+"\\"+K,controller);
+					file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 					try
 					{								
 
@@ -2045,7 +2066,7 @@ public class EditorMenuBar extends JMenuBar
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
 
 				if (aut==null)
 				{
@@ -2091,7 +2112,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
-				FMCA aut= FMCAIO.parseXMLintoFMCA(absfilename);
+				MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
 
 				if (aut==null)
 				{
@@ -2133,7 +2154,7 @@ public class EditorMenuBar extends JMenuBar
 
 				long start = System.currentTimeMillis();
 				
-				FMCA controller = aut.choreographyLarger();
+				MSCA controller = aut.choreographyLarger();
 				
 				long elapsedTime = System.currentTimeMillis() - start;
 				//
@@ -2144,7 +2165,7 @@ public class EditorMenuBar extends JMenuBar
 				{
 					String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
 							filename;
-					file= FMCAIO.convertFMCAintoXML(lastDir+"//"+K,controller);
+					file= MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
 					String message = "The choreography has been stored with filename "+lastDir+"//"+K
 							+"\n Elapsed time : "+elapsedTime + " milliseconds"
 							+"\n Number of states : "+controller.getNumStates();

@@ -40,7 +40,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.w3c.dom.Document;
 
-import FMCA.FMCAIO;
+import MSCA.MSCAIO;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
@@ -1528,7 +1528,7 @@ public class EditorActions
 
 								String fileName =fc.getSelectedFile().toString();
 								
-								File file=FMCAIO.loadFMCAAndWriteIntoXML(fileName);
+								File file=MSCAIO.loadMSCAAndWriteIntoXML(fileName);
 								
 								fileName=file.getAbsolutePath();
 								

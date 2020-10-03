@@ -1,4 +1,4 @@
-package FMCA;
+package MSCA;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import CA.CAState;
 import CA.CATransition;
+import MSCA.MSCATransition;
 
 /**
  * Input/Output 
@@ -38,12 +39,12 @@ import CA.CATransition;
  * @author Davide
  *
  */
-public class FMCAIO {
+public class MSCAIO {
 
 	/**
 	 * print the description of the CA to a file
 	 */
-	public static void printToFile(String filename, FMCA aut)
+	public static void printToFile(String filename, MSCA aut)
 	{
 		String name=null;
 		int rank= aut.getRank();
@@ -67,16 +68,16 @@ public class FMCAIO {
 			PrintWriter pr = new PrintWriter(name+".data"); 
 			pr.println("Rank: "+rank);
 			pr.println("Number of states: "+Arrays.toString(aut.getNumStatesPrinc()));
-			pr.println("Initial state: " +Arrays.toString(aut.getInitialCA().getState()));
+			pr.println("Initial state: " +Arrays.toString(aut.getInitial().getState()));
 			pr.print("Final states: [");
 			for (int i=0;i<finalstates.length;i++)
 				pr.print(Arrays.toString(finalstates[i]));
 			pr.print("]\n");
 			pr.println("Transitions: \n");
-			Set<FMCATransition> tr = aut.getTransition();
+			Set<? extends MSCATransition> tr = aut.getTransition();
 			if (tr!=null)
 			{
-				for (FMCATransition t : tr)
+				for (MSCATransition t : tr)
 					pr.println(t.toString());
 			}
 			pr.close();
@@ -84,20 +85,20 @@ public class FMCAIO {
 	}
 
 
-	public static File loadFMCAAndWriteIntoXML(String fileName)
+	public static File loadMSCAAndWriteIntoXML(String fileName)
 	{
-		return convertFMCAintoXML(fileName, load(fileName));
+		return convertMSCAintoXML(fileName, load(fileName));
 	}
 
 	/**
-	 * load a FMCA described in a text file,  
+	 * load a MSCA described in a text file,  
 	 * it also loads the must transitions but it does not load the states
-	 * this method is only used by loadFMCAAndWriteIntoXML
+	 * this method is only used by loadMSCAAndWriteIntoXML
 	 * 
 	 * @param the name of the file
 	 * @return	the CA loaded
 	 */
-	private static FMCA load(String fileName)
+	private static MSCA load(String fileName)
 	{
 		try
 		{
@@ -112,7 +113,7 @@ public class FMCAIO {
 			int[] initial = new int[1];
 			int[] numstates = new int[1]; //TODO this can be removed
 			int[][] fin = new int[1][]; //rank initialization later
-			Set<FMCATransition> tr = new HashSet<FMCATransition>();
+			Set<MSCATransition> tr = new HashSet<MSCATransition>();
 			Set<CAState> states = new HashSet<CAState>();
 			String strLine;
 			//Read File Line By Line
@@ -179,7 +180,7 @@ public class FMCAIO {
 										innerindex++;
 									}catch(NumberFormatException e){} //skip values that are not numbers
 								}
-								fin[outerindex]=FMCAUtil.removeTailsNull(tf, innerindex); 
+								fin[outerindex]=MSCAUtils.removeTailsNull(tf, innerindex); 
 								outerindex++;
 							}catch(NumberFormatException e){}
 						}
@@ -187,18 +188,18 @@ public class FMCAIO {
 					}
 					case "(": //a may transition
 					{
-						tr.add(loadTransition(strLine,rank, FMCATransition.action.PERMITTED, states));
+						tr.add(loadTransition(strLine,rank, MSCATransition.action.PERMITTED, states));
 						break;
 					}
 					case "!": //a must transition
 					{
 						String stype= strLine.substring(1,2);
-						FMCATransition.action type=null;
+						MSCATransition.action type=null;
 						switch (stype)
 						{
-						case "U": type=FMCATransition.action.URGENT;break;
-						case "G": type=FMCATransition.action.GREEDY;break;
-						case "L": type=FMCATransition.action.LAZY;break;
+						case "U": type=MSCATransition.action.URGENT;break;
+						case "G": type=MSCATransition.action.GREEDY;break;
+						case "L": type=MSCATransition.action.LAZY;break;
 						}
 						tr.add(loadTransition(strLine,rank,type,states));
 						break;
@@ -208,14 +209,14 @@ public class FMCAIO {
 			}
 			br.close();
 
-			return new FMCA(rank,new CAState(initial, true, false),//numstates,
+			return new MSCA(rank,new CAState(initial, true, false),//numstates,
 					fin,tr,states);
 		} catch (FileNotFoundException e) {System.out.println("File not found"); return null;}
 		catch (Exception e) {e.printStackTrace();}
 		return null;
 	}
 
-	private static FMCATransition loadTransition(String str, int rank, FMCATransition.action type, Set<CAState> states)
+	private static MSCATransition loadTransition(String str, int rank, MSCATransition.action type, Set<CAState> states)
 	{
 		int what=0;
 		String[] ss=str.split("]");
@@ -275,7 +276,7 @@ public class FMCAIO {
 						.findAny()
 						.orElseGet(()->{CAState temp= new CAState(statestransition); states.add(temp); return temp;});
 				
-				return new FMCATransition(source,label,target,type);
+				return new MSCATransition(source,label,target,type);
 			}
 			else
 			{
@@ -289,7 +290,7 @@ public class FMCAIO {
 
 
 	/**
-	 * parse the XML description of graphEditor into an FMCA object
+	 * parse the XML description of graphEditor into an MSCA object
 	 * 
 	 * TODO the set of final states of principals is reconstructed at the end, this encoding XML lose the information of 
 	 * some of the final states of principals so should be removed
@@ -297,7 +298,7 @@ public class FMCAIO {
 	 * @param filename
 	 * @return
 	 */
-	public static FMCA parseXMLintoFMCA(String filename)
+	public static MSCA parseXMLintoMSCA(String filename)
 	{
 		try {
 			File inputFile = new File(filename);
@@ -317,7 +318,7 @@ public class FMCAIO {
 			int[] idfinalstate=new int[nodeList.getLength()];
 			float[] xfinalstate=new float[idstate.length];
 			float[] yfinalstate=new float[idstate.length];
-			Set<FMCATransition> t= new HashSet<FMCATransition>();
+			Set<MSCATransition> t= new HashSet<MSCATransition>();
 			int statec=0;
 			int finalstatec=0;
 			/**
@@ -397,51 +398,51 @@ public class FMCAIO {
 						if (eElement.hasAttribute("edge"))//edge
 						{
 							int idsource=Integer.parseInt(eElement.getAttribute("source"));
-							int index=FMCAUtil.getIndex(idstate, idsource);
+							int index=MSCAUtils.getIndex(idstate, idsource);
 							int[] source;
 							if (index>-1)
 								source=states[index];
 							else
-								source=finalstates[FMCAUtil.getIndex(idfinalstate, idsource)];
+								source=finalstates[MSCAUtils.getIndex(idfinalstate, idsource)];
 
 							int idtarget=Integer.parseInt(eElement.getAttribute("target"));
-							index=FMCAUtil.getIndex(idstate, idtarget);
+							index=MSCAUtils.getIndex(idstate, idtarget);
 							int[] target;
 							if (index>-1)
 								target=states[index];
 							else
-								target=finalstates[FMCAUtil.getIndex(idfinalstate, idtarget)];
+								target=finalstates[MSCAUtils.getIndex(idfinalstate, idtarget)];
 
 
 							String[] label=getArrayString(eElement.getAttribute("value"));
 							if (label==null)
 								return null;
 							if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
-								t.add(new FMCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),FMCATransition.action.URGENT));//red
+								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.URGENT));//red
 							else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
-								t.add(new FMCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),FMCATransition.action.GREEDY)); //orange
+								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.GREEDY)); //orange
 							else if (eElement.getAttribute("style").contains("strokeColor=#00FF00"))
-								t.add(new FMCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),FMCATransition.action.LAZY)); //green
+								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.LAZY)); //green
 							else 
-								t.add(new FMCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),FMCATransition.action.PERMITTED)); //otherwise
+								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.PERMITTED)); //otherwise
 							
 						}
 					}
 				}
 			}
 
-			finalstates=FMCAUtil.removeTailsNull(finalstates, finalstatec, new int[][] {});
-			xfinalstate=FMCAUtil.removeTailsNull(xstate, finalstatec);
-			yfinalstate=FMCAUtil.removeTailsNull(ystate, finalstatec);
-			states=FMCAUtil.removeTailsNull(states, statec, new int[][] {});
-			xstate=FMCAUtil.removeTailsNull(xstate, statec);
-			ystate=FMCAUtil.removeTailsNull(ystate, statec);
+			finalstates=MSCAUtils.removeTailsNull(finalstates, finalstatec, new int[][] {});
+			xfinalstate=MSCAUtils.removeTailsNull(xstate, finalstatec);
+			yfinalstate=MSCAUtils.removeTailsNull(ystate, finalstatec);
+			states=MSCAUtils.removeTailsNull(states, statec, new int[][] {});
+			xstate=MSCAUtils.removeTailsNull(xstate, statec);
+			ystate=MSCAUtils.removeTailsNull(ystate, statec);
 			int rank=states[0].length;
 			int[] initial = new int[rank];
 			for (int ind=0;ind<rank;ind++)
 				initial[ind]=0;
 			
-			FMCA aut= new FMCA(rank, 
+			MSCA aut= new MSCA(rank, 
 					CAState.getCAStateWithValue(initial, castates),
 					principalsFinalStates(finalstates),
 					t,
@@ -477,7 +478,7 @@ public class FMCAIO {
 
 		for (int ind=0; ind<pfs.length;ind++)
 			for (int ind2=0; ind2<pfs[ind].length;ind2++)
-				pfs[ind][ind2] = -1;    //the check FMCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
+				pfs[ind][ind2] = -1;    //the check MSCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
 
 		for (int j=0;j<rank;j++)
 		{
@@ -488,7 +489,7 @@ public class FMCAIO {
 		{
 			for (int j=0;j<rank;j++)
 			{
-				if (FMCAUtil.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
+				if (MSCAUtils.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
 				{
 					pfs[j][count[j]]=states[i][j];
 					count[j]++;
@@ -496,18 +497,18 @@ public class FMCAIO {
 			}
 		}
 		for (int j=0;j<rank;j++)
-			pfs[j]=FMCAUtil.removeTailsNull(pfs[j], count[j]);
+			pfs[j]=MSCAUtils.removeTailsNull(pfs[j], count[j]);
 		return pfs;
 	}
 
 
 
 	/**
-	 * convert the FMCA aut as a mxGraphModel File
+	 * convert the MSCA aut as a mxGraphModel File
 	 * @param fileName	write the automaton into fileName
 	 * @return
 	 */
-	public static File convertFMCAintoXML(String fileName, FMCA aut)
+	public static File convertMSCAintoXML(String fileName, MSCA aut)
 	{
 		try{
 			DocumentBuilderFactory dbFactory =
@@ -540,8 +541,8 @@ public class FMCAIO {
 				id+=1;
 			}
 			
-			Set<FMCATransition> tr= aut.getTransition();
-			for (FMCATransition t : tr)
+			Set<? extends MSCATransition> tr= aut.getTransition();
+			for (MSCATransition t : tr)
 			{
 				createElementEdge(doc,root,Integer.toString(id),
 						state2element.get(t.getSource()),
@@ -572,17 +573,17 @@ public class FMCAIO {
 		}
 	}
 
-	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,FMCATransition.action type)
+	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,MSCATransition.action type)
 	{
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
 		Attr style=doc.createAttribute("style");
 
-		if (type==FMCATransition.action.URGENT)
+		if (type==MSCATransition.action.URGENT)
 			style.setValue("straight;strokeColor=#FF0000");
-		else if (type==FMCATransition.action.GREEDY)
+		else if (type==MSCATransition.action.GREEDY)
 			style.setValue("straight;strokeColor=#FFA500");
-		else if (type==FMCATransition.action.LAZY)
+		else if (type==MSCATransition.action.LAZY)
 			style.setValue("straight;strokeColor=#00FF00");
 		else
 			style.setValue("straight");

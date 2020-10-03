@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import FMCA.FMCATransition;
-
 public class CAState {
 	private int[] state; //TODO this should be a set of CAState? I would have many unused variables, still these are states identifiers, maybe an empty state class
 	
@@ -150,10 +148,10 @@ public class CAState {
 	 * @param tr
 	 * @return an array of CAStates containing all states of transitions tr
 	 */
-	public static Set<CAState> extractCAStatesFromTransitions(Set<FMCATransition> tr)
+	public static Set<CAState> extractCAStatesFromTransitions(Set<? extends CATransition> tr)
 	{
 		Set<CAState> s = new HashSet<CAState>();
-		for (FMCATransition t : tr)
+		for (CATransition t : tr)
 		{
 			s.add(t.getSource()); //no duplicates in set
 			s.add(t.getTarget());

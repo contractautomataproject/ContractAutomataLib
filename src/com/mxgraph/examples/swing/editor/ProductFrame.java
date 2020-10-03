@@ -1,17 +1,27 @@
 package com.mxgraph.examples.swing.editor;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-
-import FMCA.FMCAUtil;
-import FMCA.Family;
-import FMCA.Product;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
+
+import FMCA.Family;
+import FMCA.Product;
 public class ProductFrame extends JFrame{
 	private Family fam;
 	JButton[] nodes;
@@ -95,10 +105,10 @@ public class ProductFrame extends JFrame{
         	                			nodes[subind[ind]].setBorderPainted(true);
         	                			} catch (Exception e){
         	                				//debug
-        	                				int d=prod[ind].getForbiddenAndRequiredNumber();
+        	                		//		int d=prod[ind].getForbiddenAndRequiredNumber();
         	                			   //int dd=ptl[ind];
         	                			   //int ddd=depth[prod[ind].getForbiddenAndRequiredNumber()][ptl[ind]]; 
-        	                			   int x=0;
+        	                		//	   int x=0;
         	                			   //System.out.println(d+dd+ddd+x);
         	                			   e.printStackTrace();
         	                			}
