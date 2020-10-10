@@ -10,8 +10,6 @@ import MSCA.MSCAUtils;
 /**
  * Utilities for FMCA
  * 
- * Composition and other operations have been shifted to FMCA class
- * 
  * TODO remove this class and use java.util library
  * 
  * @author Davide Basile
@@ -19,7 +17,7 @@ import MSCA.MSCAUtils;
  */
 public class FMCAUtils extends MSCAUtils
 {
-	public static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
+	static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
 	{
 		if (q1==null || q2==null)
 			return null;
@@ -33,7 +31,7 @@ public class FMCAUtils extends MSCAUtils
 	/**
 	 * @return  q1 / q2
 	 */
-	public static <T> T[] setDifference(T[] q1, T[] q2, T[] type)
+	static <T> T[] setDifference(T[] q1, T[] q2, T[] type)
 	{
 		return Arrays.stream(q1)
 				.distinct()
@@ -43,7 +41,7 @@ public class FMCAUtils extends MSCAUtils
 				.toArray(type);
 	}
 
-	public static <T> int getIndex(T[] q, T e)
+	static <T> int getIndex(T[] q, T e)
 	{
 		if (e==null||q==null)
 			return -1;
@@ -51,10 +49,8 @@ public class FMCAUtils extends MSCAUtils
 			return Arrays.asList(q)
 					.indexOf(e);
 	}
-
 	
-	
-	public static <T> T[] removeHoles(T[] l, T[] type)
+	static <T> T[] removeHoles(T[] l, T[] type)
 	{
 		if (l==null)
 			return null;
@@ -62,9 +58,7 @@ public class FMCAUtils extends MSCAUtils
 				.filter(Objects::nonNull)
 				.collect(toList())
 				.toArray(type);
-	}
-
-	
+	}	
 }
 
 //END OF THE CLASS

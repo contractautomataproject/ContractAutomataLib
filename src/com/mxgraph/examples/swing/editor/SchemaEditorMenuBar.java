@@ -19,7 +19,6 @@ import com.mxgraph.examples.swing.editor.EditorActions.GridStyleAction;
 import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ImportAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PageBackgroundAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PageSetupAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;

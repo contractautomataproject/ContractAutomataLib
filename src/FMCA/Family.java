@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JTextArea;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,6 +23,7 @@ import org.xml.sax.SAXException;
 import com.mxgraph.examples.swing.editor.ProductFrame;
 
 import CA.CAState;
+import MSCA.MSCA;
 import MSCA.MSCATransition;
 
 public class Family {
@@ -35,8 +35,6 @@ public class Family {
 	private int[] pointerToLevel; //i index to elements, pointerLevel[i] index to depth[totfeatures i]
 	private boolean[] hasParents;// hasParents[i]==true iff there exists j s.t. reversepo[i][j]=1
 
-	JTextArea textArea;
-	
 	public Family(Product[] elements, int[][] po)
 	{
 		this.elements=elements;
@@ -599,12 +597,12 @@ public class Family {
 	 * @param aut
 	 * @return a new family with only products valid in aut
 	 */
-	public int[] validProducts(FMCA aut)
+	public int[] validProducts(MSCA aut)
 	{
 		boolean[] valid=new boolean[elements.length];
 		for (int i=0;i<elements.length;i++)
 			valid[i]=false; //initialise
-		int[] tv = getTopProducts();
+		int[] tv = getMaximalProducts();
 		if (aut.getActions().contains("dummy")) //dummy is an epsilon move, it is only used in the union
 		{
 			CAState storeinitial=aut.getInitial();
@@ -617,7 +615,7 @@ public class Family {
 				for (MSCATransition t : aut.getForwardStar(storeinitial))
 				{	
 					aut.setInitialCA(t.getTarget());//TODO check I changed the initial state representation
-					FMCA newaut = aut.orchestration(new Product(new String[0],new String[0]));
+					MSCA newaut = aut.clone().orchestration(new Product(new String[0],new String[0]));
 					valid(valid,tv[i],newaut); //recursive method
 				}				
 			}
@@ -643,14 +641,14 @@ public class Family {
 		return newp;
 	}
 	
-	public int[] productsWithNonEmptyMPC(FMCA aut)
+	public int[] productsWithNonEmptyMPC(MSCA aut)
 	{
 		int[] pr = new int[this.elements.length];
 		int count=0;
 		//TODO exploit theoretical results to speed up the computation (intersection of MPC, lattice)
 		for (int i=0;i<pr.length;i++)
 		{
-			if (aut.orchestration(this.elements[i])!=null)
+			if (aut.clone().orchestration(this.elements[i])!=null)
 			{
 				pr[count]=i;
 				count++;
@@ -667,7 +665,7 @@ public class Family {
 	 * @param i   current element
 	 * @param aut  automaton to check
 	 */
-	private void valid(boolean[] valid, int i, FMCA aut)
+	private void valid(boolean[] valid, int i, MSCA aut)
 	{
 		if (elements[i].isValid(aut))
 		{
@@ -684,7 +682,7 @@ public class Family {
 	 * 
 	 * @return all maximal products p s.t. there not exists p'>p
 	 */
-	public int[] getTopProducts()
+	public int[] getMaximalProducts()
 	{
 		int[] tp=new int[elements.length];
 		int count=0;
@@ -708,23 +706,21 @@ public class Family {
 	 * @param indexOfProducts		index in the array of products
 	 * @return	the array of canonical products
 	 */
-	public Product[] getCanonicalProducts(FMCA aut, FMCA[] mpcOfFamily,boolean getMpcOfFamily,int[][] indexOfProducts)
+	public Product[] getCanonicalProducts(MSCA aut, MSCA[] mpcOfFamily,boolean getMpcOfFamily,int[][] indexOfProducts)
 	{
 		//Family f=this.validProducts(aut); //prefilter WARNING
 		Product[] p=this.getProducts();
-		int[] ind= this.getTopProducts(); 
-		FMCA[] K= new FMCA[p.length];
+		int[] ind= this.getMaximalProducts(); 
+		MSCA[] K= new MSCA[p.length];
 		int nonemptylength=0;
 		int[] nonemptyindex= new int[p.length];
 		
 		//compute the non-empty list of mpc for maximal (aka top) products
 		for (int i=0;i<ind.length;i++)
 		{
-			//Product ppp=p[ind[i]];
-			K[ind[i]]=aut.orchestration(p[ind[i]]);
+			K[ind[i]]=aut.clone().orchestration(p[ind[i]]);
 			if (K[ind[i]]!=null)
 			{
-				aut.orchestration(p[ind[i]]);
 				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
 				nonemptylength++;
 			}
@@ -772,7 +768,7 @@ public class Family {
 		}
 		//take as canonical product the first element of each class
 		Product[] canonicalproducts=new Product[quotientclasses];
-		FMCA[] K2= new FMCA[quotientclasses]; //K of all canonical products
+		MSCA[] K2= new MSCA[quotientclasses]; //K of all canonical products
 		indexOfProducts[0]=new int[quotientclasses];
 		for (int i=0;i<quotientclasses;i++)
 		{
@@ -781,13 +777,13 @@ public class Family {
 			K2[i]=K[quotient[i][0]]; 
 		}
 		if (getMpcOfFamily)
-			mpcOfFamily[0]=FMCA.union(K2); //store the mpc of family if needed
+			mpcOfFamily[0]=MSCA.union(K2); //store the mpc of family if needed
 		return canonicalproducts;
 	}
 	
-	public FMCA getMPCofFamily(FMCA aut)
+	public MSCA getMPCofFamily(MSCA aut)
 	{
-		FMCA[] mpcf=new FMCA[1];
+		MSCA[] mpcf=new MSCA[1];
 		this.getCanonicalProducts(aut, mpcf,true,new int[1][]); //as side effect the mpc is computed
 		return mpcf[0];
 	}
@@ -801,12 +797,12 @@ public class Family {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public FMCA getMPCofFamilyWithoutPO(FMCA aut, ProductFrame pf, int[][] pr) 
+	public MSCA getMPCofFamilyWithoutPO(MSCA aut, ProductFrame pf, int[][] pr) 
 	{
 		int[] tot = depth[this.getMaximumDepth()-1]; //total are at maximum depth
 		Product[] p = this.getProducts();
 		//compute the non-empty list of mpc
-		FMCA K[] = new FMCA[tot.length];
+		MSCA K[] = new MSCA[tot.length];
 		pr[0] = new int[tot.length]; 
 		int ind=0;
 		
@@ -814,7 +810,7 @@ public class Family {
 		{	
     		System.out.println(i);	
     		//setProgress(i);
-			K[ind]=aut.orchestration(p[tot[i]]);
+			K[ind]=aut.clone().orchestration(p[tot[i]]);
 			if (K[ind]!=null)
 			{
 				pr[0][ind]=i;
@@ -825,6 +821,13 @@ public class Family {
 		K = Arrays.copyOf(K, ind);	
 		pr[0]=FMCAUtils.removeTailsNull(pr[0], ind);
 		
-		return FMCA.union(K);
+		return MSCA.union(K);
 	}
+	
+//	@Override
+//	public Family clone()
+//	{
+//		return new Family(Arrays.stream(elements).map(Product::clone).toArray(Product[]::new),
+//				Arrays.stream(po).map(int[]::clone).toArray(int[][]::new));
+//	}
 }

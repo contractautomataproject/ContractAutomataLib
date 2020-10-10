@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import CA.CATransition;
+import MSCA.MSCA;
 import MSCA.MSCATransition;
 
 public class Product {
@@ -167,6 +168,18 @@ public class Product {
 		return true;
 	}
 	
+
+	public boolean isForbidden(MSCATransition t)
+	{
+		return (FMCAUtils.getIndex(this.getForbidden(),t.getUnsignedAction())>=0);
+	}
+
+	public boolean isRequired(MSCATransition t)
+	{
+		return (FMCAUtils.getIndex(this.getRequired(),t.getUnsignedAction())>=0);		
+	}
+
+	
 	/**
 	 * 
 	 * @param t
@@ -187,7 +200,7 @@ public class Product {
 	}
 	
 	
-	public boolean isValid(FMCA aut)
+	public boolean isValid(MSCA aut)
 	{
 		Set<? extends MSCATransition> t=aut.getTransition();
 		return this.checkForbidden(t)&&this.checkRequired(t);
@@ -223,7 +236,7 @@ public class Product {
 	 * @param p
 	 * @return true if both products have the same required and forbidden features
 	 */
-	public boolean equals(Product p)
+	public boolean equals(Product p) //TODO write standard equals
 	{
 		return (
 			((p.getRequired().length==required.length)&&(this.containsRequiredFeatures(p)))
@@ -231,4 +244,11 @@ public class Product {
 			((p.getForbidden().length==forbidden.length)&&(this.containsForbiddenFeatures(p)))			
 			);
 	}
+	
+//	@Override
+//	public Product clone()
+//	{
+//		return new Product(Arrays.copyOf(this.getRequired(), this.getRequired().length), 
+//				Arrays.copyOf(this.getForbidden(), this.getForbidden().length));
+//	}
 }

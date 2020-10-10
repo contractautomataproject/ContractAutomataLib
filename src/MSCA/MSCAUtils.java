@@ -7,8 +7,6 @@ import java.util.Arrays;
 /**
  * Utilities for MSCA
  * 
- * Composition and other operations have been shifted to FMCA class
- * 
  * TODO remove this class and use java.util library
  * 
  * @author Davide Basile

@@ -1,13 +1,13 @@
 package FMCA;
 
-import static org.junit.Assert.assertEquals;
+/*import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-
+*/
 /**
  * using for testing that code cleaning is correct
  * @author Davide
