@@ -1,9 +1,10 @@
 package CA;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CAState {
 	private int[] state; //TODO this should be a set of CAState? I would have many unused variables, still these are states identifiers, maybe an empty state class
@@ -94,33 +95,41 @@ public class CAState {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CAState other = (CAState) obj;
-		if (finalstate != other.finalstate)
-			return false;
-		if (initial != other.initial)
-			return false;
-		if (!Arrays.equals(state, other.state))
-			return false;
-		return true;
-
-		//&& this.x==c.getX()							
-		//&& this.y==c.getY()
-	}
+	
+// equals could cause errors of duplication of states in transitions to go undetected. 
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		CAState other = (CAState) obj;
+//		if (finalstate != other.finalstate)
+//			return false;
+//		if (initial != other.initial)
+//			return false;
+//		if (!Arrays.equals(state, other.state))
+//			return false;
+//		return true;
+//
+//		//&& this.x==c.getX()							
+//		//&& this.y==c.getY()
+//	}
 
 
 	public static CAState getCAStateWithValue(int[] value, Set<CAState> states)
 	{
+		if (states.parallelStream()
+				.filter(x->Arrays.equals(x.getState(),value))
+				.count()>1)
+			throw new IllegalArgumentException("Ambiguous states: there is more than one state with value "+Arrays.toString(value));
+
 		return states.parallelStream()
 				.filter(x->Arrays.equals(x.getState(),value))
-				.findAny()
+				.findFirst()
 				.orElseThrow(IllegalArgumentException::new);
 	}
 
@@ -130,14 +139,18 @@ public class CAState {
 	 */
 	public static Set<CAState> extractCAStatesFromTransitions(Set<? extends CATransition> tr)
 	{
-		Set<CAState> s = new HashSet<CAState>();
-		for (CATransition t : tr)
-		{
-			s.add(t.getSource()); //no duplicates in set
-			s.add(t.getTarget());
-		}
 
-		return s;
+		Set<CAState> cs= tr.stream()
+				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
+				.collect(Collectors.toSet()); //CAState without equals, duplicates objects are detected
+
+		if (cs.stream()
+				.anyMatch(x-> cs.stream()
+						.filter(y->x!=y && Arrays.equals(x.getState(), y.getState()))
+						.count()>0))
+			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
+
+		return cs;
 	}
 
 

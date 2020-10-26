@@ -8,7 +8,7 @@ import MSCA.MSCA;
 import MSCA.MSCATransition;
 
 public class Product {
-	private String[] required;
+	private String[] required; //TODO use ArrayList
 	private String[] forbidden;
 	
 	public Product(String[] r, String[] f)
@@ -231,19 +231,47 @@ public class Product {
 	
 	}
 	
-	/**
-	 * 
-	 * @param p
-	 * @return true if both products have the same required and forbidden features
-	 */
-	public boolean equals(Product p) //TODO write standard equals
-	{
-		return (
-			((p.getRequired().length==required.length)&&(this.containsRequiredFeatures(p)))
-			&&
-			((p.getForbidden().length==forbidden.length)&&(this.containsForbiddenFeatures(p)))			
-			);
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(forbidden);
+		result = prime * result + Arrays.hashCode(required);
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (!Arrays.equals(forbidden, other.forbidden))
+			return false;
+		if (!Arrays.equals(required, other.required))
+			return false;
+		return true;
+	}
+}
+
+//END OF CLASS
+
+//	/**
+//	 * 
+//	 * @param p
+//	 * @return true if both products have the same required and forbidden features
+//	 */
+//	public boolean equals(Product p)
+//	{
+//		return (
+//			((p.getRequired().length==required.length)&&(this.containsRequiredFeatures(p)))
+//			&&
+//			((p.getForbidden().length==forbidden.length)&&(this.containsForbiddenFeatures(p)))			
+//			);
+//	}
 	
 //	@Override
 //	public Product clone()
@@ -251,4 +279,4 @@ public class Product {
 //		return new Product(Arrays.copyOf(this.getRequired(), this.getRequired().length), 
 //				Arrays.copyOf(this.getForbidden(), this.getForbidden().length));
 //	}
-}
+

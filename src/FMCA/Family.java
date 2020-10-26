@@ -472,7 +472,7 @@ public class Family {
 				List<Product> lp= Arrays.asList(p);
 				lp.addAll(Arrays.asList(pl[i]));
 				p=lp.toArray(p);
-				//FMCAUtil.concat(p, pl[i]);  TODO: check
+				//FMCAUtil.concat(p, pl[i]);  
 			}
 		}
 		return p;
@@ -611,11 +611,10 @@ public class Family {
 				//aut.setInitialCA(storeinitial); 
 				//FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
 				
-				//TODO I changed this without testing
 				for (MSCATransition t : aut.getForwardStar(storeinitial))
 				{	
-					aut.setInitialCA(t.getTarget());//TODO check I changed the initial state representation
-					MSCA newaut = aut.clone().orchestration(new Product(new String[0],new String[0]));
+					aut.setInitialCA(t.getTarget());
+					MSCA newaut = new FMCA(aut.clone()).orchestration(new Product(new String[0],new String[0]));
 					valid(valid,tv[i],newaut); //recursive method
 				}				
 			}
@@ -648,7 +647,7 @@ public class Family {
 		//TODO exploit theoretical results to speed up the computation (intersection of MPC, lattice)
 		for (int i=0;i<pr.length;i++)
 		{
-			if (aut.clone().orchestration(this.elements[i])!=null)
+			if (new FMCA(aut.clone()).orchestration(this.elements[i])!=null)
 			{
 				pr[count]=i;
 				count++;
@@ -718,7 +717,7 @@ public class Family {
 		//compute the non-empty list of mpc for maximal (aka top) products
 		for (int i=0;i<ind.length;i++)
 		{
-			K[ind[i]]=aut.clone().orchestration(p[ind[i]]);
+			K[ind[i]]=new FMCA(aut.clone()).orchestration(p[ind[i]]);
 			if (K[ind[i]]!=null)
 			{
 				nonemptyindex[nonemptylength]=ind[i]; //index in the array of products
@@ -750,6 +749,7 @@ public class Family {
 					 * The quotient class considers all products with the same set of forbidden features, ignoring 
 					 * those features that are never displayed in the automaton
 					 */
+					//TODO check if two automata were canonical or more in the JSCP case study!
 					String[] act=aut.getActions().toArray(new String[] {});
 					Product test1=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
 					Product test2=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
@@ -777,7 +777,7 @@ public class Family {
 			K2[i]=K[quotient[i][0]]; 
 		}
 		if (getMpcOfFamily)
-			mpcOfFamily[0]=MSCA.union(K2); //store the mpc of family if needed
+			mpcOfFamily[0]=MSCA.union(List.of(K2)); //store the mpc of family if needed
 		return canonicalproducts;
 	}
 	
@@ -810,7 +810,7 @@ public class Family {
 		{	
     		System.out.println(i);	
     		//setProgress(i);
-			K[ind]=aut.clone().orchestration(p[tot[i]]);
+			K[ind]= new FMCA(aut.clone()).orchestration(p[tot[i]]);
 			if (K[ind]!=null)
 			{
 				pr[0][ind]=i;
@@ -821,7 +821,7 @@ public class Family {
 		K = Arrays.copyOf(K, ind);	
 		pr[0]=FMCAUtils.removeTailsNull(pr[0], ind);
 		
-		return MSCA.union(K);
+		return MSCA.union(List.of(K));
 	}
 	
 //	@Override

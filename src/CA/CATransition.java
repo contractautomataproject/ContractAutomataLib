@@ -18,6 +18,8 @@ public class CATransition {
 	final public static  String request="?";
 
 	public CATransition(CAState source, String[] label, CAState target){
+		if (source==null || label==null || target==null)
+			throw new IllegalArgumentException("source, label or target null");
 		this.source=source;
 		this.target=target;
 		this.label =label;

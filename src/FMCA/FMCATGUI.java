@@ -35,7 +35,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUtils;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
@@ -153,9 +152,9 @@ public class FMCATGUI extends BasicGraphEditor
 			setPageVisible(false);
 			setGridVisible(false);
 			setToolTips(true);
-			setConnectable(false);
+			setConnectable(true);
 			
-			getConnectionHandler().setCreateTarget(false);
+			getConnectionHandler().setCreateTarget(true);
 
 			// Loads the defalt stylesheet from an external file
 			mxCodec codec = new mxCodec();
@@ -392,18 +391,19 @@ public class FMCATGUI extends BasicGraphEditor
 			layout.execute(graph.getDefaultParent());
 		} finally {
 			mxMorphing morph = new mxMorphing(graphComponent, 20, 1.5, 20);
-
-			morph.addListener(mxEvent.DONE, new mxIEventListener() {
-
-				@Override
-				public void invoke(Object arg0, mxEventObject arg1) {
-					graph.getModel().endUpdate();
-					// fitViewport();
-				}
-
-
-
-			});
+			morph.addListener(mxEvent.DONE, (Object arg0, mxEventObject arg1) -> graph.getModel().endUpdate());
+//					new mxIEventListener() {
+//
+//				@Override
+//				public void invoke(Object arg0, mxEventObject arg1) {
+//					graph.getModel().endUpdate();
+//					// fitViewport();
+//				}
+//
+//
+//
+//			}
+//			);
 
 			morph.startAnimation();
 		}

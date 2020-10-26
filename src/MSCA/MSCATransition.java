@@ -261,10 +261,4 @@ public class MSCATransition extends CATransition {
 						.count()>0  //for all such states there exists an outgoing transition with the same label of this
 						);
 	}
-	
-	@Override
-	public MSCATransition clone()
-	{
-		return new MSCATransition(this.getSource().clone(), this.getLabel().clone(), this.getTarget().clone(), this.getType());
-	}
 }

@@ -10,9 +10,12 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,57 +34,45 @@ import org.xml.sax.SAXException;
 
 import CA.CAState;
 import CA.CATransition;
-import MSCA.MSCATransition;
 
 /**
  * Input/Output 
  * 
- * @author Davide
+ * @author Davide Basile
  *
  */
 public class MSCAIO {
 
 	/**
 	 * print the description of the CA to a file
+	 * @throws FileNotFoundException 
 	 */
-	public static void printToFile(String filename, MSCA aut)
+	public static void printToFile(String filename, MSCA aut) throws FileNotFoundException
 	{
-		String name=null;
+		if (filename=="")
+		{
+			throw new IllegalArgumentException("Empty file name");
+		}
 		int rank= aut.getRank();
 		int[][] finalstates = aut.getFinalStatesofPrincipals();
-		InputStreamReader reader = new InputStreamReader(System.in);
-		BufferedReader myInput = new BufferedReader(reader);
-		try {
-			if (filename=="")
-			{
-				System.out.println("Do you want to save this automaton? (write yes or no, default yes)");
-				if (!myInput.readLine().equals("no"))
-				{	
-					System.out.println("Write the name of this automaton");
-					name= myInput.readLine();
-				}
-				else return;
-			}
-			else
-				name=filename;
 
-			PrintWriter pr = new PrintWriter(name+".data"); 
-			pr.println("Rank: "+rank);
-			pr.println("Number of states: "+Arrays.toString(aut.getNumStatesPrinc()));
-			pr.println("Initial state: " +Arrays.toString(aut.getInitial().getState()));
-			pr.print("Final states: [");
-			for (int i=0;i<finalstates.length;i++)
-				pr.print(Arrays.toString(finalstates[i]));
-			pr.print("]\n");
-			pr.println("Transitions: \n");
-			Set<? extends MSCATransition> tr = aut.getTransition();
-			if (tr!=null)
-			{
-				for (MSCATransition t : tr)
-					pr.println(t.toString());
-			}
-			pr.close();
-		}catch(Exception e){e.printStackTrace();}
+		PrintWriter pr = new PrintWriter(filename+".data"); 
+		pr.println("Rank: "+rank);
+		pr.println("Number of states: "+Arrays.toString(aut.getNumStatesPrinc()));
+		pr.println("Initial state: " +Arrays.toString(aut.getInitial().getState()));
+		pr.print("Final states: [");
+		for (int i=0;i<finalstates.length;i++)
+			pr.print(Arrays.toString(finalstates[i]));
+		pr.print("]\n");
+		pr.println("Transitions: \n");
+		Set<? extends MSCATransition> tr = aut.getTransition();
+		if (tr!=null)
+		{
+			for (MSCATransition t : tr)
+				pr.println(t.toString());
+		}
+		pr.close();
+
 	}
 
 
@@ -168,7 +159,7 @@ public class MSCAIO {
 						for (int ind=0;ind<arr.length;ind++)
 						{
 
-							String[] arr2=arr[ind].split("[,|\\[]"); //TODO BUG with this parseInt fails with spaces
+							String[] arr2=arr[ind].split("[,|\\[]"); //FIXME BUG with this parseInt fails with spaces
 							try{
 								int innerindex=0;
 								int[] tf = new int[numstates[outerindex]]; //upper bound
@@ -270,12 +261,12 @@ public class MSCAIO {
 						.filter(x->Arrays.equals(x.getState(), store[0])) //source
 						.findAny()
 						.orElseGet(()->{CAState temp= new CAState(store[0]); states.add(temp); return temp;});
-				
+
 				CAState target = states.stream()
 						.filter(x->Arrays.equals(x.getState(), statestransition)) //target
 						.findAny()
 						.orElseGet(()->{CAState temp= new CAState(statestransition); states.add(temp); return temp;});
-				
+
 				return new MSCATransition(source,label,target,type);
 			}
 			else
@@ -306,146 +297,66 @@ public class MSCAIO {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(inputFile);
 			doc.getDocumentElement().normalize();
-
 			NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
-			Set<CAState> castates= new HashSet<CAState>();
-			int[][] states=new int[nodeList.getLength()][];
-			int[][] finalstates=new int[nodeList.getLength()][];
-			int[] idstate=new int[nodeList.getLength()];
-			//each node has associated an id, used for identifying source and target of an edge
-			float[] xstate=new float[idstate.length];
-			float[] ystate=new float[idstate.length];
-			int[] idfinalstate=new int[nodeList.getLength()];
-			float[] xfinalstate=new float[idstate.length];
-			float[] yfinalstate=new float[idstate.length];
-			Set<MSCATransition> t= new HashSet<MSCATransition>();
-			int statec=0;
-			int finalstatec=0;
-			/**
-			 * first read all the states, then all the edges
-			 */
+
+			Map<Integer, CAState> id2castate = new HashMap<>(nodeList.getLength());
+			Set<MSCATransition> transitions= new HashSet<MSCATransition>();
+
+			//first read all the states, then all the edges
 			for (int i = 0; i < nodeList.getLength(); i++) 
 			{
 				Node nNode = nodeList.item(i);
-				//  System.out.println("\nCurrent Element :" 
-				//     + nNode.getNodeName());
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+				if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 				{
 					Element eElement = (Element) nNode;
-					String prova=eElement.getAttribute("id");
-					if (Integer.parseInt(prova)>1)
+					if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
 					{
-						if (!eElement.hasAttribute("edge"))//edge
-
-							//TODO remove xstates ystates etc..
-						{
-							if (eElement.getAttribute("style").contains("terminate.png"))
-							{ 
-								idfinalstate[finalstatec]=Integer.parseInt(eElement.getAttribute("id"));
-								finalstates[finalstatec]=getArray(eElement.getAttribute("value"));
-								NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
-								Element geo= (Element) g.item(0);
-								if (geo.hasAttribute("x"))
-									xfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("x"));
-								else
-									xfinalstate[finalstatec]=0;
-								if (geo.hasAttribute("y"))
-									yfinalstate[finalstatec]=Float.parseFloat(geo.getAttribute("y"));
-								else
-									yfinalstate[finalstatec]=0;
-								boolean initial=true;
-								for (int ind=0;ind<finalstates[finalstatec].length;ind++)
-									initial=initial&&(finalstates[finalstatec][ind]==0);
-								castates.add(new CAState(finalstates[finalstatec], xfinalstate[finalstatec], 
-										yfinalstate[finalstatec], initial,true));
-								finalstatec++;
-							}
-							else{
-								idstate[statec]=Integer.parseInt(eElement.getAttribute("id"));
-								states[statec]=getArray(eElement.getAttribute("value"));
-								NodeList g= (NodeList) eElement.getElementsByTagName("mxGeometry");
-								Element geo= (Element) g.item(0);
-								if (geo.hasAttribute("x"))
-									xstate[statec]=Float.parseFloat(geo.getAttribute("x"));
-								else
-									xstate[statec]=0;
-								if (geo.hasAttribute("y"))
-									ystate[statec]=Float.parseFloat(geo.getAttribute("y"));
-								else
-									ystate[statec]=0;
-								boolean initial=true;
-								for (int ind=0;ind<states[statec].length;ind++)
-									initial=initial&&(states[statec][ind]==0);
-								castates.add(new CAState(states[statec], xstate[statec], 
-										ystate[statec], initial,false));
-								statec++;
-							}
-						}
-					}
-				}
-			}
-			for (int i = 0; i < nodeList.getLength(); i++) 
-			{
-				Node nNode = nodeList.item(i);
-				//  System.out.println("\nCurrent Element :" 
-				//     + nNode.getNodeName());
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
-				{
-					Element eElement = (Element) nNode;
-					String prova=eElement.getAttribute("id");
-					if (Integer.parseInt(prova)>1)
-					{
-						if (eElement.hasAttribute("edge"))//edge
-						{
-							int idsource=Integer.parseInt(eElement.getAttribute("source"));
-							int index=MSCAUtils.getIndex(idstate, idsource);
-							int[] source;
-							if (index>-1)
-								source=states[index];
-							else
-								source=finalstates[MSCAUtils.getIndex(idfinalstate, idsource)];
-
-							int idtarget=Integer.parseInt(eElement.getAttribute("target"));
-							index=MSCAUtils.getIndex(idstate, idtarget);
-							int[] target;
-							if (index>-1)
-								target=states[index];
-							else
-								target=finalstates[MSCAUtils.getIndex(idfinalstate, idtarget)];
-
-
-							String[] label=getArrayString(eElement.getAttribute("value"));
-							if (label==null)
-								return null;
-							if (eElement.getAttribute("style").contains("strokeColor=#FF0000"))
-								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.URGENT));//red
-							else if (eElement.getAttribute("style").contains("strokeColor=#FFA500"))
-								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.GREEDY)); //orange
-							else if (eElement.getAttribute("style").contains("strokeColor=#00FF00"))
-								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.LAZY)); //green
-							else 
-								t.add(new MSCATransition(CAState.getCAStateWithValue(source, castates),label,CAState.getCAStateWithValue(target, castates),MSCATransition.action.PERMITTED)); //otherwise
-							
-						}
+						int[] st=getArray(eElement.getAttribute("value"));
+						CAState castate=new CAState(st,0,0, //x,y
+								Arrays.equals(st, new int[st.length]), //initial
+								eElement.getAttribute("style").contains("terminate.png"));//final
+						if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
+							throw new IllegalArgumentException("Duplicate states!");
 					}
 				}
 			}
 
-			finalstates=MSCAUtils.removeTailsNull(finalstates, finalstatec, new int[][] {});
-			xfinalstate=MSCAUtils.removeTailsNull(xstate, finalstatec);
-			yfinalstate=MSCAUtils.removeTailsNull(ystate, finalstatec);
-			states=MSCAUtils.removeTailsNull(states, statec, new int[][] {});
-			xstate=MSCAUtils.removeTailsNull(xstate, statec);
-			ystate=MSCAUtils.removeTailsNull(ystate, statec);
-			int rank=states[0].length;
-			int[] initial = new int[rank];
-			for (int ind=0;ind<rank;ind++)
-				initial[ind]=0;
+			// A set of checks for detecting bugs
 			
+			if (id2castate.isEmpty())
+				throw new IllegalArgumentException("No states!");
+
+			Set<CAState> castates = id2castate.entrySet().stream()
+					.map(Entry::getValue)
+					.collect(Collectors.toSet());
+			
+			//transitions
+			for (int i = 0; i < nodeList.getLength(); i++) 
+			{
+				Node nNode = nodeList.item(i);
+				if ((nNode.getNodeType() == Node.ELEMENT_NODE))
+				{
+					Element eElement = (Element) nNode;
+					if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge"))
+						transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
+								getArrayString(eElement.getAttribute("value")),//label
+								id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
+								(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.action.URGENT: //red
+									(eElement.getAttribute("style").contains("strokeColor=#FFA500"))? MSCATransition.action.GREEDY: //orange
+										(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.action.LAZY: //green
+											MSCATransition.action.PERMITTED));
+				}
+			}
+
+
+			int rank=castates.iterator().next().getState().length;
 			MSCA aut= new MSCA(rank, 
-					CAState.getCAStateWithValue(initial, castates),
-					principalsFinalStates(finalstates),
-					t,
+					CAState.getCAStateWithValue(new int[rank], castates),
+					principalsFinalStates(castates.stream()
+							.filter(CAState::isFinalstate)
+							.map(CAState::getState)
+							.collect(Collectors.toList())),
+					transitions,
 					castates);
 			return aut;
 		} catch (ParserConfigurationException e) {
@@ -455,10 +366,11 @@ public class MSCAIO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
-
+		//TODO  improve exception handling
+		
 		return null;
 	}
-	
+
 	/**
 	 * this method is used when importing from XML, where no description of  principal final states is given 
 	 * and it is reconstructed
@@ -468,13 +380,13 @@ public class MSCAIO {
 	 * @param all final states of the composed automaton
 	 * @return the final states of each principal
 	 */
-	private static int[][] principalsFinalStates(int[][] states)
+	private static int[][] principalsFinalStates(List<int[]> states)
 	{
-		if (states.length<=0)
+		if (states.size()<=0)
 			return null;
-		int rank=states[0].length;
+		int rank=states.get(0).length;
 		int[] count=new int[rank];
-		int[][] pfs=new int[rank][states.length];
+		int[][] pfs=new int[rank][states.size()];
 
 		for (int ind=0; ind<pfs.length;ind++)
 			for (int ind2=0; ind2<pfs[ind].length;ind2++)
@@ -482,16 +394,16 @@ public class MSCAIO {
 
 		for (int j=0;j<rank;j++)
 		{
-			pfs[j][0]=states[0][j];
+			pfs[j][0]=states.get(0)[j];
 			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
 		}
-		for (int i=1;i<states.length;i++)
+		for (int i=1;i<states.size();i++)
 		{
 			for (int j=0;j<rank;j++)
 			{
-				if (MSCAUtils.getIndex(pfs[j], states[i][j])==-1 )  // if states[i][j] is not in pfs[j]
+				if (MSCAUtils.getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
 				{
-					pfs[j][count[j]]=states[i][j];
+					pfs[j][count[j]]=states.get(i)[j];
 					count[j]++;
 				}
 			}
@@ -533,14 +445,14 @@ public class MSCAIO {
 			root.appendChild(mxcell1);
 
 			Map<CAState,Element> state2element = new HashMap<CAState, Element>();
-			
+
 			int id=2;
 			for (CAState s : aut.getStates())
 			{
 				state2element.put(s, createElementState(doc, root,Integer.toString(id), s));
 				id+=1;
 			}
-			
+
 			Set<? extends MSCATransition> tr= aut.getTransition();
 			for (MSCATransition t : tr)
 			{
@@ -550,7 +462,7 @@ public class MSCAIO {
 						Arrays.toString(t.getLabel()),t.getType());
 				id+=1;
 			}
-			
+
 			TransformerFactory transformerFactory =
 					TransformerFactory.newInstance();
 			Transformer transformer =
@@ -751,88 +663,19 @@ public class MSCAIO {
 		return mxcell1;		
 	}
 
-	//	private static Element createElementFinalState(Document doc, Element root,String id, CAState[] castates, int[] arrintstate)
-	//	{
-	//		Attr parent=doc.createAttribute("parent");
-	//		parent.setValue("1");
-	//		Element mxcell1 = doc.createElement("mxCell");
-	//		Attr id1=doc.createAttribute("id");
-	//		Attr as=doc.createAttribute("as");
-	//		Attr vertex=doc.createAttribute("vertex");
-	//		vertex.setNodeValue("1");		
-	//		as.setValue("geometry");
-	//		id1.setValue(id);
-	//		Attr stylefinal=doc.createAttribute("style");
-	//		stylefinal.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
-	//		Attr valuefinal=doc.createAttribute("value");
-	//		valuefinal.setValue(Arrays.toString(arrintstate));
-	//		mxcell1.setAttributeNode(id1);
-	//		mxcell1.setAttributeNode(parent);
-	//		mxcell1.setAttributeNode(stylefinal);
-	//		mxcell1.setAttributeNode(valuefinal);
-	//		mxcell1.setAttributeNode(vertex);
-	//		Element mxGeometry1=doc.createElement("mxGeometry");
-	//		mxGeometry1.setAttributeNode(as);
-	//		mxGeometry1.setAttribute("height", "50.0");
-	//		mxGeometry1.setAttribute("width", "50.0");
-	//		for (int i=0;i<castates.length;i++)
-	//		{
-	//			if (Arrays.equals(arrintstate, castates[i].getState()))
-	//			{
-	//				if (!mxGeometry1.hasAttribute("x"))
-	//				{
-	//					Attr x=doc.createAttribute("x");
-	//					x.setNodeValue(castates[i].getX()+"");
-	//					mxGeometry1.setAttributeNode(x);
-	//				}
-	//				else
-	//					mxGeometry1.setAttribute("x", castates[i].getX()+"");
-	//
-	//				if (!mxGeometry1.hasAttribute("y"))
-	//				{
-	//					Attr y=doc.createAttribute("y");
-	//					y.setNodeValue(castates[i].getY()+"");
-	//					mxGeometry1.setAttributeNode(y);
-	//				}
-	//				else
-	//					mxGeometry1.setAttribute("y", castates[i].getY()+"");
-	//			}
-	//		}
-	//		mxcell1.appendChild(mxGeometry1);
-	//		root.appendChild(mxcell1);
-	//		return mxcell1;		
-	//	}
-
-
-
 	private static String[] getArrayString(String arr)
 	{
 		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-		for (int i=0;i<items.length;i++)
-		{
-			if (!(items[i].startsWith("!")||items[i].startsWith("?")||items[i].startsWith("-")))
-				return null;
-		}
+		if (Arrays.stream(items).anyMatch(item->!(item.startsWith("!")||item.startsWith("?")||item.startsWith("-"))))
+			return null;
 		return items;
 	}
 
 	private static int[] getArray(String arr)
 	{
 		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-
-		int[] results = new int[items.length];
-
-		for (int ii = 0; ii < items.length; ii++) {
-			// try {
-			results[ii] = Integer.parseInt(items[ii]);
-			/*} catch (NumberFormatException nfe) {
-		         nfe.printStackTrace();
-		     };*/
-		}
-		return results;
+		return Arrays.stream(items)
+				.mapToInt(Integer::parseInt)
+				.toArray();
 	}
-
-
-
-
 }

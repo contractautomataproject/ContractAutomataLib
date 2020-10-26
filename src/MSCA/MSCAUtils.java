@@ -55,14 +55,6 @@ public class MSCAUtils
 			r[i]=q[i];
 		return r;
 	}
-
-	public static float[] removeTailsNull(float[] q,int length)
-	{
-		float[] r=new float[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
 	
 	public static int getIndex(int[] q, int e)
 	{

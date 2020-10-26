@@ -84,7 +84,7 @@ public class SchemaEditorToolBar extends JToolBar
 */
 		final mxGraphView view = editor.getGraphComponent().getGraph()
 				.getView();
-		final JComboBox zoomCombo = new JComboBox(new Object[] { "400%",
+		final JComboBox<?> zoomCombo = new JComboBox(new Object[] { "400%",
 				"200%", "150%", "100%", "75%", "50%", mxResources.get("page"),
 				mxResources.get("width"), mxResources.get("actualSize") });
 		zoomCombo.setEditable(true);

@@ -40,6 +40,7 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 
+import FMCA.FMCA;
 import FMCA.FMCATGUI;
 import FMCA.Family;
 import FMCA.Product;
@@ -53,7 +54,7 @@ public class EditorMenuBar extends JMenuBar
 	String lastDir;
 
 	MSCA lastaut; //TODO it should be used to avoid to import the automaton from its xml description at each operation. 
-				//TODO value never read if private
+				//FIXME value never read if private
 	
 	private static final long serialVersionUID = 4060203894740766714L;
 
@@ -216,8 +217,12 @@ public class EditorMenuBar extends JMenuBar
 				MSCA aut= MSCAIO.parseXMLintoMSCA(filename); //TODO there is no need to parse the xml, aut should be shared
 				if (aut!=null)
 				{
-					MSCAIO.printToFile(filename,aut);
-					JOptionPane.showMessageDialog(null,"The automaton has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
+					try {
+						MSCAIO.printToFile(filename,aut);
+						JOptionPane.showMessageDialog(null,"The automaton has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
+					} catch (FileNotFoundException e1) {
+						JOptionPane.showMessageDialog(null,"File not found","Error!",JOptionPane.WARNING_MESSAGE);
+					}	
 				}
 				else 
 				{
@@ -307,9 +312,6 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-
-
-				//ProductFrame pf=editor.getProductFrame();
 
 				lastDir=editor.getCurrentFile().getParent();
 				String absfilename =editor.getCurrentFile().getAbsolutePath();
@@ -1649,11 +1651,12 @@ public class EditorMenuBar extends JMenuBar
 				Product p=(R.length+F.length>0)?new Product(R,F):null;
 				
 				MSCA controller=null;
+				FMCA faut= new FMCA(aut);
 				long elapsedTime;
 				if (p!=null)
 				{
 					long start = System.currentTimeMillis();
-					controller= aut.orchestration(p);
+					controller= faut.orchestration(p);
 				    elapsedTime = System.currentTimeMillis() - start;
 				}
 				else
@@ -1751,6 +1754,8 @@ public class EditorMenuBar extends JMenuBar
 
 				Family f=pf.getFamily();
 				
+				FMCA faut= new FMCA(aut);
+				
 				String S= (String) JOptionPane.showInputDialog(null, 
 						"Insert Product id",
 						JOptionPane.PLAIN_MESSAGE);
@@ -1760,7 +1765,7 @@ public class EditorMenuBar extends JMenuBar
 				Product p=f.getProducts()[Integer.parseInt(S)];
 				long start = System.currentTimeMillis();
 
-				MSCA controller = aut.orchestration(p);
+				MSCA controller = faut.orchestration(p);
 				long elapsedTime = System.currentTimeMillis() - start;
 				//
 				File file=null;
