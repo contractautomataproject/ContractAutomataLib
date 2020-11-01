@@ -468,75 +468,6 @@ public class MSCA
 		return new MSCA(rank, initialstate, finalstates, tr, states);
 	}
 
-
-	/**
-	 * compute the projection on the i-th principal
-	 * @param indexprincipal		index of the FMCA
-	 * @return		the ith principal
-	 * 
-	 * @deprecated the XML representation must be fixed to store final states of principals for projection to work
-	 */
-	MSCA proj(int indexprincipal)
-	{
-		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //TODO check if the parameter i is in the rank of the FMCA
-			return null;
-		if (this.getRank()==1)
-			return this;
-		MSCATransition[] tra = this.getTransition().toArray(new MSCATransition[] {});
-		//int[] numberofstatesprincipal= new int[1];
-		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
-		MSCATransition[] transitionsprincipal = new MSCATransition[tra.length];
-		int pointer=0;
-		for (int ind=0;ind<tra.length;ind++)
-		{
-			MSCATransition tt= ((MSCATransition)tra[ind]);
-			String label = tt.getLabel()[indexprincipal];
-			if(label!=CATransition.idle)
-			{
-				int source =  tt.getSource().getState()[indexprincipal];
-				int dest = tt.getTarget().getState()[indexprincipal];
-				int[] sou = new int[1];
-				sou[0]=source;
-				int[] des = new int[1];
-				des[0]=dest;
-				String[] lab = new String[1];
-				lab[0]=label;
-				MSCATransition selected = null;
-				if (label.substring(0,1).equals(CATransition.offer))
-				{
-					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),MSCATransition.action.PERMITTED);
-				}
-				else {
-					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
-				}
-
-				if (!MSCAUtils.contains(selected, transitionsprincipal, pointer))
-				{
-					transitionsprincipal[pointer]=selected;
-					pointer++;
-				}
-			}
-		}
-
-		transitionsprincipal = MSCAUtils.removeTailsNull(transitionsprincipal, pointer, new MSCATransition[] {});
-		Set<MSCATransition> transitionprincipalset = new HashSet<MSCATransition>(Arrays.asList(transitionsprincipal));
-		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
-		int[] init=new int[1]; init[0]=0;
-		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
-		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
-		int[][] finalstatesprincipal = new int[1][];
-		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
-		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
-		{
-			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
-			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
-		}
-
-		return new MSCA(1,initialstateprincipal,
-				finalstatesprincipal,transitionprincipalset,fstates); 
-	}
-
-
 	/**
 	 * 
 	 * @param aut
@@ -552,14 +483,14 @@ public class MSCA
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
-		float fur= (float)aut.stream()
-				.mapToDouble(x ->  x.getStates().parallelStream()
-						.mapToDouble(CAState::getX)
-						.max()
-						.getAsDouble())
-				.max()
-				.getAsDouble(); //furthest node  //TODO check if it is necessary to set graphical coordinates or morphGraph can be used
-
+//		float fur= (float)aut.stream()
+//				.mapToDouble(x ->  x.getStates().parallelStream()
+//						.mapToDouble(CAState::getX)
+//						.max()
+//						.getAsDouble())
+//				.max()
+//				.getAsDouble(); //furthest node  
+		
 		final int upperbound=aut.parallelStream()
 				.flatMap(x->x.getStates().parallelStream())
 				.mapToInt(x->Arrays.stream(x.getState()).max().orElse(0))
@@ -572,8 +503,8 @@ public class MSCA
 		IntStream.range(0, aut.size())
 		.forEach(id ->{
 			aut.get(id).getStates().forEach(x->{
-				x.setX(x.getX()+fur*(id)+25*id);
-				x.setY(x.getY()+50);
+			//	x.setX(x.getX()+fur*(id)+25*id);
+			//	x.setY(x.getY()+50);
 				x.setState(Arrays.stream(x.getState())
 						.map(s->s+upperbound*(id+1))
 						.toArray());});
@@ -594,7 +525,8 @@ public class MSCA
 				.collect(Collectors.toSet());
 
 		//new initial state
-		CAState newinitial = new CAState( new int[rank],(float)((aut.size())*fur)/2,0,true,false);
+		CAState newinitial = new CAState( new int[rank],//(float)((aut.size())*fur)/2,0,
+				true,false);
 		statesunion.add(newinitial);
 
 		Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
@@ -671,28 +603,76 @@ public class MSCA
 		.ifPresent(c -> {throw new IllegalArgumentException("State "+c.toString()+ " is in a state but not in any transition");});
 	}
 
-	//		
-	//		Iterator<CAState> it_tr;
-	//		Iterator<CAState> it;
-	//		
-	//		it_tr = states_tr.iterator();
-	//		while (it_tr.hasNext())
-	//		{
-	//			Object s= (Object) it_tr.next();
-	//			boolean found=false;
-	//			it = states.iterator();
-	//			while (it.hasNext())
-	//			{
-	//				Object ss= (Object) it.next();
-	//				if (s==ss)
-	//					found=true;
-	//			}
-	//			if (!found)
-	//			{
-	//				throw new IllegalArgumentException("State "+s.toString()+ " is in a transition but not in states");
-	//			}
-	//		}
 
+//	/**
+//	 * compute the projection on the i-th principal
+//	 * @param indexprincipal		index of the FMCA
+//	 * @return		the ith principal
+//	 * 
+//	 * @deprecated the XML representation must be fixed to store final states of principals for projection to work
+//	 */
+//	MSCA proj(int indexprincipal)
+//	{
+//		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //check if the parameter i is in the rank of the FMCA
+//			return null;
+//		if (this.getRank()==1)
+//			return this;
+//		MSCATransition[] tra = this.getTransition().toArray(new MSCATransition[] {});
+//		//int[] numberofstatesprincipal= new int[1];
+//		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
+//		MSCATransition[] transitionsprincipal = new MSCATransition[tra.length];
+//		int pointer=0;
+//		for (int ind=0;ind<tra.length;ind++)
+//		{
+//			MSCATransition tt= ((MSCATransition)tra[ind]);
+//			String label = tt.getLabel()[indexprincipal];
+//			if(label!=CATransition.idle)
+//			{
+//				int source =  tt.getSource().getState()[indexprincipal];
+//				int dest = tt.getTarget().getState()[indexprincipal];
+//				int[] sou = new int[1];
+//				sou[0]=source;
+//				int[] des = new int[1];
+//				des[0]=dest;
+//				String[] lab = new String[1];
+//				lab[0]=label;
+//				MSCATransition selected = null;
+//				if (label.substring(0,1).equals(CATransition.offer))
+//				{
+//					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),MSCATransition.action.PERMITTED);
+//				}
+//				else {
+//					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
+//				}
+//
+//				if (!MSCAUtils.contains(selected, transitionsprincipal, pointer))
+//				{
+//					transitionsprincipal[pointer]=selected;
+//					pointer++;
+//				}
+//			}
+//		}
+//
+//		transitionsprincipal = MSCAUtils.removeTailsNull(transitionsprincipal, pointer, new MSCATransition[] {});
+//		Set<MSCATransition> transitionprincipalset = new HashSet<MSCATransition>(Arrays.asList(transitionsprincipal));
+//		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
+//		int[] init=new int[1]; init[0]=0;
+//		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
+//		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
+//		int[][] finalstatesprincipal = new int[1][];
+//		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
+//		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
+//		{
+//			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
+//			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
+//		}
+//
+//		return new MSCA(1,initialstateprincipal,
+//				finalstatesprincipal,transitionprincipalset,fstates); 
+//	}
+
+
+	
 }
 
 

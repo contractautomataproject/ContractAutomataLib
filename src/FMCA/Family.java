@@ -746,10 +746,9 @@ public class Family {
 				for (int j=i+1;j<nonemptylength;j++)
 				{
 					/**
-					 * The quotient class considers all products with the same set of forbidden features, ignoring 
-					 * those features that are never displayed in the automaton
+					 * The quotient class considers all products with the same set of forbidden features, and 
+					 * <<ignoring  those features that are never displayed in the automaton>> (this is an improvement of Def.32 of JSCP2020).
 					 */
-					//TODO check if two automata were canonical or more in the JSCP case study!
 					String[] act=aut.getActions().toArray(new String[] {});
 					Product test1=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
 					Product test2=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
@@ -799,6 +798,8 @@ public class Family {
 	 */
 	public MSCA getMPCofFamilyWithoutPO(MSCA aut, ProductFrame pf, int[][] pr) 
 	{
+		//TODO check why there are 6 total products instead of four
+		
 		int[] tot = depth[this.getMaximumDepth()-1]; //total are at maximum depth
 		Product[] p = this.getProducts();
 		//compute the non-empty list of mpc
@@ -808,8 +809,7 @@ public class Family {
 		
 		for (int i=0;i<tot.length;i++)
 		{	
-    		System.out.println(i);	
-    		//setProgress(i);
+    		//System.out.println(i);	
 			K[ind]= new FMCA(aut.clone()).orchestration(p[tot[i]]);
 			if (K[ind]!=null)
 			{

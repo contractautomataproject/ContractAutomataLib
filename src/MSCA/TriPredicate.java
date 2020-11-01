@@ -1,8 +1,7 @@
 package MSCA;
 
 /**
- * used in the synthesis for readability, instead of using a function taking one argument and
- * returning a bipredicate where to apply such argument
+ * used in the synthesis method of MSCA for readability. 
  * @author Davide
  *
  * @param <T>
