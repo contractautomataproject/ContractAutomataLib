@@ -21,8 +21,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.mxgraph.examples.swing.editor.EditorActions.ExitAction;
 import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
@@ -154,11 +156,11 @@ public class EditorMenuBar extends JMenuBar
 		item.addActionListener(e->
 		{
 			String filename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(filename); 
-			//TODO there is no need to parse the xml, aut should be shared
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(filename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
@@ -239,33 +241,16 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-
 			File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
 			lastaut=aut;
 			parseAndSet(absfilename, editor,file);
-
-			/*
-			 * try {
-			 * 
-			 * Document document = mxXmlUtils .parseXml(mxUtils.readFile(absfilename));
-			 * mxCodec codec = new mxCodec(document); codec.decode(
-			 * document.getDocumentElement(), graphfinal.getModel());
-			 * editor.setCurrentFile(file);
-			 * 
-			 * editor.setModified(false); editor.getUndoManager().clear();
-			 * editor.getGraphComponent().zoomAndCenter(); } catch (IOException ex) {
-			 * ex.printStackTrace(); JOptionPane.showMessageDialog(
-			 * editor.getGraphComponent(), ex.toString(), mxResources.get("error"),
-			 * JOptionPane.ERROR_MESSAGE); }
-			 */
-
 		});
 
 
@@ -360,7 +345,14 @@ public class EditorMenuBar extends JMenuBar
 					} while (done);
 
 					String fileName =fc.getSelectedFile().toString();
-					aut[fmcacount]=MSCAIO.parseXMLintoMSCA(fileName);
+					
+					try {
+						aut[fmcacount]= MSCAIO.parseXMLintoMSCA(fileName);
+					} catch (ParserConfigurationException|SAXException|IOException e1) {
+						JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					
 					names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
 					fmcacount++;
 					String compositionname="(";
@@ -735,10 +727,11 @@ public class EditorMenuBar extends JMenuBar
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut=MSCAIO.parseXMLintoMSCA(absfilename);
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
@@ -792,13 +785,14 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut=MSCAIO.parseXMLintoMSCA(absfilename);
 
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 
 			int[] vp= pf.getFamily().validProducts(aut);
 			if (vp==null || vp.length==0)
@@ -832,13 +826,14 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
 
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 
 			Family fam= editor.getProductFrame().getFamily();
 
@@ -883,14 +878,14 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
-
+			}
+			
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
@@ -948,12 +943,15 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
 			}
+			
 			int[] vp= pf.getFamily().productsWithNonEmptyMPC(aut);
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 			pf=editor.getProductFrame();
@@ -1075,13 +1073,13 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 
 			Family f=pf.getFamily();
 
@@ -1119,12 +1117,13 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 
 			String S= (String) JOptionPane.showInputDialog(null, 
 					"Insert Required features separated by colon",
@@ -1207,12 +1206,13 @@ public class EditorMenuBar extends JMenuBar
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
@@ -1283,13 +1283,13 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			}
 			Family f=pf.getFamily();
 
 			JOptionPane.showMessageDialog(null,"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
@@ -1333,13 +1333,13 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}		
+			}
 
 			JOptionPane.showMessageDialog(null,aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
 
@@ -1355,13 +1355,13 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut= MSCAIO.parseXMLintoMSCA(absfilename);
-
-			if (aut==null)
-			{
-				JOptionPane.showMessageDialog(null,errorMsg,"Error!",JOptionPane.WARNING_MESSAGE);
+			MSCA aut;
+			try {
+				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (ParserConfigurationException|SAXException|IOException e1) {
+				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
 				return;
-			}	
+			};
 
 			long start = System.currentTimeMillis();
 
@@ -1418,6 +1418,8 @@ public class EditorMenuBar extends JMenuBar
 	{
 		if (!name.endsWith(".mxe")&&!name.endsWith(".data"))
 			name=name+".mxe";
+		if (!name.startsWith(lastDir))
+			name=lastDir+"\\"+name;
 		try
 		{	
 			mxGraph graph = editor.getGraphComponent().getGraph();
@@ -1425,7 +1427,7 @@ public class EditorMenuBar extends JMenuBar
 			//TODO I store, load, morph and store the file again, there should be a better method
 			// I do this way because I use Document to update the window
 			Document document = mxXmlUtils
-					.parseXml(mxUtils.readFile(lastDir+"\\"+name));									
+					.parseXml(mxUtils.readFile(name));									
 
 			mxCodec codec = new mxCodec(document);
 			mxGraphModel mgm = (mxGraphModel) codec.decode(
@@ -1440,21 +1442,9 @@ public class EditorMenuBar extends JMenuBar
 			codec = new mxCodec();
 			String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
 
-			mxUtils.writeFile(xml, lastDir+"\\"+name);
+			mxUtils.writeFile(xml, name);
 
-			document = mxXmlUtils
-					.parseXml(mxUtils.readFile(lastDir+"\\"+name));
-
-
-			codec = new mxCodec(document);
-			codec.decode(
-					document.getDocumentElement(),
-					graph.getModel());
-
-			editor.setCurrentFile(file);
-			editor.setModified(false);
-			editor.getUndoManager().clear();
-			editor.getGraphComponent().zoomAndCenter();
+			parseAndSet(name, editor, file);
 		}
 		catch (IOException ex)
 		{
@@ -1466,21 +1456,6 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.ERROR_MESSAGE);
 		}
 
-	}
-
-	private boolean checkAut(FMCATGUI editor)
-	{
-		try
-		{
-			editor.getCurrentFile().getName();
-			return false;
-
-		}
-		catch(Exception ex)
-		{
-			JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
-			return true;
-		}
 	}
 
 	private void parseAndSet(String absfilename, FMCATGUI editor, File file)
@@ -1511,6 +1486,21 @@ public class EditorMenuBar extends JMenuBar
 					JOptionPane.ERROR_MESSAGE);
 		}
 
+	}
+	
+	private boolean checkAut(FMCATGUI editor)
+	{
+		try
+		{
+			editor.getCurrentFile().getName();
+			return false;
+
+		}
+		catch(Exception ex)
+		{
+			JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
 	}
 
 }

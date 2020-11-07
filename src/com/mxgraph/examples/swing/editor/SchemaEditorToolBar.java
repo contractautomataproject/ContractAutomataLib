@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
+
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
@@ -16,8 +17,8 @@ import com.mxgraph.examples.swing.editor.EditorActions.SaveAction;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraphView;
 
 public class SchemaEditorToolBar extends JToolBar
@@ -84,7 +85,7 @@ public class SchemaEditorToolBar extends JToolBar
 */
 		final mxGraphView view = editor.getGraphComponent().getGraph()
 				.getView();
-		final JComboBox<?> zoomCombo = new JComboBox(new Object[] { "400%",
+		final JComboBox<?> zoomCombo = new JComboBox<>(new Object[] { "400%",
 				"200%", "150%", "100%", "75%", "50%", mxResources.get("page"),
 				mxResources.get("width"), mxResources.get("actualSize") });
 		zoomCombo.setEditable(true);

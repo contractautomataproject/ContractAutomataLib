@@ -288,10 +288,12 @@ public class MSCAIO {
 	 * 
 	 * @param filename
 	 * @return
+	 * @throws ParserConfigurationException 
+	 * @throws SAXException 
+	 * @throws IOException 
 	 */
-	public static MSCA parseXMLintoMSCA(String filename)
+	public static MSCA parseXMLintoMSCA(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
-		try {
 			File inputFile = new File(filename);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -311,8 +313,11 @@ public class MSCAIO {
 					Element eElement = (Element) nNode;
 					if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
 					{
+           			 	Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
 						int[] st=getArray(eElement.getAttribute("value"));
-						CAState castate=new CAState(st,0,0, //x,y
+						CAState castate=new CAState(st,
+								geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
+								geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0,//useful when not morphing (e.g. adding handles to edges)
 								Arrays.equals(st, new int[st.length]), //initial
 								eElement.getAttribute("style").contains("terminate.png"));//final
 						if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
@@ -359,60 +364,7 @@ public class MSCAIO {
 					transitions,
 					castates);
 			return aut;
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		//TODO  improve exception handling
-		
-		return null;
 	}
-
-	/**
-	 * this method is used when importing from XML, where no description of  principal final states is given 
-	 * and it is reconstructed
-	 * 
-	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
-	 * 
-	 * @param all final states of the composed automaton
-	 * @return the final states of each principal
-	 */
-	private static int[][] principalsFinalStates(List<int[]> states)
-	{
-		if (states.size()<=0)
-			return null;
-		int rank=states.get(0).length;
-		int[] count=new int[rank];
-		int[][] pfs=new int[rank][states.size()];
-
-		for (int ind=0; ind<pfs.length;ind++)
-			for (int ind2=0; ind2<pfs[ind].length;ind2++)
-				pfs[ind][ind2] = -1;    //the check MSCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
-
-		for (int j=0;j<rank;j++)
-		{
-			pfs[j][0]=states.get(0)[j];
-			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
-		}
-		for (int i=1;i<states.size();i++)
-		{
-			for (int j=0;j<rank;j++)
-			{
-				if (MSCAUtils.getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
-				{
-					pfs[j][count[j]]=states.get(i)[j];
-					count[j]++;
-				}
-			}
-		}
-		for (int j=0;j<rank;j++)
-			pfs[j]=MSCAUtils.removeTailsNull(pfs[j], count[j]);
-		return pfs;
-	}
-
 
 
 	/**
@@ -493,7 +445,7 @@ public class MSCAIO {
 
 		if (type==MSCATransition.action.URGENT)
 			style.setValue("straight;strokeColor=#FF0000");
-		else if (type==MSCATransition.action.GREEDY)
+		else if (type==MSCATransition.action.GREEDY)//TODO remove Greedy
 			style.setValue("straight;strokeColor=#FFA500");
 		else if (type==MSCATransition.action.LAZY)
 			style.setValue("straight;strokeColor=#00FF00");
@@ -662,6 +614,49 @@ public class MSCAIO {
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
+	
+	/**
+	 * this method is used when importing from XML, where no description of  principal final states is given 
+	 * and it is reconstructed
+	 * 
+	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
+	 * 
+	 * @param all final states of the composed automaton
+	 * @return the final states of each principal
+	 */
+	private static int[][] principalsFinalStates(List<int[]> states)
+	{
+		if (states.size()<=0)
+			return null;
+		int rank=states.get(0).length;
+		int[] count=new int[rank];
+		int[][] pfs=new int[rank][states.size()];
+
+		for (int ind=0; ind<pfs.length;ind++)
+			for (int ind2=0; ind2<pfs[ind].length;ind2++)
+				pfs[ind][ind2] = -1;    //the check MSCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
+
+		for (int j=0;j<rank;j++)
+		{
+			pfs[j][0]=states.get(0)[j];
+			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
+		}
+		for (int i=1;i<states.size();i++)
+		{
+			for (int j=0;j<rank;j++)
+			{
+				if (MSCAUtils.getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
+				{
+					pfs[j][count[j]]=states.get(i)[j];
+					count[j]++;
+				}
+			}
+		}
+		for (int j=0;j<rank;j++)
+			pfs[j]=MSCAUtils.removeTailsNull(pfs[j], count[j]);
+		return pfs;
+	}
+
 
 	private static String[] getArrayString(String arr)
 	{
