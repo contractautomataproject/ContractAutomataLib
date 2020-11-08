@@ -89,7 +89,7 @@ public class MSCAIO {
 	 * @param the name of the file
 	 * @return	the CA loaded
 	 */
-	private static MSCA load(String fileName)
+	public static MSCA load(String fileName)
 	{
 		try
 		{

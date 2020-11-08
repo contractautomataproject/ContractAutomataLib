@@ -38,10 +38,11 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
+import MSCA.MSCA;
+
 public class FMCATGUI extends BasicGraphEditor
 {
 	
-	private ProductFrame pf;
 	/**
 	 * 
 	 */
@@ -59,12 +60,15 @@ public class FMCATGUI extends BasicGraphEditor
 	 * connections. This is currently unused.
 	 */
 	public static URL url = null;
+	
+	public MSCA lastaut = null;
+	
+	private ProductFrame pf=null;
 
 
 	public FMCATGUI()
 	{
 		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
-		pf=null;
 	}
 
 	public void setProductFrame(ProductFrame pf)

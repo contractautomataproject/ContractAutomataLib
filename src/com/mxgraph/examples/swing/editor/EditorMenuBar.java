@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -50,15 +51,12 @@ import FMCA.Product;
 import MSCA.MSCA;
 import MSCA.MSCAIO;
 
-//TODO refactor class
 
 public class EditorMenuBar extends JMenuBar 
 {
 	String lastDir;
 
-	MSCA lastaut; //TODO it should be used to avoid to import the automaton from its xml description at each operation. 
-	//FIXME value never read if private
-
+	
 	final String errorMsg = "States or labels contain errors.\n "
 			+ 		"Please, check that each state has following format:\n"
 			+		"[INTEGER, ..., INTEGER]\n" 
@@ -85,11 +83,9 @@ public class EditorMenuBar extends JMenuBar
 		graphfinal.setCellStyles("width","50.0");
 		graphfinal.setCellStyles("heigth","50.0");
 
-		JMenu menu = null;
-		JMenu submenu = null;
 
 		// Creates the file menu
-		menu = add(new JMenu(mxResources.get("file")));
+		JMenu menu = add(new JMenu(mxResources.get("file")));
 
 		menu.add(editor.bind(mxResources.get("new"), new NewAction(), "/com/mxgraph/examples/swing/images/new.gif"));
 		menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(), "/com/mxgraph/examples/swing/images/open.gif"));
@@ -112,63 +108,42 @@ public class EditorMenuBar extends JMenuBar
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			if (graph == null) return;
 
-			//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
-			//String wd=System.getProperty("user.dir");
-
-			File f=editor.getCurrentFile();
-			String wd;
-			if (f!=null)
-				wd=editor.getCurrentFile().getParent();
-			else
-				wd=System.getProperty("user.dir");
-			JFileChooser fc = new JFileChooser(wd);
+			JFileChooser fc = new JFileChooser(
+					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
 			// Adds file filter for supported file format
-			DefaultFileFilter defaultFilter = 
-					new DefaultFileFilter(
-							".data", "")//mxResources.get("allSupportedFormats")
-					//+ " (.mxe, .png, .vdx)")
-					{
-				public boolean accept(File file)
-				{
-					String lcase = file.getName().toLowerCase();
-					return super.accept(file)
-							|| lcase.endsWith(".data");
-				}
-					};
-					fc.addChoosableFileFilter(defaultFilter);
-					fc.addChoosableFileFilter(new DefaultFileFilter(".data",
-							"FMCA description " + mxResources.get("file")
-							+ " (.data)"));
+			setDefaultFilter(fc,".data","FMCA description",null);
 
-					fc.setFileFilter(defaultFilter);
-					int rc = fc.showDialog(null,
-							mxResources.get("openFile"));
-					if (rc == JFileChooser.APPROVE_OPTION)
-					{
-						lastDir = fc.getSelectedFile().getParent();										
-						File file=MSCAIO.loadMSCAAndWriteIntoXML(fc.getSelectedFile().toString());
-						loadMorphStore(file.getName(), editor, file);
-					}
+			int rc = fc.showDialog(null,
+					mxResources.get("openFile"));
+			if (rc == JFileChooser.APPROVE_OPTION)
+			{
+				lastDir = fc.getSelectedFile().getParent();	
+				MSCA aut=MSCAIO.load(fc.getSelectedFile().toString());
+				File file=MSCAIO.convertMSCAintoXML(fc.getSelectedFile().toString(),aut);
+				editor.lastaut=aut;
+				loadMorphStore(file.getName(), editor, file);
+			}
 		});
 
 		item = menu.add(new JMenuItem("Export .data"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
 			String filename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(filename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
+//			try {
+//				aut = MSCAIO.parseXMLintoMSCA(filename);
+//				editor.lastaut=aut;
+//			} catch (ParserConfigurationException|SAXException|IOException e1) {
+//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+//				return;
+//			}
 
 			try {
 				MSCAIO.printToFile(filename,aut);
-				JOptionPane.showMessageDialog(null,"The automaton has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The automaton has been stored with filename "+filename+".data","Success!",JOptionPane.PLAIN_MESSAGE);
 			} catch (FileNotFoundException e1) {
-				JOptionPane.showMessageDialog(null,"File not found","Error!",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"File not found"+e1.toString(),mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 			}	
 
 
@@ -203,7 +178,21 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(editor.bind(mxResources.get("selectAll"), mxGraphActions.getSelectAllAction()));
 		menu.add(editor.bind(mxResources.get("selectNone"), mxGraphActions.getSelectNoneAction()));
 
-		//menu.addSeparator();
+		menu.addSeparator();
+
+		item = menu.add(new JMenuItem("Add handles to edges"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+
+			lastDir=editor.getCurrentFile().getParent();
+			String absfilename =editor.getCurrentFile().getAbsolutePath();
+			MSCA aut=editor.lastaut;
+			File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
+			parseAndSet(absfilename, editor,file);
+		});
+
+
 
 		//menu.add(editor.bind(mxResources.get("warning"), new WarningAction()));
 		//menu.add(editor.bind(mxResources.get("edit"), mxGraphActions.getEditAction()));
@@ -212,7 +201,7 @@ public class EditorMenuBar extends JMenuBar
 		menu = add(new JMenu(mxResources.get("view")));
 
 
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("zoom")));
+		JMenu submenu = (JMenu) menu.add(new JMenu(mxResources.get("zoom")));
 
 		submenu.add(editor.bind("400%", new ScaleAction(4)));
 		submenu.add(editor.bind("200%", new ScaleAction(2)));
@@ -234,27 +223,6 @@ public class EditorMenuBar extends JMenuBar
 		menu = add(new JMenu("FMCA"));
 
 
-		item = menu.add(new JMenuItem("Add handles to edges"));//mxResources.get("aboutGraphEditor")));
-		item.addActionListener(e->
-		{
-			if (checkAut(editor)) return;
-
-			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
-			lastaut=aut;
-			parseAndSet(absfilename, editor,file);
-		});
-
-
-		menu.addSeparator();
 
 		item = menu.add(new JMenuItem("Composition"));
 		item.addActionListener(e->
@@ -263,130 +231,74 @@ public class EditorMenuBar extends JMenuBar
 
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			if (graph == null) return;
+	
+			JFileChooser fc = new JFileChooser(
+					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
-			//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
+			setDefaultFilter(fc,".mxe","FMCA Description",null);
 
-			File f=editor.getCurrentFile();
-			String wd;
-			if (f!=null)
-				wd=editor.getCurrentFile().getParent();
-			else
-				wd=System.getProperty("user.dir");
+			fc.setDialogTitle("Select an FMCA to be composed");
 
-			JFileChooser fc = new JFileChooser(wd);
+			List<MSCA> aut = new ArrayList<>(3);
+			List<String> names= new ArrayList<>(3);
 
-			// Adds file filter for supported file format
-			DefaultFileFilter defaultFilter = new DefaultFileFilter(
-					".mxe", "")//mxResources.get("allSupportedFormats")
-					//+ " (.mxe, .png, .vdx)")
-					{
-				public boolean accept(File file)
+			boolean lastIteration=false;
+			int rc = fc.showDialog(editor.getGraphComponent(),mxResources.get("openFile"));
+			while (true)
+			{
+				lastDir = fc.getSelectedFile().getParent();
+				try
 				{
-					String lcase = file.getName().toLowerCase();
-					return super.accept(file)
-							|| lcase.endsWith(".mxe");
-				}
-					};
-
-					fc.addChoosableFileFilter(defaultFilter);
-
-					fc.addChoosableFileFilter(new DefaultFileFilter(".mxe",
-							"FMCA description " + mxResources.get("file")
-							+ " (.mxe)"));
-
-
-					fc.setFileFilter(defaultFilter);
-
-					fc.setDialogTitle("Select an FMCA to be composed");
-
-					MSCA[] aut = new MSCA[50]; //TODO upperbound to 50
-					String[] names= new String[50];
-					int fmcacount = 0;
-
-					int rc = fc.showDialog(null,
-							mxResources.get("openFile"));
-
-					boolean done=false;
-					do 
-					{
-						lastDir = fc.getSelectedFile().getParent();
-						try
-						{
-							String fileName =fc.getSelectedFile().toString();
-							aut[fmcacount]=MSCAIO.parseXMLintoMSCA(fileName);
-							names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
-							fmcacount++;
-							rc = fc.showDialog(null,
-									mxResources.get("openFile"));
-						}
-						catch (Exception ex)
-						{
-							ex.printStackTrace();
-							JOptionPane.showMessageDialog(
-									editor.getGraphComponent(),
-									ex.toString(),
-									mxResources.get("error"),
-									JOptionPane.ERROR_MESSAGE);
-						}
-						done=(rc == JFileChooser.APPROVE_OPTION);
-						if (done)
-						{
-							int reply=JOptionPane.showOptionDialog(null, 
-									"", 
-									"Composition", 
-									JOptionPane.YES_NO_OPTION, 
-									JOptionPane.INFORMATION_MESSAGE, 
-									null, 
-									new String[]{"Compute Composition", "Load other automata"}, 
-									"default");
-							//int reply = JOptionPane.showConfirmDialog(null, "Select YES for computing the composition or NO for selecting other FMCA to be composed", "Composition", JOptionPane.YES_NO_OPTION);
-							done= (reply == JOptionPane.NO_OPTION);
-						}
-					} while (done);
-
 					String fileName =fc.getSelectedFile().toString();
-					
-					try {
-						aut[fmcacount]= MSCAIO.parseXMLintoMSCA(fileName);
-					} catch (ParserConfigurationException|SAXException|IOException e1) {
-						JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					
-					names[fmcacount]=fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."));
-					fmcacount++;
-					String compositionname="(";
-					MSCA[] autWithoutTailsNull = new MSCA[fmcacount];
-					for (int i=0;i<fmcacount;i++)
-					{
-						autWithoutTailsNull[i]=aut[i];
-						compositionname+=names[i];
-						if (!(i==(fmcacount-1)))
-							compositionname+="x";
-					}
-					compositionname+=")";
-					long start = System.currentTimeMillis();
-					MSCA composition = (MSCA) MSCA.composition(List.of(autWithoutTailsNull),t->t.isRequest()
-							,100);	
-					//MSCA composition = (MSCA) MSCAUtil.composition(autWithoutTailsNull);	
-					long elapsedTime = System.currentTimeMillis() - start;
+					names.add(fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf(".")));
+					aut.add(MSCAIO.parseXMLintoMSCA(fileName));
+				}
+				catch (ParserConfigurationException|SAXException|IOException e1) {
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				if (lastIteration)
+					break;
 
-					if (composition==null)
-					{
-						JOptionPane.showMessageDialog(null,"Error","Error",JOptionPane.WARNING_MESSAGE);
-						return;
-					}
+				rc = fc.showDialog(editor.getGraphComponent(),mxResources.get("openFile"));
+				if (rc == JFileChooser.APPROVE_OPTION)
+				{
+					int reply=JOptionPane.showOptionDialog(editor.getGraphComponent(), 
+							"", 
+							"Composition", 
+							JOptionPane.YES_NO_OPTION, 
+							JOptionPane.INFORMATION_MESSAGE, 
+							null, 
+							new String[]{"Compute Composition", "Load other automata"}, 
+							"default");
+					lastIteration=(reply != JOptionPane.NO_OPTION);
+				}
+				else
+					lastIteration=true;
+			}
 
-					File file = MSCAIO.convertMSCAintoXML(lastDir+"\\"+compositionname,composition);
-					String message = "The composition has been stored with filename "+lastDir+"\\"+compositionname
-							+"\n Elapsed time : "+elapsedTime + " milliseconds"
-							+"\n Number of states : "+composition.getNumStates();
-					;
-					JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+			
+			long start = System.currentTimeMillis();
+			MSCA composition = (MSCA) MSCA.composition(aut,t->t.isRequest(),100);	
+			long elapsedTime = System.currentTimeMillis() - start;
 
+			if (composition==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"Error",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			editor.lastaut=composition;
+			String compositionname="("+	names.stream().reduce((x,y)->x+"x"+y).orElse("")+")";
 
-					//loading the file
-					this.loadMorphStore(compositionname, editor, file);
+			File file = MSCAIO.convertMSCAintoXML(lastDir+"\\"+compositionname,composition);
+			String message = "The composition has been stored with filename "+lastDir+"\\"+compositionname
+					+"\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+composition.getNumStates();
+			;
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
+			
+			this.loadMorphStore(compositionname, editor, file);
 
 		});
 
@@ -427,72 +339,29 @@ public class EditorMenuBar extends JMenuBar
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			if (graph == null) return;
 
-			//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
-			//String wd=System.getProperty("user.dir");
 			ProductFrame pf=editor.getProductFrame();
 			if (pf!=null)
 			{
 				editor.setProductFrame(null);
 				pf.dispose();
 			}
-
-			File f=editor.getCurrentFile();
-			String wd;
-			if (f!=null)
-				wd=editor.getCurrentFile().getParent();
-			else
-				wd=System.getProperty("user.dir");
-			JFileChooser fc = new JFileChooser(wd);
-
-			// Adds file filter for supported file format
-			DefaultFileFilter defaultFilter = new DefaultFileFilter(
-					".prod", "")//mxResources.get("allSupportedFormats")
-					//+ " (.mxe, .png, .vdx)")
-					{
-
-				public boolean accept(File file)
-				{
-					String lcase = file.getName().toLowerCase();
-
-					return super.accept(file)
-							|| lcase.endsWith(".prod");
-				}
-					};
-					fc.addChoosableFileFilter(defaultFilter);
-
-					fc.addChoosableFileFilter(new DefaultFileFilter(".prod",
-							"Products List " + mxResources.get("file")
-							+ " (.prod)"));
-
-					fc.setFileFilter(defaultFilter);
-
-					int rc = fc.showDialog(null,
-							mxResources.get("openFile"));
-
-					if (rc == JFileChooser.APPROVE_OPTION)
-					{
-						lastDir = fc.getSelectedFile().getParent();
-
-						try
-						{
-							String fileName =fc.getSelectedFile().toString();
-
-							Family fam=new Family(fileName);
-							pf= new ProductFrame(fam, (JPanel)editor);
-							editor.setProductFrame(pf);
+			
+			JFileChooser fc = new JFileChooser(
+					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
 
-						}
-						catch (Exception ex)
-						{
-							ex.printStackTrace();
-							JOptionPane.showMessageDialog(
-									editor.getGraphComponent(),
-									ex.toString(),
-									mxResources.get("error"),
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
+			setDefaultFilter(fc,".prod","Products list",null);
+
+			int rc = fc.showDialog(null,mxResources.get("openFile"));
+
+			if (rc == JFileChooser.APPROVE_OPTION)
+			{
+				lastDir = fc.getSelectedFile().getParent();
+				String fileName =fc.getSelectedFile().toString();
+				Family fam=new Family(fileName);
+				pf= new ProductFrame(fam, (JPanel)editor);
+				editor.setProductFrame(pf);
+			}
 
 		});
 
@@ -503,52 +372,29 @@ public class EditorMenuBar extends JMenuBar
 			if (editor != null)
 			{
 				mxGraphComponent graphComponent = editor.getGraphComponent();
-				//mxGraph graph = graphComponent.getGraph();
 				ProductFrame pf=editor.getProductFrame();
 				if (pf==null)
 				{
-					JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				FileFilter selectedFilter = null;
-				DefaultFileFilter prodFilter = new DefaultFileFilter(".prod",
-						"Family");
-				String filename = null;
-				//boolean dialogShown = false;
-
-				String wd;
-
-				if (lastDir != null)
-				{
-					wd = lastDir;
-				}
-				else if (editor.getCurrentFile() != null)
-				{
-					wd = editor.getCurrentFile().getParent();
-				}
-				else
-				{
-					wd = System.getProperty("user.dir");
-				}
-
-				JFileChooser fc = new JFileChooser(wd);
+				DefaultFileFilter prodFilter = new DefaultFileFilter(".prod","Family");
+			
+				JFileChooser fc = new JFileChooser(
+						(lastDir != null)?lastDir:(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent():
+							System.getProperty("user.dir"));
 
 				// Adds the default file format
 				FileFilter defaultFilter = prodFilter;
 				fc.addChoosableFileFilter(defaultFilter);
 
 				int rc = fc.showDialog(null, mxResources.get("save"));
-				//dialogShown = true;
-
 				if (rc != JFileChooser.APPROVE_OPTION)
-				{
 					return;
-				}
 
 				lastDir = fc.getSelectedFile().getParent();
-
-
-				filename = fc.getSelectedFile().getAbsolutePath();
+				String filename = fc.getSelectedFile().getAbsolutePath();
 				selectedFilter = fc.getFileFilter();
 
 				if (selectedFilter instanceof DefaultFileFilter)
@@ -557,17 +403,14 @@ public class EditorMenuBar extends JMenuBar
 							.getExtension();
 
 					if (!filename.toLowerCase().endsWith(ext))
-					{
 						filename += ext;
-					}
 				}
 
 				if (new File(filename).exists()
 						&& JOptionPane.showConfirmDialog(graphComponent,
 								mxResources.get("overwriteExistingFile")) != JOptionPane.YES_OPTION)
-				{
 					return;
-				}
+				
 
 				try
 				{
@@ -596,8 +439,6 @@ public class EditorMenuBar extends JMenuBar
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			if (graph == null) return;
 
-			//String wd = (lastDir != null) ? lastDir : System.getProperty("user.dir");
-			//String wd=System.getProperty("user.dir");
 			ProductFrame pf=editor.getProductFrame();
 			if (pf!=null)
 			{
@@ -605,64 +446,41 @@ public class EditorMenuBar extends JMenuBar
 				pf.dispose();
 			}
 
-			File f=editor.getCurrentFile();
-			String wd;
-			if (f!=null)
-				wd=editor.getCurrentFile().getParent();
-			else
-				wd=System.getProperty("user.dir");
-			JFileChooser fc = new JFileChooser(wd);
+			JFileChooser fc = new JFileChooser(
+					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
 			// Adds file filter for supported file format
-			DefaultFileFilter defaultFilter = new DefaultFileFilter(
-					".xml", "")//mxResources.get("allSupportedFormats")
-					//+ " (.mxe, .png, .vdx)")
-					{
-				public boolean accept(File file)
+			setDefaultFilter(fc,".xml"," Feature Model ", ".cfr.data");
+
+			int rc = fc.showDialog(null,
+					mxResources.get("openFile"));
+
+			if (rc == JFileChooser.APPROVE_OPTION)
+			{
+				lastDir = fc.getSelectedFile().getParent();
+				try
 				{
-					String lcase = file.getName().toLowerCase();
+					String fileName =fc.getSelectedFile().toString();
+					Product[] pr=Family.importFamily(fc.getSelectedFile().getPath(),fileName);
+					Family fam=new Family(pr);
+					pf= new ProductFrame(fam, (JPanel)editor);
+					editor.setProductFrame(pf);
+					pf.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+					//pf.setAlwaysOnTop(true);
+					pf.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+					pf.setVisible(true);
 
-					return super.accept(file)
-							|| lcase.endsWith(".cfr.data");
 				}
-					};
-					fc.addChoosableFileFilter(defaultFilter);
-
-					fc.addChoosableFileFilter(new DefaultFileFilter(".xml",
-							" Feature Model " + mxResources.get("file")
-							+ " (.xml)"));
-
-					fc.setFileFilter(defaultFilter);
-
-					int rc = fc.showDialog(null,
-							mxResources.get("openFile"));
-
-					if (rc == JFileChooser.APPROVE_OPTION)
-					{
-						lastDir = fc.getSelectedFile().getParent();
-						try
-						{
-							String fileName =fc.getSelectedFile().toString();
-							Product[] pr=Family.importFamily(fc.getSelectedFile().getPath(),fileName);
-							Family fam=new Family(pr);
-							pf= new ProductFrame(fam, (JPanel)editor);
-							editor.setProductFrame(pf);
-							pf.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-							//pf.setAlwaysOnTop(true);
-							pf.setLocation(editor.getX() + editor.getWidth(), editor.getY());
-							pf.setVisible(true);
-
-						}
-						catch (Exception ex)
-						{
-							ex.printStackTrace();
-							JOptionPane.showMessageDialog(
-									editor.getGraphComponent(),
-									ex.toString(),
-									mxResources.get("error"),
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(
+							editor.getGraphComponent(),
+							ex.toString(),
+							mxResources.get("error"),
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		});
 
 		menu.addSeparator();
@@ -673,7 +491,7 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -685,7 +503,7 @@ public class EditorMenuBar extends JMenuBar
 			Product[] cp=fam.subsetOfProductsFromIndex(pid);
 			if (cp==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Maximal Products","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Maximal Products",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -694,7 +512,7 @@ public class EditorMenuBar extends JMenuBar
 			for (int i=0;i<cp.length;i++)
 				message+= pid[i]+" : \n"+cp[i].toString()+"\n";
 
-			message += "Elapsed time : "+elapsedTime;
+			message += "Elapsed time : "+elapsedTime+ "milliseconds";
 
 			JTextArea textArea = new JTextArea(200,200);
 			textArea.setText(message);
@@ -720,20 +538,13 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
 
 			long start = System.currentTimeMillis();
 			int[] vp= pf.getFamily().validProducts(aut);
@@ -743,7 +554,7 @@ public class EditorMenuBar extends JMenuBar
 
 			if (vp==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Valid Products","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Valid Products",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -753,7 +564,7 @@ public class EditorMenuBar extends JMenuBar
 			for (int i=0;i<vp.length;i++)
 				message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
 
-			message += "Elapsed Time " + elapsedTime;
+			message += "Elapsed Time " + elapsedTime + "milliseconds";
 			JTextArea textArea = new JTextArea(200,200);
 			textArea.setText(message);
 			textArea.setEditable(true);
@@ -779,37 +590,27 @@ public class EditorMenuBar extends JMenuBar
 
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
 
 			int[] vp= pf.getFamily().validProducts(aut);
 			if (vp==null || vp.length==0)
 			{
-				JOptionPane.showMessageDialog(null,"No valid products!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No valid products!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 			pf=editor.getProductFrame();
 			if (pf!=null)
-			{
-				editor.setProductFrame(null);
 				pf.dispose();
-			}
-
+		
 			pf= new ProductFrame(new Family(vpp), (JPanel)editor);
-			editor.setProductFrame(pf);  //FIXME it looks like i set ProductFrame twice
+			editor.setProductFrame(pf);  
 		});
 
 		item = menu.add(new JMenuItem("Canonical Products"));
@@ -820,20 +621,13 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
 
 			Family fam= editor.getProductFrame().getFamily();
 
@@ -845,7 +639,7 @@ public class EditorMenuBar extends JMenuBar
 
 			if (cp==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Canonical Products"+"\n Elapsed time : "+elapsedTime,"Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Canonical Products"+"\n Elapsed time : "+elapsedTime+ "milliseconds",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -854,7 +648,7 @@ public class EditorMenuBar extends JMenuBar
 			for (int i=0;i<cp.length;i++)
 				message+= ind[0][i]+" : \n"+cp[i].toString()+"\n";
 
-			message += "Elapsed time : "+elapsedTime;
+			message += "Elapsed time : "+elapsedTime+ "milliseconds";
 			JTextArea textArea = new JTextArea(200,200);
 			textArea.setText(message);
 			textArea.setEditable(true);
@@ -877,19 +671,12 @@ public class EditorMenuBar extends JMenuBar
 			if (checkAut(editor)) return;
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
+			MSCA aut=editor.lastaut;
+
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -900,7 +687,7 @@ public class EditorMenuBar extends JMenuBar
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 			if (vp==null)
 			{			
-				JOptionPane.showMessageDialog(null,"No Products With Non-empty MPC"+ "\nElapsed time : "+elapsedTime,"Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Products With Non-empty MPC"+ "\nElapsed time : "+elapsedTime+ "milliseconds","",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
@@ -909,7 +696,7 @@ public class EditorMenuBar extends JMenuBar
 			for (int i=0;i<vp.length;i++)
 				message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
 
-			message += "Elapsed time : " + elapsedTime;
+			message += "Elapsed time : " + elapsedTime+ "milliseconds";
 			JTextArea textArea = new JTextArea(200,200);
 			textArea.setText(message);
 			textArea.setEditable(true);
@@ -923,8 +710,8 @@ public class EditorMenuBar extends JMenuBar
 
 			jd.setSize(500,500);
 			jd.setLocationRelativeTo(null);
-			// JOptionPane.showMessageDialog(null, jd);
-			//JOptionPane.showMessageDialog(null,message,"Valid Products",JOptionPane.PLAIN_MESSAGE);
+			// JOptionPane.showMessageDialog(editor.getGraphComponent(), jd);
+			//JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Valid Products",JOptionPane.PLAIN_MESSAGE);
 
 		});
 
@@ -937,21 +724,14 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
+
+			MSCA aut=editor.lastaut;
+
 			int[] vp= pf.getFamily().productsWithNonEmptyMPC(aut);
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 			pf=editor.getProductFrame();
@@ -972,7 +752,7 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			//aut.printToFile(filename);
@@ -1018,7 +798,7 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -1067,20 +847,14 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
 
+			MSCA aut=editor.lastaut;
+			
 			Family f=pf.getFamily();
 
 			long start = System.currentTimeMillis();
@@ -1088,13 +862,13 @@ public class EditorMenuBar extends JMenuBar
 			long elapsedTime = System.currentTimeMillis() - start;
 
 
-			String K="K_family_"+filename;
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
+			String K="K_family_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 
 			String message = "The mpc has been stored with filename "+lastDir+"\\"
@@ -1103,8 +877,9 @@ public class EditorMenuBar extends JMenuBar
 					+ "\n Number of states : "+controller.getNumStates();
 			;
 
-			JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.WARNING_MESSAGE);
 
+			editor.lastaut=controller;
 			loadMorphStore(K,editor,file);
 		});
 
@@ -1116,22 +891,14 @@ public class EditorMenuBar extends JMenuBar
 			String filename=editor.getCurrentFile().getName();
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-
+			MSCA aut=editor.lastaut;
+			
 			String S= (String) JOptionPane.showInputDialog(null, 
 					"Insert Required features separated by colon",
 					JOptionPane.PLAIN_MESSAGE);
 			if (S==null)
 				return;
-			String[] R;
-			R=S.split(",");
+			String[] R=S.split(",");
 
 			if (R[0].equals(""))
 				R=new String[0];
@@ -1150,22 +917,13 @@ public class EditorMenuBar extends JMenuBar
 			MSCA controller=null;
 			FMCA faut= new FMCA(aut);
 			long elapsedTime;
-			if (p!=null)
-			{
-				long start = System.currentTimeMillis();
-				controller= faut.orchestration(p);
-				elapsedTime = System.currentTimeMillis() - start;
-			}
-			else
-			{
-				long start = System.currentTimeMillis();
-				controller= aut.orchestration();
-				elapsedTime = System.currentTimeMillis() - start;
-			}
+			long start = System.currentTimeMillis();
+			controller= (p!=null)?faut.orchestration(p):aut.orchestration();
+			elapsedTime = System.currentTimeMillis() - start;
 
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
@@ -1175,26 +933,10 @@ public class EditorMenuBar extends JMenuBar
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
 					+"\n Number of states : "+controller.getNumStates();
 
-			JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
-			lastaut=controller;
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.WARNING_MESSAGE);
+			editor.lastaut=controller;
 			parseAndSet(lastDir+"//"+K, editor, file);
 
-			/*
-			 * try {
-			 * 
-			 * Document document = mxXmlUtils .parseXml(mxUtils.readFile(lastDir+"//"+K));
-			 * 
-			 * mxCodec codec = new mxCodec(document); codec.decode(
-			 * document.getDocumentElement(), graphfinal.getModel());
-			 * editor.setCurrentFile(file);
-			 * 
-			 * editor.setModified(false); editor.getUndoManager().clear();
-			 * editor.getGraphComponent().zoomAndCenter();
-			 * 
-			 * } catch (IOException ex) { ex.printStackTrace();
-			 * JOptionPane.showMessageDialog( editor.getGraphComponent(), ex.toString(),
-			 * mxResources.get("error"), JOptionPane.ERROR_MESSAGE); }
-			 */
 		});
 
 		item = menu.add(new JMenuItem("Orchestration of a Product (product id)"));//mxResources.get("aboutGraphEditor")));
@@ -1204,28 +946,20 @@ public class EditorMenuBar extends JMenuBar
 			String filename=editor.getCurrentFile().getName();
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
 
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
 
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			Family f=pf.getFamily();
-
 			FMCA faut= new FMCA(aut);
 
-			String S= (String) JOptionPane.showInputDialog(null, 
+			String S= (String) JOptionPane.showInputDialog(editor.getGraphComponent(), 
 					"Insert Product id",
 					JOptionPane.PLAIN_MESSAGE);
 			if (S==null)
@@ -1236,34 +970,23 @@ public class EditorMenuBar extends JMenuBar
 			MSCA controller = faut.orchestration(p);
 			long elapsedTime = System.currentTimeMillis() - start;
 
-			File file=null;
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
-			file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
+			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 			String message = "The mpc has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
 					+"\n Number of states : "+controller.getNumStates();
 
-			JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
 
-			lastaut=controller;
+			editor.lastaut=controller;
 			parseAndSet(lastDir+"//"+K, editor, file);
-			/*
-			 * // try // { // Document document = mxXmlUtils //
-			 * .parseXml(mxUtils.readFile(lastDir+"\\"+K)); // // mxCodec codec = new
-			 * mxCodec(document); // codec.decode( // document.getDocumentElement(), //
-			 * graphfinal.getModel()); // editor.setCurrentFile(file); // //
-			 * editor.setModified(false); // editor.getUndoManager().clear(); //
-			 * editor.getGraphComponent().zoomAndCenter(); // lastaut=controller; // } //
-			 * catch (IOException ex) // { // ex.printStackTrace(); //
-			 * JOptionPane.showMessageDialog( // editor.getGraphComponent(), //
-			 * ex.toString(), // mxResources.get("error"), // JOptionPane.ERROR_MESSAGE); //
-			 * }
-			 */		});
+					
+		});
 
 		menu.addSeparator();
 
@@ -1277,22 +1000,24 @@ public class EditorMenuBar extends JMenuBar
 			ProductFrame pf=editor.getProductFrame();
 			if (pf==null)
 			{
-				JOptionPane.showMessageDialog(null,"No Family loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
+//			
+//			String absfilename =editor.getCurrentFile().getAbsolutePath();
+//			MSCA aut;
+//			try {
+//				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+//			} catch (ParserConfigurationException|SAXException|IOException e1) {
+//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+//				return;
+//			}
 			Family f=pf.getFamily();
 
-			JOptionPane.showMessageDialog(null,"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
 
 			long start = System.currentTimeMillis();
 			int[][] vpdummy = new int[1][];
@@ -1300,16 +1025,18 @@ public class EditorMenuBar extends JMenuBar
 			int[] vp = vpdummy[0];
 			long elapsedTime = System.currentTimeMillis() - start;
 
-			File file=null;
+//			File file=null;
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(null,"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
 			String K="K_familyWithoutPO_"+filename;
+			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
+
 			String message = "The mpc has been stored with filename "+lastDir+"\\"+K;
 
 			message+= "\n" + vp.length + " Total Products With Non-empty MPC Found:\n";
@@ -1320,7 +1047,8 @@ public class EditorMenuBar extends JMenuBar
 					+"\n Number of states : "+controller.getNumStates();
 
 
-			JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.WARNING_MESSAGE);
+			editor.lastaut=controller;
 			loadMorphStore(K,editor,file);
 
 		});
@@ -1332,16 +1060,9 @@ public class EditorMenuBar extends JMenuBar
 			if (checkAut(editor)) return;
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			MSCA aut=editor.lastaut;
 
-			JOptionPane.showMessageDialog(null,aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
 
 		});
 
@@ -1354,14 +1075,7 @@ public class EditorMenuBar extends JMenuBar
 			String filename=editor.getCurrentFile().getName();
 
 			lastDir=editor.getCurrentFile().getParent();
-			String absfilename =editor.getCurrentFile().getAbsolutePath();
-			MSCA aut;
-			try {
-				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (ParserConfigurationException|SAXException|IOException e1) {
-				JOptionPane.showMessageDialog(null,errorMsg,"Error "+e1.getMessage(),JOptionPane.WARNING_MESSAGE);
-				return;
-			};
+			MSCA aut=editor.lastaut;
 
 			long start = System.currentTimeMillis();
 
@@ -1369,39 +1083,22 @@ public class EditorMenuBar extends JMenuBar
 
 			long elapsedTime = System.currentTimeMillis() - start;
 
-			File file=null;
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(null,"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
 					filename;
-			file= MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
+			File file= MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
 			String message = "The choreography has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
 					+"\n Number of states : "+controller.getNumStates();
 
-			JOptionPane.showMessageDialog(null,message,"Success!",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
 
-			lastaut=controller;
+			editor.lastaut=controller;
 			parseAndSet(lastDir+"//"+K, editor, file);
-
-			/*
-			 * try {
-			 * 
-			 * Document document = mxXmlUtils .parseXml(mxUtils.readFile(lastDir+"//"+K));
-			 * mxCodec codec = new mxCodec(document); codec.decode(
-			 * document.getDocumentElement(), graphfinal.getModel());
-			 * editor.setCurrentFile(file);
-			 * 
-			 * editor.setModified(false); editor.getUndoManager().clear();
-			 * editor.getGraphComponent().zoomAndCenter(); lastaut=controller; } catch
-			 * (IOException ex) { ex.printStackTrace(); JOptionPane.showMessageDialog(
-			 * editor.getGraphComponent(), ex.toString(), mxResources.get("error"),
-			 * JOptionPane.ERROR_MESSAGE); }
-			 */
-
 		});
 
 		// Creates the help menu
@@ -1487,7 +1184,7 @@ public class EditorMenuBar extends JMenuBar
 		}
 
 	}
-	
+
 	private boolean checkAut(FMCATGUI editor)
 	{
 		try
@@ -1498,9 +1195,33 @@ public class EditorMenuBar extends JMenuBar
 		}
 		catch(Exception ex)
 		{
-			JOptionPane.showMessageDialog(null,"No automaton loaded!","Empty",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),"No automaton loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
+	}
+
+	private DefaultFileFilter setDefaultFilter(JFileChooser fc,String type, String title, String type2) {
+		DefaultFileFilter defaultFilter = new DefaultFileFilter(type, "")//mxResources.get("allSupportedFormats")
+				//+ " (.mxe, .png, .vdx)")
+				{
+			public boolean accept(File file)
+			{
+				String lcase = file.getName().toLowerCase();
+				if (type2==null)
+					return super.accept(file)
+							|| lcase.endsWith(type);
+				else
+					return super.accept(file)
+							|| lcase.endsWith(type2);
+			}
+				};
+				fc.addChoosableFileFilter(defaultFilter);
+				fc.addChoosableFileFilter(new DefaultFileFilter(type,
+						title+" "+  mxResources.get("file")
+						+ " ("+type+")"));
+
+				fc.setFileFilter(defaultFilter);
+				return defaultFilter;
 	}
 
 }

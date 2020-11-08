@@ -37,10 +37,10 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-
-import MSCA.MSCAIO;
+import org.xml.sax.SAXException;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
@@ -67,6 +67,9 @@ import com.mxgraph.util.png.mxPngEncodeParam;
 import com.mxgraph.util.png.mxPngImageEncoder;
 import com.mxgraph.util.png.mxPngTextDecoder;
 import com.mxgraph.view.mxGraph;
+
+import FMCA.FMCATGUI;
+import MSCA.MSCAIO;
 
 /**
  *
@@ -1449,120 +1452,120 @@ public class EditorActions
 			}
 		}
 	}
-
-	/**
-	 * import automaton
-	 */
-	@SuppressWarnings("serial")
-	public static class ImportAction extends AbstractAction
-	{
-		/**
-		 * 
-		 */
-		protected String lastDir;
-
-		/**
-		 * 
-		 */
-		protected void resetEditor(BasicGraphEditor editor)
-		{
-			editor.setModified(false);
-			editor.getUndoManager().clear();
-			editor.getGraphComponent().zoomAndCenter();
-		}
-
-
-		/**
-		 * 
-		 */
-		public void actionPerformed(ActionEvent e)
-		{
-			BasicGraphEditor editor = getEditor(e);
-
-			if (editor != null)
-			{
-				if (!editor.isModified()
-						|| JOptionPane.showConfirmDialog(editor,
-								mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
-				{
-					mxGraph graph = editor.getGraphComponent().getGraph();
-
-					if (graph != null)
-					{
-						String wd = (lastDir != null) ? lastDir : System
-								.getProperty("user.dir");
-
-						JFileChooser fc = new JFileChooser(wd);
-
-						// Adds file filter for supported file format
-						DefaultFileFilter defaultFilter = new DefaultFileFilter(
-								".data", "")//mxResources.get("allSupportedFormats")
-										//+ " (.mxe, .png, .vdx)")
-						{
-
-							public boolean accept(File file)
-							{
-								String lcase = file.getName().toLowerCase();
-
-								return super.accept(file)
-										|| lcase.endsWith(".data");
-							}
-						};
-						fc.addChoosableFileFilter(defaultFilter);
-
-						fc.addChoosableFileFilter(new DefaultFileFilter(".data",
-								"FMCA description " + mxResources.get("file")
-										+ " (.data)"));
-
-						fc.setFileFilter(defaultFilter);
-
-						int rc = fc.showDialog(null,
-								mxResources.get("openFile"));
-
-						if (rc == JFileChooser.APPROVE_OPTION)
-						{
-							lastDir = fc.getSelectedFile().getParent();
-
-							try
-							{
-
-								String fileName =fc.getSelectedFile().toString();
-								
-								File file=MSCAIO.loadMSCAAndWriteIntoXML(fileName);
-								
-								fileName=file.getAbsolutePath();
-								
-									Document document = mxXmlUtils
-											.parseXml(mxUtils.readFile(fileName));
-													/*mxUtils.readFile(fc
-													.getSelectedFile()
-													.getAbsolutePath()));
-*/
-									mxCodec codec = new mxCodec(document);
-									codec.decode(
-											document.getDocumentElement(),
-											graph.getModel());
-									editor.setCurrentFile(file);
-
-									resetEditor(editor);
-							
-							}
-							catch (IOException ex)
-							{
-								ex.printStackTrace();
-								JOptionPane.showMessageDialog(
-										editor.getGraphComponent(),
-										ex.toString(),
-										mxResources.get("error"),
-										JOptionPane.ERROR_MESSAGE);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
+//
+//	/**
+//	 * import automaton
+//	 */
+//	@SuppressWarnings("serial")
+//	public static class ImportAction extends AbstractAction
+//	{
+//		/**		
+//		 * 
+//		 */
+//		protected String lastDir;
+//
+//		/**
+//		 * 
+//		 */
+//		protected void resetEditor(BasicGraphEditor editor)
+//		{
+//			editor.setModified(false);
+//			editor.getUndoManager().clear();
+//			editor.getGraphComponent().zoomAndCenter();
+//		}
+//
+//
+//		/**
+//		 * 
+//		 */
+//		public void actionPerformed(ActionEvent e)
+//		{
+//			BasicGraphEditor editor = getEditor(e);
+//
+//			if (editor != null)
+//			{
+//				if (!editor.isModified()
+//						|| JOptionPane.showConfirmDialog(editor,
+//								mxResources.get("loseChanges")) == JOptionPane.YES_OPTION)
+//				{
+//					mxGraph graph = editor.getGraphComponent().getGraph();
+//
+//					if (graph != null)
+//					{
+//						String wd = (lastDir != null) ? lastDir : System
+//								.getProperty("user.dir");
+//
+//						JFileChooser fc = new JFileChooser(wd);
+//
+//						// Adds file filter for supported file format
+//						DefaultFileFilter defaultFilter = new DefaultFileFilter(
+//								".data", "")//mxResources.get("allSupportedFormats")
+//										//+ " (.mxe, .png, .vdx)")
+//						{
+//
+//							public boolean accept(File file)
+//							{
+//								String lcase = file.getName().toLowerCase();
+//
+//								return super.accept(file)
+//										|| lcase.endsWith(".data");
+//							}
+//						};
+//						fc.addChoosableFileFilter(defaultFilter);
+//
+//						fc.addChoosableFileFilter(new DefaultFileFilter(".data",
+//								"FMCA description " + mxResources.get("file")
+//										+ " (.data)"));
+//
+//						fc.setFileFilter(defaultFilter);
+//
+//						int rc = fc.showDialog(null,
+//								mxResources.get("openFile"));
+//
+//						if (rc == JFileChooser.APPROVE_OPTION)
+//						{
+//							lastDir = fc.getSelectedFile().getParent();
+//
+//							try
+//							{
+//
+//								String fileName =fc.getSelectedFile().toString();
+//								
+//								File file=MSCAIO.loadMSCAAndWriteIntoXML(fileName);
+//								
+//								fileName=file.getAbsolutePath();
+//								
+//									Document document = mxXmlUtils
+//											.parseXml(mxUtils.readFile(fileName));
+//													/*mxUtils.readFile(fc
+//													.getSelectedFile()
+//													.getAbsolutePath()));
+//*/
+//									mxCodec codec = new mxCodec(document);
+//									codec.decode(
+//											document.getDocumentElement(),
+//											graph.getModel());
+//									editor.setCurrentFile(file);
+//
+//									resetEditor(editor);
+//							
+//							}
+//							catch (IOException ex)
+//							{
+//								ex.printStackTrace();
+//								JOptionPane.showMessageDialog(
+//										editor.getGraphComponent(),
+//										ex.toString(),
+//										mxResources.get("error"),
+//										JOptionPane.ERROR_MESSAGE);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//	
 	/*@SuppressWarnings("serial")
 	public static class ExportAction extends AbstractAction
 	{
@@ -1613,6 +1616,7 @@ public class EditorActions
 					codec.decode(document.getDocumentElement(), editor
 							.getGraphComponent().getGraph().getModel());
 					editor.setCurrentFile(file);
+
 					resetEditor(editor);
 
 					return;
@@ -1742,6 +1746,18 @@ public class EditorActions
 											graph.getModel());
 									editor.setCurrentFile(fc
 											.getSelectedFile());
+									
+									if (editor instanceof FMCATGUI) //TODO import .data could be swapped to open, as well as export to save
+									{
+										try {
+											((FMCATGUI) editor).lastaut = MSCAIO.parseXMLintoMSCA(fc
+													.getSelectedFile()
+													.getAbsolutePath());
+										} catch (ParserConfigurationException|SAXException|IOException e1) {
+											JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+											return;
+										}
+									}
 									resetEditor(editor);
 								}
 							}
@@ -1764,11 +1780,6 @@ public class EditorActions
 	/**
 	 *
 	 */
-	/*@SuppressWarnings("serial")
-	public static class ImportAutomataAction extends AbstractAction
-	{
-		
-	}*/
 	
 	/**
 	 *
