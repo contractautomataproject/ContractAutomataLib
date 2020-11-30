@@ -26,6 +26,12 @@ import CA.CAState;
 import MSCA.MSCA;
 import MSCA.MSCATransition;
 
+/**
+ * A family contains its products/configurations and subfamilies, organised as a partial order
+ * 
+ * @author Davide Basile
+ *
+ */
 public class Family {
 	
 	private Product[] elements;
@@ -603,7 +609,7 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			valid[i]=false; //initialise
 		int[] tv = getMaximalProducts();
-		if (aut.getActions().contains("dummy")) //dummy is an epsilon move, it is only used in the union
+		if (aut.getUnsignedActions().contains("dummy")) //dummy is an epsilon move, it is only used in the union
 		{
 			CAState storeinitial=aut.getInitial();
 			for (int i=0;i<tv.length;i++)
@@ -749,7 +755,7 @@ public class Family {
 					 * The quotient class considers all products with the same set of forbidden features, and 
 					 * <<ignoring  those features that are never displayed in the automaton>> (this is an improvement of Def.32 of JSCP2020).
 					 */
-					String[] act=aut.getActions().toArray(new String[] {});
+					String[] act=aut.getUnsignedActions().toArray(new String[] {});
 					Product test1=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
 					Product test2=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
 					if (test1.containsForbiddenFeatures(test2)

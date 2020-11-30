@@ -40,6 +40,13 @@ import com.mxgraph.view.mxGraph;
 
 import MSCA.MSCA;
 
+
+/**
+ * An adaptation of BasicGraphEditor of mxGraph
+ * 
+ * @author Davide Basile
+ *
+ */
 public class FMCATGUI extends BasicGraphEditor
 {
 	

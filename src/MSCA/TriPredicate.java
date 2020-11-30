@@ -2,7 +2,7 @@ package MSCA;
 
 /**
  * used in the synthesis method of MSCA for readability. 
- * @author Davide
+ * @author Davide Basile
  *
  * @param <T>
  * @param <U>

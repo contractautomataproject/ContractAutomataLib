@@ -7,7 +7,7 @@ import MSCA.MSCA;
  * 
  * decorate MSCA with a new orchestration synthesis for a product configuration
  * 
- * @author Davide
+ * @author Davide Basile
  *
  */
 public class FMCA {
@@ -25,7 +25,7 @@ public class FMCA {
 	public MSCA orchestration(Product p)
 	{
 		aut.synthesis( (x,t,bad) -> 
-		x.isRequest()||p.isForbidden(x)||bad.contains(x.getTarget()), 
+		x.getLabel().isRequest()||p.isForbidden(x)||bad.contains(x.getTarget()), 
 		(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableOrchestration(t, bad));
 
 		if (aut==null||!p.checkRequired(aut.getTransition()))

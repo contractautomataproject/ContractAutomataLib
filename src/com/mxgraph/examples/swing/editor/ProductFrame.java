@@ -1,5 +1,6 @@
 package com.mxgraph.examples.swing.editor;
 import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -22,6 +23,12 @@ import javax.swing.border.LineBorder;
 
 import FMCA.Family;
 import FMCA.Product;
+
+/**
+ * 
+ * @author Davide Basile
+ *
+ */
 public class ProductFrame extends JFrame{
 	private Family fam;
 	JButton[] nodes;

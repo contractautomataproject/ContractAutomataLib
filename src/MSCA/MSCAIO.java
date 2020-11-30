@@ -32,8 +32,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import CA.CALabel;
 import CA.CAState;
-import CA.CATransition;
 
 /**
  * Input/Output 
@@ -53,33 +53,34 @@ public class MSCAIO {
 		{
 			throw new IllegalArgumentException("Empty file name");
 		}
-		int rank= aut.getRank();
-		int[][] finalstates = aut.getFinalStatesofPrincipals();
+//		int rank= aut.getRank();
+//		int[][] finalstates = aut.getFinalStatesofPrincipals();
 
 		PrintWriter pr = new PrintWriter(filename+".data"); 
-		pr.println("Rank: "+rank);
-		pr.println("Number of states: "+Arrays.toString(aut.getNumStatesPrinc()));
-		pr.println("Initial state: " +Arrays.toString(aut.getInitial().getState()));
-		pr.print("Final states: [");
-		for (int i=0;i<finalstates.length;i++)
-			pr.print(Arrays.toString(finalstates[i]));
-		pr.print("]\n");
-		pr.println("Transitions: \n");
-		Set<? extends MSCATransition> tr = aut.getTransition();
-		if (tr!=null)
-		{
-			for (MSCATransition t : tr)
-				pr.println(t.toString());
-		}
+//		pr.println("Rank: "+rank);
+//		pr.println("Number of states: "+Arrays.toString(aut.getNumStatesPrinc()));
+//		pr.println("Initial state: " +Arrays.toString(aut.getInitial().getState()));
+//		pr.print("Final states: [");
+//		for (int i=0;i<finalstates.length;i++)
+//			pr.print(Arrays.toString(finalstates[i]));
+//		pr.print("]\n");
+//		pr.println("Transitions: \n");
+//		Set<? extends MSCATransition> tr = aut.getTransition();
+//		if (tr!=null)
+//		{
+//			for (MSCATransition t : tr)
+//				pr.println(t.toString());
+//		}
+		pr.print(aut.toString());
 		pr.close();
 
 	}
 
 
-	public static File loadMSCAAndWriteIntoXML(String fileName)
-	{
-		return convertMSCAintoXML(fileName, load(fileName));
-	}
+	/*
+	 * public static File loadMSCAAndWriteIntoXML(String fileName) { return
+	 * convertMSCAintoXML(fileName, load(fileName)); }
+	 */
 
 	/**
 	 * load a MSCA described in a text file,  
@@ -88,133 +89,130 @@ public class MSCAIO {
 	 * 
 	 * @param the name of the file
 	 * @return	the CA loaded
+	 * @throws IOException 
+	 * @throws NumberFormatException 
 	 */
-	public static MSCA load(String fileName)
+	public static MSCA load(String fileName) throws NumberFormatException, IOException
 	{
-		try
+		// Open the file
+		FileInputStream fstream;
+		if (fileName.endsWith(".data"))
+			fstream = new FileInputStream(fileName);
+		else
+			fstream = new FileInputStream(fileName+".data");
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+		int rank=0;
+		int[] initial = new int[1];
+		int[] numstates = new int[1]; //TODO this can be removed
+		int[][] fin = new int[1][]; //rank initialization later
+		Set<MSCATransition> tr = new HashSet<MSCATransition>();
+		Set<CAState> states = new HashSet<CAState>();
+		String strLine;
+		//Read File Line By Line
+		while ((strLine = br.readLine()) != null)   
 		{
-			// Open the file
-			FileInputStream fstream;
-			if (fileName.endsWith(".data"))
-				fstream = new FileInputStream(fileName);
-			else
-				fstream = new FileInputStream(fileName+".data");
-			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-			int rank=0;
-			int[] initial = new int[1];
-			int[] numstates = new int[1]; //TODO this can be removed
-			int[][] fin = new int[1][]; //rank initialization later
-			Set<MSCATransition> tr = new HashSet<MSCATransition>();
-			Set<CAState> states = new HashSet<CAState>();
-			String strLine;
-			//Read File Line By Line
-			while ((strLine = br.readLine()) != null)   
+			if (strLine.length()>0)
 			{
-				if (strLine.length()>0)
+				switch(strLine.substring(0,1))
 				{
-					switch(strLine.substring(0,1))
-					{
-					case "R":  //Rank Line
-					{
-						String srank = strLine.substring(6);
-						rank = Integer.parseInt(srank);
-						initial = new int[rank];
-						numstates = new int[rank];
-						fin = new int[rank][];
-						break;
-					}
-					case "N":	//Number of states line
-					{
-						String[] arr=strLine.split("[\\[\\],]");
-						int i=0;
+				case "R":  //Rank Line
+				{
+					String srank = strLine.substring(6);
+					rank = Integer.parseInt(srank);
+					initial = new int[rank];
+					numstates = new int[rank];
+					fin = new int[rank][];
+					break;
+				}
+				case "N":	//Number of states line
+				{
+					String[] arr=strLine.split("[\\[\\],]");
+					int i=0;
 
-						for (int ind=0;ind<arr.length;ind++)
-						{
-							try{
-								int num=Integer.parseInt(arr[ind].trim());
-								numstates[i] = num;
-								i++; //incremented when there are no exceptions
-							}catch(NumberFormatException e){}
-						}
-					}
-					case "I": //Initial state
+					for (int ind=0;ind<arr.length;ind++)
 					{
-						String[] arr=strLine.split("[\\[\\],]");
-						int i=0;
-						for (int ind=0;ind<arr.length;ind++)
-						{
-							try{
-								int num=Integer.parseInt(arr[ind].trim());
-								initial[i] = num;
-								i++;
-							}catch(NumberFormatException e){}
-						}
-						break;
-					}
-					case "F": //Final state
-					{
-						String[] arr=strLine.split("]");  
-						int outerindex=0;
-
-						for (int ind=0;ind<arr.length;ind++)
-						{
-
-							String[] arr2=arr[ind].split("[,|\\[]"); //FIXME BUG with this parseInt fails with spaces
-							try{
-								int innerindex=0;
-								int[] tf = new int[numstates[outerindex]]; //upper bound
-								for(int ind2=0;ind2<arr2.length;ind2++)
-								{
-									try{
-										int num=Integer.parseInt(arr2[ind2].trim());
-										tf[innerindex] = num;
-										innerindex++;
-									}catch(NumberFormatException e){} //skip values that are not numbers
-								}
-								fin[outerindex]=MSCAUtils.removeTailsNull(tf, innerindex); 
-								outerindex++;
-							}catch(NumberFormatException e){}
-						}
-						break;
-					}
-					case "(": //a may transition
-					{
-						tr.add(loadTransition(strLine,rank, MSCATransition.action.PERMITTED, states));
-						break;
-					}
-					case "!": //a must transition
-					{
-						String stype= strLine.substring(1,2);
-						MSCATransition.action type=null;
-						switch (stype)
-						{
-						case "U": type=MSCATransition.action.URGENT;break;
-						case "G": type=MSCATransition.action.GREEDY;break;
-						case "L": type=MSCATransition.action.LAZY;break;
-						}
-						tr.add(loadTransition(strLine,rank,type,states));
-						break;
-					}
+						try{
+							int num=Integer.parseInt(arr[ind].trim());
+							numstates[i] = num;
+							i++; //incremented when there are no exceptions
+						}catch(NumberFormatException e){}
 					}
 				}
-			}
-			br.close();
+				case "I": //Initial state
+				{
+					String[] arr=strLine.split("[\\[\\],]");
+					int i=0;
+					for (int ind=0;ind<arr.length;ind++)
+					{
+						try{
+							int num=Integer.parseInt(arr[ind].trim());
+							initial[i] = num;
+							i++;
+						}catch(NumberFormatException e){}
+					}
+					break;
+				}
+				case "F": //Final state
+				{
+					String[] arr=strLine.split("]");  
+					int outerindex=0;
 
-			return new MSCA(rank,new CAState(initial, true, false),//numstates,
-					fin,tr,states);
-		} catch (FileNotFoundException e) {System.out.println("File not found"); return null;}
-		catch (Exception e) {e.printStackTrace();}
-		return null;
+					for (int ind=0;ind<arr.length;ind++)
+					{
+
+						String[] arr2=arr[ind].split("[,|\\[]"); //FIXME BUG with this parseInt fails with spaces
+						try{
+							int innerindex=0;
+							int[] tf = new int[numstates[outerindex]]; //upper bound
+							for(int ind2=0;ind2<arr2.length;ind2++)
+							{
+								try{
+									int num=Integer.parseInt(arr2[ind2].trim());
+									tf[innerindex] = num;
+									innerindex++;
+								}catch(NumberFormatException e){} //skip values that are not numbers
+							}
+							fin[outerindex]=MSCAUtils.removeTailsNull(tf, innerindex); 
+							outerindex++;
+						}catch(NumberFormatException e){}
+					}
+					break;
+				}
+				case "(": //a may transition
+				{
+					tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states));
+					break;
+				}
+				case "!": //a must transition
+				{
+					String stype= strLine.substring(1,2);
+					MSCATransition.Modality type=null;
+					switch (stype)
+					{
+					case "U": type=MSCATransition.Modality.URGENT;break;
+					case "L": type=MSCATransition.Modality.LAZY;break;
+					}
+					tr.add(loadTransition(strLine,rank,type,states));
+					break;
+				}
+				}
+			}
+		}
+		br.close();
+
+		return new MSCA(rank,new CAState(initial, true, false),//numstates,
+				fin,tr,states);
 	}
 
-	private static MSCATransition loadTransition(String str, int rank, MSCATransition.action type, Set<CAState> states)
+	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states)
 	{
 		int what=0;
 		String[] ss=str.split("]");
 		int[][] store=new int[1][];
-		String[] label = new String[rank];
+		String[] arrlabel = new String[rank];
+		String offer=null, request = null;
+		Integer offerer=null,requester=null;
 		for (int i=0;i<ss.length;i++)
-			//TODO check
 		{
 			int[] statestransition = new int[rank];
 			Scanner s = new Scanner(ss[i]);
@@ -238,12 +236,20 @@ public class MSCAIO {
 					if (s.hasNext())
 					{
 						String action=s.next();
-						if (action.contains(CATransition.idle))
-							label[j]=CATransition.idle;
-						else if (action.contains(CATransition.offer))
-							label[j]=action.substring(action.indexOf(CATransition.offer));
-						else if (action.contains(CATransition.request))
-							label[j]=action.substring(action.indexOf(CATransition.request));
+						if (action.contains(CALabel.idle))
+							arrlabel[j]=CALabel.idle;
+						else if (action.contains(CALabel.offer))
+						{
+							arrlabel[j]=action.substring(action.indexOf(CALabel.offer));
+							offerer=j;
+							offer=action.substring(action.indexOf(CALabel.offer));//FIXME?
+						}
+						else if (action.contains(CALabel.request))
+						{
+							arrlabel[j]=action.substring(action.indexOf(CALabel.request));
+							requester=j;
+							request=action.substring(action.indexOf(CALabel.request));//FIXME?
+						}
 						else
 							j--; //trick for not increasing the counter j
 
@@ -267,7 +273,18 @@ public class MSCAIO {
 						.findAny()
 						.orElseGet(()->{CAState temp= new CAState(statestransition); states.add(temp); return temp;});
 
-				return new MSCATransition(source,label,target,type);
+				CALabel label;
+				if (offerer!=null&&requester!=null&&offer!=null&&offer.startsWith(CALabel.offer))
+					label = new CALabel(source.getRank(),offerer,requester,offer);
+				else if (offerer!=null&&requester==null&&offer!=null&&offer.startsWith(CALabel.offer))
+					label = new CALabel(source.getRank(),offerer, offer);
+				else if (offerer==null&&requester!=null&&request!=null&&request.startsWith(CALabel.request))
+					label = new CALabel(source.getRank(),requester,request);
+				else
+					throw new RuntimeException("Bug in loading label");
+
+				return new MSCATransition(source,label,target,type); //TODO check & remove arrlabel
+				//				return new MSCATransition(source,List.of(arrlabel),target,type);
 			}
 			else
 			{
@@ -276,7 +293,8 @@ public class MSCAIO {
 			}
 			what++;
 		}
-		return null;
+		throw new RuntimeException(); //check
+		//return null;
 	}
 
 
@@ -294,76 +312,75 @@ public class MSCAIO {
 	 */
 	public static MSCA parseXMLintoMSCA(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
-			File inputFile = new File(filename);
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(inputFile);
-			doc.getDocumentElement().normalize();
-			NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
+		File inputFile = new File(filename);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(inputFile);
+		doc.getDocumentElement().normalize();
+		NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
 
-			Map<Integer, CAState> id2castate = new HashMap<>(nodeList.getLength());
-			Set<MSCATransition> transitions= new HashSet<MSCATransition>();
+		Map<Integer, CAState> id2castate = new HashMap<>(nodeList.getLength());
+		Set<MSCATransition> transitions= new HashSet<MSCATransition>();
 
-			//first read all the states, then all the edges
-			for (int i = 0; i < nodeList.getLength(); i++) 
+		//first read all the states, then all the edges
+		for (int i = 0; i < nodeList.getLength(); i++) 
+		{
+			Node nNode = nodeList.item(i);
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 			{
-				Node nNode = nodeList.item(i);
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))
+				Element eElement = (Element) nNode;
+				if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
 				{
-					Element eElement = (Element) nNode;
-					if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
-					{
-           			 	Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
-						int[] st=getArray(eElement.getAttribute("value"));
-						CAState castate=new CAState(st,
-								geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
-								geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0,//useful when not morphing (e.g. adding handles to edges)
-								Arrays.equals(st, new int[st.length]), //initial
-								eElement.getAttribute("style").contains("terminate.png"));//final
-						if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
-							throw new IllegalArgumentException("Duplicate states!");
-					}
+					Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
+					int[] st=getArray(eElement.getAttribute("value"));
+					CAState castate=new CAState(st,
+							geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
+									geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0,//useful when not morphing (e.g. adding handles to edges)
+											Arrays.equals(st, new int[st.length]), //initial
+											eElement.getAttribute("style").contains("terminate.png"));//final
+					if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
+						throw new IllegalArgumentException("Duplicate states!");
 				}
 			}
+		}
 
-			// A set of checks for detecting bugs
-			
-			if (id2castate.isEmpty())
-				throw new IllegalArgumentException("No states!");
+		// A set of checks for detecting bugs
 
-			Set<CAState> castates = id2castate.entrySet().stream()
-					.map(Entry::getValue)
-					.collect(Collectors.toSet());
-			
-			//transitions
-			for (int i = 0; i < nodeList.getLength(); i++) 
+		if (id2castate.isEmpty())
+			throw new IllegalArgumentException("No states!");
+
+		Set<CAState> castates = id2castate.entrySet().stream()
+				.map(Entry::getValue)
+				.collect(Collectors.toSet());
+
+		//transitions
+		for (int i = 0; i < nodeList.getLength(); i++) 
+		{
+			Node nNode = nodeList.item(i);
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 			{
-				Node nNode = nodeList.item(i);
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))
-				{
-					Element eElement = (Element) nNode;
-					if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge"))
-						transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
-								getArrayString(eElement.getAttribute("value")),//label
-								id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
-								(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.action.URGENT: //red
-									(eElement.getAttribute("style").contains("strokeColor=#FFA500"))? MSCATransition.action.GREEDY: //orange
-										(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.action.LAZY: //green
-											MSCATransition.action.PERMITTED));
-				}
+				Element eElement = (Element) nNode;
+				if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge"))
+					transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
+							new CALabel(List.of(getArrayString(eElement.getAttribute("value")))),//label
+							id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
+							(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.Modality.URGENT: //red
+								(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.Modality.LAZY: //green
+									MSCATransition.Modality.PERMITTED));
 			}
+		}
 
 
-			int rank=castates.iterator().next().getState().length;
-			MSCA aut= new MSCA(rank, 
-					CAState.getCAStateWithValue(new int[rank], castates),
-					principalsFinalStates(castates.stream()
-							.filter(CAState::isFinalstate)
-							.map(CAState::getState)
-							.collect(Collectors.toList())),
-					transitions,
-					castates);
-			return aut;
+		int rank=castates.iterator().next().getState().length;
+		MSCA aut= new MSCA(rank, 
+				CAState.getCAStateWithValue(new int[rank], castates),
+				principalsFinalStates(castates.stream()
+						.filter(CAState::isFinalstate)
+						.map(CAState::getState)
+						.collect(Collectors.toList())),
+				transitions,
+				castates);
+		return aut;
 	}
 
 
@@ -411,7 +428,7 @@ public class MSCAIO {
 				createElementEdge(doc,root,Integer.toString(id),
 						state2element.get(t.getSource()),
 						state2element.get(t.getTarget()),
-						Arrays.toString(t.getLabel()),t.getType());
+						Arrays.toString(t.getLabelAsList().toArray(String[]::new)),t.getModality());
 				id+=1;
 			}
 
@@ -437,17 +454,15 @@ public class MSCAIO {
 		}
 	}
 
-	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,MSCATransition.action type)
+	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,MSCATransition.Modality type)
 	{
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
 		Attr style=doc.createAttribute("style");
 
-		if (type==MSCATransition.action.URGENT)
+		if (type==MSCATransition.Modality.URGENT)
 			style.setValue("straight;strokeColor=#FF0000");
-		else if (type==MSCATransition.action.GREEDY)//TODO remove Greedy
-			style.setValue("straight;strokeColor=#FFA500");
-		else if (type==MSCATransition.action.LAZY)
+		else if (type==MSCATransition.Modality.LAZY)
 			style.setValue("straight;strokeColor=#00FF00");
 		else
 			style.setValue("straight");
@@ -614,7 +629,7 @@ public class MSCAIO {
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
-	
+
 	/**
 	 * this method is used when importing from XML, where no description of  principal final states is given 
 	 * and it is reconstructed
@@ -661,7 +676,7 @@ public class MSCAIO {
 	private static String[] getArrayString(String arr)
 	{
 		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-		if (Arrays.stream(items).anyMatch(item->!(item.startsWith("!")||item.startsWith("?")||item.startsWith("-"))))
+		if (Arrays.stream(items).anyMatch(item->!(item.startsWith(CALabel.offer)||item.startsWith(CALabel.request)||item.startsWith(CALabel.idle))))
 			return null;
 		return items;
 	}

@@ -6,6 +6,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * 
+ * @author Davide Basile
+ *
+ */
 public class CAState {
 	private int[] state; //TODO this should be a set of CAState? I would have many unused variables, still these are states identifiers, maybe an empty state class
 
@@ -48,6 +53,9 @@ public class CAState {
 		return state;
 	}
 
+	public int getRank() {
+		return state.length;
+	}
 	public void setState(int[] state) {
 		this.state = state;
 	}

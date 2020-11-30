@@ -5,82 +5,81 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import CA.CALabel;
 import CA.CAState;
 import CA.CATransition;
 
 
 
 /**
- * Transition of a featured modal contract automaton
+ * Transition of a modal service contract automaton
  * 
  * @author Davide Basile
  *
  */
-public class MSCATransition extends CATransition { 
-	public enum action{
-		PERMITTED,URGENT,GREEDY,LAZY		//TODO remove greedy
+public class MSCATransition extends CATransition {
+	
+	public enum Modality{
+		PERMITTED,URGENT,LAZY
 	}
-	private action type;
-
-	public MSCATransition(CAState source, String[] label, CAState target, action type)//TODO remove String[]
+	
+	private Modality mod;
+	
+	public MSCATransition(CAState source, CALabel label, CAState target, Modality type)
 	{
 		super(source,label,target);
-		this.type=type;
+		this.mod=type;
 	}
 
-	public MSCATransition(CAState source, Integer p1, String action, Integer p2, CAState target, action type)
+	public MSCATransition(CAState source, boolean offererMinorRequester, String offeraction, CAState target, Modality type)
 	{
-		super(source,p1,action,p2,target);
-		this.type=type;
+		super(source,offererMinorRequester,offeraction,target);
+		this.mod=type;
 	}
 
+	public MSCATransition(CAState source, String action, CAState target, Modality type)
+	{
+		super(source,action,target);
+		this.mod=type;
+	}
+	
 	public boolean isUrgent()
 	{
-		return (this.type==action.URGENT);
+		return (this.mod==Modality.URGENT);
 	}
-
-	public boolean isGreedy()
-	{
-		return (this.type==action.GREEDY);
-	}
-
 
 	public boolean isLazy()
 	{
-		return (this.type==action.LAZY);
+		return (this.mod==Modality.LAZY);
 	}
-
 
 	public boolean isNecessary()
 	{
-		return (this.type!=action.PERMITTED);
+		return (this.mod!=Modality.PERMITTED);
 	}
 
 	public boolean isPermitted()
 	{
-		return (this.type==action.PERMITTED);
+		return (this.mod==Modality.PERMITTED);
 	}
 	
 	public boolean isSemiControllable()
 	{
-		return (this.type==action.LAZY)||(this.type==action.GREEDY);
+		return (this.mod==Modality.LAZY);
 	}
 
-	public action getType()
+	public Modality getModality()
 	{
-		return this.type;
+		return this.mod;
 	}
-
-
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((mod == null) ? 0 : mod.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -91,42 +90,39 @@ public class MSCATransition extends CATransition {
 		if (getClass() != obj.getClass())
 			return false;
 		MSCATransition other = (MSCATransition) obj;
-		if (type != other.type)
+		if (mod != other.mod)
 			return false;
 		return true;
 	}
 
-
 	//@Override
 	public String toString()
 	{
-		if (getSource()!=null&&getLabel()!=null)
-			switch (this.type) 
+		if (getSource()!=null&&getLabelAsList()!=null)
+			switch (this.mod) 
 			{
-			case PERMITTED: return "("+Arrays.toString(getSource().getState())+","+Arrays.toString(getLabel())+","+Arrays.toString(getTarget().getState())+")";
-			case URGENT:return "!U("+Arrays.toString(getSource().getState())+","+Arrays.toString(getLabel())+","+Arrays.toString(getTarget().getState())+")";
-			case GREEDY:return "!G("+Arrays.toString(getSource().getState())+","+Arrays.toString(getLabel())+","+Arrays.toString(getTarget().getState())+")";
-			case LAZY:return "!L("+Arrays.toString(getSource().getState())+","+Arrays.toString(getLabel())+","+Arrays.toString(getTarget().getState())+")";		
+			case PERMITTED: return "("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";
+			case URGENT:return "!U("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";
+			case LAZY:return "!L("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";		
 			}
 		return null;
 	}
-
 
 	/**
 	 * 
 	 * @return	true if the  greedy/lazy transition request is controllable 
 	 */
-	public boolean isControllableLazyRequest(Set<? extends MSCATransition> tr, Set<CAState> badStates)
+	private boolean isControllableLazyRequest(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
-		if (this.isRequest()&&this.isLazy())
+		if (this.getLabel().isRequest()&&this.isLazy())
 		{
 			for (MSCATransition t : tr)	
 			{
-				if ((t.isMatch())
+				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
-						&&(t.getReceiver()==this.getReceiver())	//the same principal
-						&&(t.getSource().getState()[t.getReceiver()]==this.getSource().getState()[this.getReceiver()]) //the same source state					
-						&&(t.getLabel()[t.getReceiver()].equals(this.getLabel()[this.getReceiver()])) //the same request
+						&&(t.getLabel().getRequester().equals(this.getLabel().getRequester()))	//the same principal
+						&&(t.getSource().getState()[t.getLabel().getRequester()]==this.getSource().getState()[this.getLabel().getRequester()]) //the same source state					
+						&&(t.getLabel().getCoAction().equals(this.getLabel().getAction())) //the same request
 						&&(!badStates.contains(this.getSource()))) //source state is not bad
 				{
 					return true;
@@ -142,17 +138,17 @@ public class MSCATransition extends CATransition {
 	 *  it checks that the transition that matches has the same source state of this
 	 * @return	true if the  lazy transition request is matched 
 	 */
-	boolean isControllableLazyOffer(Set<? extends MSCATransition> tr, Set<CAState> badStates)
+	private boolean isControllableLazyOffer(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
-		if ((this.isOffer()&&this.isLazy()))
+		if ((this.getLabel().isOffer()&&this.isLazy()))
 		{
 			for (MSCATransition t : tr)	
 			{
-				if ((t.isMatch())
+				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
-						&&(t.getSender()==this.getSender())	//the same principal
-						&&(t.getSource().getState()[t.getSender()]==this.getSource().getState()[this.getSender()]) //the same source state					
-						&&(t.getLabel()[t.getSender()].equals(this.getLabel()[this.getSender()])) //the same offer (different from orchestration!)
+						&&(t.getLabel().getOfferer().equals(this.getLabel().getOfferer()))	//the same principal
+						&&(t.getSource().getState()[t.getLabel().getOfferer()]==this.getSource().getState()[this.getLabel().getOfferer()]) //the same source state					
+						&&(t.getLabel().getAction().equals(this.getLabel().getAction())) //the same offer (different from orchestration!)
 						&&(t.getSource().equals(this.getSource())) //the same source state because it is a semi-controllable for choreography
 						&&(!badStates.contains(this.getSource())) //source state is not redundant
 						&&(!badStates.contains(t.getTarget()))) //target state is not redundant
@@ -169,34 +165,39 @@ public class MSCATransition extends CATransition {
 	 * 
 	 * @return a new request transition where the sender of the match is idle
 	 */
-	public MSCATransition extractRequestFromMatch()
+	private MSCATransition extractRequestFromMatch()
 	{
-		if (!this.isMatch())
-			return null;
-		int sender=this.getSender();
+		if (!this.getLabel().isMatch())
+			throw new RuntimeException("this transition is not a match");
 		CAState source= this.getSource(); 
 		CAState target= this.getTarget();  
-		String[] request=Arrays.copyOf(this.getLabel(), this.getLabel().length);
-		target.getState()[sender]=source.getState()[sender];  //the sender is now idle
-		request[sender]=CATransition.idle;  //swapping offer to idle
-		return new MSCATransition(source,request,target,this.type); //returning the request transition
+		CALabel label = this.getLabel();
+		
+		int offerer=this.getLabel().getOfferer();
+		target.getState()[offerer]=source.getState()[offerer];  //the offerer is now idle
+		return new MSCATransition(source,
+				new CALabel(label.getRank(),label.getRequester(),label.getCoAction()),
+				target,this.mod); //returning the request transition
 	}
 
 	/**
 	 * 
 	 * @return a new request transition where the sender of the match is idle
 	 */
-	public MSCATransition extractOfferFromMatch()
+	private MSCATransition extractOfferFromMatch()
 	{
-		if (!this.isMatch())
-			return null;
-		int receiver=this.getReceiver();
+		if (!this.getLabel().isMatch())
+			throw new RuntimeException("this transition is not a match");
 		CAState source= this.getSource();
 		CAState target= this.getTarget();
-		String[] offer=Arrays.copyOf(this.getLabel(), this.getLabel().length);
-		target.getState()[receiver]=source.getState()[receiver];  
-		offer[receiver]=CATransition.idle;  //swapping request to idle, and target state equal source state. The receiver is now idle
-		return new MSCATransition(source,offer,target,this.type); //returning the request transition
+		CALabel label=this.getLabel();
+		
+		int requester=this.getLabel().getRequester();
+		target.getState()[requester]=source.getState()[requester];  
+		return new MSCATransition(source,
+				new CALabel(label.getRank(),label.getOfferer(),label.getAction()),
+				target,this.mod); 
+		//returning the offer transition
 	}
 
 	/**
@@ -205,9 +206,9 @@ public class MSCATransition extends CATransition {
 	 */
 	public boolean isUncontrollableOrchestration(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
-		return this.isUrgent()//||(this.isMatch()&&this.isGreedy())
+		return this.isUrgent()
 				||!this.isControllableLazyRequest(tr,badStates)
-				||this.isMatch()&&this.isLazy()&&!tr.contains(this)&& 
+				||this.getLabel().isMatch()&&this.isLazy()&&!tr.contains(this)&& 
 				!this.extractRequestFromMatch().isControllableLazyRequest(tr,badStates);
 	}
 
@@ -220,10 +221,9 @@ public class MSCATransition extends CATransition {
 	public boolean  isUncontrollableChoreography(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
 		return !this.isControllableLazyOffer(tr, badStates)
-				||this.isMatch()&&this.isLazy()&&!tr.contains(this)&& 
+				||this.getLabel().isMatch()&&this.isLazy()&&!tr.contains(this)&& 
 				!this.extractOfferFromMatch().isControllableLazyOffer(tr,badStates);
 	}
-
 
 	/**
 	 *
@@ -243,21 +243,22 @@ public class MSCATransition extends CATransition {
 	 */
 	public boolean satisfiesBranchingCondition(Set<? extends MSCATransition> trans, Set<CAState> bad) 
 	{
-		if (!this.isMatch()||bad.contains(this.getSource()) || bad.contains(this.getTarget()))
+		if (!this.getLabel().isMatch()||bad.contains(this.getSource()) || bad.contains(this.getTarget()))
 			return false;		//ignore this transition because it is going to be pruned in the synthesis
 
-		final Set<MSCATransition> ftr= trans.parallelStream()
-				.filter(x->x.isMatch()&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
+		final Set<MSCATransition> ftr = trans.parallelStream()
+				.filter(x->x.getLabel().isMatch()&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 
 		return ftr.parallelStream()
 				.map(x->x.getSource().getState())
 				.filter(x->(!Arrays.equals(this.getSource().getState(),x))&&
-						this.getSource().getState()[this.getSender()]==x[this.getSender()]) 
+						this.getSource().getState()[this.getLabel().getOfferer()]==x[this.getLabel().getOfferer()]) 
 				//it's not the same state of this but sender is in the same state of this
 				.allMatch(s -> ftr.parallelStream()
 						.filter(x->Arrays.equals(x.getSource().getState(),s)
-								&&Arrays.equals(x.getLabel(), this.getLabel()))
+								&& this.getLabel().equals(x.getLabel()))
+								//Arrays.equals(x.getLabelAsStringArr(), this.getLabelAsStringArr())) //TODO check
 						.count()>0  //for all such states there exists an outgoing transition with the same label of this
 						);
 	}

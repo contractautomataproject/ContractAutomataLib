@@ -625,7 +625,7 @@ public class BasicGraphEditor extends JPanel
 	/**
 	 * 
 	 * @param name
-	 * @param action
+	 * @param Modality
 	 * @return a new Action bound to the specified string name
 	 */
 	public Action bind(String name, final Action action)
@@ -636,7 +636,7 @@ public class BasicGraphEditor extends JPanel
 	/**
 	 * 
 	 * @param name
-	 * @param action
+	 * @param Modality
 	 * @return a new Action bound to the specified string name and icon
 	 */
 	@SuppressWarnings("serial")

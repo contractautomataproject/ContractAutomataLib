@@ -3,10 +3,16 @@ package FMCA;
 import java.util.Arrays;
 import java.util.Set;
 
-import CA.CATransition;
+import CA.CALabel;
 import MSCA.MSCA;
 import MSCA.MSCATransition;
 
+/**
+ * A configuration/product of a product line/family, identified as set of required and forbidden features
+ * 
+ * @author Davide Basile
+ *
+ */
 public class Product {
 	private String[] required; //TODO use ArrayList
 	private String[] forbidden;
@@ -16,11 +22,11 @@ public class Product {
 		//all positive integers, to avoid sign mismatches
 		String[] rp = new String[r.length];
 		for (int i=0;i<r.length;i++)
-			rp[i]=CATransition.getUnsignedAction(r[i]);
+			rp[i]=CALabel.getUnsignedAction(r[i]);
 
 		String[] fp = new String[f.length];
 		for (int i=0;i<f.length;i++)
-			fp[i]=CATransition.getUnsignedAction(f[i]);
+			fp[i]=CALabel.getUnsignedAction(f[i]);
 
 		this.required=rp;
 		this.forbidden=fp;
@@ -39,11 +45,11 @@ public class Product {
 		//all positive integers, to avoid sign mismatches
 		String[] rp = new String[r.length];
 		for (int i=0;i<r.length;i++)
-			rp[i]=CATransition.getUnsignedAction(r[i]);
+			rp[i]=CALabel.getUnsignedAction(r[i]);
 
 		String[] fp = new String[f.length];
 		for (int i=0;i<f.length;i++)
-			fp[i]=CATransition.getUnsignedAction(f[i]);
+			fp[i]=CALabel.getUnsignedAction(f[i]);
 
 //		int countreq=0;
 //		int countforb=0;
@@ -159,7 +165,7 @@ public class Product {
 			boolean found=false;
 			for (MSCATransition t : set)
 			{
-				if (CATransition.getUnsignedAction(t.getAction()).equals(this.required[i]))  //do not differ between requests and offers
+				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.required[i]))  //do not differ between requests and offers
 					found=true;
 			}
 			if (!found)
@@ -171,13 +177,13 @@ public class Product {
 
 	public boolean isForbidden(MSCATransition t)
 	{
-		return (FMCAUtils.getIndex(this.getForbidden(),t.getUnsignedAction())>=0);
+		return (FMCAUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
 	}
 
-	public boolean isRequired(MSCATransition t)
-	{
-		return (FMCAUtils.getIndex(this.getRequired(),t.getUnsignedAction())>=0);		
-	}
+//	private boolean isRequired(MSCATransition t)
+//	{
+//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
+//	}
 
 	
 	/**
@@ -192,7 +198,7 @@ public class Product {
 		{
 			for (MSCATransition t : tr)
 			{
-				if (CATransition.getUnsignedAction(t.getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
+				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
 					return false;
 			}
 		}
