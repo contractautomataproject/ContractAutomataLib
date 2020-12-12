@@ -231,6 +231,7 @@ public class Product {
 		}
 		return "p"+id+": R={"+req+"} F={"+forb+"}";
 	}
+	
 	public String toHTMLString(String s)
 	{
         return "<html>"+s+"R:"+Arrays.toString(required)+"<br />F:"+Arrays.toString(forbidden)+"</html>";

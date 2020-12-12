@@ -95,7 +95,7 @@ public class MSCATransition extends CATransition {
 		return true;
 	}
 
-	//@Override
+	@Override
 	public String toString()
 	{
 		if (getSource()!=null&&getLabelAsList()!=null)

@@ -346,8 +346,7 @@ public class MSCAIO {
 
 		// A set of checks for detecting bugs
 
-		if (id2castate.isEmpty())
-			throw new IllegalArgumentException("No states!");
+		assert !(id2castate.isEmpty()):"No states!";
 
 		Set<CAState> castates = id2castate.entrySet().stream()
 				.map(Entry::getValue)
@@ -362,7 +361,7 @@ public class MSCAIO {
 				Element eElement = (Element) nNode;
 				if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge"))
 					transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
-							new CALabel(List.of(getArrayString(eElement.getAttribute("value")))),//label
+							new CALabel(Arrays.asList(getArrayString(eElement.getAttribute("value")))),//label
 							id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
 							(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.Modality.URGENT: //red
 								(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.Modality.LAZY: //green
@@ -428,7 +427,7 @@ public class MSCAIO {
 				createElementEdge(doc,root,Integer.toString(id),
 						state2element.get(t.getSource()),
 						state2element.get(t.getTarget()),
-						Arrays.toString(t.getLabelAsList().toArray(String[]::new)),t.getModality());
+						Arrays.toString(t.getLabelAsList().stream().toArray(String[]::new)),t.getModality());
 				id+=1;
 			}
 
@@ -602,10 +601,7 @@ public class MSCAIO {
 		mxGeometry1.setAttributeNode(as);
 		mxGeometry1.setAttribute("height", "50.0");
 		mxGeometry1.setAttribute("width", "50.0");
-		//		for (int i=0;i<castates.length;i++)
-		//		{
-		//			if (Arrays.equals(arrintstate, castates[i].getState()))
-		//			{
+
 		if (!mxGeometry1.hasAttribute("x"))
 		{
 			Attr x=doc.createAttribute("x");
@@ -623,8 +619,7 @@ public class MSCAIO {
 		}
 		else
 			mxGeometry1.setAttribute("y", castate.getY()+"");
-		//			}
-		//		}
+
 		mxcell1.appendChild(mxGeometry1);
 		root.appendChild(mxcell1);
 		return mxcell1;		

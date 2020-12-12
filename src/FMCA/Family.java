@@ -782,7 +782,7 @@ public class Family {
 			K2[i]=K[quotient[i][0]]; 
 		}
 		if (getMpcOfFamily)
-			mpcOfFamily[0]=MSCA.union(List.of(K2)); //store the mpc of family if needed
+			mpcOfFamily[0]=MSCA.union(Arrays.asList(K2));  //List.of(K2)); //store the mpc of family if needed
 		return canonicalproducts;
 	}
 	
@@ -827,7 +827,7 @@ public class Family {
 		K = Arrays.copyOf(K, ind);	
 		pr[0]=FMCAUtils.removeTailsNull(pr[0], ind);
 		
-		return MSCA.union(List.of(K));
+		return MSCA.union(Arrays.asList(K));//List.of(K));
 	}
 	
 //	@Override

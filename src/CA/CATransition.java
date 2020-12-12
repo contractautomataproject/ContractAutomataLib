@@ -14,8 +14,6 @@ public class CATransition {
 	final private CAState target;
 	final private CALabel label;
 
-
-
 	public CATransition(CAState source, CALabel label, CAState target){
 		if (source==null || label==null || target==null)
 			throw new IllegalArgumentException("source, label or target null");

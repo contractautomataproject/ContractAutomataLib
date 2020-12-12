@@ -194,10 +194,23 @@ public class EditorMenuBar extends JMenuBar
 		item.addActionListener(e->
 		{
 			if (checkAut(editor)) return;
+			if (editor.modified) {
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"Save model first",mxResources.get("warning"),JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
 
 			lastDir=editor.getCurrentFile().getParent();
+			;
+			 
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
 			MSCA aut=editor.lastaut;
+
+			 try {
+				aut=MSCAIO.parseXMLintoMSCA(absfilename);
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No automaton loaded",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
 			File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
 			parseAndSet(absfilename, editor,file);
 		});
@@ -292,9 +305,9 @@ public class EditorMenuBar extends JMenuBar
 					return;
 			}
 
-			
+			//TODO add dialog for choosing number of automata to compose, bound, pruning predicate (agreement, strong agremeent)
 			long start = System.currentTimeMillis();
-			MSCA composition = (MSCA) MSCA.composition(aut, null, 100);//t->t.getLabel().isRequest(),100);	
+			MSCA composition = (MSCA) MSCA.composition(aut, t->t.getLabel().isRequest(),100);	//null, 100);//
 			long elapsedTime = System.currentTimeMillis() - start;
 
 			if (composition==null)
@@ -802,8 +815,6 @@ public class EditorMenuBar extends JMenuBar
 
 			jd.setSize(500,500);
 			jd.setLocationRelativeTo(null);
-
-
 		});
 
 
@@ -1125,6 +1136,7 @@ public class EditorMenuBar extends JMenuBar
 			editor.lastaut=controller;
 			loadMorphStore(lastDir+"//"+K,editor,file);
 		});
+		
 
 		// Creates the help menu
 		menu = add(new JMenu(mxResources.get("help")));

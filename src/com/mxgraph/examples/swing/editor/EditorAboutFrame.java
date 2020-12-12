@@ -77,7 +77,9 @@ public class EditorAboutFrame extends JDialog
 
 		// Adds optional subtitle
 		JLabel subtitleLabel = new JLabel(
-				"Featured Modal Contract Automata Tool, GUI based on mxGraph");
+				"<html> Featured Modal Contract Automata Tool (2020),  <br />"
+				+ "developed by Davide Basile (https://github.com/davidebasile),  <br />"
+				+ "GUI based on mxGraph (https://jgraph.github.io/mxgraph/) </html>");
 		subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
 		subtitleLabel.setOpaque(false);
 		panel.add(subtitleLabel, BorderLayout.CENTER);
@@ -136,8 +138,8 @@ public class EditorAboutFrame extends JDialog
 		// Sets default button for enter key
 		getRootPane().setDefaultButton(closeButton);
 
-		setResizable(false);
-		setSize(400, 400);
+		setResizable(true);
+		setSize(600, 600);
 	}
 
 	/**

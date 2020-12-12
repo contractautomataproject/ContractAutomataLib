@@ -15,9 +15,9 @@ public class CAState {
 	private int[] state; //TODO this should be a set of CAState? I would have many unused variables, still these are states identifiers, maybe an empty state class
 
 	private boolean initial;
-	private boolean finalstate; //TODO this should be a list telling which one is final, instead of the instance variable in FMCA class
+	private boolean finalstate; //TODO this should be a list telling which one is final, instead of the instance variable in MSCA class
 
-	private float x;		//TODO check if these two variables should be removed and put into GUI and I/O methods as maps
+	private float x;
 	private float y;
 
 	public CAState(int[] state)
@@ -35,8 +35,8 @@ public class CAState {
 	public CAState(int[] state, float x, float y, boolean initial, boolean finalstate)
 	{
 		this(state,initial,finalstate);
-		this.setX(x);
-		this.setY(y);
+		this.x=x;
+		this.y=y;
 	}
 
 	public CAState(List<CAState> states)
@@ -64,16 +64,8 @@ public class CAState {
 		return x;
 	}
 
-	public void setX(float x) {
-		this.x = x;
-	}
-
 	public float getY() {
 		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
 	}
 
 	public boolean isInitial() {
@@ -133,7 +125,7 @@ public class CAState {
 		if (states.parallelStream()
 				.filter(x->Arrays.equals(x.getState(),value))
 				.count()>1)
-			throw new IllegalArgumentException("Ambiguous states: there is more than one state with value "+Arrays.toString(value));
+			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
 
 		return states.parallelStream()
 				.filter(x->Arrays.equals(x.getState(),value))
