@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import CA.CALabel;
 import CA.CAState;
+import CA.State;
 
 
 /** 
@@ -37,7 +39,7 @@ import CA.CAState;
 public class MSCA
 { 
 
-	private int rank;
+	private Integer rank;
 
 	private int[][] finalstates; //these are the final states of the principal in the contract automaton
 	//TODO there is loss of information in mxGraph XML and projection
@@ -45,38 +47,46 @@ public class MSCA
 	//this cannot be retrieved from CAState[] states because of conjunction and the usage of int[] for 
 	//composed state
 
-	private Set<? extends MSCATransition> tra;
+	private Set<MSCATransition> tra;
 	private Set<CAState> states; //all the states of the automaton
 
 	private Map<CAState,Boolean> reachable;
 	private Map<CAState,Boolean> successful;
 
-
-	public MSCA(int rank, CAState initial,  int[][] finalstates, Set<? extends MSCATransition> tr, Set<CAState> states)
+	public MSCA(Integer rank, CAState initial,  int[][] finalstates, Set<MSCATransition> tr, Set<CAState> states)
 	{
+		if (rank==null || initial == null || finalstates == null || tr == null || states == null )
+			throw new IllegalArgumentException("Null argument "+rank+" "+initial+" "+finalstates+" "+tr+" "+states);
+
 		this.rank=rank;
 		setTransition(tr);
 		setStates(states);
-		setInitialCA(initial);
+		//setInitialCA(initial);
 		setFinalStatesofPrincipals(finalstates);
 
-		this.checkStatesTransitions();//useful for development
+		this.checkInitFinAndStatesTransitions();//useful for development
 	}
 
 
-	public void setTransition(Set<? extends MSCATransition> tr)
+	public void setTransition(Set<MSCATransition> tr)
 	{
+		if (tr.parallelStream()
+				.anyMatch(Objects::isNull))
+			throw new IllegalArgumentException("Null element");
 		this.tra=tr;
 	}
 
 
-	public  Set<? extends MSCATransition> getTransition()
+	public  Set<MSCATransition> getTransition()
 	{
 		return tra;
 	}
 
 	public void setStates(Set<CAState> s)
 	{
+		if (s.parallelStream()
+				.anyMatch(Objects::isNull))
+			throw new IllegalArgumentException("Null element");
 		this.states=s;
 	}
 
@@ -94,23 +104,14 @@ public class MSCA
 
 	public void setFinalStatesofPrincipals(int[][] finalstates)
 	{
+		for (int[] a : finalstates)
+			if (a==null)
+				throw new IllegalArgumentException("Final states contain a null array element");
+
 		this.finalstates = finalstates;
-		setFinalStatesCA();
 	}
 
-	/**
-	 * set the final state flag of the states of the CA using the finalstates of each principal.
-	 * A state is final if all component states of principals are final.
-	 * @param fs  the array of final states of each principal
-	 */
-	private void setFinalStatesCA()
-	{
-		this.setStates(this.getStates().stream()
-				.peek(x -> x.setFinalstate((IntStream.range(0,x.getState().length)
-						.allMatch(i -> MSCAUtils.contains(x.getState()[i], 
-								IntStream.of(finalstates[i]).boxed().toArray())))))
-				.collect(Collectors.toSet()));
-	}
+
 
 	/**
 	 * 
@@ -140,21 +141,40 @@ public class MSCA
 	 */
 	public void setInitialCA(CAState initial)
 	{
-		this.getStates().parallelStream()
-		.filter(CAState::isInitial)
-		.findAny().ifPresent(x->x.setInitial(false));
+		setInitialCA(initial, this.getStates());
+	}
 
-		CAState init = this.getStates().parallelStream()
+	public static void setInitialCA(CAState initial, Set<CAState> states)
+	{
+		states.parallelStream()
+		.filter(CAState::isInitial)
+		.forEach(x->x.setInitial(false));
+
+		CAState init = states.parallelStream()
 				.filter(x->Arrays.equals(initial.getState(),x.getState()))
 				.findAny().orElseThrow(IllegalArgumentException::new);
 
 		init.setInitial(true);
 	}
-
+	
 	public int getRank()
 	{
 		return rank;
 	}
+
+	/**
+	 * @return the synthesised orchestration/mpc in agreement
+	 */
+	public MSCA mpc()
+	{
+		if (this.getTransition().parallelStream()
+				.anyMatch(t-> t.isSemiControllable()))
+			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
+
+		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
+				(x,t,bad) -> bad.contains(x.getTarget()));
+	}
+
 
 	/**
 	 * @return the synthesised orchestration/mpc in agreement
@@ -178,10 +198,10 @@ public class MSCA
 		do 
 		{ aut = aut.synthesis((x,t,bad) -> 
 		!x.getLabel().isMatch()||bad.contains(x.getTarget()),
-		(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad));;
+		(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad));
 		if (aut==null)
 			break;
-		final Set<? extends MSCATransition> trf = aut.getTransition();
+		final Set<MSCATransition> trf = aut.getTransition();
 		toRemove=(aut.getTransition().parallelStream()
 				.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
 				.findAny() 
@@ -370,6 +390,7 @@ public class MSCA
 				.flatMap(a -> a.getStates().stream())
 				.filter(CAState::isInitial)
 				.collect(Collectors.toList());
+
 		CAState initialstate = new CAState(initial);
 
 		Queue<Entry<List<CAState>,Integer>> toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));//List.of(Map.entry(initial,0)));
@@ -396,6 +417,11 @@ public class MSCA
 						.flatMap(Function.identity())
 						.collect(toList()); //indexing outgoing transitions of each operand, used for target states and labels
 
+				if (trans2index.parallelStream()
+						.filter(e -> e.tra.getTarget().getStateL().size() != aut.get(e.ind).rank)
+						.count()>0)
+					throw new RuntimeException();
+
 				//firstly match transitions are generated
 				Map<MSCATransition, List<Entry<MSCATransition,List<CAState>>>> matchtransitions=
 						trans2index.parallelStream()
@@ -407,10 +433,12 @@ public class MSCA
 									targetlist.set(ee.ind, ee.tra.getTarget());
 
 									MSCATransition tradd=new MSCATransition(sourcestate,
-											e.tra.getLabel().isOffer(), //since e.ind<ee.ind true if e is offer
-											(e.tra.getLabel().isOffer())?e.tra.getLabel().getAction():ee.tra.getLabel().getAction(),//offer action
-													operandstat2compstat.computeIfAbsent(targetlist, v->new CAState(v)), 
-													e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
+											new CALabel(rank,computeSumPrincipal(e.tra,e.ind,aut),//index of principal in e
+													computeSumPrincipal(ee.tra,ee.ind,aut),	//index of principal in ee										
+													e.tra.getLabel().getAction(),ee.tra.getLabel().getAction()),
+											operandstat2compstat.computeIfAbsent(targetlist, v->
+											new CAState(v)), 
+											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
 									return Stream.of((Entry<MSCATransition, Entry<MSCATransition,List<CAState>>>) 
 											new AbstractMap.SimpleEntry<MSCATransition, Entry<MSCATransition,List<CAState>>>(e.tra, 
@@ -431,16 +459,13 @@ public class MSCA
 						.collect(mapping(e->{List<CAState> targetlist = new ArrayList<CAState>(source);
 						targetlist.set(e.ind, e.tra.getTarget());
 						return 	new AbstractMap.SimpleEntry<MSCATransition,List<CAState>>
-						((!e.tra.getLabel().isMatch())?
-								new MSCATransition(sourcestate,  
-										e.tra.getLabel().getAction(),
-										operandstat2compstat.computeIfAbsent(targetlist, v->new CAState(v)),
-										e.tra.getModality())
-								:new MSCATransition(sourcestate, 
-										e.tra.getLabel().getOfferer()<e.tra.getLabel().getRequester(), 
-										e.tra.getLabel().getAction(),
-										operandstat2compstat.computeIfAbsent(targetlist, v->new CAState(v)),
-										e.tra.getModality()),
+						(new MSCATransition(sourcestate,
+								new CALabel(e.tra.getLabel(),rank,
+										IntStream.range(0, e.ind)
+										.map(i->aut.get(i).getRank())
+										.sum()),//shifting positions of label
+								operandstat2compstat.computeIfAbsent(targetlist, v->new CAState(v)),
+								e.tra.getModality()),
 								targetlist);},
 								toSet()));
 				trmap.addAll(matchtransitions.values().parallelStream()//matched transitions
@@ -489,6 +514,12 @@ public class MSCA
 		return new MSCA(rank, initialstate, finalstates, tr, states);
 	}
 
+	private static Integer computeSumPrincipal(MSCATransition etra, Integer eind, List<MSCA> aut)
+	{
+		return IntStream.range(0, eind)
+				.map(i->aut.get(i).getRank())
+				.sum()+etra.getLabel().getOffererOrRequester();
+	}
 
 	/**
 	 * 
@@ -543,7 +574,7 @@ public class MSCA
 		//new initial state
 		CAState newinitial = new CAState( new int[rank],//(float)((aut.size())*fur)/2,0,
 				true,false);
-		statesunion.add(newinitial);
+		statesunion.add(newinitial);		
 
 		Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
 				.map(x->x.getTransition().size())
@@ -572,6 +603,8 @@ public class MSCA
 					return comb;
 				}).orElseThrow(IllegalArgumentException::new);  //merging final states
 
+		MSCA.setInitialCA(newinitial, statesunion);
+		
 		return new MSCA(rank, newinitial, 
 				finalstates, 
 				uniontr, 
@@ -581,25 +614,46 @@ public class MSCA
 	@Override
 	public MSCA clone()
 	{	
-		Map<CAState,CAState> clonedstates = this.getStates().stream()
-				.collect(Collectors.toMap(Function.identity(), CAState::clone));
+		Map<State,State> clonedstate = this.getStates().stream()
+				.flatMap(x->x.getStateL().stream())
+				.distinct()
+				.collect(Collectors.toMap(Function.identity(), s->new State(s.getLabel(),s.isInit(),s.isFin())));
+
+		Map<CAState,CAState> clonedcastates  = this.getStates().stream()
+				.collect(Collectors.toMap(Function.identity(), 
+						x->new CAState(x.getStateL().stream()
+								.map(s->clonedstate.get(s))
+								.collect(Collectors.toList()),
+								x.getX(),x.getY())));
+
 		return new MSCA(rank,
-				clonedstates.get(this.getInitial()),
+				clonedcastates.get(this.getInitial()),
 				Arrays.stream(finalstates).map(int[]::clone).toArray(int[][]::new),
 				this.getTransition().stream()
-				.map(t->new MSCATransition(clonedstates.get(t.getSource()),
-						t.getLabel().clone(),
-						clonedstates.get(t.getTarget()),
+				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
+						t.getLabel().getClone(),
+						clonedcastates.get(t.getTarget()),
 						t.getModality()))
 				.collect(Collectors.toSet()),
-				clonedstates.entrySet().stream()
+				clonedcastates.entrySet().stream()
 				.map(Entry::getValue)
 				.collect(Collectors.toSet()));
 	}
 
-	private void checkStatesTransitions() 
+	private void checkInitFinAndStatesTransitions() 
 	{
 		Set<CAState> states = this.getStates();
+		
+		if (states.parallelStream()
+		.filter(CAState::isInitial)
+		.count()!=1)
+			throw new IllegalArgumentException("No Exactly one Initial State found!");
+		
+		if (!states.parallelStream()
+				.filter(CAState::isFinalstate)
+				.findAny().isPresent())
+					throw new IllegalArgumentException("No Final State found!");
+				
 		Set<CAState> states_tr = this.extractAllStatesFromTransitions();
 
 		states_tr.stream()

@@ -241,7 +241,7 @@ public class MSCATransition extends CATransition {
 	 * used by choreography synthesis
 	 * @return true if violates the branching condition
 	 */
-	public boolean satisfiesBranchingCondition(Set<? extends MSCATransition> trans, Set<CAState> bad) 
+	public boolean satisfiesBranchingCondition(Set<MSCATransition> trans, Set<CAState> bad) 
 	{
 		if (!this.getLabel().isMatch()||bad.contains(this.getSource()) || bad.contains(this.getTarget()))
 			return false;		//ignore this transition because it is going to be pruned in the synthesis

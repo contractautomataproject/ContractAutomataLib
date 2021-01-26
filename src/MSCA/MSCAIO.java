@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -85,7 +86,6 @@ public class MSCAIO {
 	/**
 	 * load a MSCA described in a text file,  
 	 * it also loads the must transitions but it does not load the states
-	 * this method is only used by loadMSCAAndWriteIntoXML
 	 * 
 	 * @param the name of the file
 	 * @return	the CA loaded
@@ -180,7 +180,7 @@ public class MSCAIO {
 				}
 				case "(": //a may transition
 				{
-					tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states));
+					tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states,initial,fin));
 					break;
 				}
 				case "!": //a must transition
@@ -192,7 +192,7 @@ public class MSCAIO {
 					case "U": type=MSCATransition.Modality.URGENT;break;
 					case "L": type=MSCATransition.Modality.LAZY;break;
 					}
-					tr.add(loadTransition(strLine,rank,type,states));
+					tr.add(loadTransition(strLine,rank,type,states,initial,fin));
 					break;
 				}
 				}
@@ -200,11 +200,11 @@ public class MSCAIO {
 		}
 		br.close();
 
-		return new MSCA(rank,new CAState(initial, true, false),//numstates,
+		return new MSCA(rank,new CAState(initial, true, false),
 				fin,tr,states);
 	}
 
-	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states)
+	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,int[] initial, int[][] fin)
 	{
 		int what=0;
 		String[] ss=str.split("]");
@@ -263,16 +263,9 @@ public class MSCAIO {
 			s.close();
 			if (what==2)
 			{
-				CAState source = states.stream()
-						.filter(x->Arrays.equals(x.getState(), store[0])) //source
-						.findAny()
-						.orElseGet(()->{CAState temp= new CAState(store[0]); states.add(temp); return temp;});
-
-				CAState target = states.stream()
-						.filter(x->Arrays.equals(x.getState(), statestransition)) //target
-						.findAny()
-						.orElseGet(()->{CAState temp= new CAState(statestransition); states.add(temp); return temp;});
-
+				CAState source = createOrLoadState(states,store[0],initial, fin);//source
+				CAState target = createOrLoadState(states,statestransition,initial, fin);//target
+						
 				CALabel label;
 				if (offerer!=null&&requester!=null&&offer!=null&&offer.startsWith(CALabel.offer))
 					label = new CALabel(source.getRank(),offerer,requester,offer);
@@ -295,6 +288,28 @@ public class MSCAIO {
 		}
 		throw new RuntimeException(); //check
 		//return null;
+	}
+	
+	private static CAState createOrLoadState(Set<CAState> states, int[] state,int[] initial, int[][] fin) {
+		
+		return states.stream()
+				.filter(x->Arrays.equals(x.getState(), state)) //target
+				.findAny()
+				.orElseGet(()->{
+							boolean isInit= IntStream.range(0,state.length)
+									.allMatch(i -> initial[i]==state[i]);
+							boolean isFin=IntStream.range(0,state.length)
+									.allMatch(i -> IntStream.of(fin[i])
+											.anyMatch(fs -> fs==state[i]));
+							CAState temp= new CAState(state,isInit,isFin); 
+							
+				////		this.setStates(this.getStates().stream()
+				////				.peek(x -> x.setFinalstate((IntStream.range(0,x.getState().length)
+				////						.allMatch(i -> MSCAUtils.contains(x.getState()[i], 
+				////								IntStream.of(finalstates[i]).boxed().toArray())))))
+				////				.collect(Collectors.toSet()));
+
+				states.add(temp); return temp;});
 	}
 
 
@@ -344,8 +359,7 @@ public class MSCAIO {
 			}
 		}
 
-		// A set of checks for detecting bugs
-
+		// checks for detecting bugs
 		assert !(id2castate.isEmpty()):"No states!";
 
 		Set<CAState> castates = id2castate.entrySet().stream()
@@ -636,8 +650,8 @@ public class MSCAIO {
 	 */
 	private static int[][] principalsFinalStates(List<int[]> states)
 	{
-		if (states.size()<=0)
-			return null;
+		if (states==null ||  states.size()==0)
+			throw new IllegalArgumentException("States null or empty");
 		int rank=states.get(0).length;
 		int[] count=new int[rank];
 		int[][] pfs=new int[rank][states.size()];

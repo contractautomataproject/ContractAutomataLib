@@ -33,7 +33,7 @@ public class CATransition {
 		.filter(i->source.getState()[i]!=target.getState()[i])
 		.toArray();
 		if (principals.length!=2)
-			throw new IllegalArgumentException("Bug: only two principals are allowed to move");
+			throw new IllegalArgumentException("Bug: only two principals are allowed to move");//FIXME loop not allowed
 
 		if (offererMinorRequester)
 			this.label=new CALabel(source.getRank(),principals[0],principals[1],offeraction);
@@ -42,6 +42,7 @@ public class CATransition {
 	}
 
 
+	
 	public CATransition(CAState source, String action, CAState target)
 	{
 		if (source==null||target==null||action==null)
@@ -53,9 +54,9 @@ public class CATransition {
 		.filter(i->source.getState()[i]!=target.getState()[i])
 		.toArray();
 		if (principal.length!=1)
-			throw new IllegalArgumentException("Bug: only one principal is allowed to move");
+			throw new IllegalArgumentException("Bug: only one principal is allowed to move");//FIXME loop not allowed
 		
-		this.label=new CALabel(source.getRank(),principal[0],action);
+		this.label=new CALabel(source.getRank(),principal[0],action); 
 	}
 
 	/**

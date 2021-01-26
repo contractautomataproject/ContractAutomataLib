@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  */
 public class CALabel {
 
-	private final Integer rank;
+	private final /*@ spec_public @*/  Integer rank;
 	private /*@ spec_public @*/ Integer offerer;
 	private /*@ spec_public @*/ Integer requester;
 	private /*@ spec_public @*/  String action; //in case of match, the action is always the offer
@@ -25,6 +25,23 @@ public class CALabel {
 	final public static String offer="!";
 	final public static String request="?";
 
+	/*@ invariant rank!=null && rank>0; @*/
+	/*@ public invariant action!=null && action.length()>1 && 
+			(action.startsWith(offer) || action.startsWith(request)); @*/
+	
+	/*
+	  @ public normal_behaviour
+	  @     requires this.rank >=0;
+	  @     requires this.action != null; 
+	  @		requires this.action.length()>=2;
+	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
+	 */
+	@Override
+	public String toString() {
+		return this.getLabelAsList().toString();		
+	}
+	
+	
 	/*
 	 * @ public normal_behavior
 	 * @ 	requires rank!=null && principal !=null && action != null;
@@ -37,7 +54,7 @@ public class CALabel {
 	 */
 	public CALabel(Integer rank, Integer principal, String action) {
 		super();
-		if (rank==null||principal==null||action==null)
+		if (rank==null||principal==null||action==null||rank<=0||action.length()<=1)
 			throw new IllegalArgumentException("Null argument");
 
 		if (action.startsWith(offer))
@@ -56,6 +73,40 @@ public class CALabel {
 		this.rank = rank;
 		this.action = action;
 	}
+	
+	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
+		super();
+		if (rank==null||principal1==null||action1==null||principal2==null||action2==null||rank<=0||action1.length()<=1||action2.length()<=1)
+			throw new IllegalArgumentException("Null argument");
+
+		if ((action1.startsWith(offer)&&!action2.startsWith(request))||
+				(action2.startsWith(offer)&&!action1.startsWith(request)))
+			throw new IllegalArgumentException("The actions must be an offer and a request");
+		if (action1.startsWith(offer))
+		{
+			this.offerer=principal1;
+			this.requester=principal2;
+			this.action = action1;
+		}
+		else 
+		{
+			this.offerer=principal2;
+			this.requester=principal1;
+			this.action = action2;
+		}
+		this.rank = rank;
+	}
+	
+	public CALabel(CALabel lab, Integer rank, Integer shift) {
+		super();
+		if (rank==null||rank<=0||lab==null||shift==null||shift<0)
+			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative");
+
+		this.rank = rank;
+		this.offerer=(lab.offerer!=-1)?lab.offerer+shift:-1;
+		this.requester=(lab.requester!=-1)?lab.requester+shift:-1;
+		this.action=lab.action;
+	}
 
 	/*
 	 * @ public normal_behavior
@@ -71,11 +122,11 @@ public class CALabel {
  	 */
 	public CALabel(Integer rank, Integer offerer, Integer requester, String offeraction) {
 		super();
-		if (rank==null||offerer==null||requester==null||offeraction==null)
+		if (rank==null||offerer==null||requester==null||offeraction==null||rank<=0||offeraction.length()<=1)
 			throw new IllegalArgumentException("Null argument");
 
 		if (!offeraction.startsWith(CALabel.offer))
-			throw new IllegalArgumentException("Bug: this constructor is only for matches and by convention action is the offer");
+			throw new IllegalArgumentException("This constructor is only for matches and by convention action is the offer");
 
 		this.rank = rank;
 		this.action = offeraction;
@@ -235,7 +286,7 @@ public class CALabel {
 	
 	/*
 	  @ public normal_behavior
-	  @     requires this.rank >=0;
+	  @     requires this.rank!=null && this.rank >=0;
   	  @     requires this.action != null; 
 	  @		requires this.action.length()>=2;
 	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
@@ -246,7 +297,6 @@ public class CALabel {
 	  @		ensures this.isMatch() ==> (\result.get(offerer)==action && \result.get(requester)==this.getCoAction())
 	  */
 	public List<String> getLabelAsList(){
-		assert !(rank<0):"Negative rank";
 		if (!this.isMatch())
 		{
 			return IntStream.range(0, rank)
@@ -346,36 +396,23 @@ public class CALabel {
 			return action;
 	}
 	
-	@Override
-	public CALabel clone() {
+	public CALabel getClone() {
 		if (!this.isMatch())
 			return new CALabel(rank,(this.isOffer())?offerer:requester,action);
 		else 
 			return new CALabel(rank,offerer,requester,action);
 	}
 	
-	/*
-	 * @ public normal_behaviour
-  	  @     requires this.rank >=0;
-  	  @     requires this.action != null; 
-	  @		requires this.action.length()>=2;
-	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
-	 */
-	@Override
-	public String toString() {
-		return this.getLabelAsList().toString();		
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((offerer == null) ? 0 : offerer.hashCode());
-		result = prime * result + ((rank == null) ? 0 : rank.hashCode());
-		result = prime * result + ((requester == null) ? 0 : requester.hashCode());
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + ((action == null) ? 0 : action.hashCode());
+//		result = prime * result + ((offerer == null) ? 0 : offerer.hashCode());
+//		result = prime * result + ((rank == null) ? 0 : rank.hashCode());
+//		result = prime * result + ((requester == null) ? 0 : requester.hashCode());
+//		return result;
+//	}
 
 	@Override
 	public boolean equals(Object obj) {

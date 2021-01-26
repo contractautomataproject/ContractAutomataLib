@@ -243,8 +243,7 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(editor.bind(mxResources.get("zoomOut"), mxGraphActions.getZoomOutAction()));
 
 
-		menu = add(new JMenu("FMCA"));
-
+		menu = add(new JMenu("MSCA"));
 
 
 		item = menu.add(new JMenuItem("Composition"));
@@ -331,7 +330,139 @@ public class EditorMenuBar extends JMenuBar
 		});
 
 
+		item = menu.add(new JMenuItem("Most Permissive Controller"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+			String filename=editor.getCurrentFile().getName();
+
+			lastDir=editor.getCurrentFile().getParent();
+
+			MSCA aut=editor.lastaut;
+			MSCA backup = aut.clone();
+			
+			if (aut.getTransition().parallelStream()
+					.anyMatch(t-> t.isSemiControllable()))
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The automaton contains semi-controllable transitions","Error",JOptionPane.ERROR_MESSAGE);
+				editor.lastaut=backup;
+				return;
+			}
+	
+
+			long start = System.currentTimeMillis();
+			MSCA controller = aut.mpc();
+			long elapsedTime = System.currentTimeMillis() - start;
+
+			if (controller==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				editor.lastaut=backup;
+				return;
+			}
+			String K="Kmpc_"+filename;
+			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
+			String message = "The mpc has been stored with filename "+lastDir+"//"+K
+					+"\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+controller.getNumStates();
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
+
+			editor.lastaut=controller;
+			loadMorphStore(lastDir+"//"+K,editor,file);
+					
+		});
+
+
+		
+		item = menu.add(new JMenuItem("Orchestration"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+			String filename=editor.getCurrentFile().getName();
+
+			lastDir=editor.getCurrentFile().getParent();
+
+			MSCA aut=editor.lastaut;
+			MSCA backup = aut.clone();
+
+			long start = System.currentTimeMillis();
+			MSCA controller = aut.orchestration();
+			long elapsedTime = System.currentTimeMillis() - start;
+
+			if (controller==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The orchestration is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				editor.lastaut=backup;
+				return;
+			}
+			String K="K_"+filename;
+			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
+			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
+					+"\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+controller.getNumStates();
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
+
+			editor.lastaut=controller;
+			loadMorphStore(lastDir+"//"+K,editor,file);
+					
+		});
+
+
+
+		item = menu.add(new JMenuItem("Choreography"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+			String filename=editor.getCurrentFile().getName();
+
+			lastDir=editor.getCurrentFile().getParent();
+			MSCA aut=editor.lastaut;
+			MSCA backup = aut.clone();
+			
+			long start = System.currentTimeMillis();
+
+			MSCA controller = aut.choreographyLarger();
+
+			long elapsedTime = System.currentTimeMillis() - start;
+
+			if (controller==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				editor.lastaut=backup;
+				return;
+			}
+			String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
+					filename;
+			File file= MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
+			String message = "The choreography has been stored with filename "+lastDir+"//"+K
+					+"\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+controller.getNumStates();
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
+
+			editor.lastaut=controller;
+			loadMorphStore(lastDir+"//"+K,editor,file);
+		});
+
 		menu.addSeparator();
+		
+		item = menu.add(new JMenuItem("Info about converting in MSCA without Lazy Transitions"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+
+			lastDir=editor.getCurrentFile().getParent();
+			MSCA aut=editor.lastaut;
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
+
+		});
+
+		
+		menu = add(new JMenu("FMCA"));
+
 
 		item = menu.add(new JMenuItem("Clear Family"));
 		item.addActionListener(e->
@@ -692,7 +823,7 @@ public class EditorMenuBar extends JMenuBar
 
 		});
 
-		item = menu.add(new JMenuItem("Products with non-empty MPC"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Products with non-empty orchestration"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
 
@@ -715,12 +846,12 @@ public class EditorMenuBar extends JMenuBar
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 			if (vp==null)
 			{			
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Products With Non-empty MPC"+ "\nElapsed time : "+elapsedTime+ " milliseconds","",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Products With non-empty orchestration"+ "\nElapsed time : "+elapsedTime+ " milliseconds","",JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
 			pf.setColorButtonProducts(vp, Color.BLUE);
-			String message=vp.length + " Products With Non-empty MPC Found:\n";
+			String message=vp.length + " Products With non-empty orchestration Found:\n";
 			for (int i=0;i<vp.length;i++)
 				message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
 
@@ -732,7 +863,7 @@ public class EditorMenuBar extends JMenuBar
 			JScrollPane scrollPane = new JScrollPane(textArea);
 			JDialog jd = new JDialog(pf);
 			jd.add(scrollPane);
-			jd.setTitle("Products With Non-empty MPC");
+			jd.setTitle("Products With non-empty orchestration");
 			jd.setResizable(true);
 			jd.setVisible(true);
 
@@ -743,7 +874,7 @@ public class EditorMenuBar extends JMenuBar
 
 		});
 
-		item = menu.add(new JMenuItem("Products with Non-empty MPC (Only)"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("Products with non-empty orchestration (Only)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{		
 
@@ -891,7 +1022,7 @@ public class EditorMenuBar extends JMenuBar
 
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The orchestration is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
 				editor.lastaut=backup;
 				return;
 			}
@@ -899,7 +1030,7 @@ public class EditorMenuBar extends JMenuBar
 			String K="K_family_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 
-			String message = "The mpc has been stored with filename "+lastDir+"\\"
+			String message = "The orchestration has been stored with filename "+lastDir+"\\"
 					+ K
 					+ "\n Elapsed time : "+elapsedTime + " milliseconds"
 					+ "\n Number of states : "+controller.getNumStates();
@@ -912,6 +1043,69 @@ public class EditorMenuBar extends JMenuBar
 		});
 
 
+		item = menu.add(new JMenuItem("Orchestration of Family (without PO)"));//mxResources.get("aboutGraphEditor")));
+		item.addActionListener(e->
+		{
+			if (checkAut(editor)) return;
+			String filename=editor.getCurrentFile().getName();
+
+			ProductFrame pf=editor.getProductFrame();
+			if (pf==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			lastDir=editor.getCurrentFile().getParent();
+			MSCA aut=editor.lastaut;
+			MSCA backup = aut.clone();
+//			
+//			String absfilename =editor.getCurrentFile().getAbsolutePath();
+//			MSCA aut;
+//			try {
+//				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+//			} catch (ParserConfigurationException|SAXException|IOException e1) {
+//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+//				return;
+//			}
+			Family f=pf.getFamily();
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
+
+			long start = System.currentTimeMillis();
+			int[][] vpdummy = new int[1][];
+			MSCA controller = f.getMPCofFamilyWithoutPO(aut, pf, vpdummy);
+			int[] vp = vpdummy[0];
+			long elapsedTime = System.currentTimeMillis() - start;
+
+//			File file=null;
+			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
+
+			if (controller==null)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The orchestration is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				editor.lastaut=backup;
+				return;
+			}
+
+			String K="K_familyWithoutPO_"+filename;
+			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
+
+			String message = "The orchestration has been stored with filename "+lastDir+"\\"+K;
+
+			message+= "\n" + vp.length + " Total Products With non-empty orchestration Found:\n";
+			for (int i=0;i<vp.length;i++)
+				message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
+
+			message+="\n Elapsed time : "+elapsedTime + " milliseconds"
+					+"\n Number of states : "+controller.getNumStates();
+
+
+			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.WARNING_MESSAGE);
+			editor.lastaut=controller;
+			loadMorphStore(K,editor,file);
+
+		});
 		item = menu.add(new JMenuItem("Orchestration of a Product (insert manually)"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
@@ -952,14 +1146,14 @@ public class EditorMenuBar extends JMenuBar
 
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The orchestration is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","",JOptionPane.WARNING_MESSAGE);
 				editor.lastaut=backup;
 				return;
 			}
 
 			String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
-			String message = "The mpc has been stored with filename "+lastDir+"//"+K
+			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
 					+"\n Number of states : "+controller.getNumStates();
 
@@ -1003,13 +1197,13 @@ public class EditorMenuBar extends JMenuBar
 
 			if (controller==null)
 			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The orchestration is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
 				editor.lastaut=backup;
 				return;
 			}
 			String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
-			String message = "The mpc has been stored with filename "+lastDir+"//"+K
+			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
 					+"\n Number of states : "+controller.getNumStates();
 
@@ -1020,123 +1214,8 @@ public class EditorMenuBar extends JMenuBar
 					
 		});
 
-		menu.addSeparator();
+		menu = add(new JMenu("TSCA"));
 
-
-		item = menu.add(new JMenuItem("Orchestration of Family (without PO)"));//mxResources.get("aboutGraphEditor")));
-		item.addActionListener(e->
-		{
-			if (checkAut(editor)) return;
-			String filename=editor.getCurrentFile().getName();
-
-			ProductFrame pf=editor.getProductFrame();
-			if (pf==null)
-			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No Family loaded!",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			lastDir=editor.getCurrentFile().getParent();
-			MSCA aut=editor.lastaut;
-			MSCA backup = aut.clone();
-//			
-//			String absfilename =editor.getCurrentFile().getAbsolutePath();
-//			MSCA aut;
-//			try {
-//				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-//			} catch (ParserConfigurationException|SAXException|IOException e1) {
-//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
-//				return;
-//			}
-			Family f=pf.getFamily();
-
-			JOptionPane.showMessageDialog(editor.getGraphComponent(),"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
-
-			long start = System.currentTimeMillis();
-			int[][] vpdummy = new int[1][];
-			MSCA controller = f.getMPCofFamilyWithoutPO(aut, pf, vpdummy);
-			int[] vp = vpdummy[0];
-			long elapsedTime = System.currentTimeMillis() - start;
-
-//			File file=null;
-			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
-
-			if (controller==null)
-			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
-				editor.lastaut=backup;
-				return;
-			}
-
-			String K="K_familyWithoutPO_"+filename;
-			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
-
-			String message = "The mpc has been stored with filename "+lastDir+"\\"+K;
-
-			message+= "\n" + vp.length + " Total Products With Non-empty MPC Found:\n";
-			for (int i=0;i<vp.length;i++)
-				message+= vp[i]+" : \n"+vpp[i].toString()+"\n";
-
-			message+="\n Elapsed time : "+elapsedTime + " milliseconds"
-					+"\n Number of states : "+controller.getNumStates();
-
-
-			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.WARNING_MESSAGE);
-			editor.lastaut=controller;
-			loadMorphStore(K,editor,file);
-
-		});
-
-
-		item = menu.add(new JMenuItem("Info about converting in MSCA without Lazy Transitions"));//mxResources.get("aboutGraphEditor")));
-		item.addActionListener(e->
-		{
-			if (checkAut(editor)) return;
-
-			lastDir=editor.getCurrentFile().getParent();
-			MSCA aut=editor.lastaut;
-
-			JOptionPane.showMessageDialog(editor.getGraphComponent(),aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
-
-		});
-
-		menu.addSeparator();
-
-		item = menu.add(new JMenuItem("Choreography"));//mxResources.get("aboutGraphEditor")));
-		item.addActionListener(e->
-		{
-			if (checkAut(editor)) return;
-			String filename=editor.getCurrentFile().getName();
-
-			lastDir=editor.getCurrentFile().getParent();
-			MSCA aut=editor.lastaut;
-			MSCA backup = aut.clone();
-			
-			long start = System.currentTimeMillis();
-
-			MSCA controller = aut.choreographyLarger();
-
-			long elapsedTime = System.currentTimeMillis() - start;
-
-			if (controller==null)
-			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
-				editor.lastaut=backup;
-				return;
-			}
-			String K="Chor_"+//"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+
-					filename;
-			File file= MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
-			String message = "The choreography has been stored with filename "+lastDir+"//"+K
-					+"\n Elapsed time : "+elapsedTime + " milliseconds"
-					+"\n Number of states : "+controller.getNumStates();
-
-			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
-
-			editor.lastaut=controller;
-			loadMorphStore(lastDir+"//"+K,editor,file);
-		});
-		
 
 		// Creates the help menu
 		menu = add(new JMenu(mxResources.get("help")));
