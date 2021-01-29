@@ -480,7 +480,6 @@ public class EditorMenuBar extends JMenuBar
 			MSCA aut=editor.lastaut;
 
 			JOptionPane.showMessageDialog(editor.getGraphComponent(),aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
-
 		});
 
 		

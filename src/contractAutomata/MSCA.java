@@ -172,7 +172,7 @@ public class MSCA
 
 		
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> bad.contains(x.getTarget()));
+				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUrgent());
 	}
 
 
@@ -187,7 +187,7 @@ public class MSCA
 			throw new UnsupportedOperationException("The automaton contains necessary offers that are not allowed in the orchestration synthesis");
 
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableOrchestration(t, bad));
+				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableOrchestration(t, bad));
 	}
 
 	/** 
@@ -208,7 +208,7 @@ public class MSCA
 		do 
 		{ aut = aut.synthesis((x,t,bad) -> 
 		!x.getLabel().isMatch()||bad.contains(x.getTarget()),
-		(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad));
+		(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
 		if (aut==null)
 			break;
 		final Set<MSCATransition> trf = aut.getTransition();
@@ -257,7 +257,6 @@ public class MSCA
 		if (R.contains(init))
 			return null;
 
-		//this.setStates(this.extractAllStatesFromTransitions());
 		return this;
 	}
 	
