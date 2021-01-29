@@ -1,4 +1,4 @@
-package MSCA;
+package contractAutomata;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,9 +32,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import CA.CALabel;
-import CA.CAState;
 
 /**
  * Input/Output 
@@ -87,8 +84,8 @@ public class MSCAIO {
 	 * load a MSCA described in a text file,  
 	 * it also loads the must transitions but it does not load the states
 	 * 
-	 * @param the name of the file
-	 * @return	the CA loaded
+	 * @param  fileName the name of the file
+	 * @return	the MSCA described in the textfile
 	 * @throws IOException 
 	 * @throws NumberFormatException 
 	 */
@@ -201,7 +198,7 @@ public class MSCAIO {
 		br.close();
 
 		return new MSCA(rank,new CAState(initial, true, false),
-				fin,tr,states);
+				fin,tr);
 	}
 
 	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,int[] initial, int[][] fin)
@@ -319,8 +316,8 @@ public class MSCAIO {
 	 * TODO the set of final states of principals is reconstructed at the end, this encoding XML lose the information of 
 	 * some of the final states of principals so should be removed
 	 * 
-	 * @param filename
-	 * @return
+	 * @param filename  the XML file name
+	 * @return the MSCA parsed from the XML
 	 * @throws ParserConfigurationException 
 	 * @throws SAXException 
 	 * @throws IOException 
@@ -391,16 +388,16 @@ public class MSCAIO {
 						.filter(CAState::isFinalstate)
 						.map(CAState::getState)
 						.collect(Collectors.toList())),
-				transitions,
-				castates);
+				transitions);
 		return aut;
 	}
 
 
 	/**
-	 * convert the MSCA aut as a mxGraphModel File
-	 * @param fileName	write the automaton into fileName
-	 * @return
+	 * save the MSCA aut as a mxGraphModel File with xml extension
+	 * @param fileName the name of the xml file where to write the automaton
+	 * @param aut the automaton to be saved
+	 * @return the File containing the xml for the automaton aut
 	 */
 	public static File convertMSCAintoXML(String fileName, MSCA aut)
 	{
@@ -669,7 +666,7 @@ public class MSCAIO {
 		{
 			for (int j=0;j<rank;j++)
 			{
-				if (MSCAUtils.getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
+				if (getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
 				{
 					pfs[j][count[j]]=states.get(i)[j];
 					count[j]++;
@@ -681,6 +678,15 @@ public class MSCAIO {
 		return pfs;
 	}
 
+	private static int getIndex(int[] q, int e)
+	{
+		for (int i=0;i<q.length;i++)
+		{
+			if (q[i]==e)
+				return i;
+		}
+		return -1;
+	}
 
 	private static String[] getArrayString(String arr)
 	{

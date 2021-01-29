@@ -1,4 +1,4 @@
-package CA;
+package contractAutomata;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,15 +15,38 @@ import java.util.stream.IntStream;
  *
  */
 public class CALabel {
-
+	/**
+	 * the rank of the label (i.e. number of principals)
+	 */
 	private final /*@ spec_public @*/  Integer rank;
-	private /*@ spec_public @*/ Integer offerer;
-	private /*@ spec_public @*/ Integer requester;
-	private /*@ spec_public @*/  String action; //in case of match, the action is always the offer
+	
+	/**
+	 * the index of the offerer in the label or -1
+	 */
+	private final /*@ spec_public @*/ Integer offerer;
+	
+	/**
+	 * the index of the requester in the label or -1
+	 */
+	private final /*@ spec_public @*/ Integer requester;
+	
+	/**
+	 * the action performed by the label
+	 */
+	private final /*@ spec_public @*/  String action; //in case of match, the action is always the offer
 
 	final public static String idle="-";
 	final public static String offer="!";
 	final public static String request="?";
+	
+	//TODO use enum instead of strings for the type
+	
+//	enum ActionType{
+//		REQUEST,OFFER,MATCH
+//	}
+//	
+//	private ActionType actiontype;
+
 
 	/*@ invariant rank!=null && rank>0; @*/
 	/*@ public invariant action!=null && action.length()>1 && 
@@ -55,7 +78,7 @@ public class CALabel {
 	public CALabel(Integer rank, Integer principal, String action) {
 		super();
 		if (rank==null||principal==null||action==null||rank<=0||action.length()<=1)
-			throw new IllegalArgumentException("Null argument");
+			throw new IllegalArgumentException(rank + " " + principal + " " + action);
 
 		if (action.startsWith(offer))
 		{
@@ -178,23 +201,26 @@ public class CALabel {
 			x -> {if (x==null) throw new IllegalArgumentException("Label contains null references");}
 		);
 		
-		this.offerer=-1;this.requester=-1;
+		int offtemp=-1,requtemp=-1;//offerer and requester are final
+		String acttemp=null;//action is final
 		for (int i=0;i<label.size();i++)
 		{
 			if (label.get(i).startsWith(offer)) 
 			{
-				this.offerer=i; 
-				this.action=label.get(i);
+				offtemp=i; 
+				acttemp=label.get(i);
 			}
 			else if (label.get(i).startsWith(request))
 			{
-				this.requester=i; 
-				this.action = (this.action!=null)?this.action:label.get(i);
+				requtemp=i; 
+				acttemp = (acttemp!=null)?acttemp:label.get(i);
 			}
 			else if (!label.get(i).equals(idle)) 
 				throw new IllegalArgumentException("The label is not well-formed");
 		}
-
+		this.offerer=offtemp;
+		this.requester=requtemp;
+		this.action=acttemp;
 		if (offerer==-1 && requester==-1)
 			throw new IllegalArgumentException("The label is not well-formed");
 		

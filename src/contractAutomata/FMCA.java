@@ -1,6 +1,6 @@
-package FMCA;
+package contractAutomata;
 
-import MSCA.MSCA;
+import family.Product;
 
 /**
  * Featured Modal Contract Automata

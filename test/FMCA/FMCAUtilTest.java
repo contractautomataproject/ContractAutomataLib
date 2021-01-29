@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import CA.CAState;
+import contractAutomata.CAState;
 
 /*import static org.junit.Assert.assertEquals;
 

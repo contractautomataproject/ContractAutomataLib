@@ -1,4 +1,4 @@
-package FMCA;
+package family;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +22,10 @@ import org.xml.sax.SAXException;
 
 import com.mxgraph.examples.swing.editor.ProductFrame;
 
-import CA.CAState;
-import MSCA.MSCA;
-import MSCA.MSCATransition;
+import contractAutomata.CAState;
+import contractAutomata.FMCA;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 /**
  * A family contains its products/configurations and subfamilies, organised as a partial order
@@ -220,7 +221,7 @@ public class Family {
             	pointer++;
         	}
         }
-        subproducts = FMCAUtils.removeTailsNull(subproducts, pointer);
+        subproducts = FamilyUtils.removeTailsNull(subproducts, pointer);
         return subproducts;
 	}
 	
@@ -240,7 +241,7 @@ public class Family {
             	pointer++;
         	}
         }
-        supproducts = FMCAUtils.removeTailsNull(supproducts, pointer);
+        supproducts = FamilyUtils.removeTailsNull(supproducts, pointer);
         return supproducts;
 	}
 	
@@ -291,14 +292,14 @@ public class Family {
 		//int counteq=0;
 		for (int i=0;i<eq.length;i++)
 		{
-			if (FMCAUtils.contains(eq[i][0], features)&&FMCAUtils.contains(eq[i][1], features))
+			if (FamilyUtils.contains(eq[i][0], features)&&FamilyUtils.contains(eq[i][1], features))
 			{
-				int index=FMCAUtils.getIndex(features, eq[i][1]);
+				int index=FamilyUtils.getIndex(features, eq[i][1]);
 				features[index]=null;
 		//		counteq++;
 			}
 		}
-		features=FMCAUtils.removeHoles(features, new String[] {}); //,counteq);
+		features=FamilyUtils.removeHoles(features, new String[] {}); //,counteq);
 		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
 		currentdir+="\\products\\";
 		File folder = new File(currentdir);
@@ -335,7 +336,7 @@ public class Family {
 						System.out.println();
 					}
 */					String[] f1 = lines.toArray(new String[lines.size()]); //required features
-					Product pro = new Product(FMCAUtils.setIntersection(f1, features, new String[] {}), FMCAUtils.setDifference(features, f1, new String[] {}), eq); 
+					Product pro = new Product(FamilyUtils.setIntersection(f1, features, new String[] {}), FamilyUtils.setDifference(features, f1, new String[] {}), eq); 
 					boolean alreadyinserted=false;
 					/**
 					 * product generation of featureide may generate duplicate products!
@@ -355,7 +356,7 @@ public class Family {
 					}
 				}		      
 		    }
-		pr=FMCAUtils.removeTailsNull(pr, prlength, new Product[] {});
+		pr=FamilyUtils.removeTailsNull(pr, prlength, new Product[] {});
 		return generateSuperProducts(pr,features);
 	}
 	
@@ -434,10 +435,10 @@ public class Family {
 */								String[] rf=new String[1];
 								rf[0]=features[removedfeature];
 								
-								Product p1 = new Product(FMCAUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
-										FMCAUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
-								Product p2 = new Product(FMCAUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
-										FMCAUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
+								Product p1 = new Product(FamilyUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
+										FamilyUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
+								Product p2 = new Product(FamilyUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
+										FamilyUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
 								if (p1.equals(p2))
 								{	//featuresremoved[newprodind]=features[removedfeature];
 									boolean alreadyinserted=false;
@@ -464,7 +465,7 @@ public class Family {
 			}
 			if (newprodind>0)
 			{
-				newproducts=FMCAUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
+				newproducts=FamilyUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
 				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
 				pl[level-2]=newproducts;
 			}
@@ -518,7 +519,7 @@ public class Family {
 	               ind++;
 	            }       
 	        }
-	        features=FMCAUtils.removeTailsNull(features, ind, new String[] {});
+	        features=FamilyUtils.removeTailsNull(features, ind, new String[] {});
 	      } catch (ParserConfigurationException e) {
 	         e.printStackTrace();
 	      } catch (SAXException e) {
@@ -642,7 +643,7 @@ public class Family {
 				count++;
 			}
 		}
-		newp=FMCAUtils.removeTailsNull(newp, count);
+		newp=FamilyUtils.removeTailsNull(newp, count);
 		return newp;
 	}
 	
@@ -659,7 +660,7 @@ public class Family {
 				count++;
 			}
 		}
-		pr=FMCAUtils.removeTailsNull(pr, count);
+		pr=FamilyUtils.removeTailsNull(pr, count);
 		return pr;
 	}
 	
@@ -699,7 +700,7 @@ public class Family {
 				count++;
 			}
 		}
-		tp=FMCAUtils.removeTailsNull(tp, count);
+		tp=FamilyUtils.removeTailsNull(tp, count);
 		return tp;
 	}
 	
@@ -756,8 +757,8 @@ public class Family {
 					 * <<ignoring  those features that are never displayed in the automaton>> (this is an improvement of Def.32 of JSCP2020).
 					 */
 					String[] act=aut.getUnsignedActions().toArray(new String[] {});
-					Product test1=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
-					Product test2=new Product(new String[0],FMCAUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
+					Product test1=new Product(new String[0],FamilyUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
+					Product test2=new Product(new String[0],FamilyUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
 					if (test1.containsForbiddenFeatures(test2)
 						&&	
 						test2.containsForbiddenFeatures(test1)
@@ -825,7 +826,7 @@ public class Family {
 			}
 		}
 		K = Arrays.copyOf(K, ind);	
-		pr[0]=FMCAUtils.removeTailsNull(pr[0], ind);
+		pr[0]=FamilyUtils.removeTailsNull(pr[0], ind);
 		
 		return MSCA.union(Arrays.asList(K));//List.of(K));
 	}

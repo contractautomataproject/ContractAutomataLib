@@ -68,8 +68,7 @@ import com.mxgraph.util.png.mxPngImageEncoder;
 import com.mxgraph.util.png.mxPngTextDecoder;
 import com.mxgraph.view.mxGraph;
 
-import FMCA.FMCATGUI;
-import MSCA.MSCAIO;
+import contractAutomata.MSCAIO;
 
 /**
  *
@@ -1743,10 +1742,10 @@ public class EditorActions
 									editor.setCurrentFile(fc
 											.getSelectedFile());
 									
-									if (editor instanceof FMCATGUI) //TODO import .data could be swapped to open, as well as export to save
+									if (editor instanceof App) //TODO import .data could be swapped to open, as well as export to save
 									{
 										try {
-											((FMCATGUI) editor).lastaut = MSCAIO.parseXMLintoMSCA(fc
+											((App) editor).lastaut = MSCAIO.parseXMLintoMSCA(fc
 													.getSelectedFile()
 													.getAbsolutePath());
 										} catch (ParserConfigurationException|SAXException|IOException e1) {

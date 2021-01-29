@@ -1,13 +1,9 @@
-package MSCA;
+package contractAutomata;
 
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import CA.CALabel;
-import CA.CAState;
-import CA.CATransition;
 
 
 
@@ -23,23 +19,11 @@ public class MSCATransition extends CATransition {
 		PERMITTED,URGENT,LAZY
 	}
 	
-	private Modality mod;
+	private final Modality mod;
 	
 	public MSCATransition(CAState source, CALabel label, CAState target, Modality type)
 	{
 		super(source,label,target);
-		this.mod=type;
-	}
-
-	public MSCATransition(CAState source, boolean offererMinorRequester, String offeraction, CAState target, Modality type)
-	{
-		super(source,offererMinorRequester,offeraction,target);
-		this.mod=type;
-	}
-
-	public MSCATransition(CAState source, String action, CAState target, Modality type)
-	{
-		super(source,action,target);
 		this.mod=type;
 	}
 	
@@ -202,7 +186,7 @@ public class MSCATransition extends CATransition {
 
 	/**
 	 * 
-	 * @return	true if the transition is uncontrollable
+	 * @return	true if the transition is uncontrollable for an orchestration
 	 */
 	public boolean isUncontrollableOrchestration(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
@@ -213,10 +197,9 @@ public class MSCATransition extends CATransition {
 	}
 
 	/**
-	 * Readapted for a choreography,
 	 * 
 	 * @param aut
-	 * @return	true if the transition is uncontrollable
+	 * @return	true if the transition is uncontrollable for a choreography
 	 */
 	public boolean  isUncontrollableChoreography(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
@@ -227,7 +210,7 @@ public class MSCATransition extends CATransition {
 
 	/**
 	 *
-	 * @param t
+	 * @param t	set of transitions
 	 * @return   source states of transitions in t 
 	 */
 	static Set<CAState> getSources(Set<? extends MSCATransition> t)
@@ -238,8 +221,11 @@ public class MSCATransition extends CATransition {
 	}
 
 	/**
-	 * used by choreography synthesis
-	 * @return true if violates the branching condition
+	 * 
+	 * this method is used by the choreography synthesis 
+	 * @param trans the set of transitions to check
+	 * @param bad  the set of bad (dangling) states
+	 * @return true if the set of transitions and bad states violate the branching condition
 	 */
 	public boolean satisfiesBranchingCondition(Set<MSCATransition> trans, Set<CAState> bad) 
 	{

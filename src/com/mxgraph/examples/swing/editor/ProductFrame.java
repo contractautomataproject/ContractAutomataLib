@@ -16,15 +16,18 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
-import FMCA.Family;
-import FMCA.Product;
+import family.Family;
+import family.Product;
 
 /**
- * 
+ * This class represents a frame visualising the products of a feature model
  * @author Davide Basile
  *
  */
 public class ProductFrame extends JFrame{
+	/**
+	 * the family whose products are being displayed
+	 */
 	private Family fam;
 	JButton[] nodes;
 

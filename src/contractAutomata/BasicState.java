@@ -1,12 +1,17 @@
-package CA;
+package contractAutomata;
 
-public class State {
+/**
+ * Class representing a basic state, used by CAState
+ * @author Davide
+ *
+ */
+public class BasicState {
 
 	private boolean init;
 	private boolean fin;
-	private String label;
+	private final String label;
 	
-	public State(String label, boolean init, boolean fin) {
+	public BasicState(String label, boolean init, boolean fin) {
 		super();
 		this.label=label;
 		this.init = init;
@@ -27,8 +32,8 @@ public class State {
 	public String getLabel() {
 		return label;
 	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
+//	public void setLabel(String label) {
+//		this.label = label;
+//	}
 	
 }

@@ -1,7 +1,6 @@
-package CA;
+package contractAutomata;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * Transition of a contract automaton
@@ -20,43 +19,6 @@ public class CATransition {
 		this.source=source;
 		this.target=target;
 		this.label=label;
-	}
-
-	public CATransition(CAState source, boolean offererMinorRequester, String offeraction, CAState target)
-	{
-		if (source==null||target==null||offeraction==null)
-			throw new IllegalArgumentException("Bug: trying to instantiate a CATransition with some null value");
-		this.source=source;
-		this.target=target;
-		
-		int[] principals= IntStream.range(0,source.getState().length)
-		.filter(i->source.getState()[i]!=target.getState()[i])
-		.toArray();
-		if (principals.length!=2)
-			throw new IllegalArgumentException("Bug: only two principals are allowed to move");//FIXME loop not allowed
-
-		if (offererMinorRequester)
-			this.label=new CALabel(source.getRank(),principals[0],principals[1],offeraction);
-		else
-			this.label=new CALabel(source.getRank(),principals[1],principals[0],offeraction);
-	}
-
-
-	
-	public CATransition(CAState source, String action, CAState target)
-	{
-		if (source==null||target==null||action==null)
-			throw new IllegalArgumentException("Bug: trying to instantiate a CATransition with some null value");
-		this.source=source;
-		this.target=target;
-		
-		int[] principal= IntStream.range(0,source.getState().length)
-		.filter(i->source.getState()[i]!=target.getState()[i])
-		.toArray();
-		if (principal.length!=1)
-			throw new IllegalArgumentException("Bug: only one principal is allowed to move");//FIXME loop not allowed
-		
-		this.label=new CALabel(source.getRank(),principal[0],action); 
 	}
 
 	/**

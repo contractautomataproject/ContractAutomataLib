@@ -44,15 +44,16 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 
-import FMCA.FMCA;
-import FMCA.FMCATGUI;
-import FMCA.Family;
-import FMCA.Product;
-import MSCA.MSCA;
-import MSCA.MSCAIO;
+import contractAutomata.FMCA;
+import contractAutomata.MSCA;
+import contractAutomata.MSCAIO;
+import family.Family;
+import family.Product;
 
 /**
- * Extended the MenuBar of BasicGraphEditor with functionalities of FMCA
+ * 
+ * This is the Menu of the application
+ * adapted the MenuBar of BasicGraphEditor with functionalities of FMCA
  * 
  * @author Davide Basile
  *
@@ -68,7 +69,7 @@ public class EditorMenuBar extends JMenuBar
 			+		"and  each label has the following format:\n"
 			+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
 
-	Predicate<FMCATGUI> loseChanges = x->((x != null)&&(!x.isModified()
+	Predicate<App> loseChanges = x->((x != null)&&(!x.isModified()
 			|| JOptionPane.showConfirmDialog(x,	mxResources.get("loseChanges")) == JOptionPane.YES_OPTION));
 
 	private static final long serialVersionUID = 4060203894740766714L;
@@ -76,7 +77,7 @@ public class EditorMenuBar extends JMenuBar
 	/**
 	 * @param editor
 	 */
-	public EditorMenuBar(final FMCATGUI editor)
+	public EditorMenuBar(final App editor)
 	{
 		final mxGraph graphfinal = editor.getGraphComponent().getGraph();
 
@@ -341,19 +342,22 @@ public class EditorMenuBar extends JMenuBar
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
 			
-			if (aut.getTransition().parallelStream()
-					.anyMatch(t-> t.isSemiControllable()))
-			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The automaton contains semi-controllable transitions","Error",JOptionPane.ERROR_MESSAGE);
-				editor.lastaut=backup;
-				return;
-			}
 	
-
+			
+			MSCA controller=null;
 			long start = System.currentTimeMillis();
-			MSCA controller = aut.mpc();
+			try {
+				controller = aut.mpc();
+			} catch(UnsupportedOperationException exc) {
+				if (exc.getMessage()=="The automaton contains semi-controllable transitions")
+				{
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					editor.lastaut=backup;
+					return;
+				} else throw exc;
+			}
 			long elapsedTime = System.currentTimeMillis() - start;
-
+			
 			if (controller==null)
 			{
 				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
@@ -386,9 +390,20 @@ public class EditorMenuBar extends JMenuBar
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
 
+			MSCA controller=null;
 			long start = System.currentTimeMillis();
-			MSCA controller = aut.orchestration();
+			try {
+				controller = aut.orchestration();
+			} catch(UnsupportedOperationException exc) {
+				if (exc.getMessage()=="The automaton contains necessary offers that are not allowed in the orchestration synthesis")
+				{
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					editor.lastaut=backup;
+					return;
+				} else throw exc;
+			}
 			long elapsedTime = System.currentTimeMillis() - start;
+			
 
 			if (controller==null)
 			{
@@ -421,12 +436,20 @@ public class EditorMenuBar extends JMenuBar
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
 			
+			MSCA controller=null;
 			long start = System.currentTimeMillis();
-
-			MSCA controller = aut.choreographyLarger();
-
+			try {
+				controller = aut.choreography();
+			} catch(UnsupportedOperationException exc) {
+				if (exc.getMessage()=="The automaton contains necessary requests that are not allowed in the choreography synthesis")
+				{
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					editor.lastaut=backup;
+					return;
+				} else throw exc;
+			}
 			long elapsedTime = System.currentTimeMillis() - start;
-
+			
 			if (controller==null)
 			{
 				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
@@ -1227,7 +1250,7 @@ public class EditorMenuBar extends JMenuBar
 		});
 	}
 
-	private void loadMorphStore(String name, FMCATGUI editor, File file)
+	private void loadMorphStore(String name, App editor, File file)
 	{
 		if (!name.endsWith(".mxe")&&!name.endsWith(".data"))
 			name=name+".mxe";
@@ -1250,7 +1273,7 @@ public class EditorMenuBar extends JMenuBar
 			mxGraph mg=new mxGraph(mgm);
 			mxGraphComponent mgc = new mxGraphComponent(mg);
 
-			FMCATGUI.morphGraph(mgc.getGraph(), mgc);
+			App.morphGraph(mgc.getGraph(), mgc);
 
 			codec = new mxCodec();
 			String xml = mxXmlUtils.getXml(codec.encode(mgc.getGraph().getModel()));
@@ -1271,7 +1294,7 @@ public class EditorMenuBar extends JMenuBar
 
 	}
 
-	private void parseAndSet(String absfilename, FMCATGUI editor, File file)
+	private void parseAndSet(String absfilename, App editor, File file)
 	{
 		//TODO there should be no need in parsing the xml and then converting to xml anymore
 		try
@@ -1300,7 +1323,7 @@ public class EditorMenuBar extends JMenuBar
 
 	}
 
-	private boolean checkAut(FMCATGUI editor)
+	private boolean checkAut(App editor)
 	{
 		try
 		{

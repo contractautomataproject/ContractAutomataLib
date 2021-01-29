@@ -1,4 +1,4 @@
-package MSCA;
+package contractAutomata;
 
 /**
  * used in the synthesis method of MSCA for readability. 

@@ -1,4 +1,4 @@
-package FMCA;
+package com.mxgraph.examples.swing.editor;
 /**
  * Copyright (c) 2006-2012, JGraph Ltd */
 
@@ -15,10 +15,6 @@ import javax.swing.UIManager;
 
 import org.w3c.dom.Document;
 
-import com.mxgraph.examples.swing.editor.BasicGraphEditor;
-import com.mxgraph.examples.swing.editor.EditorMenuBar;
-import com.mxgraph.examples.swing.editor.EditorPalette;
-import com.mxgraph.examples.swing.editor.ProductFrame;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxIGraphLayout;
@@ -38,16 +34,16 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
-import MSCA.MSCA;
+import contractAutomata.MSCA;
 
 
 /**
- * An adaptation of BasicGraphEditor of mxGraph
- * 
+ * An adaptation of BasicGraphEditor of mxGraph to provide a GUI application for FMCA tool.
+ *
  * @author Davide Basile
  *
  */
-public class FMCATGUI extends BasicGraphEditor
+public class App extends BasicGraphEditor
 {
 	
 	/**
@@ -73,11 +69,15 @@ public class FMCATGUI extends BasicGraphEditor
 	private ProductFrame pf=null;
 
 
-	public FMCATGUI()
+	public App()
 	{
 		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
 	}
 
+	/**
+	 * the application used a frame for visualising the products of the feature model
+	 * @param pf
+	 */
 	public void setProductFrame(ProductFrame pf)
 	{
 		this.pf=pf;
@@ -91,7 +91,7 @@ public class FMCATGUI extends BasicGraphEditor
 	/**
 	 * 
 	 */
-	public FMCATGUI(String appTitle, mxGraphComponent component)
+	public App(String appTitle, mxGraphComponent component)
 	{
 		super(appTitle, component);
 		pf=null;
@@ -105,19 +105,19 @@ public class FMCATGUI extends BasicGraphEditor
 		symbolsPalette.addEdgeTemplate(
 				"Edge",//"Horizontal Edge",
 				new ImageIcon(
-						FMCATGUI.class
+						App.class
 								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
 				"", 100, 100, "");
 		symbolsPalette.addEdgeTemplate(
 				"Vertical Edge",
 				new ImageIcon(
-						FMCATGUI.class
+						App.class
 								.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
 				"vertical", 100, 100, "");
 		symbolsPalette.addEdgeTemplate(
 				"Rounded Edge",
 				new ImageIcon(
-						FMCATGUI.class
+						App.class
 								.getResource("/com/mxgraph/examples/swing/images/entity.png")),
 				"entity", 100, 100, "");
 		
@@ -125,7 +125,7 @@ public class FMCATGUI extends BasicGraphEditor
 				.addTemplate(
 						"State",//"Event",
 						new ImageIcon(
-								FMCATGUI.class
+								App.class
 										.getResource("/com/mxgraph/examples/swing/images/event.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
 						40, 40, "State"); //TODO use vectorial images
@@ -134,7 +134,7 @@ public class FMCATGUI extends BasicGraphEditor
 				.addTemplate(
 						"FinalState",//"Terminate",
 						new ImageIcon(
-								FMCATGUI.class
+								App.class
 										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
 						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
 						40, 40, "FinalState");
@@ -169,7 +169,7 @@ public class FMCATGUI extends BasicGraphEditor
 
 			// Loads the defalt stylesheet from an external file
 			mxCodec codec = new mxCodec();
-			Document doc = mxUtils.loadDocument(FMCATGUI.class.getResource(
+			Document doc = mxUtils.loadDocument(App.class.getResource(
 					"/com/mxgraph/examples/swing/resources/default-style.xml")
 					.toString());
 			codec.decode(doc.getDocumentElement(), graph.getStylesheet());
@@ -359,7 +359,7 @@ public class FMCATGUI extends BasicGraphEditor
 	}
 
 	/**
-	 * 
+	 * Entry point for running FMCAT
 	 * @param args
 	 */
 	public static void main(String[] args)
@@ -376,12 +376,12 @@ public class FMCATGUI extends BasicGraphEditor
 		mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
 		mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
 
-		FMCATGUI editor = new FMCATGUI();
+		App editor = new App();
 		editor.createFrame(new EditorMenuBar(editor)).setVisible(true);
 	}
 	
 	/**
-	 * utility for arranging the graphical display of the automaton
+	 * utility for rearranging the graphical display of the automaton
 	 * @param graph
 	 * @param graphComponent
 	 */

@@ -1,22 +1,44 @@
-package FMCA;
+package family;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-import MSCA.MSCAUtils;
+import contractAutomata.MSCAUtils;
 
 /**
- * Utilities for FMCA
+ * Utilities for Family and Product
  * 
  * TODO remove this class and use java.util library
  * 
  * @author Davide Basile
  *
  */
-public class FMCAUtils extends MSCAUtils
+public class FamilyUtils extends MSCAUtils
 {
+	public static <T> T[] removeTailsNull(T[] q, int length, T[] type)
+	{
+		return  Arrays.stream(q)
+				.limit(length)
+				.collect(toList())
+				.toArray(type);
+	}
+
+	
+	public static <T> boolean contains(T q, T[] listq)
+	{
+		if (q==null||listq==null) 
+			return false;
+		else if (q instanceof int[])
+			return Arrays.stream(listq)
+					.filter(x -> Arrays.equals((int[])q, (int[])x))
+					.count()>0;
+					else
+						return Arrays.asList(listq)
+								.indexOf(q)!=-1;
+	}
+	
 	static <T> T[] setIntersection(T[] q1, T[] q2, T[] type)
 	{
 		if (q1==null || q2==null)

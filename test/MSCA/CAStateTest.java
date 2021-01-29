@@ -1,4 +1,4 @@
-package CA;
+package MSCA;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+import contractAutomata.CAState;
 
 
 public class CAStateTest {

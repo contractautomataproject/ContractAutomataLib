@@ -1,11 +1,11 @@
-package FMCA;
+package family;
 
 import java.util.Arrays;
 import java.util.Set;
 
-import CA.CALabel;
-import MSCA.MSCA;
-import MSCA.MSCATransition;
+import contractAutomata.CALabel;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 /**
  * A configuration/product of a product line/family, identified as set of required and forbidden features
@@ -56,21 +56,21 @@ public class Product {
 //		
 		for (int i=0;i<eq.length;i++)
 		{
-			if (FMCAUtils.contains(eq[i][0], rp)&&FMCAUtils.contains(eq[i][1], rp))
+			if (FamilyUtils.contains(eq[i][0], rp)&&FamilyUtils.contains(eq[i][1], rp))
 			{
-				int index=FMCAUtils.getIndex(rp, eq[i][1]);
+				int index=FamilyUtils.getIndex(rp, eq[i][1]);
 				rp[index]=null;
 				//countreq++;
 			}
-			else if (FMCAUtils.contains(eq[i][0], fp)&&FMCAUtils.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
+			else if (FamilyUtils.contains(eq[i][0], fp)&&FamilyUtils.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
 			{
-				int index=FMCAUtils.getIndex(fp, eq[i][1]);
+				int index=FamilyUtils.getIndex(fp, eq[i][1]);
 				fp[index]=null;
 				//countforb++;
 			}
 		}
-		rp=FMCAUtils.removeHoles(rp, new String[] {}); //countreq
-		fp=FMCAUtils.removeHoles(fp, new String[] {}); //countforb
+		rp=FamilyUtils.removeHoles(rp, new String[] {}); //countreq
+		fp=FamilyUtils.removeHoles(fp, new String[] {}); //countforb
 		this.required=rp;
 		this.forbidden=fp;
 	}
@@ -100,10 +100,10 @@ public class Product {
 		String[] rp=p.getRequired();
 		String[] rf=p.getForbidden();
 		for(int i=0;i<rp.length;i++)
-			if (!FMCAUtils.contains(rp[i], this.required))
+			if (!FamilyUtils.contains(rp[i], this.required))
 				return false;
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtils.contains(rf[i], this.forbidden))
+			if (!FamilyUtils.contains(rf[i], this.forbidden))
 				return false;
 		
 		return true;
@@ -118,7 +118,7 @@ public class Product {
 	{
 		String[] rf=p.getForbidden();
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtils.contains(rf[i], this.forbidden))
+			if (!FamilyUtils.contains(rf[i], this.forbidden))
 				return false;
 		
 		return true;
@@ -133,7 +133,7 @@ public class Product {
 	{
 		String[] rf=p.getRequired();
 		for(int i=0;i<rf.length;i++)
-			if (!FMCAUtils.contains(rf[i], this.required))
+			if (!FamilyUtils.contains(rf[i], this.required))
 				return false;
 		
 		return true;
@@ -177,7 +177,7 @@ public class Product {
 
 	public boolean isForbidden(MSCATransition t)
 	{
-		return (FMCAUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
+		return (FamilyUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
 	}
 
 //	private boolean isRequired(MSCATransition t)
