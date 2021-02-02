@@ -307,12 +307,13 @@ public class EditorMenuBar extends JMenuBar
 
 			//TODO add dialog for choosing number of automata to compose, bound, pruning predicate (agreement, strong agremeent)
 			long start = System.currentTimeMillis();
-			MSCA composition = (MSCA) MSCA.composition(aut, t->t.getLabel().isRequest(),100);	//null, 100);//
+			MSCA composition = (MSCA) MSCA.composition(aut, null, 100); //t->t.getLabel().isRequest(),100);	//
 			long elapsedTime = System.currentTimeMillis() - start;
 
 			if (composition==null)
 			{
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"Empty composition",mxResources.get("Empty composition"),JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),"Empty composition",mxResources.get("Empty composition")
+						+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
 			
@@ -345,18 +346,21 @@ public class EditorMenuBar extends JMenuBar
 	
 			
 			MSCA controller=null;
-			long start = System.currentTimeMillis();
+			long elapsedTime;
+			long start= System.currentTimeMillis();
 			try {
 				controller = aut.mpc();
+				elapsedTime = System.currentTimeMillis() - start;
 			} catch(UnsupportedOperationException exc) {
 				if (exc.getMessage()=="The automaton contains semi-controllable transitions")
 				{
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					elapsedTime = System.currentTimeMillis() - start;
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
+							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
 			}
-			long elapsedTime = System.currentTimeMillis() - start;
 			
 			if (controller==null)
 			{
@@ -391,18 +395,21 @@ public class EditorMenuBar extends JMenuBar
 			MSCA backup = aut.clone();
 
 			MSCA controller=null;
+			long elapsedTime;
 			long start = System.currentTimeMillis();
 			try {
 				controller = aut.orchestration();
+				elapsedTime = System.currentTimeMillis() - start;
 			} catch(UnsupportedOperationException exc) {
+				elapsedTime = System.currentTimeMillis() - start;
 				if (exc.getMessage()=="The automaton contains necessary offers that are not allowed in the orchestration synthesis")
 				{
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
+							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
 			}
-			long elapsedTime = System.currentTimeMillis() - start;
 			
 
 			if (controller==null)
@@ -411,7 +418,7 @@ public class EditorMenuBar extends JMenuBar
 				editor.lastaut=backup;
 				return;
 			}
-			String K="K_"+filename;
+			String K="Orc_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
@@ -441,9 +448,11 @@ public class EditorMenuBar extends JMenuBar
 			try {
 				controller = aut.choreography();
 			} catch(UnsupportedOperationException exc) {
+				long elapsedTime = System.currentTimeMillis() - start;
 				if (exc.getMessage()=="The automaton contains necessary requests that are not allowed in the choreography synthesis")
 				{
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
+							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
@@ -1049,7 +1058,7 @@ public class EditorMenuBar extends JMenuBar
 				return;
 			}
 
-			String K="K_family_"+filename;
+			String K="Orc_family_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 
 			String message = "The orchestration has been stored with filename "+lastDir+"\\"
@@ -1110,7 +1119,7 @@ public class EditorMenuBar extends JMenuBar
 				return;
 			}
 
-			String K="K_familyWithoutPO_"+filename;
+			String K="Orc_familyWithoutPO_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 
 			String message = "The orchestration has been stored with filename "+lastDir+"\\"+K;
@@ -1173,7 +1182,7 @@ public class EditorMenuBar extends JMenuBar
 				return;
 			}
 
-			String K="K_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
+			String K="Orc_"+"(R"+Arrays.toString(R)+"_F"+Arrays.toString(F)+")_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"//"+K,controller);
 			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"
@@ -1223,7 +1232,7 @@ public class EditorMenuBar extends JMenuBar
 				editor.lastaut=backup;
 				return;
 			}
-			String K="K_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
+			String K="Orc_"+"(R"+Arrays.toString(p.getRequired())+"_F"+Arrays.toString(p.getForbidden())+")_"+filename;
 			File file=MSCAIO.convertMSCAintoXML(lastDir+"\\"+K,controller);
 			String message = "The orchestration has been stored with filename "+lastDir+"//"+K
 					+"\n Elapsed time : "+elapsedTime + " milliseconds"

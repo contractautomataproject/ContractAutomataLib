@@ -10,17 +10,16 @@ The tool is continuously under development.
 At the actual stage, it has been mainly used by the author for developing the theory of contract automata, with extensions to modalities (MSCA) and product lines (FMCA).
 I am currently working on the code-cleaning (master) branch, to clean off legacy parts from the tool CAT (see CAT repository), 
 and rewrite other parts in Java 8. 
-At the time of writing, the package contractAutomata almost totally refactored in Java 8.
+At the time of writing, the package contractAutomata is almost totally rewritten in Java 8.
 
 If you have any question or want to help contact me on davide.basile@isti.cnr.it.
 
-FMCAT features a GUI (based on mxGraph) 
+The GUI application is based on mxGraph.
 
 
 <h1>Tutorials</h1>
 A first video tutorial is available at https://youtu.be/LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
-
 
 The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
 The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
