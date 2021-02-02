@@ -1,28 +1,20 @@
 
 
 
-![The Architecture of FMCAT and FMCAT at work](./FMCAT.png) [fig:architecture]
+![The Architecture of the tool](./CATdiagram.png) [fig:the class diagram of contractAutomata package]
 
-**Note:** I am currently working on the code-cleaning branch, to clean off legacy parts from the tool CAT (see CAT repository), 
-and rewrite other parts in Java 8.
 
 <h1>Info</h1>
 
-FMCA Tool is built on top of JaMaTa,  an earlier prototypical tool for managing different automata models. 
-The tool is still prototypical and under development.
-At the actual stage, it has been mainly used by the author for developing the theory regarding FMCA, and the earlier formalisms MSCA and CA. 
-
-I am working (when I have free time) on improving its usability for potential users.
-Also, the current version (though I am fixing it) is a result of quick incremental patches made over the years, with the goal of performing empirical evaluations of the theory and algorithms  being developed. 
+The tool is continuously under development.
+At the actual stage, it has been mainly used by the author for developing the theory of contract automata, with extensions to modalities (MSCA) and product lines (FMCA).
+I am currently working on the code-cleaning (master) branch, to clean off legacy parts from the tool CAT (see CAT repository), 
+and rewrite other parts in Java 8. 
+At the time of writing, the package contractAutomata almost totally refactored in Java 8.
 
 If you have any question or want to help contact me on davide.basile@isti.cnr.it.
 
-FMCAT features both a GUI (based on mxGraph) and a command line interface (deprecated). 
-Software developed with Eclipse and JavaSE-1.8, 1.7
-
-
-- FMCA (Featured Modal Service Contract Automata) extends CA
-- CA (Contract Automata) see CAT repository for more informations on CA
+FMCAT features a GUI (based on mxGraph) 
 
 
 <h1>Tutorials</h1>
