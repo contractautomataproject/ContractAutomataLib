@@ -58,7 +58,7 @@ public class EditorPalette extends JPanel
 	/**
 	 * 
 	 */
-	protected Color gradientColor = new Color(117, 195, 173);
+	protected Color gradientColor = new Color(72,209,204);//117, 195, 173);
 
 	/**
 	 * 
@@ -66,7 +66,7 @@ public class EditorPalette extends JPanel
 	@SuppressWarnings("serial")
 	public EditorPalette()
 	{
-		setBackground(new Color(149, 230, 190));
+		setBackground(new Color(72,209,204));//149, 230, 190));
 		setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 
 		// Clears the current selection when the background is clicked
@@ -341,8 +341,7 @@ public class EditorPalette extends JPanel
 			 */
 			public void dragGestureRecognized(DragGestureEvent e)
 			{
-				e
-						.startDrag(null, mxSwingConstants.EMPTY_IMAGE, new Point(),
+				e.startDrag(null, mxSwingConstants.EMPTY_IMAGE, new Point(),
 								t, null);
 			}
 

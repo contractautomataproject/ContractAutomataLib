@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -48,11 +47,11 @@ import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.view.mxGraph;
 
@@ -195,26 +194,29 @@ public class BasicGraphEditor extends JPanel
 		// Creates the graph outline component
 		graphOutline = new mxGraphOutline(graphComponent);
 
+		// 
+		// 	THE RIGHT PALETTE PANEL HAS BEEN MOVED TO THE TOOLBAR
+		
 		// Creates the library pane that contains the tabs with the palettes
-		libraryPane = new JTabbedPane();
+	//	libraryPane = new JTabbedPane();
 
-		// Creates the inner split pane that contains the library with the
-		// palettes and the graph outline on the left side of the window
-		JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				libraryPane, graphOutline);
-		inner.setDividerLocation(320);
-		inner.setResizeWeight(1);
-		inner.setDividerSize(6);
-		inner.setBorder(null);
+//		// Creates the inner split pane that contains the library with the
+//		// palettes and the graph outline on the left side of the window
+//		JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+//				libraryPane, graphOutline);
+//		inner.setDividerLocation(320);
+//		inner.setResizeWeight(1);
+//		inner.setDividerSize(6);
+//		inner.setBorder(null);
 
 		// Creates the outer split pane that contains the inner split pane and
 		// the graph component on the right side of the window
-		JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, libraryPane,
-				graphComponent);
-		outer.setOneTouchExpandable(true);
-		outer.setDividerLocation(200);
-		outer.setDividerSize(6);
-		outer.setBorder(null);
+//		JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, libraryPane,
+//				graphComponent);
+//		outer.setOneTouchExpandable(true);
+//		outer.setDividerLocation(200);
+//		outer.setDividerSize(6);
+//		outer.setBorder(null);
 
 		// Creates the status bar
 		statusBar = createStatusBar();
@@ -224,7 +226,8 @@ public class BasicGraphEditor extends JPanel
 
 		// Puts everything together
 		setLayout(new BorderLayout());
-		add(outer, BorderLayout.CENTER);
+				
+		add(graphComponent, BorderLayout.CENTER);//previously was outer instead of graphComponent
 		add(statusBar, BorderLayout.SOUTH);
 		installToolBar();
 

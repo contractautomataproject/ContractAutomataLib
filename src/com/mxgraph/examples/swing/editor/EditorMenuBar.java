@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -62,7 +63,7 @@ public class EditorMenuBar extends JMenuBar
 {
 	String lastDir;
 
-	
+
 	final String errorMsg = "States or labels contain errors.\n "
 			+ 		"Please, check that each state has following format:\n"
 			+		"[INTEGER, ..., INTEGER]\n" 
@@ -107,6 +108,8 @@ public class EditorMenuBar extends JMenuBar
 		menu.addSeparator();
 
 		JMenuItem item = menu.add(new JMenuItem("Import .data"));//mxResources.get("aboutGraphEditor")));
+		
+		item.setIcon(new ImageIcon(getClass().getResource("/com/mxgraph/examples/swing/images/import.gif")));
 		item.addActionListener(e->
 		{
 			if (!loseChanges.test(editor)) return;
@@ -138,17 +141,19 @@ public class EditorMenuBar extends JMenuBar
 		});
 
 		item = menu.add(new JMenuItem("Export .data"));//mxResources.get("aboutGraphEditor")));
+		item.setIcon(new ImageIcon(getClass().getResource("/com/mxgraph/examples/swing/images/export.gif")));
+		
 		item.addActionListener(e->
 		{
 			String filename =editor.getCurrentFile().getAbsolutePath();
 			MSCA aut=editor.lastaut;
-//			try {
-//				aut = MSCAIO.parseXMLintoMSCA(filename);
-//				editor.lastaut=aut;
-//			} catch (ParserConfigurationException|SAXException|IOException e1) {
-//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
-//				return;
-//			}
+			//			try {
+			//				aut = MSCAIO.parseXMLintoMSCA(filename);
+			//				editor.lastaut=aut;
+			//			} catch (ParserConfigurationException|SAXException|IOException e1) {
+			//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+			//				return;
+			//			}
 
 			try {
 				MSCAIO.printToFile(filename,aut);
@@ -190,8 +195,10 @@ public class EditorMenuBar extends JMenuBar
 		menu.add(editor.bind(mxResources.get("selectNone"), mxGraphActions.getSelectNoneAction()));
 
 		menu.addSeparator();
-
+		
+		
 		item = menu.add(new JMenuItem("Add handles to edges"));//mxResources.get("aboutGraphEditor")));
+		item.setIcon(new ImageIcon(getClass().getResource("/com/mxgraph/examples/swing/images/straight.gif")));
 		item.addActionListener(e->
 		{
 			if (checkAut(editor)) return;
@@ -202,11 +209,11 @@ public class EditorMenuBar extends JMenuBar
 
 			lastDir=editor.getCurrentFile().getParent();
 			;
-			 
+
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
 			MSCA aut=editor.lastaut;
 
-			 try {
+			try {
 				aut=MSCAIO.parseXMLintoMSCA(absfilename);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No automaton loaded",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
@@ -254,7 +261,7 @@ public class EditorMenuBar extends JMenuBar
 
 			mxGraph graph = editor.getGraphComponent().getGraph();
 			if (graph == null) return;
-	
+
 			JFileChooser fc = new JFileChooser(
 					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
@@ -305,9 +312,21 @@ public class EditorMenuBar extends JMenuBar
 					return;
 			}
 
-			//TODO add dialog for choosing number of automata to compose, bound, pruning predicate (agreement, strong agremeent)
+			int pruningOption=JOptionPane.showOptionDialog(editor.getGraphComponent(), 
+					"", "Composition Type", 
+					JOptionPane.YES_NO_CANCEL_OPTION, 
+					JOptionPane.INFORMATION_MESSAGE, 
+					null, 
+					new String[]{"Open", "Close for Agreement","Close for Strong Agreement"}, 
+					"default");
+			if (pruningOption== JOptionPane.CANCEL_OPTION)
+				return;
+			
 			long start = System.currentTimeMillis();
-			MSCA composition = (MSCA) MSCA.composition(aut, null, 100); //t->t.getLabel().isRequest(),100);	//
+			MSCA composition = (MSCA) MSCA.composition(aut, 
+					(pruningOption==JOptionPane.YES_OPTION)?null:
+					(pruningOption==JOptionPane.NO_OPTION)?t->t.getLabel().isRequest():
+						t->!t.getLabel().isMatch(),100); 
 			long elapsedTime = System.currentTimeMillis() - start;
 
 			if (composition==null)
@@ -316,7 +335,7 @@ public class EditorMenuBar extends JMenuBar
 						+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			
+
 			editor.lastaut=composition;
 			String compositionname="("+	names.stream().reduce((x,y)->x+"x"+y).orElse("")+")";
 
@@ -326,7 +345,7 @@ public class EditorMenuBar extends JMenuBar
 					+"\n Number of states : "+composition.getNumStates();
 			;
 			JOptionPane.showMessageDialog(editor.getGraphComponent(),message,"Success!",JOptionPane.PLAIN_MESSAGE);
-			
+
 			this.loadMorphStore(compositionname, editor, file);
 
 		});
@@ -342,9 +361,9 @@ public class EditorMenuBar extends JMenuBar
 
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
-			
-	
-			
+
+
+
 			MSCA controller=null;
 			long elapsedTime;
 			long start= System.currentTimeMillis();
@@ -355,13 +374,14 @@ public class EditorMenuBar extends JMenuBar
 				if (exc.getMessage()=="The automaton contains semi-controllable transitions")
 				{
 					elapsedTime = System.currentTimeMillis() - start;
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
-							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),
+							exc.getMessage()+"\n Elapsed time : "+elapsedTime + " milliseconds",
+							"Error",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
 			}
-			
+
 			if (controller==null)
 			{
 				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The mpc is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
@@ -378,11 +398,11 @@ public class EditorMenuBar extends JMenuBar
 
 			editor.lastaut=controller;
 			loadMorphStore(lastDir+"//"+K,editor,file);
-					
+
 		});
 
 
-		
+
 		item = menu.add(new JMenuItem("Orchestration"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
@@ -404,13 +424,14 @@ public class EditorMenuBar extends JMenuBar
 				elapsedTime = System.currentTimeMillis() - start;
 				if (exc.getMessage()=="The automaton contains necessary offers that are not allowed in the orchestration synthesis")
 				{
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
-							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),
+							exc.getMessage()+"\n Elapsed time : "+elapsedTime + " milliseconds",
+							"Error",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
 			}
-			
+
 
 			if (controller==null)
 			{
@@ -428,7 +449,7 @@ public class EditorMenuBar extends JMenuBar
 
 			editor.lastaut=controller;
 			loadMorphStore(lastDir+"//"+K,editor,file);
-					
+
 		});
 
 
@@ -442,7 +463,7 @@ public class EditorMenuBar extends JMenuBar
 			lastDir=editor.getCurrentFile().getParent();
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
-			
+
 			MSCA controller=null;
 			long start = System.currentTimeMillis();
 			try {
@@ -451,14 +472,15 @@ public class EditorMenuBar extends JMenuBar
 				long elapsedTime = System.currentTimeMillis() - start;
 				if (exc.getMessage()=="The automaton contains necessary requests that are not allowed in the choreography synthesis")
 				{
-					JOptionPane.showMessageDialog(editor.getGraphComponent(),exc.getMessage(),"Error"
-							+"\n Elapsed time : "+elapsedTime + " milliseconds",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editor.getGraphComponent(),
+							exc.getMessage()+"\n Elapsed time : "+elapsedTime + " milliseconds",
+							"Error",JOptionPane.ERROR_MESSAGE);
 					editor.lastaut=backup;
 					return;
 				} else throw exc;
 			}
 			long elapsedTime = System.currentTimeMillis() - start;
-			
+
 			if (controller==null)
 			{
 				JOptionPane.showMessageDialog(editor.getGraphComponent(),"The choreography is empty"+"\n Elapsed time : "+elapsedTime + " milliseconds","Empty",JOptionPane.WARNING_MESSAGE);
@@ -479,7 +501,7 @@ public class EditorMenuBar extends JMenuBar
 		});
 
 		menu.addSeparator();
-		
+
 		item = menu.add(new JMenuItem("Info about converting in MSCA without Lazy Transitions"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
@@ -491,7 +513,7 @@ public class EditorMenuBar extends JMenuBar
 			JOptionPane.showMessageDialog(editor.getGraphComponent(),aut.infoExpressivenessLazyTransitions(),"Result",JOptionPane.WARNING_MESSAGE);
 		});
 
-		
+
 		menu = add(new JMenu("FMCA"));
 
 
@@ -535,7 +557,7 @@ public class EditorMenuBar extends JMenuBar
 				editor.setProductFrame(null);
 				pf.dispose();
 			}
-			
+
 			JFileChooser fc = new JFileChooser(
 					(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent(): System.getProperty("user.dir"));
 
@@ -570,7 +592,7 @@ public class EditorMenuBar extends JMenuBar
 				}
 				FileFilter selectedFilter = null;
 				DefaultFileFilter prodFilter = new DefaultFileFilter(".prod","Family");
-			
+
 				JFileChooser fc = new JFileChooser(
 						(lastDir != null)?lastDir:(editor.getCurrentFile()!=null)?editor.getCurrentFile().getParent():
 							System.getProperty("user.dir"));
@@ -600,7 +622,7 @@ public class EditorMenuBar extends JMenuBar
 						&& JOptionPane.showConfirmDialog(graphComponent,
 								mxResources.get("overwriteExistingFile")) != JOptionPane.YES_OPTION)
 					return;
-				
+
 
 				try
 				{
@@ -798,7 +820,7 @@ public class EditorMenuBar extends JMenuBar
 			pf=editor.getProductFrame();
 			if (pf!=null)
 				pf.dispose();
-		
+
 			pf= new ProductFrame(new Family(vpp), (JPanel)editor);
 			editor.setProductFrame(pf);  
 		});
@@ -1043,7 +1065,7 @@ public class EditorMenuBar extends JMenuBar
 
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
-			
+
 			Family f=pf.getFamily();
 
 			long start = System.currentTimeMillis();
@@ -1090,15 +1112,15 @@ public class EditorMenuBar extends JMenuBar
 			lastDir=editor.getCurrentFile().getParent();
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();
-//			
-//			String absfilename =editor.getCurrentFile().getAbsolutePath();
-//			MSCA aut;
-//			try {
-//				aut = MSCAIO.parseXMLintoMSCA(absfilename);
-//			} catch (ParserConfigurationException|SAXException|IOException e1) {
-//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
-//				return;
-//			}
+			//			
+			//			String absfilename =editor.getCurrentFile().getAbsolutePath();
+			//			MSCA aut;
+			//			try {
+			//				aut = MSCAIO.parseXMLintoMSCA(absfilename);
+			//			} catch (ParserConfigurationException|SAXException|IOException e1) {
+			//				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+			//				return;
+			//			}
 			Family f=pf.getFamily();
 
 			JOptionPane.showMessageDialog(editor.getGraphComponent(),"Warning : the computation without PO may require several minutes!","Warning",JOptionPane.WARNING_MESSAGE);
@@ -1109,7 +1131,7 @@ public class EditorMenuBar extends JMenuBar
 			int[] vp = vpdummy[0];
 			long elapsedTime = System.currentTimeMillis() - start;
 
-//			File file=null;
+			//			File file=null;
 			Product[] vpp=pf.getFamily().subsetOfProductsFromIndex(vp);
 
 			if (controller==null)
@@ -1146,7 +1168,7 @@ public class EditorMenuBar extends JMenuBar
 			lastDir=editor.getCurrentFile().getParent();
 			MSCA aut=editor.lastaut;
 			MSCA backup = aut.clone();//in case aut becomes null
-			
+
 			String S= (String) JOptionPane.showInputDialog(null, 
 					"Insert Required features separated by colon",
 					JOptionPane.PLAIN_MESSAGE);
@@ -1242,7 +1264,7 @@ public class EditorMenuBar extends JMenuBar
 
 			editor.lastaut=controller;
 			loadMorphStore(lastDir+"//"+K,editor,file);
-					
+
 		});
 
 		menu = add(new JMenu("TSCA"));
@@ -1251,7 +1273,7 @@ public class EditorMenuBar extends JMenuBar
 		// Creates the help menu
 		menu = add(new JMenu(mxResources.get("help")));
 
-		item = menu.add(new JMenuItem("about FMCA Tool"));//mxResources.get("aboutGraphEditor")));
+		item = menu.add(new JMenuItem("about Contract Automata Tool"));//mxResources.get("aboutGraphEditor")));
 		item.addActionListener(e->
 		{
 			editor.about();

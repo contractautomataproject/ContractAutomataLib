@@ -10,7 +10,6 @@ import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import org.w3c.dom.Document;
@@ -29,7 +28,6 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
@@ -71,7 +69,7 @@ public class App extends BasicGraphEditor
 
 	public App()
 	{
-		this("FMCA Tool", new CustomGraphComponent(new CustomGraph()));
+		this("Contract Automata Tool (2021)", new CustomGraphComponent(new CustomGraph()));
 	}
 
 	/**
@@ -97,47 +95,48 @@ public class App extends BasicGraphEditor
 		pf=null;
 		// Creates the shapes palette
 	//	EditorPalette shapesPalette = insertPalette(mxResources.get("shapes"));
-		EditorPalette symbolsPalette = insertPalette(mxResources.get("symbols"));
-
-		// Sets the edge template to be used for creating new edges if an edge
-		// is clicked in the shape palette
-		
-		symbolsPalette.addEdgeTemplate(
-				"Edge",//"Horizontal Edge",
-				new ImageIcon(
-						App.class
-								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
-				"", 100, 100, "");
-		symbolsPalette.addEdgeTemplate(
-				"Vertical Edge",
-				new ImageIcon(
-						App.class
-								.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
-				"vertical", 100, 100, "");
-		symbolsPalette.addEdgeTemplate(
-				"Rounded Edge",
-				new ImageIcon(
-						App.class
-								.getResource("/com/mxgraph/examples/swing/images/entity.png")),
-				"entity", 100, 100, "");
-		
-		symbolsPalette
-				.addTemplate(
-						"State",//"Event",
-						new ImageIcon(
-								App.class
-										.getResource("/com/mxgraph/examples/swing/images/event.png")),
-						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
-						40, 40, "State"); //TODO use vectorial images
-		
-		symbolsPalette
-				.addTemplate(
-						"FinalState",//"Terminate",
-						new ImageIcon(
-								App.class
-										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
-						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
-						40, 40, "FinalState");
+	
+//		EditorPalette symbolsPalette = insertPalette("Toolbox");//mxResources.get("symbols"));
+//
+//		// Sets the edge template to be used for creating new edges if an edge
+//		// is clicked in the shape palette
+//		
+//		symbolsPalette.addEdgeTemplate(
+//				"Edge",//"Horizontal Edge",
+//				new ImageIcon(
+//						App.class
+//								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
+//				"", 100, 100, "");
+//		symbolsPalette.addEdgeTemplate(
+//				"Vertical Edge",
+//				new ImageIcon(
+//						App.class
+//								.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
+//				"vertical", 100, 100, "");
+//		symbolsPalette.addEdgeTemplate(
+//				"Rounded Edge",
+//				new ImageIcon(
+//						App.class
+//								.getResource("/com/mxgraph/examples/swing/images/entity.png")),
+//				"entity", 100, 100, "");
+//		
+//		symbolsPalette
+//				.addTemplate(
+//						"State",//"Event",
+//						new ImageIcon(
+//								App.class
+//										.getResource("/com/mxgraph/examples/swing/images/event.png")),
+//						"roundImage;image=/com/mxgraph/examples/swing/images/event.png",
+//						40, 40, "State"); //TODO use vectorial images
+//		
+//		symbolsPalette
+//				.addTemplate(
+//						"FinalState",//"Terminate",
+//						new ImageIcon(
+//								App.class
+//										.getResource("/com/mxgraph/examples/swing/images/terminate.png")),
+//						"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png",
+//						40, 40, "FinalState");
 	}
 
 	/**

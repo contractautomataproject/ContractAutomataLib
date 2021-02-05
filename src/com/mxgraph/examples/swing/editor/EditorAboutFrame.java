@@ -36,7 +36,7 @@ public class EditorAboutFrame extends JDialog
 	public EditorAboutFrame(Frame owner)
 	{
 		super(owner);
-		setTitle("about FMCAT");//mxResources.get("aboutGraphEditor"));
+		setTitle("about Contract Automata Tool");//mxResources.get("aboutGraphEditor"));
 		setLayout(new BorderLayout());
 
 		// Creates the gradient panel
@@ -69,7 +69,7 @@ public class EditorAboutFrame extends JDialog
 				.createEmptyBorder(8, 8, 12, 8)));
 
 		// Adds title
-		JLabel titleLabel = new JLabel("about FMCAT");
+		JLabel titleLabel = new JLabel("about Contract Automata Tool");
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
 		titleLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 		titleLabel.setOpaque(false);
@@ -77,9 +77,10 @@ public class EditorAboutFrame extends JDialog
 
 		// Adds optional subtitle
 		JLabel subtitleLabel = new JLabel(
-				"<html> Featured Modal Contract Automata Tool (2020),  <br />"
+				"<html> Contract Automata Tool (2021),  <br />"
+				+ "info at https://github.com/davidebasile/FMCAT,  <br />"
 				+ "developed by Davide Basile (https://github.com/davidebasile),  <br />"
-				+ "GUI based on mxGraph (https://jgraph.github.io/mxgraph/) </html>");
+				+ "GUI adapted from mxGraph BasicGraphEditor (https://jgraph.github.io/mxgraph/) </html>");
 		subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
 		subtitleLabel.setOpaque(false);
 		panel.add(subtitleLabel, BorderLayout.CENTER);
