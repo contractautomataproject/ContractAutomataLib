@@ -39,6 +39,8 @@ public class EditorToolBar extends JToolBar
 	 * 
 	 */
 	private static final long serialVersionUID = -8015443128436394471L;
+	
+	private static int incrementalStateLabel=0;
 
 	/**
 	 * 
@@ -173,6 +175,11 @@ public class EditorToolBar extends JToolBar
 			 */
 			public void dragGestureRecognized(DragGestureEvent e)
 			{
+				if (cell.getValue()!="[]")
+				{
+					cell.setValue("["+incrementalStateLabel+"]");
+					incrementalStateLabel++;
+				}
 				e.startDrag(null, mxSwingConstants.EMPTY_IMAGE, new Point(),
 								t, null);
 			}
@@ -255,13 +262,13 @@ public class EditorToolBar extends JToolBar
 		
 		addSeparator();
 
-		mxCell cellState = new mxCell("State", new mxGeometry(0, 0, 40, 40),
+		mxCell cellState = new mxCell("", new mxGeometry(0, 0, 40, 40),
 		"roundImage;image=/com/mxgraph/examples/swing/images/event.png");
 		cellState.setVertex(true);
 		addTemplate("State", new ImageIcon(getClass().getResource("/com/mxgraph/examples/swing/images/ellipse.png")), 
 				cellState);
 		
-		mxCell cellFinalState = new mxCell("State", new mxGeometry(0, 0, 40, 40),
+		mxCell cellFinalState = new mxCell("", new mxGeometry(0, 0, 40, 40),
 				"roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
 				cellState.setVertex(true);
 		cellFinalState.setVertex(true);
@@ -278,19 +285,19 @@ public class EditorToolBar extends JToolBar
 				new ImageIcon(
 						App.class
 								.getResource("/com/mxgraph/examples/swing/images/connect.png")),
-				"", 100, 100, "");
+				"", 100, 100, "[]");
 		addEdgeTemplate(
 				" Vertical Edge ",
 				new ImageIcon(
 						App.class
 								.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
-				"vertical", 100, 100, "");
+				"vertical", 100, 100, "[]");
 		addEdgeTemplate(
 				" Rounded Edge ",
 				new ImageIcon(
 						App.class
 								.getResource("/com/mxgraph/examples/swing/images/entity.png")),
-				"entity", 100, 100, "");
+				"entity", 100, 100, "[]");
 
 		
 //		

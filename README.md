@@ -4,32 +4,73 @@
 ![The Architecture of the tool](./CATdiagram.png) [fig:the class diagram of contractAutomata package]
 
 
-<h1>Info</h1>
+<h1>Contract Automata Tool</h1>
 
-The tool is continuously under development.
-At the actual stage, it has been mainly used by the author for developing the theory of contract automata, with extensions to modalities (MSCA) and product lines (FMCA).
-I am currently working on the code-cleaning (master) branch, to clean off legacy parts from the tool CAT (see CAT repository), 
-and rewrite other parts in Java 8. 
+The Contract Automata Tool is an ongoing basic research activity about implementing 
+and experimenting with new developments in the theoretical framework of contract automata.
+Contract automata are a formalism developed in the  research area of foundations for services and distributed 
+computing.
+They are used for specifying services' interface, called behavioral contracts, 
+ as finite-state automata, with functionalities for composing contracts and generating the 
+ orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
+ lines (FMCA).
+
+The tool is undergoing a refactoring in Java 8 and redesigning.
 At the time of writing, the package contractAutomata is almost totally rewritten in Java 8.
 
-If you have any question or want to help contact me on davide.basile@isti.cnr.it.
+<h2>Usage</h2>
+The tool has been developed using Eclipse and tested on Windows machines. 
+The GUI application is based on mxGraph and allows to visualize the automata, edit them, and 
+use the main operations.
+The main application is in the file App.java, under com.mxgraph.examples.swing.editor package. 
+A precompiled App.jar file is available in the root of the project.
 
-The GUI application is based on mxGraph.
 
 
-<h1>Tutorials</h1>
+
+<h2>Tutorials</h2>
 A first video tutorial is available at https://youtu.be/LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
 The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
 The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
 
+<h2>Contacts</h2>
+
+If you have any question or want to help contact me on davide.basile@isti.cnr.it.
+
+
+<h2>Documentation</h2>
+
+The documentation for this tool is available at:
+
+Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: supporting dynamic service-based product lines. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 3-8).
+https://doi.org/10.1145/3109729.3109760
+
+Basile, D., Beek, M.H.T. and Gnesi, S., 2018, September. Modelling and analysis with featured modal contract automata. In Proceedings of the 22nd International Systems and Software Product Line Conference-Volume 2 (pp. 11-16).
+https://doi.org/10.1145/3236405.3236408
+
+Further documentation:
+
+Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, 187, p.102344.
+https://www.sciencedirect.com/science/article/pii/S0167642318302260
+
+Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, 16.
+https://lmcs.episciences.org/6527
+
+Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of dynamic service product lines with featured modal contract automata. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 117-122).
+https://doi.org/10.1145/3109729.3109741
+
+Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In MODELSWARD (pp. 679-686).
+https://www.scitepress.org/Link.aspx?doi=10.5220/0006291106790686
+
+
 
 
 
 <h1>FMCAT</h1>
 
-**What follows is an excerpt of SPLC 2017 publication (see References), recently the tool has been equipped with 
+**What follows is an excerpt of SPLC 2017 publication, recently the tool has been equipped with 
  a choreography synthesis algorithm**
  
 Service-oriented computing (SOC)  is a paradigm for distributed
@@ -299,32 +340,3 @@ computing the partial order of products and the canonical product. It is
 also used by the `FMCA` class for computing the orchestration of the
 service product line (i.e. the union of the mpc of the canonical
 products).
-
-<h1>Documentation</h1>
-
-The documentation for this tool is available at:
-
-
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: supporting dynamic service-based product lines. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 3-8).
-https://doi.org/10.1145/3109729.3109760
-
-Basile, D., Beek, M.H.T. and Gnesi, S., 2018, September. Modelling and analysis with featured modal contract automata. In Proceedings of the 22nd International Systems and Software Product Line Conference-Volume 2 (pp. 11-16).
-https://doi.org/10.1145/3236405.3236408
-
-Further documentation:
-
-
-Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, 187, p.102344.
-https://www.sciencedirect.com/science/article/pii/S0167642318302260
-
-Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, 16.
-https://lmcs.episciences.org/6527
-
-Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of dynamic service product lines with featured modal contract automata. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 117-122).
-https://doi.org/10.1145/3109729.3109741
-
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In MODELSWARD (pp. 679-686).
-https://www.scitepress.org/Link.aspx?doi=10.5220/0006291106790686
-
-
-

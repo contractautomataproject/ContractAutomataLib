@@ -271,7 +271,7 @@ public class MSCAIO {
 				else if (offerer==null&&requester!=null&&request!=null&&request.startsWith(CALabel.request))
 					label = new CALabel(source.getRank(),requester,request);
 				else
-					throw new RuntimeException("Bug in loading label");
+					throw new RuntimeException("Problem in loading label");
 
 				return new MSCATransition(source,label,target,type); //TODO check & remove arrlabel
 				//				return new MSCATransition(source,List.of(arrlabel),target,type);

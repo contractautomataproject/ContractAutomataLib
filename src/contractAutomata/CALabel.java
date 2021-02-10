@@ -39,13 +39,12 @@ public class CALabel {
 	final public static String offer="!";
 	final public static String request="?";
 	
-	//TODO use enum instead of strings for the type
+	//the actiontype is used for redundant checks
+	enum ActionType{
+		REQUEST,OFFER,MATCH
+	}
 	
-//	enum ActionType{
-//		REQUEST,OFFER,MATCH
-//	}
-//	
-//	private ActionType actiontype;
+	private ActionType actiontype;
 
 
 	/*@ invariant rank!=null && rank>0; @*/
@@ -83,11 +82,13 @@ public class CALabel {
 		if (action.startsWith(offer))
 		{
 			this.offerer=principal;
+			this.actiontype=CALabel.ActionType.OFFER;
 			this.requester=-1;
 		}
 		else if (action.startsWith(request))
 		{
 			this.requester=principal;
+			this.actiontype=CALabel.ActionType.REQUEST;
 			this.offerer=-1;
 		}
 		else
@@ -118,6 +119,7 @@ public class CALabel {
 			this.action = action2;
 		}
 		this.rank = rank;
+		this.actiontype=CALabel.ActionType.MATCH;
 	}
 	
 	public CALabel(CALabel lab, Integer rank, Integer shift) {
@@ -129,6 +131,7 @@ public class CALabel {
 		this.offerer=(lab.offerer!=-1)?lab.offerer+shift:-1;
 		this.requester=(lab.requester!=-1)?lab.requester+shift:-1;
 		this.action=lab.action;
+		this.actiontype=lab.actiontype;
 	}
 
 	/*
@@ -155,6 +158,7 @@ public class CALabel {
 		this.action = offeraction;
 		this.offerer = offerer;
 		this.requester = requester;
+		this.actiontype=CALabel.ActionType.MATCH;
 	}
 
 	/*
@@ -223,6 +227,12 @@ public class CALabel {
 		this.action=acttemp;
 		if (offerer==-1 && requester==-1)
 			throw new IllegalArgumentException("The label is not well-formed");
+		else if (offerer!=-1&&requester!=-1)
+			this.actiontype=CALabel.ActionType.MATCH;
+		else if (offerer!=-1)
+			this.actiontype=CALabel.ActionType.OFFER;
+		else
+			this.actiontype=CALabel.ActionType.REQUEST;
 		
 		this.rank = label.size();
 	}
@@ -345,7 +355,12 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isMatch()
 	{
-		return this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer);
+		if ((this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer))
+				&&this.actiontype!=CALabel.ActionType.MATCH)
+			throw new RuntimeException("The type of the label is not correct");
+		
+		return this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer)
+				&&this.actiontype==CALabel.ActionType.MATCH;
 	}
 	
 	/*
@@ -355,7 +370,12 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isOffer()
 	{
-		return this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer);
+		if ( (this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)) 
+				&& this.actiontype!=CALabel.ActionType.OFFER)
+			throw new RuntimeException("The type of the label is not correct");
+		
+		return this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)
+				&& this.actiontype==CALabel.ActionType.OFFER;
 	}
 
 	/*
@@ -365,7 +385,12 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isRequest()
 	{
-		return this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request);
+		if ( (this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)) 
+				&& this.actiontype!=CALabel.ActionType.REQUEST)
+			throw new RuntimeException("The type of the label is not correct");
+	
+		return this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)
+				&& this.actiontype==CALabel.ActionType.REQUEST;
 	}
 
 

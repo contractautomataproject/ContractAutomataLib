@@ -23,10 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.mxgraph.examples.swing.editor.EditorActions.ExitAction;
 import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
@@ -64,10 +62,10 @@ public class EditorMenuBar extends JMenuBar
 	String lastDir;
 
 
-	final String errorMsg = "States or labels contain errors.\n "
-			+ 		"Please, check that each state has following format:\n"
+	final static String errorMsg = "States or transitions contain syntax errors.\n "
+			+ 		"Please, check that each state has the following format:\n"
 			+		"[INTEGER, ..., INTEGER]\n" 
-			+		"and  each label has the following format:\n"
+			+		"and that each transition label has the following format:\n"
 			+		"[(TYPE)STRING, ...,(TYPE)STRING]\n where (TYPE) is either ! or ?";
 
 	Predicate<App> loseChanges = x->((x != null)&&(!x.isModified()
@@ -208,22 +206,20 @@ public class EditorMenuBar extends JMenuBar
 			}
 
 			lastDir=editor.getCurrentFile().getParent();
-			;
 
 			String absfilename =editor.getCurrentFile().getAbsolutePath();
 			MSCA aut=editor.lastaut;
 
 			try {
 				aut=MSCAIO.parseXMLintoMSCA(absfilename);
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(editor.getGraphComponent(),"No automaton loaded",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
+				File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
+				parseAndSet(absfilename, editor,file);
+			} 
+			catch(Exception e1)
+			{
+				JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n "+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 			}
-			File file = MSCAIO.convertMSCAintoXML(absfilename,aut);
-			parseAndSet(absfilename, editor,file);
 		});
-
-
 
 		//menu.add(editor.bind(mxResources.get("warning"), new WarningAction()));
 		//menu.add(editor.bind(mxResources.get("edit"), mxGraphActions.getEditAction()));
@@ -285,7 +281,7 @@ public class EditorMenuBar extends JMenuBar
 					names.add(fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf(".")));
 					aut.add(MSCAIO.parseXMLintoMSCA(fileName));
 				}
-				catch (ParserConfigurationException|SAXException|IOException e1) {
+				catch (Exception e1) {
 					JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n"+errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 					return;
 				}

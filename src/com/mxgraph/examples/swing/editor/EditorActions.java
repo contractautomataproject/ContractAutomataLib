@@ -37,10 +37,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
 import com.mxgraph.analysis.mxGraphAnalysis;
@@ -1749,8 +1747,9 @@ public class EditorActions
 											((App) editor).lastaut = MSCAIO.parseXMLintoMSCA(fc
 													.getSelectedFile()
 													.getAbsolutePath());
-										} catch (ParserConfigurationException|SAXException|IOException e1) {
-											JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+"\n",mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
+										} catch (Exception e1) {
+											JOptionPane.showMessageDialog(editor.getGraphComponent(),e1.getMessage()+
+													"\n "+EditorMenuBar.errorMsg,mxResources.get("error"),JOptionPane.ERROR_MESSAGE);
 											return;
 										}
 									}
