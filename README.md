@@ -68,7 +68,7 @@ https://www.scitepress.org/Link.aspx?doi=10.5220/0006291106790686
 
 
 
-<h1>FMCAT</h1>
+<h1>Service-oriented Computing and Contracts</h1>
 
 **What follows is an excerpt of SPLC 2017 publication, recently the tool has been equipped with 
  a choreography synthesis algorithm**
@@ -125,14 +125,14 @@ the service composition. Contracts adapt to the overall agreement by
 renouncing to unsatisfiable, yet permitted requirements.
 
 FMCAT is a prototypical tool implementing the
-theory of FMCA . FMCAT organises the products into a partial
+theory of FMCA. FMCAT organises the products into a partial
 order, to efficiently compute all valid products and the orchestration
 of the service product line from only a subset of products. FMCAT also
 allows to compute the orchestration of a single product and features
 both a GUI and a command-line prompt. 
 
 
-<h1>FMCAT functionalities</h1>
+<h2>Tool functionalities</h2>
 
 We consider a simple franchise of Hotel reservation systems and model it
 as a service product line. Such a system consists of clients (either
@@ -290,28 +290,18 @@ modifying the feature model), then this would be another canonical
 product and the union of the orchestrations of `p1` and `p5` would be
 the mpc of the service product line.
 
-<h1>FMCAT Architecture</h1>
+<h2>Architecture</h2>
 
-FMCAT is based on a previous tool for contract automata (CA),
-implemented in Java. In particular, FMCAT extends the main classes used
-for CA by adding the new functionalities described above. The Contract Automata Tool also relies on a
-previous framework for specifying Finite State Automata in Java, from
-which it inherited some basic functionalities for storing and printing
-automata.
-
-A Diagram showing the architecture of FMCAT is depicted in
-Figure [fig:architecture], and it is composed of three main modules:
+The architecture of FMCAT is is composed of three main modules:
 
 
-**User Interface** This module contains the two Java classes
-`FMCATGUI.java` and `FMCATPROMPT.java`. The first one implements the GUI
+**User Interface** This module contains the Java class
+`App.java`. This implements the GUI
 of FMCAT, and it is based on an existing framework called *mxGraph* for
-editing graphs in Java. The command line prompt is mainly inherited from
-the previous versions of the tool and it allows to interact with the API
-of FMCAT by means of an interactive command-line interface.
+editing graphs in Java. 
 
-
-**I/O Module** This module concerns with the storing of file descriptors
+**I/O Module** This module contains the stand-alone Java class 
+`MSCAIO.java` and concerns with the storing of file descriptors
 used by FMCA. There are three types of files used by the tool: `*.prod`
 files contain textual descriptions of products as described previously.
 An FMCAT is stored in either a readable textual representation
@@ -320,19 +310,18 @@ used by the command-line interface and it consists of a textual
 declaration of states and transitions of each automaton. The XML
 representation of FMCA (`*.mxe`) is used by the GUI for saving and
 loading FMCA. This file descriptor also stores information related to
-the graphical visualization of the FMCA. The module also contains the
-Partial Order Generation from a `*.prod` file, computed when the product
+the graphical visualization of the FMCA. The module also contains, under 
+the class `Product.java`, the Partial Order Generation from a `*.prod` file, computed when the product
 files are loaded, and it contains the utilities for converting a
-description of FMCA into one of the available formats.
+description of FMCA into one of the available formats. 
 
 
 
 **Core** The core module of FMCAT is composed of, among the others, the
-class `FMCA.java`, extending `CA.java` and implementing the algorithm
+class `MSCA.java` implementing the algorithm
 for synthesising a safe orchestration of services for a given product.
-This class uses two others: `FMCAUtils.java` is a stand-alone class
-offering functionalities for composing automata, for computing the union
-of FMCA (used for synthesising the orchestration of a family) and other
+This class offers functionalities for composing automata, for computing the union
+of `MSCA` (used for synthesising the orchestration of a family) and other
 utilities. The class `Family.java` uses another class `Product.java` for
 memorising the various products composing a given product line. It
 contains the methods for computing the valid products of a family, for
