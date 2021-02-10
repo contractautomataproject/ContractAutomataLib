@@ -1,9 +1,4 @@
 
-
-
-![The Architecture of the tool](./CATdiagram.png) [fig:the class diagram of contractAutomata package]
-
-
 <h1>Contract Automata Tool</h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
@@ -34,6 +29,52 @@ The directory demoJSCP contains an executable jar and the models used in this tu
 
 The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
 The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
+
+<h2>Architecture</h2>
+
+The architecture of FMCAT is is composed of three main packages:
+
+
+**com.mxgraph** This package contains the Java class
+`App.java`. This implements the GUI
+of FMCAT, and it is based on an existing framework called *mxGraph* for
+editing graphs in Java. 
+The GUI is implemented starting from the BasicGraphEditor available 
+in mxGraph.
+The other classes are also modifications of the BasicGraphEditor example 
+of mxGraph.
+
+**contractAutomata** This package (depicted below) is the core of the tool. 
+The core is the class `MSCA.java` implementing the algorithm
+for synthesising a safe orchestration, choreography, or most permissive controller.
+This class offers functionalities for composing automata, for computing the union
+of `MSCA` and other utilities. 
+The class `FMCA.java` decorates MSCA by adding a method for computing orchestrations 
+of a product.
+The stand-alone Java class `MSCAIO.java` concerns with the storing of file descriptors. 
+There are two types of formats: 
+An automaton is stored in either a readable textual representation
+(`*.data`) or an XML format (`*.mxe)`. The `*.data` format can be 
+used by any textual editor and it consists of a textual
+declaration of states and transitions of each automaton. The XML
+representation of a contract (`*.mxe`) is used by the GUI for saving and
+loading CA. This file descriptor also stores information related to
+the graphical visualization of the CA.  
+
+
+![The Architecture of the tool](./CATdiagram.png) [fig:the class diagram of contractAutomata package]
+
+**family** This package contains the class `Family.java` that uses another class `Product.java` for
+memorising the various products composing a given product line. It
+contains the methods for computing the valid products of a family, for
+computing the partial order of products and the canonical product. It is
+also used by the `FMCA` class for computing the orchestration of the
+service product line (i.e. the union of the mpc of the canonical
+products). 
+The package also contains, under the class `Product.java`, the Partial Order 
+Generation from a `*.prod` file, computed when the product
+files are loaded, where `*.prod`
+files contain textual descriptions of products.
 
 <h2>Contacts</h2>
 
@@ -289,43 +330,3 @@ add a fifth product `p5: R={receipt,invoice}, F={taxi}` (obtained by
 modifying the feature model), then this would be another canonical
 product and the union of the orchestrations of `p1` and `p5` would be
 the mpc of the service product line.
-
-<h2>Architecture</h2>
-
-The architecture of FMCAT is is composed of three main modules:
-
-
-**User Interface** This module contains the Java class
-`App.java`. This implements the GUI
-of FMCAT, and it is based on an existing framework called *mxGraph* for
-editing graphs in Java. 
-
-**I/O Module** This module contains the stand-alone Java class 
-`MSCAIO.java` and concerns with the storing of file descriptors
-used by FMCA. There are three types of files used by the tool: `*.prod`
-files contain textual descriptions of products as described previously.
-An FMCAT is stored in either a readable textual representation
-(`*.data`) or an XML format (`*.mxe)`. The `*.data` format is mainly
-used by the command-line interface and it consists of a textual
-declaration of states and transitions of each automaton. The XML
-representation of FMCA (`*.mxe`) is used by the GUI for saving and
-loading FMCA. This file descriptor also stores information related to
-the graphical visualization of the FMCA. The module also contains, under 
-the class `Product.java`, the Partial Order Generation from a `*.prod` file, computed when the product
-files are loaded, and it contains the utilities for converting a
-description of FMCA into one of the available formats. 
-
-
-
-**Core** The core module of FMCAT is composed of, among the others, the
-class `MSCA.java` implementing the algorithm
-for synthesising a safe orchestration of services for a given product.
-This class offers functionalities for composing automata, for computing the union
-of `MSCA` (used for synthesising the orchestration of a family) and other
-utilities. The class `Family.java` uses another class `Product.java` for
-memorising the various products composing a given product line. It
-contains the methods for computing the valid products of a family, for
-computing the partial order of products and the canonical product. It is
-also used by the `FMCA` class for computing the orchestration of the
-service product line (i.e. the union of the mpc of the canonical
-products).
