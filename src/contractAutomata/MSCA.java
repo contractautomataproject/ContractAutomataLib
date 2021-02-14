@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 /** 
  * Class representing a Modal Service Contract Automaton
- * ...
+ * 
  * 
  * @author Davide Basile
  *
