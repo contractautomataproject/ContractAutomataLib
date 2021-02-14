@@ -315,8 +315,8 @@ public class EditorMenuBar extends JMenuBar
 					null, 
 					new String[]{"Open", "Close for Agreement","Close for Strong Agreement"}, 
 					"default");
-			if (pruningOption== JOptionPane.CANCEL_OPTION)
-				return;
+//			if (pruningOption== JOptionPane.CANCEL_OPTION)
+//				return;
 			
 			long start = System.currentTimeMillis();
 			MSCA composition = (MSCA) MSCA.composition(aut, 

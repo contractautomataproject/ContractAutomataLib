@@ -1,4 +1,0 @@
-p1: R={card} F={cash}
-p2: R={card,invoice} F={cash}
-p3: R={card} F={cash,invoice}
-p4: R={cash,invoice} F={card}
