@@ -26,5 +26,12 @@ public class CAStateTest {
 		assertEquals(test.isInitial(),true);
 		assertEquals(test.isFinalstate(),false);
 	}
+	
+	@Test
+	public void toStringTest() {
+		CAState cs = new CAState(new int[] {0,1,2},true,false);
+		System.out.println(cs.toString());
+		assertEquals(cs.getStateL().toString(),Arrays.toString(cs.getState()));
+	}
 
 }

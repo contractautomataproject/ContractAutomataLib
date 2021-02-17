@@ -155,7 +155,7 @@ public class CAState {
 		if (this.isFinalstate())
 			sb.append(" Final ");
 
-		sb.append(Arrays.toString(this.getState()));
+		sb.append(this.getStateL().toString());
 
 		return sb.toString();
 	}

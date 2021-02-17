@@ -32,5 +32,10 @@ public class BasicState {
 	public String getLabel() {
 		return label;
 	}
+	@Override
+	public String toString() {
+		return label;//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
+	}
+	
 	
 }

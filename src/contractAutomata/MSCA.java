@@ -711,7 +711,7 @@ public class MSCA
 		StringBuilder pr = new StringBuilder();
 		pr.append("Rank: "+rank+"\n");
 		pr.append("Number of states: "+Arrays.toString(this.getNumStatesPrinc())+"\n");
-		pr.append("Initial state: " +Arrays.toString(this.getInitial().getState())+"\n");
+		pr.append("Initial state: " +this.getInitial().getStateL().toString()+"\n");
 		pr.append("Final states: [");
 		for (int i=0;i<finalstates.length;i++)
 			pr.append(Arrays.toString(finalstates[i]));
