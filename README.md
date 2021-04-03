@@ -3,7 +3,7 @@
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
 and experimenting with new developments in the theoretical framework of contract automata.
-Contract automata are a formalism developed in the  research area of foundations for services and distributed 
+Contract automata are a formalism developed in the research area of foundations for services and distributed 
 computing.
 They are used for specifying services' interface, called behavioral contracts, 
  as finite-state automata, with functionalities for composing contracts and generating the 
@@ -26,7 +26,7 @@ The tool is available under Creative Common License 4.0,
 
 
 <h2>Tutorials</h2>
-A first video tutorial is available at https://youtu.be/LAzCEQtYOhU  and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
+A first video tutorial is available at https://youtu.be/LAzCEQtYOhU and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
 The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
@@ -34,12 +34,12 @@ The directory demoLMCS2020 contains an executable jar and the models used in thi
 
 <h2>Architecture</h2>
 
-The architecture of FMCAT is is composed of three main packages:
+The architecture of the Contract Automata Tool is composed of three main packages:
 
 
 **com.mxgraph** This package contains the Java class
 `App.java`. This implements the GUI
-of FMCAT, and it is based on an existing framework called *mxGraph* for
+of the tool, and it is based on an existing framework called *mxGraph* for
 editing graphs in Java. 
 The GUI is implemented starting from the BasicGraphEditor available 
 in mxGraph.
@@ -73,7 +73,7 @@ contains the methods for computing the valid products of a family, for
 computing the partial order of products and the canonical product. 
 It is
 also used  for computing the the union of the orchestrations of the canonical
-products (i.e. orchestration of the
+products (i.e., orchestration of the
 service product line). 
 The package also contains, under the class `Product.java`, the Partial Order 
 Generation from a `*.prod` file, computed when the product
@@ -94,22 +94,22 @@ If you have any question or want to help contact me on davide.basile@isti.cnr.it
 
 Several papers have been published about contract automata and their tool:
 
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: supporting dynamic service-based product lines. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 3-8).
+Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
 https://doi.org/10.1145/3109729.3109760
 
-Basile, D., Beek, M.H.T. and Gnesi, S., 2018, September. Modelling and analysis with featured modal contract automata. In Proceedings of the 22nd International Systems and Software Product Line Conference-Volume 2 (pp. 11-16).
+Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
 https://doi.org/10.1145/3236405.3236408
 
 Further documentation:
 
-Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, 187, p.102344.
-https://www.sciencedirect.com/science/article/pii/S0167642318302260
+Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
+https://doi.org/10.1016/j.scico.2019.102344
 
-Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, 16.
-https://lmcs.episciences.org/6527
+Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
+https://doi.org/10.23638/LMCS-16(2:9)2020
 
-Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of dynamic service product lines with featured modal contract automata. In Proceedings of the 21st International Systems and Software Product Line Conference-Volume B (pp. 117-122).
+Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of Dynamic Service Product Lines with Featured Modal Contract Automata. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 117-122.
 https://doi.org/10.1145/3109729.3109741
 
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In MODELSWARD (pp. 679-686).
-https://www.scitepress.org/Link.aspx?doi=10.5220/0006291106790686
+Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In Proceedings of the 5th International Conference on Model-Driven Engineering and Software Development (MODELSWARD'17), Volume 1. SciTePress, pp. 679-686.
+https://doi.org/10.5220/0006291106790686

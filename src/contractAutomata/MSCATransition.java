@@ -2,6 +2,7 @@ package contractAutomata;
 
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -163,7 +164,10 @@ public class MSCATransition extends CATransition {
 		CALabel label = this.getLabel();
 		
 		int offerer=this.getLabel().getOfferer();
-		target.getState()[offerer]=source.getState()[offerer];  //the offerer is now idle
+		//target.getState()[offerer]=source.getState()[offerer];  
+				
+		target.getStateL().set(offerer, source.getStateL().get(offerer));   //the offerer is now idle
+		
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getRequester(),label.getCoAction()),
 				target,this.mod); //returning the request transition
