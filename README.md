@@ -1,4 +1,3 @@
-
 <h1>Contract Automata Tool</h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
