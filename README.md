@@ -28,8 +28,10 @@ The tool is available under Creative Common License 4.0,
 A first video tutorial is available at https://youtu.be/LAzCEQtYOhU and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
-The second video tutorial, https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
+The second video tutorial, available at https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
 The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
+
+The third video tutorial, available at https://youtu.be/QJjT7f7vlZ4, shows the recent refactoring and improvements of the tool published in Coordination2021.
 
 <h2>Architecture</h2>
 
