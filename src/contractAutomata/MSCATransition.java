@@ -2,6 +2,7 @@ package contractAutomata;
 
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,9 +86,9 @@ public class MSCATransition extends CATransition {
 		if (getSource()!=null&&getLabelAsList()!=null)
 			switch (this.mod) 
 			{
-			case PERMITTED: return "("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";
-			case URGENT:return "!U("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";
-			case LAZY:return "!L("+Arrays.toString(getSource().getState())+","+getLabelAsList()+","+Arrays.toString(getTarget().getState())+")";		
+			case PERMITTED: return "("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";
+			case URGENT:return "!U("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";
+			case LAZY:return "!L("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";		
 			}
 		return null;
 	}
@@ -98,6 +99,8 @@ public class MSCATransition extends CATransition {
 	 */
 	private boolean isControllableLazyRequest(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
+		//TODO the same source state is checked by comparing the label of the basic state, 
+		//	   equals comparison should be performed, but equals is problematic on CAState
 		if (this.getLabel().isRequest()&&this.isLazy())
 		{
 			for (MSCATransition t : tr)	
@@ -105,7 +108,7 @@ public class MSCATransition extends CATransition {
 				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
 						&&(t.getLabel().getRequester().equals(this.getLabel().getRequester()))	//the same principal
-						&&(t.getSource().getState()[t.getLabel().getRequester()]==this.getSource().getState()[this.getLabel().getRequester()]) //the same source state					
+						&&(t.getSource().getStateL().get(t.getLabel().getRequester()).getLabel().equals(this.getSource().getStateL().get(this.getLabel().getRequester()).getLabel())) //the same source state					
 						&&(t.getLabel().getCoAction().equals(this.getLabel().getAction())) //the same request
 						&&(!badStates.contains(this.getSource()))) //source state is not bad
 				{
@@ -124,6 +127,9 @@ public class MSCATransition extends CATransition {
 	 */
 	private boolean isControllableLazyOffer(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
+		//TODO the same source state is checked by comparing the label of the basic state, 
+		//	   equals comparison should be performed, but equals is problematic on CAState
+				
 		if ((this.getLabel().isOffer()&&this.isLazy()))
 		{
 			for (MSCATransition t : tr)	
@@ -131,7 +137,7 @@ public class MSCATransition extends CATransition {
 				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
 						&&(t.getLabel().getOfferer().equals(this.getLabel().getOfferer()))	//the same principal
-						&&(t.getSource().getState()[t.getLabel().getOfferer()]==this.getSource().getState()[this.getLabel().getOfferer()]) //the same source state					
+						&&(t.getSource().getStateL().get(t.getLabel().getOfferer()).getLabel().equals(this.getSource().getStateL().get(this.getLabel().getOfferer()).getLabel())) //the same source state					
 						&&(t.getLabel().getAction().equals(this.getLabel().getAction())) //the same offer (different from orchestration!)
 						&&(t.getSource().equals(this.getSource())) //the same source state because it is a semi-controllable for choreography
 						&&(!badStates.contains(this.getSource())) //source state is not redundant
@@ -158,7 +164,10 @@ public class MSCATransition extends CATransition {
 		CALabel label = this.getLabel();
 		
 		int offerer=this.getLabel().getOfferer();
-		target.getState()[offerer]=source.getState()[offerer];  //the offerer is now idle
+		//target.getState()[offerer]=source.getState()[offerer];  
+				
+		target.getStateL().set(offerer, source.getStateL().get(offerer));   //the offerer is now idle
+		
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getRequester(),label.getCoAction()),
 				target,this.mod); //returning the request transition

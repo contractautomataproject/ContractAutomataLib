@@ -381,7 +381,7 @@ public class MSCAIO {
 		}
 
 
-		int rank=castates.iterator().next().getState().length;
+		int rank=castates.iterator().next().getStateL().size();
 		MSCA aut= new MSCA(rank, 
 				CAState.getCAStateWithValue(new int[rank], castates),
 				principalsFinalStates(castates.stream()
