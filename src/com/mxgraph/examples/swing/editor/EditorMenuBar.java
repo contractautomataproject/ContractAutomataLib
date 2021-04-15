@@ -292,8 +292,10 @@ public class EditorMenuBar extends JMenuBar
 				int reply=-1;
 				if (rc == JFileChooser.APPROVE_OPTION)
 				{
+					String fileName =fc.getSelectedFile().toString();
 					reply=JOptionPane.showOptionDialog(editor.getGraphComponent(), 
-							"", 
+							"You have selected: "+names.toString().substring(0, names.toString().length()-1)
+							+","+fileName.substring(fileName.lastIndexOf("\\")+1, fileName.indexOf("."))+"]", 
 							"Composition", 
 							JOptionPane.YES_NO_CANCEL_OPTION, 
 							JOptionPane.INFORMATION_MESSAGE, 
