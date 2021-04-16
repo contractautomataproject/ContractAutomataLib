@@ -1125,7 +1125,7 @@ public class EditorMenuBar extends JMenuBar
 
 			long start = System.currentTimeMillis();
 			int[][] vpdummy = new int[1][];
-			MSCA controller = f.getMPCofFamilyWithoutPO(aut, pf, vpdummy);
+			MSCA controller = f.getMPCofFamilyWithoutPO(aut, vpdummy);
 			int[] vp = vpdummy[0];
 			long elapsedTime = System.currentTimeMillis() - start;
 

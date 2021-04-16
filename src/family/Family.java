@@ -20,8 +20,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.mxgraph.examples.swing.editor.ProductFrame;
-
 import contractAutomata.CAState;
 import contractAutomata.FMCA;
 import contractAutomata.MSCA;
@@ -803,7 +801,7 @@ public class Family {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public MSCA getMPCofFamilyWithoutPO(MSCA aut, ProductFrame pf, int[][] pr) 
+	public MSCA getMPCofFamilyWithoutPO(MSCA aut, int[][] pr) 
 	{
 		//TODO check why there are 6 total products instead of four
 		
