@@ -116,13 +116,14 @@ public class MSCA
 	}
 
 	/**
+	 * TODO this implementation does not exploit the Set of states (before arrays were used)
 	 * @return	an array containing for each principal its number of states
 	 */
 	public int[] getNumStatesPrinc()
 	{	
 		return IntStream.range(0, rank)
 				.map(i -> (int)this.getStates().parallelStream()
-						.map(x-> x.getState()[i])
+						.map(x-> x.getStateL().get(i))
 						.distinct()
 						.count()
 						)
@@ -150,7 +151,7 @@ public class MSCA
 		.forEach(x->x.setInitial(false));
 
 		CAState init = states.parallelStream()
-				.filter(x->Arrays.equals(initial.getState(),x.getState()))
+				.filter(x->x.hasSameBasicStateLabelsOf(initial) )//Arrays.equals(initial.getState(),x.getState()))
 				.findAny().orElseThrow(IllegalArgumentException::new);
 
 		init.setInitial(true);
@@ -199,7 +200,6 @@ public class MSCA
 	 */
 	public MSCA choreography()
 	{
-
 		if (this.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
@@ -564,6 +564,7 @@ public class MSCA
 	{
 		if (aut.size()==0)
 			return null;
+		
 		int rank=aut.get(0).getRank(); 
 		if (aut.stream()
 				.map(MSCA::getRank)
@@ -580,7 +581,10 @@ public class MSCA
 
 		final int upperbound=aut.parallelStream()
 				.flatMap(x->x.getStates().parallelStream())
-				.mapToInt(x->Arrays.stream(x.getState()).max().orElse(0))
+				.mapToInt(x->//Arrays.stream(x.getState())
+						x.getStateL().stream()
+						.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+						.max().orElse(0))
 				.max().orElse(0)+1; //for renaming states
 
 		//repositioning states, renaming
@@ -589,9 +593,11 @@ public class MSCA
 			aut.get(id).getStates().forEach(x->{
 				//	x.setX(x.getX()+fur*(id)+25*id);
 				//	x.setY(x.getY()+50);
-				x.setState(Arrays.stream(x.getState())
-						.map(s->s+upperbound*(id+1))
-						.toArray());});
+//				x.setState(Arrays.stream(x.getState())
+//						.map(s->s+upperbound*(id+1))
+//						.toArray());
+				x.getStateL().forEach(s->s.setLabel(Integer.parseInt(s.getLabel())+upperbound*(id+1)+""));
+				});
 			aut.get(id).setFinalStatesofPrincipals(
 					Arrays.stream(aut.get(id).getFinalStatesofPrincipals())
 					.map(s->Arrays.stream(s).map(ar->ar+upperbound*(id+1))

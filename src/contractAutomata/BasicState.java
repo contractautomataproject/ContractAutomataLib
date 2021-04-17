@@ -9,7 +9,7 @@ public class BasicState {
 
 	private boolean init;
 	private boolean fin;
-	private final String label;
+	private String label;
 	
 	public BasicState(String label, boolean init, boolean fin) {
 		super();
@@ -32,10 +32,14 @@ public class BasicState {
 	public String getLabel() {
 		return label;
 	}
+	public void setLabel(String label) {
+		this.label=label;
+	}
 	@Override
 	public String toString() {
 		return label;//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
 	}
 	
+	//TODO check if equals create problems or no
 	
 }

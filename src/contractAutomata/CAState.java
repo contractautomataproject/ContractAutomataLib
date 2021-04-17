@@ -19,7 +19,6 @@ public class CAState {
 	 * The list of states of principal
 	 */
 	private List<BasicState> lstate;
-	//TODO the users of this class still make use of array of int[] instead of List<BasicState>
 	
 	private float x;
 	private float y;
@@ -33,7 +32,8 @@ public class CAState {
 			throw new IllegalArgumentException();
 
 		this.setState(IntStream.range(0,state.length)
-		.mapToObj(i->new BasicState(state[i]+"",initial,finalstate))//loss of information using lstate
+		.mapToObj(i->new BasicState(state[i]+"",initial,finalstate))//loss of information using lstate 
+				//TODO BasicState Objects are different here
 		.collect(Collectors.toList()));
 	}
 
@@ -63,12 +63,6 @@ public class CAState {
 		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;}));
 	}
 
-	public int[] getState() {
-		return lstate.stream()
-		.mapToInt(s->Integer.parseInt(s.getLabel()))
-		.toArray();
-	}
-	
 	public List<BasicState> getStateL(){
 		return lstate;
 	}
@@ -122,12 +116,12 @@ public class CAState {
 	public static CAState getCAStateWithValue(int[] value, Set<CAState> states)
 	{
 		if (states.parallelStream()
-				.filter(x->Arrays.equals(x.getState(),value))
+				.filter(x->x.hasSameBasicStateLabelsOf(value))//Arrays.equals(x.getState(),value))
 				.count()>1)
 			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
 
 		return states.parallelStream()
-				.filter(x->Arrays.equals(x.getState(),value))
+				.filter(x->x.hasSameBasicStateLabelsOf(value))//Arrays.equals(x.getState(),value))
 				.findFirst()
 				.orElseThrow(IllegalArgumentException::new);
 	}
@@ -158,6 +152,20 @@ public class CAState {
 		sb.append(this.getStateL().toString());
 
 		return sb.toString();
+	}
+	
+	public boolean hasSameBasicStateLabelsOf(CAState s) {
+		if (s.getStateL().size()!=this.lstate.size())
+				return false;
+		return IntStream.range(0, this.lstate.size())
+		.allMatch(i->lstate.get(i).getLabel().equals(s.getStateL().get(i).getLabel()));
+	}
+	
+	public boolean hasSameBasicStateLabelsOf(int[] s) {
+		if (s.length!=this.lstate.size())
+				return false;
+		return IntStream.range(0, this.lstate.size())
+		.allMatch(i->Integer.parseInt(lstate.get(i).getLabel())==s[i]);
 	}
 	
 	// equals could cause errors of duplication of states in transitions to go undetected. 

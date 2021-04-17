@@ -287,10 +287,10 @@ public class MSCAIO {
 		//return null;
 	}
 	
-	private static CAState createOrLoadState(Set<CAState> states, int[] state,int[] initial, int[][] fin) {
+	private static CAState createOrLoadState(Set<CAState> states,int[] state,int[] initial, int[][] fin) {
 		
 		return states.stream()
-				.filter(x->Arrays.equals(x.getState(), state)) //target
+				.filter(x->x.hasSameBasicStateLabelsOf(state))// Arrays.equals(x.getState(), state)) //target
 				.findAny()
 				.orElseGet(()->{
 							boolean isInit= IntStream.range(0,state.length)
@@ -309,9 +309,8 @@ public class MSCAIO {
 				states.add(temp); return temp;});
 	}
 
-
 	/**
-	 * parse the XML description of graphEditor into an MSCA object
+	 * parse the mxGraphModel XML description (used by the mxGraph) into an MSCA object
 	 * 
 	 * TODO the set of final states of principals is reconstructed at the end, this encoding XML lose the information of 
 	 * some of the final states of principals so should be removed
@@ -386,15 +385,16 @@ public class MSCAIO {
 				CAState.getCAStateWithValue(new int[rank], castates),
 				principalsFinalStates(castates.stream()
 						.filter(CAState::isFinalstate)
-						.map(CAState::getState)
+						.map(s->s.getStateL().stream()
+								.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+								.toArray())
 						.collect(Collectors.toList())),
 				transitions);
 		return aut;
 	}
 
-
 	/**
-	 * save the MSCA aut as a mxGraphModel File with xml extension
+	 * save the MSCA aut as a mxGraphModel  (used by mxGraph) File with XML extension
 	 * @param fileName the name of the xml file where to write the automaton
 	 * @param aut the automaton to be saved
 	 * @return the File containing the xml for the automaton aut
@@ -595,7 +595,7 @@ public class MSCAIO {
 		else
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
 		Attr value=doc.createAttribute("value");
-		value.setValue(Arrays.toString(castate.getState()));
+		value.setValue(castate.getStateL().toString());//Arrays.toString(castate.getState()));
 		Element mxcell1 = doc.createElement("mxCell");
 		Attr id1=doc.createAttribute("id");
 		Attr as=doc.createAttribute("as");

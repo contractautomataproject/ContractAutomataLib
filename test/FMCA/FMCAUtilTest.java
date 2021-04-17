@@ -2,7 +2,6 @@ package FMCA;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +74,7 @@ public class FMCAUtilTest {
 		
 		boolean test=cs.stream()
 				.anyMatch(x-> cs.stream()
-						.filter(y->x!=y && Arrays.equals(x.getState(), y.getState()))
+						.filter(y->x!=y && x.hasSameBasicStateLabelsOf(y))//Arrays.equals(getArrayState(x), getArrayState(y)))
 						.count()>0						
 						);
 		

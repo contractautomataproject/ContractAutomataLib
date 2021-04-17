@@ -1,7 +1,6 @@
 package contractAutomata;
 
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,19 +13,19 @@ import java.util.stream.Collectors;
  *
  */
 public class MSCATransition extends CATransition {
-	
+
 	public enum Modality{
 		PERMITTED,URGENT,LAZY
 	}
-	
+
 	private final Modality mod;
-	
+
 	public MSCATransition(CAState source, CALabel label, CAState target, Modality type)
 	{
 		super(source,label,target);
 		this.mod=type;
 	}
-	
+
 	public boolean isUrgent()
 	{
 		return (this.mod==Modality.URGENT);
@@ -46,7 +45,7 @@ public class MSCATransition extends CATransition {
 	{
 		return (this.mod==Modality.PERMITTED);
 	}
-	
+
 	public boolean isSemiControllable()
 	{
 		return (this.mod==Modality.LAZY);
@@ -128,7 +127,7 @@ public class MSCATransition extends CATransition {
 	{
 		//TODO the same source state is checked by comparing the label of the basic state, 
 		//	   equals comparison should be performed, but equals is problematic on CAState
-				
+
 		if ((this.getLabel().isOffer()&&this.isLazy()))
 		{
 			for (MSCATransition t : tr)	
@@ -161,12 +160,12 @@ public class MSCATransition extends CATransition {
 		CAState source= this.getSource(); 
 		CAState target= this.getTarget();  
 		CALabel label = this.getLabel();
-		
+
 		int offerer=this.getLabel().getOfferer();
 		//target.getState()[offerer]=source.getState()[offerer];  
-				
+
 		target.getStateL().set(offerer, source.getStateL().get(offerer));   //the offerer is now idle
-		
+
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getRequester(),label.getCoAction()),
 				target,this.mod); //returning the request transition
@@ -183,9 +182,10 @@ public class MSCATransition extends CATransition {
 		CAState source= this.getSource();
 		CAState target= this.getTarget();
 		CALabel label=this.getLabel();
-		
+
 		int requester=this.getLabel().getRequester();
-		target.getState()[requester]=source.getState()[requester];  
+		target.getStateL().set(requester, source.getStateL().get(requester));
+		//	target.getState()[requester]=source.getState()[requester];  
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getOfferer(),label.getAction()),
 				target,this.mod); 
@@ -244,16 +244,31 @@ public class MSCATransition extends CATransition {
 				.filter(x->x.getLabel().isMatch()&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 
+//				return ftr.parallelStream()
+//				.map(x->x.getSource().getState())
+//				.filter(x->(!Arrays.equals(this.getSource().getState(),x))&&
+//						this.getSource().getState()[this.getLabel().getOfferer()]==x[this.getLabel().getOfferer()]) 
+//				//it's not the same state of this but sender is in the same state of this
+//				.allMatch(s -> ftr.parallelStream()
+//						.filter(x->Arrays.equals(x.getSource().getState(),s)
+//								&& this.getLabel().equals(x.getLabel()))
+//								//Arrays.equals(x.getLabelAsStringArr(), this.getLabelAsStringArr()))
+//						.count()>0  //for all such states there exists an outgoing transition with the same label of this
+//						);
+		 		
 		return ftr.parallelStream()
-				.map(x->x.getSource().getState())
-				.filter(x->(!Arrays.equals(this.getSource().getState(),x))&&
-						this.getSource().getState()[this.getLabel().getOfferer()]==x[this.getLabel().getOfferer()]) 
+				.map(x->x.getSource())
+				.filter(x->!x.hasSameBasicStateLabelsOf(this.getSource())&&
+						this.getSource().getStateL().get(this.getLabel().getOfferer()).getLabel()
+						.equals(x.getStateL().get(this.getLabel().getOfferer()).getLabel()))
+				//TODO BasicState objects are not equal because of constructor
+				// 		CAState(int[] state, boolean initial, boolean finalstate)
 				//it's not the same state of this but sender is in the same state of this
 				.allMatch(s -> ftr.parallelStream()
-						.filter(x->Arrays.equals(x.getSource().getState(),s)
+						.filter(x->x.getSource().hasSameBasicStateLabelsOf(s)
 								&& this.getLabel().equals(x.getLabel()))
-								//Arrays.equals(x.getLabelAsStringArr(), this.getLabelAsStringArr())) //TODO check
 						.count()>0  //for all such states there exists an outgoing transition with the same label of this
 						);
+		
 	}
 }
