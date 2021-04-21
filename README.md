@@ -13,11 +13,11 @@ The tool is undergoing a refactoring in Java 8 and redesigning.
 At the time of writing, the package contractAutomata is almost totally rewritten in Java 8.
 
 <h2>Usage</h2>
-The tool has been developed using Eclipse and tested on Windows machines.
-The GUI application is based on mxGraph and allows to visualize the automata, edit them, and 
-use the main operations.
-The main application is in the file App.java, under com.mxgraph.examples.swing.editor package. 
-A precompiled App.jar file is available in the root of the project.
+
+The  package  of the GUI Application, previously in this 
+repository, has been moved to https://github.com/davidebasile/Contract-Automata-App.
+Check that repository for an example of usage of the API of the Contract Automata Tool, contained 
+in this project.
 
 <h2>License</h2>
 The tool is available under Creative Common License 4.0,
@@ -25,6 +25,7 @@ The tool is available under Creative Common License 4.0,
 
 
 <h2>Tutorials</h2>
+
 A first video tutorial is available at https://youtu.be/LAzCEQtYOhU and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
 The directory demoJSCP contains an executable jar and the models used in this tutorial.
 
@@ -35,18 +36,7 @@ The third video tutorial, available at https://youtu.be/QJjT7f7vlZ4, shows the r
 
 <h2>Architecture</h2>
 
-The architecture of the Contract Automata Tool is composed of three main packages:
-
-
-**com.mxgraph** This package contains the Java class
-`App.java`. This implements the GUI
-of the tool, and it is based on an existing framework called *mxGraph* for
-editing graphs in Java. 
-The GUI is implemented starting from the BasicGraphEditor available 
-in mxGraph.
-The other classes are also modifications of the BasicGraphEditor example 
-of mxGraph. 
-For more info check https://jgraph.github.io/mxgraph/docs/manual_javavis.html.
+The architecture of the Contract Automata Tool is composed of two  packages:
 
 **contractAutomata** This package (depicted below) is the core of the tool. 
 The core is the class `MSCA.java` implementing the algorithm
@@ -66,7 +56,7 @@ loading CA. This file descriptor also stores information related to
 the graphical visualization of the CA.  
 
 
-![The class diagram of contractAutomata package](./CATdiagram.png)[fig:the class diagram of contractAutomata package]
+![The class diagram of contractAutomata package](./doc/CATdiagram.png)[fig:the class diagram of contractAutomata package]
 
 **family** This package contains the class `Family.java` that uses another class `Product.java` for
 memorising the various products composing a given product line. It
@@ -83,7 +73,7 @@ files contain textual descriptions of products.
 At the moment of writing, the package family has not been refactored to Java 8. 
 The wiki contains an excerpt from a published paper regarding the product lines functionalities of the tool.
 
-![The class diagram of family package](./familyDiagram.png)[fig:the class diagram of family package]
+![The class diagram of family package](./doc/familyDiagram.png)[fig:the class diagram of family package]
 
 
 <h2>Contacts</h2>
@@ -109,7 +99,7 @@ Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and 
 https://doi.org/10.1016/j.scico.2019.102344
 (pdf at https://openportal.isti.cnr.it/data/2019/409807/2019_409807.published.pdf)
 
-Pugliese, R., ter Beek, M.H. and Basile, D., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
+Basile, D., ter Beek, M.H. and Pugliese, R., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
 https://doi.org/10.23638/LMCS-16(2:9)2020
 (pdf at http://openportal.isti.cnr.it/data/2020/423262/2020_%20423262.published.pdf)
 

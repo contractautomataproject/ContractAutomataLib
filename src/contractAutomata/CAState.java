@@ -1,9 +1,7 @@
 package contractAutomata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,7 +16,7 @@ public class CAState {
 	/**
 	 * The list of states of principal
 	 */
-	private List<BasicState> lstate;
+	private List<BasicState> state;
 	
 	private float x;
 	private float y;
@@ -59,32 +57,23 @@ public class CAState {
 			throw new IllegalArgumentException();
 	
 		this.setState(states.stream()
-		.map(CAState::getStateL)
+		.map(CAState::getState)
 		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;}));
 	}
 
-	public List<BasicState> getStateL(){
-		return lstate;
+	public List<BasicState> getState(){
+		return state;
 	}
 
 	public int getRank() {
-		return lstate.size();
-	}
-	
-	public void setState(int[] state) {
-		if (state==null)
-			throw new IllegalArgumentException();
-
-		lstate=IntStream.range(0,state.length)
-				.mapToObj(i->new BasicState(state[i]+"",lstate.get(i).isInit(),lstate.get(i).isFin()))
-				.collect(Collectors.toList());
+		return state.size();
 	}
 
 	public void setState(List<BasicState> state) {
 		if (state==null)
 			throw new IllegalArgumentException();
 
-		this.lstate = state;
+		this.state = state;
 	}
 
 	public float getX() {
@@ -96,49 +85,21 @@ public class CAState {
 	}
 
 	public boolean isInitial() {
-		return lstate.stream().allMatch(BasicState::isInit);
+		return state.stream().allMatch(BasicState::isInit);
 	}
 	
 	public void setInitial(boolean initial) {
-		this.lstate.forEach(s->s.setInit(initial));
+		this.state.forEach(s->s.setInit(initial));
 	}
 
 	public boolean isFinalstate() {
-		return lstate.stream().allMatch(BasicState::isFin);
+		return state.stream().allMatch(BasicState::isFin);
 	}
 
 	public void setFinalstate(boolean finalstate) {
 
-		this.lstate.forEach(s->s.setFin(finalstate));
+		this.state.forEach(s->s.setFin(finalstate));
 	}
-
-
-	public static CAState getCAStateWithValue(int[] value, Set<CAState> states)
-	{
-		if (states.parallelStream()
-				.filter(x->x.hasSameBasicStateLabelsOf(value))//Arrays.equals(x.getState(),value))
-				.count()>1)
-			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
-
-		return states.parallelStream()
-				.filter(x->x.hasSameBasicStateLabelsOf(value))//Arrays.equals(x.getState(),value))
-				.findFirst()
-				.orElseThrow(IllegalArgumentException::new);
-	}
-	
-/*	public static CAState getCAStateWithLValue(List<State> value, Set<CAState> states)
-	{
-		if (states.parallelStream()
-				.filter(x->x.getStateL().equals(value))
-				.count()>1)
-			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+value);
-
-		return states.parallelStream()
-				.filter(x->x.getStateL().equals(value))
-				.findFirst()
-				.orElseThrow(IllegalArgumentException::new);
-	}*/
-
 
 	@Override
 	public String toString()
@@ -149,23 +110,16 @@ public class CAState {
 		if (this.isFinalstate())
 			sb.append(" Final ");
 
-		sb.append(this.getStateL().toString());
+		sb.append(this.getState().toString());
 
 		return sb.toString();
 	}
 	
 	public boolean hasSameBasicStateLabelsOf(CAState s) {
-		if (s.getStateL().size()!=this.lstate.size())
+		if (s.getState().size()!=this.state.size())
 				return false;
-		return IntStream.range(0, this.lstate.size())
-		.allMatch(i->lstate.get(i).getLabel().equals(s.getStateL().get(i).getLabel()));
-	}
-	
-	public boolean hasSameBasicStateLabelsOf(int[] s) {
-		if (s.length!=this.lstate.size())
-				return false;
-		return IntStream.range(0, this.lstate.size())
-		.allMatch(i->Integer.parseInt(lstate.get(i).getLabel())==s[i]);
+		return IntStream.range(0, this.state.size())
+		.allMatch(i->state.get(i).getLabel().equals(s.getState().get(i).getLabel()));
 	}
 	
 	// equals could cause errors of duplication of states in transitions to go undetected. 

@@ -1,0 +1,22 @@
+Rank: 1
+Number of states: [10]
+Initial state: [0]
+Final states: [[3]]
+Transitions: 
+([5],[!privateBathroom],[1])
+([6],[!noFreeCancellation],[5])
+([2],[!freebrk],[9])
+([4],[!receipt],[3])
+([9],[!invoice],[3])
+([6],[!freeCancellation],[5])
+([8],[!noFreeCancellation],[5])
+([2],[!invoice],[7])
+([5],[!sharedBathroom],[1])
+([0],[!sharedRoom],[8])
+([3],[!sharedRoom],[8])
+([3],[!singleRoom],[6])
+([1],[?card],[2])
+([1],[?cash],[4])
+([7],[?captcha],[3])
+([0],[!singleRoom],[6])
+([2],[!receipt],[3])

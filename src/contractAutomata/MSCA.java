@@ -115,21 +115,6 @@ public class MSCA
 		this.finalstates = finalstates;
 	}
 
-	/**
-	 * TODO this implementation does not exploit the Set of states (before arrays were used)
-	 * @return	an array containing for each principal its number of states
-	 */
-	public int[] getNumStatesPrinc()
-	{	
-		return IntStream.range(0, rank)
-				.map(i -> (int)this.getStates().parallelStream()
-						.map(x-> x.getStateL().get(i))
-						.distinct()
-						.count()
-						)
-				.toArray();
-	}
-
 	public CAState getInitial()
 	{
 		return this.getStates().parallelStream()
@@ -273,7 +258,7 @@ public class MSCA
 
 		if (cs.stream()
 				.anyMatch(x-> cs.stream()
-				.filter(y->x!=y && x.getStateL().equals(y.getStateL()))
+				.filter(y->x!=y && x.getState().equals(y.getState()))
 				.count()>0))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 
@@ -452,7 +437,7 @@ public class MSCA
 						.collect(toList()); //indexing outgoing transitions of each operand, used for target states and labels
 
 				if (trans2index.parallelStream()
-						.filter(e -> e.tra.getTarget().getStateL().size() != aut.get(e.ind).rank)
+						.filter(e -> e.tra.getTarget().getState().size() != aut.get(e.ind).rank)
 						.count()>0)
 					throw new RuntimeException();
 
@@ -582,7 +567,7 @@ public class MSCA
 		final int upperbound=aut.parallelStream()
 				.flatMap(x->x.getStates().parallelStream())
 				.mapToInt(x->//Arrays.stream(x.getState())
-						x.getStateL().stream()
+						x.getState().stream()
 						.mapToInt(bs->Integer.parseInt(bs.getLabel()))
 						.max().orElse(0))
 				.max().orElse(0)+1; //for renaming states
@@ -596,7 +581,7 @@ public class MSCA
 //				x.setState(Arrays.stream(x.getState())
 //						.map(s->s+upperbound*(id+1))
 //						.toArray());
-				x.getStateL().forEach(s->s.setLabel(Integer.parseInt(s.getLabel())+upperbound*(id+1)+""));
+				x.getState().forEach(s->s.setLabel(Integer.parseInt(s.getLabel())+upperbound*(id+1)+""));
 				});
 			aut.get(id).setFinalStatesofPrincipals(
 					Arrays.stream(aut.get(id).getFinalStatesofPrincipals())
@@ -660,13 +645,13 @@ public class MSCA
 	public MSCA clone()
 	{	
 		Map<BasicState,BasicState> clonedstate = this.getStates().stream()
-				.flatMap(x->x.getStateL().stream())
+				.flatMap(x->x.getState().stream())
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), s->new BasicState(s.getLabel(),s.isInit(),s.isFin())));
 
 		Map<CAState,CAState> clonedcastates  = this.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
-						x->new CAState(x.getStateL().stream()
+						x->new CAState(x.getState().stream()
 								.map(s->clonedstate.get(s))
 								.collect(Collectors.toList()),
 								x.getX(),x.getY())));
@@ -716,8 +701,15 @@ public class MSCA
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
 		pr.append("Rank: "+rank+"\n");
-		pr.append("Number of states: "+Arrays.toString(this.getNumStatesPrinc())+"\n");
-		pr.append("Initial state: " +this.getInitial().getStateL().toString()+"\n");
+		
+		pr.append("Number of states: "+
+				Arrays.toString(IntStream.range(0, rank)
+				.map(i -> (int)this.getStates().parallelStream()
+						.map(x-> x.getState().get(i).getLabel())
+						.distinct()
+						.count())
+				.toArray())+"\n");
+		pr.append("Initial state: " +this.getInitial().getState().toString()+"\n");
 		pr.append("Final states: [");
 		for (int i=0;i<finalstates.length;i++)
 			pr.append(Arrays.toString(finalstates[i]));

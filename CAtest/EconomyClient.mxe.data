@@ -1,0 +1,13 @@
+Rank: 1
+Number of states: [7]
+Initial state: [0]
+Final states: [[3]]
+Transitions: 
+([2],[?receipt],[3])
+!L([0],[?singleRoom],[7])
+([5],[?sharedBathroom],[1])
+!L([2],[?invoice],[3])
+([1],[!card],[2])
+([0],[?sharedRoom],[8])
+([8],[?noFreeCancellation],[5])
+([7],[?noFreeCancellation],[5])

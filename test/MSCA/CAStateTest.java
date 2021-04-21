@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 
@@ -21,9 +22,16 @@ public class CAStateTest {
 		
 		CAState test = new CAState(l);
 		
-		assertEquals(test.hasSameBasicStateLabelsOf(new int[] {0,1,2,0,0,4,10}),true);
+		assertEquals(hasSameBasicStateLabelsOf(test, new int[] {0,1,2,0,0,4,10}),true);
 		assertEquals(test.isInitial(),true);
 		assertEquals(test.isFinalstate(),false);
+	}
+	
+	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
+		if (s.length!=cs.getState().size())
+				return false;
+		return IntStream.range(0, cs.getState().size())
+		.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
 	}
 	
 //	@Test

@@ -84,9 +84,9 @@ public class MSCATransition extends CATransition {
 		if (getSource()!=null&&getLabelAsList()!=null)
 			switch (this.mod) 
 			{
-			case PERMITTED: return "("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";
-			case URGENT:return "!U("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";
-			case LAZY:return "!L("+getSource().getStateL().toString()+","+getLabelAsList()+","+getTarget().getStateL().toString()+")";		
+			case PERMITTED: return "("+getSource().getState().toString()+","+getLabelAsList()+","+getTarget().getState().toString()+")";
+			case URGENT:return "!U("+getSource().getState().toString()+","+getLabelAsList()+","+getTarget().getState().toString()+")";
+			case LAZY:return "!L("+getSource().getState().toString()+","+getLabelAsList()+","+getTarget().getState().toString()+")";		
 			}
 		return null;
 	}
@@ -106,7 +106,7 @@ public class MSCATransition extends CATransition {
 				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
 						&&(t.getLabel().getRequester().equals(this.getLabel().getRequester()))	//the same principal
-						&&(t.getSource().getStateL().get(t.getLabel().getRequester()).getLabel().equals(this.getSource().getStateL().get(this.getLabel().getRequester()).getLabel())) //the same source state					
+						&&(t.getSource().getState().get(t.getLabel().getRequester()).getLabel().equals(this.getSource().getState().get(this.getLabel().getRequester()).getLabel())) //the same source state					
 						&&(t.getLabel().getCoAction().equals(this.getLabel().getAction())) //the same request
 						&&(!badStates.contains(this.getSource()))) //source state is not bad
 				{
@@ -135,7 +135,7 @@ public class MSCATransition extends CATransition {
 				if ((t.getLabel().isMatch())
 						&&(t.isLazy()&&this.isLazy())//the same type (lazy)
 						&&(t.getLabel().getOfferer().equals(this.getLabel().getOfferer()))	//the same principal
-						&&(t.getSource().getStateL().get(t.getLabel().getOfferer()).getLabel().equals(this.getSource().getStateL().get(this.getLabel().getOfferer()).getLabel())) //the same source state					
+						&&(t.getSource().getState().get(t.getLabel().getOfferer()).getLabel().equals(this.getSource().getState().get(this.getLabel().getOfferer()).getLabel())) //the same source state					
 						&&(t.getLabel().getAction().equals(this.getLabel().getAction())) //the same offer (different from orchestration!)
 						&&(t.getSource().equals(this.getSource())) //the same source state because it is a semi-controllable for choreography
 						&&(!badStates.contains(this.getSource())) //source state is not redundant
@@ -164,7 +164,7 @@ public class MSCATransition extends CATransition {
 		int offerer=this.getLabel().getOfferer();
 		//target.getState()[offerer]=source.getState()[offerer];  
 
-		target.getStateL().set(offerer, source.getStateL().get(offerer));   //the offerer is now idle
+		target.getState().set(offerer, source.getState().get(offerer));   //the offerer is now idle
 
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getRequester(),label.getCoAction()),
@@ -184,7 +184,7 @@ public class MSCATransition extends CATransition {
 		CALabel label=this.getLabel();
 
 		int requester=this.getLabel().getRequester();
-		target.getStateL().set(requester, source.getStateL().get(requester));
+		target.getState().set(requester, source.getState().get(requester));
 		//	target.getState()[requester]=source.getState()[requester];  
 		return new MSCATransition(source,
 				new CALabel(label.getRank(),label.getOfferer(),label.getAction()),
@@ -259,10 +259,11 @@ public class MSCATransition extends CATransition {
 		return ftr.parallelStream()
 				.map(x->x.getSource())
 				.filter(x->!x.hasSameBasicStateLabelsOf(this.getSource())&&
-						this.getSource().getStateL().get(this.getLabel().getOfferer()).getLabel()
-						.equals(x.getStateL().get(this.getLabel().getOfferer()).getLabel()))
+						this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
+						.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
 				//TODO BasicState objects are not equal because of constructor
 				// 		CAState(int[] state, boolean initial, boolean finalstate)
+				
 				//it's not the same state of this but sender is in the same state of this
 				.allMatch(s -> ftr.parallelStream()
 						.filter(x->x.getSource().hasSameBasicStateLabelsOf(s)

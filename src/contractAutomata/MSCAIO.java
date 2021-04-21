@@ -290,7 +290,7 @@ public class MSCAIO {
 	private static CAState createOrLoadState(Set<CAState> states,int[] state,int[] initial, int[][] fin) {
 		
 		return states.stream()
-				.filter(x->x.hasSameBasicStateLabelsOf(state))// Arrays.equals(x.getState(), state)) //target
+				.filter(x->hasSameBasicStateLabelsOf(x,state))// Arrays.equals(x.getState(), state)) //target
 				.findAny()
 				.orElseGet(()->{
 							boolean isInit= IntStream.range(0,state.length)
@@ -380,17 +380,37 @@ public class MSCAIO {
 		}
 
 
-		int rank=castates.iterator().next().getStateL().size();
+		int rank=castates.iterator().next().getState().size();
 		MSCA aut= new MSCA(rank, 
-				CAState.getCAStateWithValue(new int[rank], castates),
+				getCAStateWithValue(new int[rank], castates),
 				principalsFinalStates(castates.stream()
 						.filter(CAState::isFinalstate)
-						.map(s->s.getStateL().stream()
+						.map(s->s.getState().stream()
 								.mapToInt(bs->Integer.parseInt(bs.getLabel()))
 								.toArray())
 						.collect(Collectors.toList())),
 				transitions);
 		return aut;
+	}
+	
+	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
+	{
+		if (states.parallelStream()
+				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+				.count()>1)
+			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
+
+		return states.parallelStream()
+				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+				.findFirst()
+				.orElseThrow(IllegalArgumentException::new);
+	}
+	
+	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
+		if (s.length!=cs.getState().size())
+				return false;
+		return IntStream.range(0, cs.getState().size())
+		.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
 	}
 
 	/**
@@ -595,7 +615,7 @@ public class MSCAIO {
 		else
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
 		Attr value=doc.createAttribute("value");
-		value.setValue(castate.getStateL().toString());//Arrays.toString(castate.getState()));
+		value.setValue(castate.getState().toString());//Arrays.toString(castate.getState()));
 		Element mxcell1 = doc.createElement("mxCell");
 		Attr id1=doc.createAttribute("id");
 		Attr as=doc.createAttribute("as");
