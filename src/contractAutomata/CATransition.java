@@ -57,31 +57,31 @@ public class CATransition {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CATransition other = (CATransition) obj;
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		if (source == null) {
-			if (other.source != null)
-				return false;
-		} else if (!source.equals(other.source))
-			return false;
-		if (target == null) {
-			if (other.target != null)
-				return false;
-		} else if (!target.equals(other.target))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		CATransition other = (CATransition) obj;
+//		if (label == null) {
+//			if (other.label != null)
+//				return false;
+//		} else if (!label.equals(other.label))
+//			return false;
+//		if (source == null) {
+//			if (other.source != null)
+//				return false;
+//		} else if (!source.equals(other.source))
+//			return false;
+//		if (target == null) {
+//			if (other.target != null)
+//				return false;
+//		} else if (!target.equals(other.target))
+//			return false;
+//		return true;
+//	}
 
 }

@@ -1,4 +1,4 @@
-<h1>Contract Automata Tool</h1>
+<h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
 and experimenting with new developments in the theoretical framework of contract automata.
@@ -15,13 +15,13 @@ At the time of writing, the package contractAutomata is almost totally rewritten
 <h2>Usage</h2>
 
 The  package  of the GUI Application, previously in this 
-repository, has been moved to https://github.com/davidebasile/Contract-Automata-App.
+repository, has been moved to https://github.com/davidebasile/ContractAutomataApp.
 Check that repository for an example of usage of the API of the Contract Automata Tool, contained 
 in this project.
 
 <h2>License</h2>
 The tool is available under Creative Common License 4.0,
- https://github.com/davidebasile/ContractAutomataTool/blob/code-cleaning/license.html.
+ https://github.com/davidebasile/ContractAutomataLib/blob/code-cleaning/license.html.
 
 
 <h2>Tutorials</h2>

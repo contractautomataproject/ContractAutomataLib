@@ -23,7 +23,7 @@ public class MSCATransitionTest {
 	public void branchingCondition() throws NumberFormatException, IOException {
 	
 		String dir = System.getProperty("user.dir");
-		MSCA aut = MSCAIO.load(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
+		MSCA aut = MSCAIO.load(dir+"/CAtest/violatingbranchingcondition.mxe.data");
 
 		final Set<MSCATransition> trf = aut.getTransition();
 		Set<MSCATransition> violatingBC = aut.getTransition().stream()

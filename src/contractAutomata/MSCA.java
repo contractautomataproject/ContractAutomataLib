@@ -231,7 +231,7 @@ public class MSCA
 				R.addAll(this.getDanglingStates(statesbackup,init));
 
 			R.addAll(trbackup.parallelStream() 
-					.filter(x->forbiddenPred.test(x,trbackup, Rf))
+					.filter(x->forbiddenPred.test(x,trf, Rf))
 					.map(MSCATransition::getSource)
 					.collect(Collectors.toSet())); //Ri
 
@@ -240,7 +240,7 @@ public class MSCA
 
 		this.removeDanglingTransitions();
 
-		if (R.contains(init))
+		if (R.contains(init)||this.getTransition().size()==0)
 			return null;
 
 		return this;
@@ -351,7 +351,7 @@ public class MSCA
 	/**
 	 * remove the unreachable transitions, needs to compute reachable and successful first
 	 */
-	void removeDanglingTransitions()
+	private void removeDanglingTransitions()
 	{
 		this.setTransition(this.getTransition().parallelStream()
 				.filter(x->this.reachable.get(x.getSource())&&this.successful.get(x.getTarget()))//x.getSource().isReachable()&&x.getTarget().isSuccessful())
@@ -363,8 +363,7 @@ public class MSCA
 	 * @param source   the source state
 	 * @return  the transitions outgoing the source state
 	 */
-	public Set<MSCATransition> getForwardStar(CAState source)
-	{
+	public Set<MSCATransition> getForwardStar(CAState source) {
 		return this.getTransition().parallelStream()
 				.filter(x->x.getSource().equals(source))
 				.collect(Collectors.toSet());
@@ -390,6 +389,7 @@ public class MSCA
 	{
 
 		//TODO study non-associative composition but all-at-once
+		//TODO study remotion of requests on-credit for a closed composition
 		
 		//each transition of each MSCA in aut is associated with the corresponding index in aut
 		final class FMCATransitionIndex {//more readable than Entry
@@ -719,6 +719,15 @@ public class MSCA
 			pr.append(t.toString()+"\n");
 		return pr.toString();
 	}
+}
+
+
+//END OF THE CLASS
+
+
+
+
+
 
 	//	/**
 	//	 * compute the projection on the i-th principal
@@ -789,10 +798,6 @@ public class MSCA
 
 
 
-}
-
-
-// END OF THE CLASS
 
 ////used in the synthesis for readability, instead of using a function taking one argument and returning a bipredicate where to apply such argument
 //interface TriPredicate<T,U,V> {

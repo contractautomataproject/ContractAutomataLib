@@ -64,19 +64,19 @@ public class MSCATransition extends CATransition {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MSCATransition other = (MSCATransition) obj;
-		if (mod != other.mod)
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		MSCATransition other = (MSCATransition) obj;
+//		if (mod != other.mod)
+//			return false;
+//		return true;
+//	}
 
 	@Override
 	public String toString()
@@ -198,8 +198,8 @@ public class MSCATransition extends CATransition {
 	 */
 	public boolean isUncontrollableOrchestration(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
-		return this.isUrgent()
-				||!this.isControllableLazyRequest(tr,badStates)
+		return this.isUrgent()|| 
+				!this.isControllableLazyRequest(tr,badStates)
 				||this.getLabel().isMatch()&&this.isLazy()&&!tr.contains(this)&& 
 				!this.extractRequestFromMatch().isControllableLazyRequest(tr,badStates);
 	}
