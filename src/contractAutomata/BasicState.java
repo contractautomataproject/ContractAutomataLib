@@ -8,7 +8,7 @@ package contractAutomata;
 public class BasicState {
 
 	private boolean init;
-	private boolean fin;
+	private final boolean fin;
 	private String label;
 	
 	public BasicState(String label, boolean init, boolean fin) {
@@ -20,9 +20,9 @@ public class BasicState {
 	public boolean isFin() {
 		return fin;
 	}
-	public void setFin(boolean fin) {
+/*	public void setFin(boolean fin) {
 		this.fin = fin;
-	}
+	}*/
 	public boolean isInit() {
 		return init;
 	}

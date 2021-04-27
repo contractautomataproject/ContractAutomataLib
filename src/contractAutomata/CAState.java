@@ -96,24 +96,20 @@ public class CAState {
 		return state.stream().allMatch(BasicState::isFin);
 	}
 
-	public void setFinalstate(boolean finalstate) {
 
-		this.state.forEach(s->s.setFin(finalstate));
-	}
-
-	@Override
-	public String toString()
-	{
-		StringBuilder sb = new StringBuilder();
-		if (this.isInitial())
-			sb.append(" Initial ");
-		if (this.isFinalstate())
-			sb.append(" Final ");
-
-		sb.append(this.getState().toString());
-
-		return sb.toString();
-	}
+//	@Override
+//	public String toString()
+//	{
+//		StringBuilder sb = new StringBuilder();
+//		if (this.isInitial())
+//			sb.append(" Initial ");
+//		if (this.isFinalstate())
+//			sb.append(" Final ");
+//
+//		sb.append(this.getState().toString());
+//
+//		return sb.toString();
+//	}
 	
 	public boolean hasSameBasicStateLabelsOf(CAState s) {
 		if (s.getState().size()!=this.state.size())

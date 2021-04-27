@@ -1,5 +1,7 @@
 package MSCA;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,17 @@ import org.junit.Test;
 import contractAutomata.CALabel;
 
 public class CALabelTest {
+
+	@Test
+	public void constructor_getaction_Test() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		CALabel calab= new CALabel(lab);
+		
+		assert(calab.getAction().startsWith(CALabel.offer));
+	}
 
 	@Test
 	public void constructorTest() {
@@ -20,4 +33,172 @@ public class CALabelTest {
 		assert(calab.getAction().startsWith(CALabel.offer));
 	}
 
+
+	@Test
+	public void constructorTest1_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null,null,""))
+	    .isInstanceOf(IllegalArgumentException.class);
+	}
+	
+
+	@Test
+	public void constructorTest2_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null,null,null,null,null))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Null argument");
+	}
+	
+	@Test
+	public void constructorTest3_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null,3,2))
+	    .isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	@Test
+	public void constructorTest4_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(3,1,2,null))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Null argument");
+	}
+	
+	@Test
+	public void constructorTest5_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Null argument");
+	}
+	
+	@Test
+	public void constructorTest_Exception_noAction() {
+		assertThatThrownBy(() -> new CALabel(2,0,"aa"))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The action is not a request nor an offer");
+	}
+
+	
+	@Test
+	public void constructorTest_Exception_noMatch() {
+		assertThatThrownBy(() -> new CALabel(2,0,1,"!a","!a"))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The actions must be an offer and a request");
+	}
+	
+	@Test
+	public void constructorTest_Exception_noOffer() {
+		assertThatThrownBy(() -> new CALabel(3,1,2,"?a"))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("This constructor is only for matches and by convention action is the offer");
+	}
+	
+
+	@Test
+	public void constructorTest_Exception_emptyLabel() {
+		assertThatThrownBy(() -> new CALabel(new ArrayList<String>()))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Empty label");
+	}
+	
+	@Test
+	public void constructorTest_Exception_nullReferencesLabel() {
+		List<String> l = new ArrayList<String>();
+		l.add(null);
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Label contains null references");
+	}
+
+	@Test
+	public void constructorTest_Exception_notWellFormedLabel() {
+		List<String> l = new ArrayList<String>();
+		l.add("a");
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The label is not well-formed");
+	}
+		
+	@Test
+	public void constructorTest_Exception_notWellFormedIdleLabel() {
+		List<String> l = new ArrayList<String>();
+		l.add(CALabel.idle);
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The label is not well-formed");
+	}
+	
+	@Test
+	public void constructorTest_Exception_notWellFormedOffersLabel() {
+		List<String> l = new ArrayList<String>();
+		l.add("!a");
+		l.add("!a");
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The label is not well-formed");
+	}
+	
+	@Test
+	public void constructorTest_Exception_notWellFormedRequestsLabel() {
+		List<String> l = new ArrayList<String>();
+		l.add("?a");
+		l.add("?a");
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The label is not well-formed");
+	}
+	@Test
+	public void getOffererTest_Exception() {
+		assertThatThrownBy(() -> new CALabel(1,0,"?a").getOfferer())
+	    .isInstanceOf(UnsupportedOperationException.class)
+	    .hasMessageContaining("No offerer in a request action");
+	}
+	
+	@Test
+	public void getRequesterTest_Exception() {
+		assertThatThrownBy(() -> new CALabel(1,0,"!a").getRequester())
+	    .isInstanceOf(UnsupportedOperationException.class)
+	    .hasMessageContaining("No requester in an offer action");
+	}
+	
+	@Test
+	public void getOffererOrRequesterTest_Exception() {
+		assertThatThrownBy(() -> new CALabel(2,0,1,"!a").getOffererOrRequester())
+	    .isInstanceOf(UnsupportedOperationException.class)
+	    .hasMessageContaining("Action is not a request nor an offer");
+	}
+	
+	@Test
+	public void equalsSameTrue() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		CALabel calab= new CALabel(lab);
+		assert(calab.equals(calab));
+	}
+	
+	@Test
+	public void equalsTwoInstancesTrue() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		assert( new CALabel(lab).equals(new CALabel(lab)));
+	}
+	
+	@Test
+	public void equalsNullFalse() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+	assert(!new CALabel(lab).equals(null));
+	}
+	
+	@Test
+	public void equalsFalse() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+	assert(!new CALabel(lab).equals(new CALabel(1,0,"!a")));
+	}
 }

@@ -3,10 +3,7 @@ package FMCA;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -58,19 +55,16 @@ public class FMCAUtilTest {
 		CAState s = new CAState(a1,false,false);
 		cs.add(s);
 		cs.add(s);
-	//	cs.add(new CAState(a1,true,false));
 		cs.add(new CAState(a2,false,false));
 		
-		Map<CAState, Long> m = cs.stream()
-				//.map(CAState::getState)
-				.collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
-				
-//		m.entrySet().forEach(x->System.out.println(Arrays.toString(x.getKey())+"="+x.getValue() ));
-		m.entrySet().forEach(x->System.out.println((x.getKey())+"="+x.getValue() ));
-
+//		Map<CAState, Long> m = cs.stream()
+//				.collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
 //		boolean test=(m.entrySet().stream()
-//				.map(Entry::getValue)
-//				.anyMatch(n->n>1));
+//		.map(Entry::getValue)
+//		.anyMatch(n->n>1));
+				
+//		m.entrySet().forEach(x->System.out.println((x.getKey())+"="+x.getValue() ));
+
 		
 		boolean test=cs.stream()
 				.anyMatch(x-> cs.stream()

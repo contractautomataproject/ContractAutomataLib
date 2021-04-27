@@ -5,8 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import contractAutomata.MSCAUtils;
-
 /**
  * Utilities for Family and Product
  * 
@@ -15,9 +13,17 @@ import contractAutomata.MSCAUtils;
  * @author Davide Basile
  *
  */
-public class FamilyUtils extends MSCAUtils
+public class FamilyUtils 
 {
-	public static <T> T[] removeTailsNull(T[] q, int length, T[] type)
+	static int[] removeTailsNull(int[] q,int length)
+	{
+		int[] r=new int[length];
+		for (int i=0;i<length;i++)
+			r[i]=q[i];
+		return r;
+	}
+	
+	static <T> T[] removeTailsNull(T[] q, int length, T[] type)
 	{
 		return  Arrays.stream(q)
 				.limit(length)

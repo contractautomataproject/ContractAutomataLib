@@ -58,10 +58,10 @@ public class CALabel {
 	  @		requires this.action.length()>=2;
 	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
 	 */
-	@Override
-	public String toString() {
-		return this.getLabelAsList().toString();		
-	}
+//	@Override
+//	public String toString() {
+//		return this.getLabelAsList().toString();		
+//	}
 	
 	
 	/*
@@ -124,8 +124,10 @@ public class CALabel {
 	
 	public CALabel(CALabel lab, Integer rank, Integer shift) {
 		super();
-		if (rank==null||rank<=0||lab==null||shift==null||shift<0)
-			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative");
+		if (rank==null||rank<=0||lab==null||shift==null||shift<0 || 
+				lab.offerer+shift>rank||lab.requester+shift>rank)
+			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
+					+ "or out of rank");
 
 		this.rank = rank;
 		this.offerer=(lab.offerer!=-1)?lab.offerer+shift:-1;
@@ -211,11 +213,16 @@ public class CALabel {
 		{
 			if (label.get(i).startsWith(offer)) 
 			{
+				if (offtemp!=-1)
+					throw new IllegalArgumentException("The label is not well-formed");
 				offtemp=i; 
 				acttemp=label.get(i);
 			}
 			else if (label.get(i).startsWith(request))
 			{
+
+				if (requtemp!=-1)
+					throw new IllegalArgumentException("The label is not well-formed");
 				requtemp=i; 
 				acttemp = (acttemp!=null)?acttemp:label.get(i);
 			}
@@ -237,14 +244,14 @@ public class CALabel {
 		this.rank = label.size();
 	}
 
-	/*
-	  @ public normal_behavior
-	  @     requires this.rank != null; 
-	  @     ensures \result == this.rank;
-	  @*/
-	public Integer getRank() {
-			return rank;
-	}
+//	/*
+//	  @ public normal_behavior
+//	  @     requires this.rank != null; 
+//	  @     ensures \result == this.rank;
+//	  @*/
+//	public Integer getRank() {
+//			return rank;
+//	}
 
 	/*
 	 * @ public normal behavior
@@ -307,17 +314,17 @@ public class CALabel {
 	  @*/
 	public  /*@ pure @*/ String getCoAction()
 	{	
-		if (action==null)
-			throw new UnsupportedOperationException("The action is null");
-		if (action.length()<2)
-			throw new UnsupportedOperationException("The action not legal");
+//		if (action==null)
+//			throw new UnsupportedOperationException("The action is null");
+//		if (action.length()<2)
+//			throw new UnsupportedOperationException("The action not legal");
 		
 		if (action.startsWith(offer))
 			return request+action.substring(1,action.length());
-		else if (action.startsWith(request))
+		else // if (action.startsWith(request))
 			return offer+action.substring(1,action.length());
-		else
-			throw new IllegalArgumentException("The label is not an action");
+//		else
+//			throw new IllegalArgumentException("The label is not an action");
 	}
 	
 	/*
@@ -355,9 +362,9 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isMatch()
 	{
-		if ((this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer))
-				&&this.actiontype!=CALabel.ActionType.MATCH)
-			throw new RuntimeException("The type of the label is not correct");
+//		if ((this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer))
+//				&&this.actiontype!=CALabel.ActionType.MATCH)
+//			throw new RuntimeException("The type of the label is not correct");
 		
 		return this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer)
 				&&this.actiontype==CALabel.ActionType.MATCH;
@@ -370,9 +377,9 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isOffer()
 	{
-		if ( (this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)) 
-				&& this.actiontype!=CALabel.ActionType.OFFER)
-			throw new RuntimeException("The type of the label is not correct");
+//		if ( (this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)) 
+//				&& this.actiontype!=CALabel.ActionType.OFFER)
+//			throw new RuntimeException("The type of the label is not correct");
 		
 		return this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)
 				&& this.actiontype==CALabel.ActionType.OFFER;
@@ -385,9 +392,9 @@ public class CALabel {
 	 */
 	public /*@ pure @*/ boolean isRequest()
 	{
-		if ( (this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)) 
-				&& this.actiontype!=CALabel.ActionType.REQUEST)
-			throw new RuntimeException("The type of the label is not correct");
+//		if ( (this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)) 
+//				&& this.actiontype!=CALabel.ActionType.REQUEST)
+//			throw new RuntimeException("The type of the label is not correct");
 	
 		return this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)
 				&& this.actiontype==CALabel.ActionType.REQUEST;
@@ -426,11 +433,11 @@ public class CALabel {
 	 */
 	public String getUnsignedAction()
 	{
-		String action=this.getAction();
-		if (action.startsWith(offer)||action.startsWith(request))
+//		String action=this.getAction();
+//		if (action.startsWith(offer)||action.startsWith(request))
 			return action.substring(1,action.length());
-		else
-			throw new RuntimeException("Bug: irregular label action"); //label;
+//		else
+//			throw new RuntimeException("Bug: irregular label action");
 	}
 
 	/*
@@ -469,31 +476,10 @@ public class CALabel {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		CALabel other = (CALabel) obj;
-		if (action == null) {
-			if (other.action != null)
-				return false;
-		} else if (!action.equals(other.action))
-			return false;
-		if (offerer == null) {
-			if (other.offerer != null)
-				return false;
-		} else if (!offerer.equals(other.offerer))
-			return false;
-		if (rank == null) {
-			if (other.rank != null)
-				return false;
-		} else if (!rank.equals(other.rank))
-			return false;
-		if (requester == null) {
-			if (other.requester != null)
-				return false;
-		} else if (!requester.equals(other.requester))
-			return false;
-		return true;
+		return action.equals(other.action)&&offerer.equals(other.offerer)
+				&&rank.equals(other.rank)&&requester.equals(other.requester);
 	}
 }

@@ -72,7 +72,6 @@ public class MSCA
 		this.checkInitFin();//useful for development
 	}
 
-
 	public void setTransition(Set<MSCATransition> tr)
 	{
 		if (tr.parallelStream()
@@ -80,7 +79,6 @@ public class MSCA
 			throw new IllegalArgumentException("Null element");
 		this.tra=tr;
 	}
-
 
 	public  Set<MSCATransition> getTransition()
 	{
@@ -103,7 +101,6 @@ public class MSCA
 	public int[][] getFinalStatesofPrincipals()
 	{
 		return this.finalstates;
-
 	}
 
 	public void setFinalStatesofPrincipals(int[][] finalstates)
