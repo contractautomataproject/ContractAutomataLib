@@ -16,22 +16,18 @@ public class CATransition {
 	public CATransition(CAState source, CALabel label, CAState target){
 		if (source==null || label==null || target==null)
 			throw new IllegalArgumentException("source, label or target null");
+		if (!(source.getRank()==target.getRank()&&label.getRank()==source.getRank()))
+			throw new IllegalArgumentException("source, label or target with different ranks");
 		this.source=source;
 		this.target=target;
 		this.label=label;
 	}
 
-	/**
-	 * @return		the source state of the transition
-	 */
 	public CAState getSource()
 	{
 		return this.source;
 	}
 
-	/**
-	 * @return		the target state of the transition
-	 */
 	public CAState getTarget()
 	{
 		return target;
@@ -46,7 +42,12 @@ public class CATransition {
 	{
 		return label;
 	}
-
+	
+	public Integer getRank()
+	{
+		return label.getRank();
+	}
+}
 /*	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -83,5 +84,3 @@ public class CATransition {
 //			return false;
 //		return true;
 //	}
-
-}

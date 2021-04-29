@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -50,19 +51,12 @@ public class MSCAIO {
 	public static void printToFile(String filename, MSCA aut) throws FileNotFoundException
 	{
 		if (filename=="")
-		{
 			throw new IllegalArgumentException("Empty file name");
-		}
 
 		PrintWriter pr = new PrintWriter(filename+".data"); 
 		pr.print(aut.toString());
 		pr.close();
 	}
-
-	/*
-	 * public static File loadMSCAAndWriteIntoXML(String fileName) { return
-	 * convertMSCAintoXML(fileName, load(fileName)); }
-	 */
 
 	/**
 	 * load a MSCA described in a text file,  
@@ -80,7 +74,7 @@ public class MSCAIO {
 		if (fileName.endsWith(".data"))
 			fstream = new FileInputStream(fileName);
 		else
-			fstream = new FileInputStream(fileName+".data");
+			throw new IllegalArgumentException("Not a .data format");
 		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 		int rank=0;
 		int[] initial = new int[1];
@@ -141,22 +135,19 @@ public class MSCAIO {
 
 					for (int ind=0;ind<arr.length;ind++)
 					{
-
-						String[] arr2=arr[ind].split("[,|\\[]"); //FIXME BUG with this parseInt fails with spaces
-						try{
-							int innerindex=0;
-							int[] tf = new int[numstates[outerindex]]; //upper bound
-							for(int ind2=0;ind2<arr2.length;ind2++)
-							{
-								try{
-									int num=Integer.parseInt(arr2[ind2].trim());
-									tf[innerindex] = num;
-									innerindex++;
-								}catch(NumberFormatException e){} //skip values that are not numbers
-							}
-							fin[outerindex]=removeTailsNull(tf, innerindex); 
-							outerindex++;
-						}catch(NumberFormatException e){}
+						String[] arr2=arr[ind].split("[,|\\[]");
+						int innerindex=0;
+						int[] tf = new int[numstates[outerindex]]; //upper bound
+						for(int ind2=0;ind2<arr2.length;ind2++)
+						{
+							try{
+								int num=Integer.parseInt(arr2[ind2].trim());
+								tf[innerindex] = num;
+								innerindex++;
+							}catch(NumberFormatException e){} //skip values that are not numbers
+						}
+						fin[outerindex]=removeTailsNull(tf, innerindex); 
+						outerindex++;
 					}
 					break;
 				}
@@ -182,25 +173,35 @@ public class MSCAIO {
 		}
 		br.close();
 
-		return new MSCA(rank,new CAState(initial, true, false),fin,tr);
+		return new MSCA(rank,fin,tr);
 	}
 
-	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates,int[] initial, int[][] fin)
+	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates,int[] initial, int[][] fin) throws IOException
 	{
 		int what=0;
-		String[] ss=str.split("]");
+		String[] splitstr=str.split("]");
 		int[][] store=new int[1][];
 		String[] arrlabel = new String[rank];
 		String offer=null, request = null;
 		Integer offerer=null,requester=null;
-		for (int i=0;i<ss.length;i++)
+
+		int j=0;
+		int[] statestransition = new int[rank];
+		for (int i=0;i<splitstr.length;i++)
 		{
-			int[] statestransition = new int[rank];
-			Scanner s = new Scanner(ss[i]);
+			j=0;
+			statestransition = new int[rank];
+
+			Scanner s = new Scanner(splitstr[i]);
 			s.useDelimiter(",|\\[| ");
-			int j=0;
 			while (s.hasNext())
 			{
+				if (j>=rank)
+				{
+					s.close();
+					throw new IOException("Ill-formed transitions, different ranks");
+				}
+
 				if (what==0||what==2)//source or target
 				{
 					if (s.hasNextInt())
@@ -214,63 +215,57 @@ public class MSCAIO {
 				}
 				else
 				{
-					if (s.hasNext())
+					String action=s.next();
+					if (action.contains(CALabel.idle))
+						arrlabel[j]=CALabel.idle;
+					else if (action.contains(CALabel.offer))
 					{
-						String action=s.next();
-						if (action.contains(CALabel.idle))
-							arrlabel[j]=CALabel.idle;
-						else if (action.contains(CALabel.offer))
-						{
-							arrlabel[j]=action.substring(action.indexOf(CALabel.offer));
-							offerer=j;
-							offer=action.substring(action.indexOf(CALabel.offer));//FIXME?
-						}
-						else if (action.contains(CALabel.request))
-						{
-							arrlabel[j]=action.substring(action.indexOf(CALabel.request));
-							requester=j;
-							request=action.substring(action.indexOf(CALabel.request));//FIXME?
-						}
-						else
-							j--; //trick for not increasing the counter j
+						arrlabel[j]=action.substring(action.indexOf(CALabel.offer));
+						offerer=j;
+						offer=action.substring(action.indexOf(CALabel.offer));//FIXME?
+					}
+					else if (action.contains(CALabel.request))
+					{
+						arrlabel[j]=action.substring(action.indexOf(CALabel.request));
+						requester=j;
+						request=action.substring(action.indexOf(CALabel.request));//FIXME?
+					}
+					else
+						j--; //trick for not increasing the counter j
 
-						j++;
-					}
-					else {
-						s.next();
-					}
+					j++;
 				}
 			}
 			s.close();
 			if (what==2)
-			{
-				CAState source = createOrLoadState(states,mapBasicStates,store[0],initial, fin);//source
-				CAState target = createOrLoadState(states,mapBasicStates,statestransition,initial, fin);//target
-
-				CALabel label;
-				if (offerer!=null&&requester!=null&&offer!=null&&offer.startsWith(CALabel.offer))
-					label = new CALabel(source.getRank(),offerer,requester,offer);
-				else if (offerer!=null&&requester==null&&offer!=null&&offer.startsWith(CALabel.offer))
-					label = new CALabel(source.getRank(),offerer, offer);
-				else if (offerer==null&&requester!=null&&request!=null&&request.startsWith(CALabel.request))
-					label = new CALabel(source.getRank(),requester,request);
-				else
-					throw new RuntimeException("Problem in loading label");
-
-				return new MSCATransition(source,label,target,type); //TODO check & remove arrlabel
-				//				return new MSCATransition(source,List.of(arrlabel),target,type);
-			}
-			else
-			{
-				if (what==0)
-					store[what]=statestransition; //the source state
-			}
+				break;
+			else if (what==0)
+				store[what]=statestransition; //the source state
 			what++;
 		}
-		throw new RuntimeException(); //check
+		if (j!=rank)
+			throw new IOException("Ill-formed transitions, different ranks");
+		CAState source = createOrLoadState(states,mapBasicStates,store[0],initial, fin);//source
+		CAState target = createOrLoadState(states,mapBasicStates,statestransition,initial, fin);//target
+
+		CALabel label;
+		if (offerer!=null&&requester!=null&&offer!=null&&offer.startsWith(CALabel.offer))
+			label = new CALabel(source.getRank(),offerer,requester,offer);
+		else if (offerer!=null&&requester==null&&offer!=null&&offer.startsWith(CALabel.offer))
+			label = new CALabel(source.getRank(),offerer, offer);
+		else if (offerer==null&&requester!=null&&request!=null&&request.startsWith(CALabel.request))
+			label = new CALabel(source.getRank(),requester,request);
+		else
+			throw new IOException("Problem in loading a label");
+
+		return new MSCATransition(source,label,target,type); //TODO check & remove arrlabel
+		//		return new MSCATransition(source,List.of(arrlabel),target,type);
+
+		//		throw new RuntimeException();
 	}
 
-	private static CAState createOrLoadState(Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates, int[] state,int[] initial, int[][] fin) {
+	private static CAState createOrLoadState(Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates, int[] state,int[] initial, int[][] fin) throws IOException {
+
 		return states.stream()
 				.filter(x->hasSameBasicStateLabelsOf(x,state))// Arrays.equals(x.getState(), state)) //target
 				.findAny()
@@ -289,11 +284,11 @@ public class MSCAIO {
 									else
 										l.add(bs);
 									return (BasicState) bs;
-								}
-								else return (BasicState) l.stream()
-										.filter(bs->Integer.parseInt(bs.getLabel())==state[i])
-										.findFirst()
-										.orElseThrow(RuntimeException::new);
+								} else
+									return (BasicState) l.stream()
+											.filter(bs->Integer.parseInt(bs.getLabel())==state[i])
+											.findFirst()
+											.orElseThrow(RuntimeException::new);
 							}).collect(Collectors.toList())
 							,0,0); 							
 					states.add(temp); return temp;});
@@ -340,13 +335,14 @@ public class MSCAIO {
 											Arrays.equals(st, new int[st.length]), //initial
 											eElement.getAttribute("style").contains("terminate.png"));//final
 					if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
-						throw new IllegalArgumentException("Duplicate states!");
+						throw new IOException("Duplicate states!");
 				}
 			}
 		}
 
 		// checks for detecting bugs
-		assert !(id2castate.isEmpty()):"No states!";
+		if (id2castate.isEmpty())
+			throw new IOException("No states!");
 
 		Set<CAState> castates = id2castate.entrySet().stream()
 				.map(Entry::getValue)
@@ -372,7 +368,6 @@ public class MSCAIO {
 
 		int rank=castates.iterator().next().getState().size();
 		MSCA aut= new MSCA(rank, 
-				getCAStateWithValue(new int[rank], castates),
 				principalsFinalStates(castates.stream()
 						.filter(CAState::isFinalstate)
 						.map(s->s.getState().stream()
@@ -383,22 +378,20 @@ public class MSCAIO {
 		return aut;
 	}
 
-	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
-	{
-		if (states.parallelStream()
-				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
-				.count()>1)
-			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
-
-		return states.parallelStream()
-				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
-				.findFirst()
-				.orElseThrow(IllegalArgumentException::new);
-	}
+	//	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
+	//	{
+	//		if (states.parallelStream()
+	//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+	//				.count()>1)
+	//			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
+	//
+	//		return states.parallelStream()
+	//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+	//				.findFirst()
+	//				.orElseThrow(IllegalArgumentException::new);
+	//	}
 
 	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
-		if (s.length!=cs.getState().size())
-			return false;
 		return IntStream.range(0, cs.getState().size())
 				.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
 	}
@@ -408,70 +401,67 @@ public class MSCAIO {
 	 * @param fileName the name of the xml file where to write the automaton
 	 * @param aut the automaton to be saved
 	 * @return the File containing the xml for the automaton aut
+	 * @throws ParserConfigurationException 
+	 * @throws TransformerException 
 	 */
-	public static File convertMSCAintoXML(String fileName, MSCA aut)
+	public static File convertMSCAintoXML(String fileName, MSCA aut) throws ParserConfigurationException, TransformerException
 	{
-		try{
-			DocumentBuilderFactory dbFactory =
-					DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = 
-					dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.newDocument();
-			// root element
-			Element rootElement = doc.createElement("mxGraphModel");
-			doc.appendChild(rootElement);
+		DocumentBuilderFactory dbFactory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = 
+				dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.newDocument();
+		// root element
+		Element rootElement = doc.createElement("mxGraphModel");
+		doc.appendChild(rootElement);
 
-			Element root = doc.createElement("root");
-			rootElement.appendChild(root);
+		Element root = doc.createElement("root");
+		rootElement.appendChild(root);
 
 
-			Element mxcell0 = doc.createElement("mxCell");
-			mxcell0.setAttribute("id", "0");
-			root.appendChild(mxcell0);
-			Element mxcell1 = doc.createElement("mxCell");
-			mxcell1.setAttribute("id", "1");
-			mxcell1.setAttribute("parent", "0");
-			root.appendChild(mxcell1);
+		Element mxcell0 = doc.createElement("mxCell");
+		mxcell0.setAttribute("id", "0");
+		root.appendChild(mxcell0);
+		Element mxcell1 = doc.createElement("mxCell");
+		mxcell1.setAttribute("id", "1");
+		mxcell1.setAttribute("parent", "0");
+		root.appendChild(mxcell1);
 
-			Map<CAState,Element> state2element = new HashMap<CAState, Element>();
+		Map<CAState,Element> state2element = new HashMap<CAState, Element>();
 
-			int id=2;
-			for (CAState s : aut.getStates())
-			{
-				state2element.put(s, createElementState(doc, root,Integer.toString(id), s));
-				id+=1;
-			}
+		int id=2;
+		for (CAState s : aut.getStates())
+		{
+			state2element.put(s, createElementState(doc, root,Integer.toString(id), s));
+			id+=1;
+		}
 
-			Set<? extends MSCATransition> tr= aut.getTransition();
-			for (MSCATransition t : tr)
-			{
-				createElementEdge(doc,root,Integer.toString(id),
-						state2element.get(t.getSource()),
-						state2element.get(t.getTarget()),
-						Arrays.toString(t.getLabelAsList().stream().toArray(String[]::new)),t.getModality());
-				id+=1;
-			}
+		Set<? extends MSCATransition> tr= aut.getTransition();
+		for (MSCATransition t : tr)
+		{
+			createElementEdge(doc,root,Integer.toString(id),
+					state2element.get(t.getSource()),
+					state2element.get(t.getTarget()),
+					Arrays.toString(t.getLabelAsList().stream().toArray(String[]::new)),t.getModality());
+			id+=1;
+		}
 
-			TransformerFactory transformerFactory =
-					TransformerFactory.newInstance();
-			Transformer transformer =
-					transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			if (fileName.contains("."))
-				fileName=fileName.substring(0,fileName.indexOf("."));
-			File file = new File(fileName+".mxe");
-			StreamResult result =
-					new StreamResult(file);
-			transformer.transform(source, result);
-			/*// Output to console for testing
+		TransformerFactory transformerFactory =
+				TransformerFactory.newInstance();
+		Transformer transformer =
+				transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		if (fileName.contains("."))
+			fileName=fileName.substring(0,fileName.indexOf("."));
+		File file = new File(fileName+".mxe");
+		StreamResult result =
+				new StreamResult(file);
+		transformer.transform(source, result);
+		/*// Output to console for testing
 			StreamResult consoleResult =
 					new StreamResult(System.out);
 			transformer.transform(source, consoleResult);*/
-			return file;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return file;
 	}
 
 	private static Element createElementEdge(Document doc, Element root,String id, Element source, Element target,String label,MSCATransition.Modality type)
@@ -509,7 +499,7 @@ public class MSCAIO {
 		mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
 		mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
 		mxGeometry1.appendChild(mxPointSource);
-		
+
 		Element mxPointTarget=doc.createElement("mxPoint");
 		mxPointTarget.setAttribute("as","targetPoint");
 		mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
@@ -518,43 +508,43 @@ public class MSCAIO {
 
 
 		//source and target are created using createElementState: they have x and y attributes
-//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
-//		{
-//			mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
-//		}
-//		else
-//			mxPointSource.setAttribute("x", "0.0");
+		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
+		//		{
+		//			mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
+		//		}
+		//		else
+		//			mxPointSource.setAttribute("x", "0.0");
 
-//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
-//		{
-//			mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
-//		}
-//		else
-//			mxPointSource.setAttribute("y", "0.0");
+		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
+		//		{
+		//			mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
+		//		}
+		//		else
+		//			mxPointSource.setAttribute("y", "0.0");
 
-//		mxGeometry1.appendChild(mxPointSource);
-//		Element mxPointTarget=doc.createElement("mxPoint");
-//		mxPointTarget.setAttribute("as","targetPoint");
+		//		mxGeometry1.appendChild(mxPointSource);
+		//		Element mxPointTarget=doc.createElement("mxPoint");
+		//		mxPointTarget.setAttribute("as","targetPoint");
 
-//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
-//			mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
-//		else
-//		{
-//			Attr x=doc.createAttribute("x");
-//			x.setNodeValue("0.0");
-//			mxPointTarget.setAttributeNode(x);
-//		}
+		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
+		//			mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		//		else
+		//		{
+		//			Attr x=doc.createAttribute("x");
+		//			x.setNodeValue("0.0");
+		//			mxPointTarget.setAttributeNode(x);
+		//		}
 
-//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
-//			mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
-//		else
-//		{
-//			Attr y=doc.createAttribute("y");
-//			y.setNodeValue("0.0");
-//			mxPointTarget.setAttributeNode(y);
-//		}
+		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
+		//			mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
+		//		else
+		//		{
+		//			Attr y=doc.createAttribute("y");
+		//			y.setNodeValue("0.0");
+		//			mxPointTarget.setAttributeNode(y);
+		//		}
 
-		
+
 		Element pointArray=doc.createElement("Array");
 		pointArray.setAttribute("as","points");
 		Element mxPoint=doc.createElement("mxPoint");
@@ -565,24 +555,24 @@ public class MSCAIO {
 		float ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
 		float yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
 
-//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
-//		{
-//			xs=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x"));
-//		}
-//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
-//		{
-//			xt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"));
-//		}
-//
-//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
-//		{
-//			ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
-//		}
-//
-//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
-//		{
-//			yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
-//		}
+		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
+		//		{
+		//			xs=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x"));
+		//		}
+		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
+		//		{
+		//			xt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"));
+		//		}
+		//
+		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
+		//		{
+		//			ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
+		//		}
+		//
+		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
+		//		{
+		//			yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
+		//		}
 
 
 		float coordinate=(xs+xt)/2;
@@ -643,7 +633,7 @@ public class MSCAIO {
 		Attr x=doc.createAttribute("x");
 		x.setNodeValue(castate.getX()+"");
 		mxGeometry1.setAttributeNode(x);
-		
+
 		//		}
 		//		else
 		//			mxGeometry1.setAttribute("x", castate.getX()+"");
@@ -653,7 +643,7 @@ public class MSCAIO {
 		Attr y=doc.createAttribute("y");
 		y.setNodeValue(castate.getY()+"");
 		mxGeometry1.setAttributeNode(y);
-		
+
 		//		}
 		//		else
 		//			mxGeometry1.setAttribute("y", castate.getY()+"");
@@ -671,11 +661,12 @@ public class MSCAIO {
 	 * 
 	 * @param all final states of the composed automaton
 	 * @return the final states of each principal
+	 * @throws IOException 
 	 */
-	private static int[][] principalsFinalStates(List<int[]> states)
+	private static int[][] principalsFinalStates(List<int[]> states) throws IOException
 	{
 		if (states==null ||  states.size()==0)
-			throw new IllegalArgumentException("States null or empty");
+			throw new IOException("States null or empty");
 		int rank=states.get(0).length;
 		int[] count=new int[rank];
 		int[][] pfs=new int[rank][states.size()];
@@ -724,11 +715,11 @@ public class MSCAIO {
 		return -1;
 	}
 
-	private static String[] getArrayString(String arr)
+	private static String[] getArrayString(String arr) throws IOException
 	{
 		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
 		if (Arrays.stream(items).anyMatch(item->!(item.startsWith(CALabel.offer)||item.startsWith(CALabel.request)||item.startsWith(CALabel.idle))))
-			return null;
+			throw new IOException("Ill-formed action");
 		return items;
 	}
 

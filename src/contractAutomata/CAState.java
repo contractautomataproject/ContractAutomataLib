@@ -26,7 +26,7 @@ public class CAState {
 	//	   such information is stored, loaded, and then the correct constructor should be called.
 	public CAState(int[] state, boolean initial, boolean finalstate)
 	{
-		if (state==null)
+		if (state==null||state.length==0)
 			throw new IllegalArgumentException();
 
 		this.setState(IntStream.range(0,state.length)
@@ -44,7 +44,7 @@ public class CAState {
 
 	public CAState(List<BasicState> lstate, float x, float y)
 	{
-		if (lstate==null)
+		if (lstate==null||lstate.isEmpty())
 			throw new IllegalArgumentException();
 		this.setState(lstate);
 		this.x=x;

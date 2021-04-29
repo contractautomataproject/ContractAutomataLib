@@ -1,6 +1,7 @@
-package MSCA;
+package contractAutomataTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class CALabelTest {
 		lab.add(CALabel.request+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assert(calab.getAction().startsWith(CALabel.offer));
+		assertEquals(calab.getAction().startsWith(CALabel.offer),true);
 	}
 
 	@Test
@@ -30,17 +31,54 @@ public class CALabelTest {
 		lab.add(CALabel.request+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assert(calab.getAction().startsWith(CALabel.offer));
+		assertEquals(calab.getAction().startsWith(CALabel.offer),true);
 	}
 
+	@Test
+	public void equalsSameTrue() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		CALabel calab= new CALabel(lab);
+		assertEquals(calab.equals(calab),true);
+	}
+	
+	@Test
+	public void equalsTwoInstancesTrue() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		assertEquals( new CALabel(lab).equals(new CALabel(lab)),true);
+	}
+	
+	@Test
+	public void equalsNullFalse() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+	assertEquals(new CALabel(lab).equals(null),false);
+	}
+	
+	@Test
+	public void equalsFalse() {
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+	assertEquals(new CALabel(lab).equals(new CALabel(1,0,"!a")),false);
+	}
 
+	//********************** testing exceptions *********************
+	
 	@Test
 	public void constructorTest1_Exception_nullArgument() {
 		assertThatThrownBy(() -> new CALabel(null,null,""))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
-
 	@Test
 	public void constructorTest2_Exception_nullArgument() {
 		assertThatThrownBy(() -> new CALabel(null,null,null,null,null))
@@ -74,7 +112,6 @@ public class CALabelTest {
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("The action is not a request nor an offer");
 	}
-
 	
 	@Test
 	public void constructorTest_Exception_noMatch() {
@@ -144,6 +181,7 @@ public class CALabelTest {
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("The label is not well-formed");
 	}
+	
 	@Test
 	public void getOffererTest_Exception() {
 		assertThatThrownBy(() -> new CALabel(1,0,"?a").getOfferer())
@@ -163,42 +201,5 @@ public class CALabelTest {
 		assertThatThrownBy(() -> new CALabel(2,0,1,"!a").getOffererOrRequester())
 	    .isInstanceOf(UnsupportedOperationException.class)
 	    .hasMessageContaining("Action is not a request nor an offer");
-	}
-	
-	@Test
-	public void equalsSameTrue() {
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-		CALabel calab= new CALabel(lab);
-		assert(calab.equals(calab));
-	}
-	
-	@Test
-	public void equalsTwoInstancesTrue() {
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-		assert( new CALabel(lab).equals(new CALabel(lab)));
-	}
-	
-	@Test
-	public void equalsNullFalse() {
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-	assert(!new CALabel(lab).equals(null));
-	}
-	
-	@Test
-	public void equalsFalse() {
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-	assert(!new CALabel(lab).equals(new CALabel(1,0,"!a")));
 	}
 }

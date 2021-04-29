@@ -244,14 +244,14 @@ public class CALabel {
 		this.rank = label.size();
 	}
 
-//	/*
-//	  @ public normal_behavior
-//	  @     requires this.rank != null; 
-//	  @     ensures \result == this.rank;
-//	  @*/
-//	public Integer getRank() {
-//			return rank;
-//	}
+	/*
+	  @ public normal_behavior
+	  @     requires this.rank != null; 
+	  @     ensures \result == this.rank;
+	  @*/
+	public Integer getRank() {
+			return rank;
+	}
 
 	/*
 	 * @ public normal behavior

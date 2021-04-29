@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import contractAutomata.CALabel;
 import contractAutomata.CAState;
 import contractAutomata.FMCA;
 import contractAutomata.MSCA;
@@ -608,7 +610,8 @@ public class Family {
 		for (int i=0;i<elements.length;i++)
 			valid[i]=false; //initialise
 		int[] tv = getMaximalProducts();
-		if (aut.getUnsignedActions().contains("dummy")) //dummy is an epsilon move, it is only used in the union
+		if (aut.getTransition().parallelStream()
+				.anyMatch(x->CALabel.getUnsignedAction(x.getLabel().getAction())=="dummy")) //dummy is an epsilon move, it is only used in the union
 		{
 			CAState storeinitial=aut.getInitial();
 			for (int i=0;i<tv.length;i++)
@@ -619,6 +622,7 @@ public class Family {
 				for (MSCATransition t : aut.getForwardStar(storeinitial))
 				{	
 					aut.setInitialCA(t.getTarget());
+					//MSCA aut = new MSCA()
 					MSCA newaut = new FMCA(aut.clone()).orchestration(new Product(new String[0],new String[0]));
 					valid(valid,tv[i],newaut); //recursive method
 				}				
@@ -754,7 +758,10 @@ public class Family {
 					 * The quotient class considers all products with the same set of forbidden features, and 
 					 * <<ignoring  those features that are never displayed in the automaton>> (this is an improvement of Def.32 of JSCP2020).
 					 */
-					String[] act=aut.getUnsignedActions().toArray(new String[] {});
+					String[] act=aut.getTransition().parallelStream()
+							.map(x->CALabel.getUnsignedAction(x.getLabel().getAction()))
+							.collect(Collectors.toSet())
+							.toArray(new String[] {});
 					Product test1=new Product(new String[0],FamilyUtils.setIntersection(p[nonemptyindex[i]].getForbidden(),act, new String[] {}));
 					Product test2=new Product(new String[0],FamilyUtils.setIntersection(p[nonemptyindex[j]].getForbidden(),act,new String[] {}));
 					if (test1.containsForbiddenFeatures(test2)

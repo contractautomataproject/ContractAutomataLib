@@ -1,7 +1,8 @@
-package MSCA;
+package contractAutomataTest;
 
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import contractAutomata.CAState;
 import contractAutomata.MSCA;
 import contractAutomata.MSCAIO;
 import contractAutomata.MSCATransition;
+import contractAutomata.MSCATransition.Modality;
 
 public class MSCATransitionTest {
 	
@@ -32,7 +34,7 @@ public class MSCATransitionTest {
 		.collect(Collectors.toSet());
 	
 		
-		assert(violatingBC.size()==6);
+		assertEquals(violatingBC.size(),6);
 	}
 	
 	@Test
@@ -71,7 +73,22 @@ public class MSCATransitionTest {
         .hasMessageContaining("Ill-formed transition");
 	}
 	
+	@Test
+	public void constructorRankException() {
+		CAState source = new CAState(new int[] {0,1,2},true,false);
+		CAState target = new CAState(new int[] {0,1,2},false,false);
+		List<String> lab = new ArrayList<>();
+		lab.add(CALabel.idle);
+		lab.add(CALabel.idle);
+		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.request+"a");
+		CALabel calab= new CALabel(lab);
 
+		assertThatThrownBy(() -> new MSCATransition(source,calab,target,Modality.PERMITTED))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("source, label or target with different ranks");
+	}
+	
 //	
 //	
 //	@Test

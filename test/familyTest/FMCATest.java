@@ -1,82 +1,107 @@
-package FMCA;
+package familyTest;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-import contractAutomata.CAState;
+import contractAutomata.FMCA;
+import contractAutomata.MSCA;
+import contractAutomata.MSCAIO;
+import contractAutomataTest.MSCATest;
+import family.Product;
 
-/*import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertEquals;
+/*
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
  */
+
 /**
+ * 
  * using for testing that code cleaning is correct
  * @author Davide
  *
  */
-
-public class FMCAUtilTest {
-//	@Test
-//	public void testUnionRenaming()
-//	{
-//		int[][] a1 = { {2,3}, {5,6}};
-//		int[][] a2 = { {1,4}, {7,8}};
-//		int[][] a3 = { {9}, {10}};
-//
-//		int[][] u = { {2,3,1,4,9}, {5,6,7,8,10}};
-//
-//		int[][] test =
-//		Arrays.stream(a1)
-//		.map(s->{return Arrays.stream(s)
-//				.map(ar->ar+10)
-//				.toArray();})
-//		.toArray(int[][]::new);
-//
-//		//System.out.print(Arrays.deepToString(test));
-//		assertEquals(u,test);
-//
-//	}
-//	
+public class FMCATest {
+	
+			
 	@Test
-	public void testFunctionIdentity()
-	{
-		int[] a1 = new int[]{ 1, 2, 3 };
-		int[] a2 = new int[]{ 1, 2, 3 };
-
-		Set<CAState> cs = new HashSet<CAState>();
-		CAState s = new CAState(a1,false,false);
-		cs.add(s);
-		cs.add(s);
-		cs.add(new CAState(a2,false,false));
-		
-//		Map<CAState, Long> m = cs.stream()
-//				.collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
-//		boolean test=(m.entrySet().stream()
-//		.map(Entry::getValue)
-//		.anyMatch(n->n>1));
-				
-//		m.entrySet().forEach(x->System.out.println((x.getKey())+"="+x.getValue() ));
-
-		
-		boolean test=cs.stream()
-				.anyMatch(x-> cs.stream()
-						.filter(y->x!=y && x.hasSameBasicStateLabelsOf(y))//Arrays.equals(getArrayState(x), getArrayState(y)))
-						.count()>0						
-						);
-		
-		assertEquals(true,test);
-
+	public void constructorTest_Exception_nullArgument() {
+		assertThatThrownBy(() -> new FMCA(null))
+	    .isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@Test
+	public void getAut_test() throws ParserConfigurationException, SAXException, IOException 
+	{
+		String dir = System.getProperty("user.dir");
+		MSCA a = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
+		FMCA aut = new FMCA(a);	
+		
+		assertEquals(aut.getAut(),a);
+	}
 	
+	@Test
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+
+		String dir = System.getProperty("user.dir");
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		
+		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
+		assertEquals(MSCATest.checkTransitions(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"})),test),true);
+	}
+	
+	@Test
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+
+		String dir = System.getProperty("user.dir");
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		
+		assertEquals(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"})),null);
+	}	
+}
+
+
+
+
+
+
+//END OF THE CLASS
+
+//old FMCA util 
+
+//@Test
+//public void testUnionRenaming()
+//{
+//	int[][] a1 = { {2,3}, {5,6}};
+//	int[][] a2 = { {1,4}, {7,8}};
+//	int[][] a3 = { {9}, {10}};
+//
+//	int[][] u = { {2,3,1,4,9}, {5,6,7,8,10}};
+//
+//	int[][] test =
+//	Arrays.stream(a1)
+//	.map(s->{return Arrays.stream(s)
+//			.map(ar->ar+10)
+//			.toArray();})
+//	.toArray(int[][]::new);
+//
+//	//System.out.print(Arrays.deepToString(test));
+//	assertEquals(u,test);
+//
+//}
+//
+
 	//	@Test
 	//	public void removeHolesTest()
 	//	{
@@ -419,6 +444,5 @@ public class FMCAUtilTest {
 	//		return max;
 	//	}
 
-}
 
 

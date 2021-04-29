@@ -11,12 +11,15 @@ import family.Product;
  *
  */
 public class FMCA {
+	
 	private MSCA aut;
+	
 	public FMCA(MSCA aut)
 	{
+		if (aut==null)
+			throw new IllegalArgumentException();
 		this.aut=aut;
 	}
-	
 
 	/**
 	 * @return the synthesised orchestration/mpc of product p in agreement
