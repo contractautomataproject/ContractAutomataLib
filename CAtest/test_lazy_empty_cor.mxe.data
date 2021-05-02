@@ -1,0 +1,8 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[1, 2][2, 0, 1]]
+Transitions: 
+([0, 0],[?privateRoom, !privateRoom],[2, 1])
+!L([0, 0],[!singleRoom, -],[1, 0])
+!L([0, 2],[!singleRoom, ?singleRoom],[1, 2])
+([0, 0],[-, !coffee],[0, 2])

@@ -1,0 +1,6 @@
+Rank: 1
+Initial state: [0]
+Final states: [[2]]
+Transitions: 
+([1],[!pluto],[2])
+([0],[!pippo],[1])

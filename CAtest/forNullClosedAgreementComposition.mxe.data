@@ -1,0 +1,5 @@
+Rank: 1
+Initial state: [0]
+Final states: [[1]]
+Transitions: 
+!U([0],[?a],[1])

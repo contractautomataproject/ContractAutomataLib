@@ -1,0 +1,8 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[1, 2][0, 1]]
+Transitions: 
+!U([3, 3],[?singleRoom, -],[1, 0])
+([0, 0],[!hello, ?hello],[3, 3])
+([3, 3],[?privateRoom, !privateRoom],[2, 1])
+([0, 0],[?privateRoom, !privateRoom],[2, 1])

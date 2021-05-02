@@ -1,0 +1,17 @@
+Rank: 3
+Initial state: [0, 0, 0]
+Final states: [[1, 2][0, 2, 1][2, 0]]
+Transitions: 
+!L([0, 2, 2],[!singleRoom, ?singleRoom, -],[1, 2, 2])
+([2, 1, 0],[-, -, ?singleRoom],[2, 1, 1])
+([1, 2, 1],[-, -, ?freeBreakfast],[1, 2, 2])
+([0, 2, 1],[-, -, ?freeBreakfast],[0, 2, 2])
+([0, 2, 0],[-, -, ?singleRoom],[0, 2, 1])
+([1, 2, 0],[-, -, ?singleRoom],[1, 2, 1])
+!U([0, 0, 0],[!singleRoom, -, ?singleRoom],[1, 0, 1])
+([0, 0, 0],[-, !coffee, -],[0, 2, 0])
+!L([0, 2, 1],[!singleRoom, ?singleRoom, -],[1, 2, 1])
+!L([0, 0, 0],[!singleRoom, ?singleRoom, -],[1, 2, 0])
+([0, 0, 0],[?privateRoom, !privateRoom, -],[2, 1, 0])
+([2, 1, 1],[-, -, ?freeBreakfast],[2, 1, 2])
+([1, 0, 1],[-, -, ?freeBreakfast],[1, 0, 2])

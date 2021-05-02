@@ -1,0 +1,20 @@
+Rank: 3
+Initial state: [0, 0, 0]
+Final states: [[3][3][3]]
+Transitions: 
+([3, 8, 8],[-, !noFreeCancellation, ?noFreeCancellation],[3, 5, 5])
+([2, 2, 0],[?receipt, !receipt, -],[3, 3, 0])
+([3, 2, 2],[-, !freebrk, -],[3, 9, 2])
+!L([3, 9, 2],[-, !invoice, ?invoice],[3, 3, 3])
+([3, 5, 5],[-, !sharedBathroom, ?sharedBathroom],[3, 1, 1])
+([9, 5, 0],[?privateBathroom, !privateBathroom, -],[1, 1, 0])
+!L([3, 3, 0],[-, !singleRoom, ?singleRoom],[3, 6, 7])
+!U([0, 0, 0],[?singleRoom, !singleRoom, -],[6, 6, 0])
+([6, 6, 0],[?noFreeCancellation, !noFreeCancellation, -],[9, 5, 0])
+([1, 1, 0],[!card, ?card, -],[2, 2, 0])
+([3, 6, 7],[-, !noFreeCancellation, ?noFreeCancellation],[3, 5, 5])
+([2, 2, 0],[-, !freebrk, -],[2, 9, 0])
+([3, 3, 0],[-, !sharedRoom, ?sharedRoom],[3, 8, 8])
+([3, 1, 1],[-, ?card, !card],[3, 2, 2])
+([3, 2, 2],[-, !receipt, ?receipt],[3, 3, 3])
+!L([2, 9, 0],[?invoice, !invoice, -],[3, 3, 0])

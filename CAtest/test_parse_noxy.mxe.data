@@ -1,0 +1,6 @@
+Rank: 1
+Initial state: [0]
+Final states: [[0, 2]]
+Transitions: 
+([1],[?freeBreakfast],[2])
+([0],[?singleRoom],[1])
