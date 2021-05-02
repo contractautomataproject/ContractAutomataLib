@@ -149,7 +149,7 @@ public class MSCAIO {
 		}
 		br.close();
 
-		return new MSCA(rank,tr);
+		return new MSCA(tr);
 	}
 
 	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,int[] initial, int[][] fin) throws IOException
@@ -338,9 +338,9 @@ public class MSCAIO {
 		if (id2castate.isEmpty())
 			throw new IOException("No states!");
 
-		Set<CAState> castates = id2castate.entrySet().stream()
-				.map(Entry::getValue)
-				.collect(Collectors.toSet());
+//		Set<CAState> castates = id2castate.entrySet().stream()
+//				.map(Entry::getValue)
+//				.collect(Collectors.toSet());
 
 		//transitions
 		for (int i = 0; i < nodeList.getLength(); i++) 
@@ -364,15 +364,8 @@ public class MSCAIO {
 			}
 		}
 
-		int rank=castates.iterator().next().getState().size();
-		MSCA aut= new MSCA(rank, 
-//				principalsFinalStates(castates.stream()
-//						.filter(CAState::isFinalstate)
-//						.map(s->s.getState().stream()
-//								.mapToInt(bs->Integer.parseInt(bs.getLabel()))
-//								.toArray())
-//						.collect(Collectors.toList())),
-				transitions);
+	//	int rank=castates.iterator().next().getState().size();
+		MSCA aut= new MSCA(transitions);
 		return aut;
 	}
 

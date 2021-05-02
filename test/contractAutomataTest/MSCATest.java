@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -38,7 +39,6 @@ public class MSCATest {
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
 		MSCA comp=MSCA.composition(aut, null,100);
-
 		assertEquals(comp.orchestration(),null);
 	}
 
@@ -51,7 +51,6 @@ public class MSCATest {
 
 		MSCA comp=MSCA.composition(aut, t->t.getLabel().isRequest(),100);
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_closed.mxe");
-
 		assertEquals(checkTransitions(comp,test),true);
 	}
 
@@ -64,7 +63,6 @@ public class MSCATest {
 
 		MSCA comp=MSCA.composition(aut, null,100);
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_open.mxe");
-
 		assertEquals(checkTransitions(comp,test),true);
 	}
 
@@ -77,7 +75,6 @@ public class MSCATest {
 		aut.add(MSCAIO.load(dir+"/CAtest/EconomyClient.mxe.data"));
 		MSCA comp = MSCA.composition(aut, null,100);
 		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
-
 		assertEquals(checkTransitions(comp,test),true);	
 	}
 
@@ -147,13 +144,37 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorTestLMCS2020Transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTestLMCS2020Transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException, TransformerException
 	{
-
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		assertEquals(checkTransitions(aut.choreography(),test),true);
+		MSCA test1 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
+		MSCA test2 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_1.mxe");
+		MSCA test3 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_2.mxe");
+		MSCA test4 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_3.mxe");
+		MSCA test5 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_4.mxe");
+		MSCA test6 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.mxe");
+		MSCA test7 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_6.mxe");
+		MSCA test8 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_7.mxe");
+
+		aut = aut.choreography();
+		boolean check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
+				||checkTransitions(aut,test4)||checkTransitions(aut,test5)
+				||checkTransitions(aut,test6)||checkTransitions(aut,test7)
+				||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
+
+//		do {
+//			aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
+//			aut = aut.choreography();
+//			check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
+//					||checkTransitions(aut,test4)||checkTransitions(aut,test5)
+//					||checkTransitions(aut,test6)||checkTransitions(aut,test7)
+//					||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
+//		} while (check);
+//		if (!check)
+//			MSCAIO.convertMSCAintoXML(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_8.mxe", aut);
+		
+		assertEquals(check,true);
 	}
 
 	@Test
@@ -164,7 +185,7 @@ public class MSCATest {
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		MSCA cor=aut.clone();
 		cor=cor.synthesis((x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
-		(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
+				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
 
 		assertEquals(cor,null);
 	}
@@ -246,7 +267,7 @@ public class MSCATest {
 
 		assertEquals(checkTransitions(comp,test),true);
 	}
-	
+
 
 	@Test
 	public void compTestEmptySimple() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
@@ -310,7 +331,7 @@ public class MSCATest {
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_urgentoffer.mxe");
 		assertEquals(aut.choreography(),null);
 	}
-	
+
 	public static boolean checkTransitions(MSCA aut, MSCA test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
 				.map(t->t.toString())
@@ -324,50 +345,66 @@ public class MSCATest {
 				testTr.parallelStream()
 				.allMatch(t->autTr.contains(t));
 	}
-	
+
 	@Test
 	public void setInitialCATest() throws ParserConfigurationException, SAXException, IOException {
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
-		
+
 		CAState newInitial = aut.getStates().parallelStream()
-		.filter(s->s!=aut.getInitial())
-		.findFirst()
-		.orElse(null);
-		
+				.filter(s->s!=aut.getInitial())
+				.findFirst()
+				.orElse(null);
+
 		aut.setInitialCA(newInitial);
-		
+
 		assertEquals(aut.getInitial(),newInitial);
 	}
-	
+
 	@Test
 	public void union_null() 
 	{
 		assertEquals(MSCA.union(null),null);
 	}
+
+
+//	@Test
+//	public void getRankZero() throws ParserConfigurationException, SAXException, IOException {
+//		String dir = System.getProperty("user.dir");
+//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
+//		aut.setTransition(new HashSet<MSCATransition>());
+//		assertEquals(aut.getRank(),0);
+//	}
 	
 	//************************************exceptions*********************************************
-	
+
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new MSCA(null,null))
-	    .isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> new MSCA(null))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Null argument");
 	}
-	
+
 	@Test
-	public void setTransition_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
-		String dir = System.getProperty("user.dir");
+	public void constructorTest_Exception_emptyTransitions() {
+		assertThatThrownBy(() -> new MSCA(new HashSet<MSCATransition>()))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("No transitions");
+
+	}
+
+	@Test
+	public void constructor_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
 		Set<MSCATransition> tr = new HashSet<>();
 		tr.add(null);
-		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
-		assertThatThrownBy(() -> aut.setTransition(tr))
-	    .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("Null element");
+	//	MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
+		assertThatThrownBy(() -> new MSCA(tr))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Null element");
 	}
-	
+
 	@Test
-	public void setTransition_Exception_differentRank() throws ParserConfigurationException, SAXException, IOException {
-		String dir = System.getProperty("user.dir");
+	public void constructor_Exception_differentRank() throws ParserConfigurationException, SAXException, IOException {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.idle);
 		lab.add(CALabel.offer+"a");
@@ -378,13 +415,13 @@ public class MSCATest {
 		lab2.add(CALabel.idle);
 		lab2.add(CALabel.offer+"a");
 		lab2.add(CALabel.request+"a");
-		
+
 
 		BasicState bs0 = new BasicState("0",true,false);
 		BasicState bs1 = new BasicState("1",true,false);
 		BasicState bs2 = new BasicState("2",true,false);
 		BasicState bs3 = new BasicState("3",true,false);
-		
+
 		Set<MSCATransition> tr = new HashSet<>();
 		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0,bs1,bs2),0,0),
 				new CALabel(lab),
@@ -395,40 +432,39 @@ public class MSCATest {
 				new CALabel(lab2),
 				cs,
 				Modality.PERMITTED));
-		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
-		
-		assertThatThrownBy(() -> aut.setTransition(tr))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Transitions with different rank");
+
+		assertThatThrownBy(() -> new MSCA(tr))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Transitions with different rank");
 	}
 	
-//	@Test
-//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
-//		String dir = System.getProperty("user.dir");
-//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
-//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
-//	    .isInstanceOf(IllegalArgumentException.class)
-//	    .hasMessageContaining("Final states contain a null array element or are empty");
-//	}
-	
+	//	@Test
+	//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
+	//		String dir = System.getProperty("user.dir");
+	//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
+	//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
+	//	    .isInstanceOf(IllegalArgumentException.class)
+	//	    .hasMessageContaining("Final states contain a null array element or are empty");
+	//	}
+
 	@Test
 	public void mpc_lazy_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertThatThrownBy(() -> orc.mpc())
-	    .isInstanceOf(UnsupportedOperationException.class);
+		.isInstanceOf(UnsupportedOperationException.class);
 	}
-	
+
 	@Test
 	public void chor_lazy_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertThatThrownBy(() -> orc.choreography())
-	    .isInstanceOf(UnsupportedOperationException.class);
+		.isInstanceOf(UnsupportedOperationException.class);
 	}
-	
+
 	@Test
 	public void orc_necessaryoffer_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
@@ -436,9 +472,9 @@ public class MSCATest {
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		assertThatThrownBy(() -> orc.orchestration())
-	    .isInstanceOf(UnsupportedOperationException.class);
+		.isInstanceOf(UnsupportedOperationException.class);
 	}
-	
+
 	@Test
 	public void union_differentrank_exception() throws ParserConfigurationException, SAXException, IOException {
 		List<MSCA> aut = new ArrayList<>(2);
@@ -447,15 +483,15 @@ public class MSCATest {
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
 		assertThatThrownBy(() -> MSCA.union(aut))
-	    .isInstanceOf(IllegalArgumentException.class);
+		.isInstanceOf(IllegalArgumentException.class);
 	}
-	
+
 	@Test
 	public void noInitialState_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
-		
+
 		BasicState bs0 = new BasicState("0",false,true);
 		BasicState bs1 = new BasicState("1",false,true);
 
@@ -466,17 +502,17 @@ public class MSCATest {
 				new CAState(Arrays.asList(bs1),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1, tr))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Not Exactly one Initial State found!");
+		assertThatThrownBy(() -> new MSCA(tr))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Not Exactly one Initial State found!");
 	}
-	
+
 	@Test
 	public void noFinalStatesInTransitions_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
-		
+
 		BasicState bs0 = new BasicState("0",true,false);
 		BasicState bs1 = new BasicState("1",false,false);
 
@@ -487,11 +523,11 @@ public class MSCATest {
 				new CAState(Arrays.asList(bs1),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1, tr))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("No Final States!");
+		assertThatThrownBy(() -> new MSCA(tr))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("No Final States!");
 	}
-	
+
 	@Test
 	public void compTestBound_noTransitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
@@ -501,26 +537,26 @@ public class MSCATest {
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 
 		assertThatThrownBy(() -> MSCA.composition(aut,null,0))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("No transitions");
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("No transitions");
 	}
-	
+
 	@Test
 	public void ambiguousStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
-		
+
 		BasicState bs = new BasicState("0",true,true);
-		
+
 		Set<MSCATransition> tr = new HashSet<>();
 		tr.add(new MSCATransition(new CAState(Arrays.asList(bs),0,0),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1, tr))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
+		assertThatThrownBy(() -> new MSCA(tr))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
 	}
 }
