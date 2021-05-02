@@ -350,7 +350,7 @@ public class MSCATest {
 	
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new MSCA(null,null,null))
+		assertThatThrownBy(() -> new MSCA(null,null))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
@@ -378,14 +378,22 @@ public class MSCATest {
 		lab2.add(CALabel.idle);
 		lab2.add(CALabel.offer+"a");
 		lab2.add(CALabel.request+"a");
+		
+
+		BasicState bs0 = new BasicState("0",true,false);
+		BasicState bs1 = new BasicState("1",true,false);
+		BasicState bs2 = new BasicState("2",true,false);
+		BasicState bs3 = new BasicState("3",true,false);
+		
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(new int[] {0,1,2},true,false),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0,bs1,bs2),0,0),
 				new CALabel(lab),
-				new CAState(new int[] {0,1,2},false,false),
+				new CAState(Arrays.asList(bs0,bs1,bs3),0,0),
 				Modality.PERMITTED));
-		tr.add(new MSCATransition(new CAState(new int[] {0,1,2,3},true,false),
+		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3),0,0);
+		tr.add(new MSCATransition(cs,
 				new CALabel(lab2),
-				new CAState(new int[] {0,1,2,3},false,false),
+				cs,
 				Modality.PERMITTED));
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 		
@@ -394,14 +402,14 @@ public class MSCATest {
 				.hasMessageContaining("Transitions with different rank");
 	}
 	
-	@Test
-	public void setFinalStatesOfPrinc_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
-		String dir = System.getProperty("user.dir");
-		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
-		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Final states contain a null array element or are empty");
-	}
+//	@Test
+//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
+//		String dir = System.getProperty("user.dir");
+//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
+//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
+//	    .isInstanceOf(IllegalArgumentException.class)
+//	    .hasMessageContaining("Final states contain a null array element or are empty");
+//	}
 	
 	@Test
 	public void mpc_lazy_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
@@ -447,14 +455,18 @@ public class MSCATest {
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
+		
+		BasicState bs0 = new BasicState("0",false,true);
+		BasicState bs1 = new BasicState("1",false,true);
+
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(new int[] {0},false,false),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0),0,0),
 				new CALabel(lab),
-				new CAState(new int[] {1},false,false),
+				new CAState(Arrays.asList(bs1),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1,new int[][] { {0,1} }, tr))
+		assertThatThrownBy(() -> new MSCA(1, tr))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Not Exactly one Initial State found!");
 	}
@@ -464,48 +476,20 @@ public class MSCATest {
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
+		
+		BasicState bs0 = new BasicState("0",true,false);
+		BasicState bs1 = new BasicState("1",false,false);
+
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(new int[] {0},true,false),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0),0,0),
 				new CALabel(lab),
-				new CAState(new int[] {1},false,false),
+				new CAState(Arrays.asList(bs1),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1,new int[][] { {0,1} }, tr))
+		assertThatThrownBy(() -> new MSCA(1, tr))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("No Final States!");
-	}
-	
-	@Test
-	public void noFinalStatesArray_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.offer+"a");
-
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(new int[] {0},true,false),
-				new CALabel(lab),
-				new CAState(new int[] {1},false,true),
-				Modality.PERMITTED));
-
-		assertThatThrownBy(() -> new MSCA(1,new int[][] {}, tr))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Empty array of final states");
-	}
-	
-	@Test
-	public void conflictingFinalStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
-		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.offer+"a");
-
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(new int[] {0},true,false),
-				new CALabel(lab),
-				new CAState(new int[] {1},false,true),
-				Modality.PERMITTED));
-
-		new MSCA(1,new int[][] { {0,1} }, tr); //TODO this should be raising an exception!
 	}
 	
 	@Test
@@ -535,7 +519,7 @@ public class MSCATest {
 				new CAState(Arrays.asList(bs),0,0),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(1,new int[][] {{0}}, tr))
+		assertThatThrownBy(() -> new MSCA(1, tr))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
 	}

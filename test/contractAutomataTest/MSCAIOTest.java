@@ -1,7 +1,12 @@
 package contractAutomataTest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.AbstractMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,8 +18,6 @@ import org.xml.sax.SAXException;
 import contractAutomata.BasicState;
 import contractAutomata.MSCA;
 import contractAutomata.MSCAIO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class MSCAIOTest {
 
@@ -60,11 +63,12 @@ public class MSCAIOTest {
 				.count()>0),false);
 	}
 	
-/*	@Test
+	@Test
 	public void parseAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws ParserConfigurationException, SAXException, IOException {		
 		//check if there are different objects for the same basic state
 
 		String dir = System.getProperty("user.dir");
+//		MSCA aut = MSCAIO.parseXMLintoMSCAnew(dir+"/CAtest/testnew.mxe");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
 
 		assertEquals(aut.getStates().stream()
@@ -75,8 +79,53 @@ public class MSCAIOTest {
 				.map(cs->cs.getState().get(e1.getKey()))
 				.filter(bs->bs!=e1.getValue()&&bs.getLabel().equals(e1.getValue().getLabel()))
 				.count()>0),false);
-	}*/
+	}
 
+//	@Test
+	public void parseAndConvertAllMxe() {
+		String dir = System.getProperty("user.dir");
+
+		try {
+			Files.list(Paths.get(dir+"/Catest/"))
+					.map(Path::toFile)
+					.filter(f->f.getName().endsWith("data")&&!f.getName().startsWith("ill"))
+					.map(f->{
+						try {
+							System.out.println(f.getAbsolutePath());
+							return new AbstractMap.SimpleEntry<String,MSCA>(f.getAbsolutePath(),
+//									MSCAIO.parseXMLintoMSCA(f.getAbsolutePath()));
+									MSCAIO.load(f.getAbsolutePath()));
+
+						} catch (Exception e) {
+							throw new RuntimeException();
+						}
+					})
+					.forEach(e->{
+						try {
+	//						MSCAIO.convertMSCAintoXMLnew(e.getKey(),e.getValue());
+						} catch (Exception ex) {
+							throw new RuntimeException();
+						}
+					});
+		} catch (IOException e1) {
+			System.out.println(e1.toString());
+			e1.printStackTrace();
+			return;
+		}
+	}
+//	
+//	@Test
+//	public void conversionXMLNew() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+//		//check if by converting and parsing the automaton does not change
+//		String dir = System.getProperty("user.dir");
+////		MSCA comp= MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");		
+//		MSCA comp= MSCAIO.parseXMLintoMSCAnew(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");			
+//		MSCAIO.convertMSCAintoXMLnew(dir+"/CAtest/testnew.mxe",comp);
+//		MSCA test=MSCAIO.parseXMLintoMSCAnew(dir+"/CAtest/testnew.mxe");
+//
+//		assertEquals(MSCATest.checkTransitions(comp,test),true);
+//	}
+	
 	@Test
 	public void conversionXMLtestSCP2020_BusinessClientxHotel() throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		//check if by converting and parsing the automaton does not change
@@ -199,8 +248,8 @@ public class MSCAIOTest {
 	{
 		String dir = System.getProperty("user.dir");
 		assertThatThrownBy(() -> MSCAIO.parseXMLintoMSCA(dir+"/CAtest//illformed3.mxe"))
-	    .isInstanceOf(IOException.class)
-	    .hasMessageContaining("States null or empty");
+	    .isInstanceOf(IllegalArgumentException.class) //IOException.class)
+	    .hasMessageContaining("No Final States!");
 	}
 	
 	@Test
@@ -211,4 +260,14 @@ public class MSCAIOTest {
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("No states!");
 	}
+	
+	@Test
+	public void parseWrongFinalStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+		String dir = System.getProperty("user.dir");
+		assertThatThrownBy(() -> MSCAIO.parseXMLintoMSCA(dir+"/CAtest//illformed5.mxe"))
+	    .isInstanceOf(IOException.class)
+	    .hasMessageContaining("Problems with final states in .mxe");
+	}
+
 }

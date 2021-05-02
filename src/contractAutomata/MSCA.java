@@ -39,12 +39,10 @@ public class MSCA
 	 */
 	private final Integer rank;
 	
-	/**
-	 * identifiers of the final states of the principal in the contract automaton
-	 */
-	private int[][] finalstates;
-	//TODO there is loss of information in mxGraph XML and projection
-	//this is the only information of the CAState needed but not currently stored in XML
+//	/**
+//	 * identifiers of the final states of the principal in the contract automaton
+//	 */
+//	private int[][] finalstates;
 
 	/**
 	 * transitions of the automaton
@@ -59,10 +57,10 @@ public class MSCA
 	private Map<CAState,Boolean> reachable;
 	private Map<CAState,Boolean> successful;
 
-	public MSCA(Integer rank, int[][] finalstates, Set<MSCATransition> tr) 
+	public MSCA(Integer rank, Set<MSCATransition> tr) 
 	{
-		if (rank==null ||  rank==0 || finalstates == null || tr == null)
-			throw new IllegalArgumentException("Null argument or rank zero"+rank+" "+finalstates+" "+tr+" ");
+		if (rank==null ||  rank==0 || tr == null)
+			throw new IllegalArgumentException("Null argument or rank zero"+rank+" "+tr+" ");
 
 		if (tr.size()==0)
 			throw new IllegalArgumentException("No transitions");
@@ -71,7 +69,7 @@ public class MSCA
 		setTransition(tr);
 		//setStates(states);
 		//setInitialCA(initial);
-		setFinalStatesofPrincipals(finalstates);
+		//setFinalStatesofPrincipals(finalstates);
 		this.checkInitFin();//useful for development
 	}
 
@@ -105,22 +103,60 @@ public class MSCA
 //		return states;
 //	}
 
-	public int[][] getFinalStatesofPrincipals()
+	/**
+	 * @return all  states that appear in at least one transition
+	 */
+	public Set<CAState> getStates()
 	{
-		return this.finalstates;
+		Set<CAState> cs= this.getTransition().stream()
+				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
+				.collect(Collectors.toSet()); //CAState without equals, duplicates objects are detected
+
+		if(cs.stream()
+				.anyMatch(x-> cs.stream()
+				.filter(y->x!=y && x.getState().equals(y.getState()))
+				.count()!=0))
+			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
+
+		return cs;
+
 	}
 
-	public void setFinalStatesofPrincipals(int[][] finalstates)
+	/**
+	 * 
+	 * @return a map where key is the index of principal, and value is its set of basic states
+	 */
+	public Map<Integer,Set<BasicState>> getBasicStates()
 	{
-		if (finalstates.length==0)
-			throw new IllegalArgumentException("Empty array of final states");
+		return this.getStates().stream()
+		.flatMap(cs->cs.getState().stream()
+				.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState>(cs.getState().indexOf(bs),bs)))
+		.collect(Collectors.groupingBy(Entry::getKey, Collectors.mapping(Entry::getValue, Collectors.toSet())));
 
-		for (int[] a : finalstates)
-			if (a==null||a.length==0)
-				throw new IllegalArgumentException("Final states contain a null array element or are empty");
-
-		this.finalstates = finalstates;
 	}
+
+//	public int[][] getFinalStatesofPrincipals()
+//	{
+//		
+//		return MSCAIO.principalsFinalStates(this.getStates().stream()
+//				.filter(CAState::isFinalstate)
+//				.map(s->s.getState().stream()
+//						.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+//						.toArray())
+//				.collect(Collectors.toList()));
+//	}
+
+//	public void setFinalStatesofPrincipals(int[][] finalstates)
+//	{
+//		if (finalstates.length==0)
+//			throw new IllegalArgumentException("Empty array of final states");
+//
+//		for (int[] a : finalstates)
+//			if (a==null||a.length==0)
+//				throw new IllegalArgumentException("Final states contain a null array element or are empty");
+//
+//		this.finalstates = finalstates;
+//	}
 
 	public CAState getInitial()
 	{
@@ -142,7 +178,7 @@ public class MSCA
 		.forEach(x->x.setInitial(false));
 
 		CAState init = states.parallelStream()
-				.filter(x->x.hasSameBasicStateLabelsOf(initial) )//Arrays.equals(initial.getState(),x.getState()))
+				.filter(x->x==initial)//.hasSameBasicStateLabelsOf(initial) )//Arrays.equals(initial.getState(),x.getState()))
 				.findAny().orElseThrow(IllegalArgumentException::new);
 
 		init.setInitial(true);
@@ -253,25 +289,7 @@ public class MSCA
 	}
 	
 
-	/**
-	 * @return all  states that appear in at least one transition
-	 */
-	public Set<CAState> getStates()
-	{
-		Set<CAState> cs= this.getTransition().stream()
-				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
-				.collect(Collectors.toSet()); //CAState without equals, duplicates objects are detected
-
-		if(cs.stream()
-				.anyMatch(x-> cs.stream()
-				.filter(y->x!=y && x.getState().equals(y.getState()))
-				.count()!=0))
-			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
-
-		return cs;
-
-	}
-
+		
 	/**
 	 * 
 	 * @return the number of states
@@ -500,16 +518,16 @@ public class MSCA
 			}
 		} while (!toVisit.isEmpty());
 
-		int[][] finalstates = new int[rank][];
-		int pointer=0;
-		for (MSCA a : aut){
-			System.arraycopy(a.getFinalStatesofPrincipals(), 0, finalstates, pointer,a.getRank());
-			pointer+=a.getRank();
-		}
+//		int[][] finalstates = new int[rank][];
+//		int pointer=0;
+//		for (MSCA a : aut){
+//			System.arraycopy(a.getFinalStatesofPrincipals(), 0, finalstates, pointer,a.getRank());
+//			pointer+=a.getRank();
+//		}
 //		Set<CAState> states =visited.parallelStream()
 //				.map(l->operandstat2compstat.get(l))
 //				.collect(Collectors.toSet());
-		return new MSCA(rank, finalstates, tr);
+		return new MSCA(rank, tr);
 	}
 
 	private static Integer computeSumPrincipal(MSCATransition etra, Integer eind, List<MSCA> aut)
@@ -562,11 +580,11 @@ public class MSCA
 //						.toArray());
 				x.getState().forEach(s->s.setLabel(Integer.parseInt(s.getLabel())+upperbound*(id+1)+""));
 				});
-			aut.get(id).setFinalStatesofPrincipals(
-					Arrays.stream(aut.get(id).getFinalStatesofPrincipals())
-					.map(s->Arrays.stream(s).map(ar->ar+upperbound*(id+1))
-							.toArray())
-					.toArray(int[][]::new));
+//			aut.get(id).setFinalStatesofPrincipals(
+//					Arrays.stream(aut.get(id).getFinalStatesofPrincipals())
+//					.map(s->Arrays.stream(s).map(ar->ar+upperbound*(id+1))
+//							.toArray())
+//					.toArray(int[][]::new));
 		}); 
 
 		//gather all states
@@ -576,8 +594,10 @@ public class MSCA
 //				.collect(Collectors.toSet());
 
 		//new initial state
-		CAState newinitial = new CAState( new int[rank],//(float)((aut.size())*fur)/2,0,
-				true,false);
+		
+		CAState newinitial = new CAState(IntStream.range(0,rank)
+				.mapToObj(i->new BasicState("0",true,false))
+				.collect(Collectors.toList()),0,0);
 //		statesunion.add(newinitial);		
 
 		Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
@@ -595,17 +615,17 @@ public class MSCA
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 
-		int[][] finalstates = aut.stream()
-				.map(MSCA::getFinalStatesofPrincipals)
-				.reduce( (a,b)->{ 
-					int[][] comb= new int[a.length][];
-					IntStream.range(0,a.length).forEach(i->	{
-						comb[i]= new int[a[i].length+b[i].length];
-						System.arraycopy(a[i], 0, comb[i], 0, a[i].length);
-						System.arraycopy(b[i], 0, comb[i], a[i].length, b[i].length);
-					});
-					return comb;
-				}).orElseThrow(IllegalArgumentException::new);  //merging final states
+//		int[][] finalstates = aut.stream()
+//				.map(MSCA::getFinalStatesofPrincipals)
+//				.reduce( (a,b)->{ 
+//					int[][] comb= new int[a.length][];
+//					IntStream.range(0,a.length).forEach(i->	{
+//						comb[i]= new int[a[i].length+b[i].length];
+//						System.arraycopy(a[i], 0, comb[i], 0, a[i].length);
+//						System.arraycopy(b[i], 0, comb[i], a[i].length, b[i].length);
+//					});
+//					return comb;
+//				}).orElseThrow(IllegalArgumentException::new);  //merging final states
 
 		//MSCA.setInitialCA(newinitial, statesunion);
 		
@@ -616,7 +636,7 @@ public class MSCA
 		.forEach(x->x.setInitial(false));
 
 		return new MSCA(rank, 
-				finalstates, 
+//				finalstates, 
 				uniontr);
 	}
 
@@ -636,7 +656,7 @@ public class MSCA
 								x.getX(),x.getY())));
 
 		return new MSCA(rank,
-				Arrays.stream(finalstates).map(int[]::clone).toArray(int[][]::new),
+//				Arrays.stream(this.getFinalStatesofPrincipals()).map(int[]::clone).toArray(int[][]::new),
 				this.getTransition().stream()
 				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
 						t.getLabel().getClone(),
@@ -680,19 +700,38 @@ public class MSCA
 
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
+				
+//		List<int[]> states =this.getStates().stream()
+//				.filter(CAState::isFinalstate)
+//				.map(s->s.getState().stream()
+//						.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+//						.toArray())
+//				.collect(Collectors.toList());
+//		
+//		if (states==null ||  states.size()==0)
+//			throw new RuntimeException("States null or empty");
+//		
+//		int[][] finalstates = MSCAIO.principalsFinalStates(states);
+		
 		pr.append("Rank: "+rank+"\n");
 		
-		pr.append("Number of states: "+
-				Arrays.toString(IntStream.range(0, rank)
-				.map(i -> (int)this.getStates().parallelStream()
-						.map(x-> x.getState().get(i).getLabel())
-						.distinct()
-						.count())
-				.toArray())+"\n");
+//		pr.append("Number of states: "+
+//				Arrays.toString(IntStream.range(0, rank)
+//				.map(i -> (int)this.getStates().parallelStream()
+//						.map(x-> x.getState().get(i).getLabel())
+//						.distinct()
+//						.count())
+//				.toArray())+"\n");
 		pr.append("Initial state: " +this.getInitial().getState().toString()+"\n");
 		pr.append("Final states: [");
-		for (int i=0;i<finalstates.length;i++)
-			pr.append(Arrays.toString(finalstates[i]));
+		for (int i=0;i<rank;i++) {
+			pr.append(Arrays.toString(  //finalstates[i]));
+			this.getBasicStates().get(i).stream()
+			.filter(BasicState::isFin)
+			.map(BasicState::getLabel)
+			.mapToInt(Integer::parseInt)
+			.toArray()));
+		}
 		pr.append("]\n");
 		pr.append("Transitions: \n");
 		for (MSCATransition t : this.getTransition())

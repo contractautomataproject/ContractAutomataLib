@@ -78,13 +78,10 @@ public class MSCATransition extends CATransition {
 	 */
 	public boolean isUncontrollableOrchestration(Set<? extends MSCATransition> tr, Set<CAState> badStates)
 	{
-		//TODO the same source state is checked by comparing the label of the basic state, 
-		//	   equals comparison should be performed, but equals is problematic on CAState
-
 		return 	isUncontrollable(tr,badStates, 
-				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))	//the same requesting principal
-				&&(t.getSource().getState().get(t.getLabel().getRequester()).getLabel()
-						.equals(tt.getSource().getState().get(tt.getLabel().getRequester()).getLabel())) //in the same local source state					
+				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
+				&&(t.getSource().getState().get(t.getLabel().getRequester())
+						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state					
 				&&(tt.getLabel().isRequest()&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())|| 
 						tt.getLabel().isMatch()&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
 	}
@@ -134,16 +131,14 @@ public class MSCATransition extends CATransition {
 
 		return ftr.parallelStream()
 				.map(x->x.getSource())
-				.filter(x->!x.hasSameBasicStateLabelsOf(this.getSource())&&
+				.filter(x->x!=this.getSource()&& //!x.hasSameBasicStateLabelsOf(this.getSource())&&
 						this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
 						.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
 				//it's not the same state of this but sender is in the same state of this
 				
-				//TODO BasicState objects are not equal because of constructor
-				// 		CAState(int[] state, boolean initial, boolean finalstate)
 
 				.allMatch(s -> ftr.parallelStream()
-						.filter(x->x.getSource().hasSameBasicStateLabelsOf(s)
+						.filter(x->x.getSource()==s //x.getSource().hasSameBasicStateLabelsOf(s)
 								&& this.getLabel().equals(x.getLabel()))
 						.count()>0  //for all such states there exists an outgoing transition with the same label of this
 						);

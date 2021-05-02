@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +58,7 @@ public class MSCAIO {
 		pr.close();
 	}
 
+
 	/**
 	 * load a MSCA described in a text file,  
 	 * it also loads the must transitions but it does not load the states
@@ -75,16 +76,16 @@ public class MSCAIO {
 			fstream = new FileInputStream(fileName);
 		else
 			throw new IllegalArgumentException("Not a .data format");
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 		int rank=0;
 		int[] initial = new int[1];
-		int[] numstates = new int[1]; //TODO this can be removed
-		int[][] fin = new int[1][]; //rank initialization later
+		int[][] fin = new int[1][];
 		Set<MSCATransition> tr = new HashSet<MSCATransition>();
 		Set<CAState> states = new HashSet<CAState>();
-		Map<Integer,List<BasicState>> mapBasicStates = new HashMap<>();
+		Map<Integer,Set<BasicState>> mapBasicStates = new HashMap<>();
+
 		String strLine;
-		//Read File Line By Line
 		while ((strLine = br.readLine()) != null)   
 		{
 			if (strLine.length()>0)
@@ -93,62 +94,37 @@ public class MSCAIO {
 				{
 				case "R":  //Rank Line
 				{
-					String srank = strLine.substring(6);
-					rank = Integer.parseInt(srank);
-					initial = new int[rank];
-					numstates = new int[rank];
-					fin = new int[rank][];
+					rank = Integer.parseInt(strLine.substring(6));
 					break;
-				}
-				case "N":	//Number of states line
-				{
-					String[] arr=strLine.split("[\\[\\],]");
-					int i=0;
-
-					for (int ind=0;ind<arr.length;ind++)
-					{
-						try{
-							int num=Integer.parseInt(arr[ind].trim());
-							numstates[i] = num;
-							i++; //incremented when there are no exceptions
-						}catch(NumberFormatException e){}
-					}
 				}
 				case "I": //Initial state
 				{
-					String[] arr=strLine.split("[\\[\\],]");
-					int i=0;
-					for (int ind=0;ind<arr.length;ind++)
-					{
-						try{
-							int num=Integer.parseInt(arr[ind].trim());
-							initial[i] = num;
-							i++;
-						}catch(NumberFormatException e){}
-					}
+					initial=Arrays.stream(strLine.split("[\\[\\],]"))
+							.map(String::trim)
+							.filter(s->  {try { 
+								Integer.parseInt(s); 
+							} catch(NumberFormatException e) { 
+								return false; 
+							} return true;})
+							.mapToInt(Integer::parseInt)
+							.toArray();
+
 					break;
 				}
 				case "F": //Final state
 				{
-					String[] arr=strLine.split("]");  
-					int outerindex=0;
+					fin=Arrays.stream(strLine.split("]"))
+							.map(sar->Arrays.stream(sar.split("[,|\\[]"))
+									.map(String::trim)
+									.filter(s->  {try { 
+										Integer.parseInt(s); 
+									} catch(NumberFormatException e) { 
+										return false; 
+									} return true;})
+									.mapToInt(Integer::parseInt)
+									.toArray())
+							.toArray(int[][]::new);
 
-					for (int ind=0;ind<arr.length;ind++)
-					{
-						String[] arr2=arr[ind].split("[,|\\[]");
-						int innerindex=0;
-						int[] tf = new int[numstates[outerindex]]; //upper bound
-						for(int ind2=0;ind2<arr2.length;ind2++)
-						{
-							try{
-								int num=Integer.parseInt(arr2[ind2].trim());
-								tf[innerindex] = num;
-								innerindex++;
-							}catch(NumberFormatException e){} //skip values that are not numbers
-						}
-						fin[outerindex]=removeTailsNull(tf, innerindex); 
-						outerindex++;
-					}
 					break;
 				}
 				case "(": //a may transition
@@ -173,79 +149,74 @@ public class MSCAIO {
 		}
 		br.close();
 
-		return new MSCA(rank,fin,tr);
+		return new MSCA(rank,tr);
 	}
 
-	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates,int[] initial, int[][] fin) throws IOException
+	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,int[] initial, int[][] fin) throws IOException
 	{
-		int what=0;
-		String[] splitstr=str.split("]");
-		int[][] store=new int[1][];
-		String[] arrlabel = new String[rank];
+		int[] sourcestate=new int[1];
+		int[] statestransition = new int[rank];
 		String offer=null, request = null;
 		Integer offerer=null,requester=null;
+		int stateOrLabel=0;
 
-		int j=0;
-		int[] statestransition = new int[rank];
-		for (int i=0;i<splitstr.length;i++)
+		for (String el : str.split("]"))
 		{
-			j=0;
+			int princ=0;
 			statestransition = new int[rank];
-
-			Scanner s = new Scanner(splitstr[i]);
+			Scanner s = new Scanner(el);
 			s.useDelimiter(",|\\[| ");
 			while (s.hasNext())
 			{
-				if (j>=rank)
+				if (princ>=rank)
 				{
 					s.close();
 					throw new IOException("Ill-formed transitions, different ranks");
 				}
 
-				if (what==0||what==2)//source or target
+				if (stateOrLabel==1)//label
+				{
+					String action=s.next();
+					if (action.contains(CALabel.idle)) 
+						princ++;
+					else 
+						if (action.contains(CALabel.offer))
+						{
+							offerer=princ;
+							offer=action.substring(action.indexOf(CALabel.offer));
+							princ++;
+						}
+						else if (action.contains(CALabel.request))
+						{
+							requester=princ;
+							request=action.substring(action.indexOf(CALabel.request));
+							princ++;
+						}
+				}
+				else //source or target
 				{
 					if (s.hasNextInt())
 					{
-						statestransition[j]=s.nextInt();
-						j++;
+						statestransition[princ]=s.nextInt();
+						princ++;
 					}
-					else {
+					else 
 						s.next();
-					}
-				}
-				else
-				{
-					String action=s.next();
-					if (action.contains(CALabel.idle))
-						arrlabel[j]=CALabel.idle;
-					else if (action.contains(CALabel.offer))
-					{
-						arrlabel[j]=action.substring(action.indexOf(CALabel.offer));
-						offerer=j;
-						offer=action.substring(action.indexOf(CALabel.offer));//FIXME?
-					}
-					else if (action.contains(CALabel.request))
-					{
-						arrlabel[j]=action.substring(action.indexOf(CALabel.request));
-						requester=j;
-						request=action.substring(action.indexOf(CALabel.request));//FIXME?
-					}
-					else
-						j--; //trick for not increasing the counter j
-
-					j++;
 				}
 			}
 			s.close();
-			if (what==2)
+			if (princ!=rank)
+				throw new IOException("Ill-formed transitions, different ranks");
+
+			if (stateOrLabel==2)//target state
 				break;
-			else if (what==0)
-				store[what]=statestransition; //the source state
-			what++;
+			else if (stateOrLabel==0)
+				sourcestate=statestransition; //source state
+			stateOrLabel++;
+
 		}
-		if (j!=rank)
-			throw new IOException("Ill-formed transitions, different ranks");
-		CAState source = createOrLoadState(states,mapBasicStates,store[0],initial, fin);//source
+
+		CAState source = createOrLoadState(states,mapBasicStates,sourcestate,initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,statestransition,initial, fin);//target
 
 		CALabel label;
@@ -258,29 +229,27 @@ public class MSCAIO {
 		else
 			throw new IOException("Problem in loading a label");
 
-		return new MSCATransition(source,label,target,type); //TODO check & remove arrlabel
-		//		return new MSCATransition(source,List.of(arrlabel),target,type);
-
-		//		throw new RuntimeException();
+		return new MSCATransition(source,label,target,type); 
 	}
 
-	private static CAState createOrLoadState(Set<CAState> states,Map<Integer,List<BasicState>> mapBasicStates, int[] state,int[] initial, int[][] fin) throws IOException {
+	private static CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates, int[] state,int[] initial, int[][] fin) throws IOException {
 
 		return states.stream()
-				.filter(x->hasSameBasicStateLabelsOf(x,state))// Arrays.equals(x.getState(), state)) //target
+				.filter(cs->IntStream.range(0, cs.getState().size())
+						.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==state[i])) 
 				.findAny()
 				.orElseGet(()->{
 					CAState temp= new CAState(
 							IntStream.range(0, state.length)
 							.mapToObj(i->{
-								List<BasicState> l = mapBasicStates.get(i);
+								Set<BasicState> l = mapBasicStates.get(i);
 								if (l==null || l.stream().allMatch(bs->Integer.parseInt(bs.getLabel())!=state[i]))
 								{
 									BasicState bs=new BasicState(state[i]+"",
 											state[i]==initial[i],
 											Arrays.stream(fin[i]).anyMatch(id->id==state[i]));
 									if (l==null)
-										mapBasicStates.put(i, new ArrayList<BasicState>(Arrays.asList(bs)));
+										mapBasicStates.put(i, new HashSet<BasicState>(Arrays.asList(bs)));
 									else
 										l.add(bs);
 									return (BasicState) bs;
@@ -294,11 +263,10 @@ public class MSCAIO {
 					states.add(temp); return temp;});
 	}
 
+
+
 	/**
 	 * parse the mxGraphModel XML description (used by the mxGraph) into an MSCA object
-	 * 
-	 * TODO the set of final states of principals is reconstructed at the end, this encoding XML lose the information of 
-	 * some of the final states of principals so should be removed
 	 * 
 	 * @param filename  the XML file name
 	 * @return the MSCA parsed from the XML
@@ -315,10 +283,11 @@ public class MSCAIO {
 		doc.getDocumentElement().normalize();
 		NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
 
-		Map<Integer, CAState> id2castate = new HashMap<>(nodeList.getLength());
+		Map<Integer,Set<BasicState>> princ2bs = new HashMap<>();
+		Map<Integer, CAState> id2castate = new HashMap<>();
 		Set<MSCATransition> transitions= new HashSet<MSCATransition>();
 
-		//first read all the states, then all the edges
+		//first read all basic states and castates, then all the edges.
 		for (int i = 0; i < nodeList.getLength(); i++) 
 		{
 			Node nNode = nodeList.item(i);
@@ -327,20 +296,45 @@ public class MSCAIO {
 				Element eElement = (Element) nNode;
 				if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
 				{
-					Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
-					int[] st=getArray(eElement.getAttribute("value"));
-					CAState castate=new CAState(st,
-							geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
-									geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0,//useful when not morphing (e.g. adding handles to edges)
-											Arrays.equals(st, new int[st.length]), //initial
-											eElement.getAttribute("style").contains("terminate.png"));//final
-					if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
-						throw new IOException("Duplicate states!");
+					String value = eElement.getAttribute("value");
+					if (value.startsWith("principal"))//basic state
+					{
+						Integer principal = Integer.parseInt(value.substring(value.indexOf("=")+1, value.indexOf(",")));//first entry is principal
+						BasicState bs = BasicState.readCSV(value.substring(value.indexOf(",")+1));
+							
+						if (princ2bs.containsKey(principal))
+							princ2bs.get(principal).add(bs);
+						else 
+							princ2bs.put(principal, new HashSet<BasicState>(Arrays.asList(bs)));
+					}
+					else {//castate
+						Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
+						int[] st=Arrays.stream(eElement.getAttribute("value").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(","))
+								.mapToInt(Integer::parseInt)
+								.toArray();
+						//\forall i. \exists bs \in princ2bs(i). bs==st[i]
+
+						List<BasicState> lbs = IntStream.range(0, st.length)
+						.mapToObj(ind->princ2bs.get(ind).stream()
+								.filter(bs->bs.getLabel().equals(st[ind]+""))
+								.findFirst()
+								.orElseThrow(RuntimeException::new))
+						.collect(Collectors.toList());
+						CAState castate = new CAState(lbs, 
+								Float.parseFloat(geom.getAttribute("x")),
+										Float.parseFloat(geom.getAttribute("y")));
+								//useful when not morphing (e.g. adding handles to edges)					
+								
+						if (castate.isFinalstate()!=eElement.getAttribute("style").contains("terminate.png"))
+							throw new IOException("Problems with final states in .mxe");
+
+						if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
+							throw new IOException("Duplicate states!");
+					}
 				}
 			}
 		}
 
-		// checks for detecting bugs
 		if (id2castate.isEmpty())
 			throw new IOException("No states!");
 
@@ -354,46 +348,32 @@ public class MSCAIO {
 			Node nNode = nodeList.item(i);
 			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 			{
-				Element eElement = (Element) nNode;
-				if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge"))
+				Element eElement = (Element) nNode;	
+
+				if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge")) {
+					List<String> labels = Arrays.asList(eElement.getAttribute("value").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(","));
+					if (labels.stream().anyMatch(item->!(item.startsWith(CALabel.offer)||item.startsWith(CALabel.request)||item.startsWith(CALabel.idle))))
+						throw new IOException("Ill-formed action");
 					transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
-							new CALabel(Arrays.asList(getArrayString(eElement.getAttribute("value")))),//label
+							new CALabel(labels),//label
 							id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
 							(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.Modality.URGENT: //red
 								(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.Modality.LAZY: //green
 									MSCATransition.Modality.PERMITTED));
+				}
 			}
 		}
 
-
 		int rank=castates.iterator().next().getState().size();
 		MSCA aut= new MSCA(rank, 
-				principalsFinalStates(castates.stream()
-						.filter(CAState::isFinalstate)
-						.map(s->s.getState().stream()
-								.mapToInt(bs->Integer.parseInt(bs.getLabel()))
-								.toArray())
-						.collect(Collectors.toList())),
+//				principalsFinalStates(castates.stream()
+//						.filter(CAState::isFinalstate)
+//						.map(s->s.getState().stream()
+//								.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+//								.toArray())
+//						.collect(Collectors.toList())),
 				transitions);
 		return aut;
-	}
-
-	//	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
-	//	{
-	//		if (states.parallelStream()
-	//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
-	//				.count()>1)
-	//			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
-	//
-	//		return states.parallelStream()
-	//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
-	//				.findFirst()
-	//				.orElseThrow(IllegalArgumentException::new);
-	//	}
-
-	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
-		return IntStream.range(0, cs.getState().size())
-				.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
 	}
 
 	/**
@@ -427,9 +407,20 @@ public class MSCAIO {
 		mxcell1.setAttribute("parent", "0");
 		root.appendChild(mxcell1);
 
+		int id=2;
+
+		for (Entry<Integer,BasicState> e : 
+			aut.getBasicStates().entrySet().stream()
+			.flatMap(e-> e.getValue().stream()
+					.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState>(e.getKey(),bs)))
+			.collect(Collectors.toSet()))
+		{
+			createElementBasicState(doc, root,Integer.toString(id), e.getKey(),e.getValue());
+			id+=1;
+		}
+
 		Map<CAState,Element> state2element = new HashMap<CAState, Element>();
 
-		int id=2;
 		for (CAState s : aut.getStates())
 		{
 			state2element.put(s, createElementState(doc, root,Integer.toString(id), s));
@@ -457,10 +448,7 @@ public class MSCAIO {
 		StreamResult result =
 				new StreamResult(file);
 		transformer.transform(source, result);
-		/*// Output to console for testing
-			StreamResult consoleResult =
-					new StreamResult(System.out);
-			transformer.transform(source, consoleResult);*/
+
 		return file;
 	}
 
@@ -588,8 +576,28 @@ public class MSCAIO {
 		return mxcell1;		
 	}
 
+	private static Element createElementBasicState(Document doc, Element root,String id, Integer principal, BasicState bs)
+	{
+		Attr parent=doc.createAttribute("parent");
+		parent.setValue("1");
+
+		Element mxcell1 = doc.createElement("mxCell");
+
+		mxcell1.setAttributeNode(parent);
+
+		Attr id1=doc.createAttribute("id");		
+		id1.setValue(id);
+		mxcell1.setAttributeNode(id1);
+
+		mxcell1.setAttribute("value", "principal="+principal+
+				","+bs.toCSV());
+
+
+		root.appendChild(mxcell1);
+		return mxcell1;		
+	}
+
 	/**
-	 * this method retrieves the coordinates from CAState castate
 	 * @param doc
 	 * @param root
 	 * @param id
@@ -606,14 +614,14 @@ public class MSCAIO {
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/event.png");
 		else
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
+
 		Attr value=doc.createAttribute("value");
 		value.setValue(castate.getState().toString());//Arrays.toString(castate.getState()));
+
 		Element mxcell1 = doc.createElement("mxCell");
 		Attr id1=doc.createAttribute("id");
-		Attr as=doc.createAttribute("as");
 		Attr vertex=doc.createAttribute("vertex");
 		vertex.setNodeValue("1");		
-		as.setValue("geometry");
 		id1.setValue(id);
 		mxcell1.setAttributeNode(id1);
 		mxcell1.setAttributeNode(parent);
@@ -622,6 +630,8 @@ public class MSCAIO {
 		mxcell1.setAttributeNode(vertex);
 
 		Element mxGeometry1=doc.createElement("mxGeometry");
+		Attr as=doc.createAttribute("as");
+		as.setValue("geometry");
 		mxGeometry1.setAttributeNode(as);
 		mxGeometry1.setAttribute("height", "50.0");
 		mxGeometry1.setAttribute("width", "50.0");
@@ -653,81 +663,168 @@ public class MSCAIO {
 		return mxcell1;		
 	}
 
-	/**
-	 * this method is used when importing from XML, where no description of  principal final states is given 
-	 * and it is reconstructed
-	 * 
-	 * //TODO remove this in the future, when importing from XML there is loss of information anyway
-	 * 
-	 * @param all final states of the composed automaton
-	 * @return the final states of each principal
-	 * @throws IOException 
-	 */
-	private static int[][] principalsFinalStates(List<int[]> states) throws IOException
-	{
-		if (states==null ||  states.size()==0)
-			throw new IOException("States null or empty");
-		int rank=states.get(0).length;
-		int[] count=new int[rank];
-		int[][] pfs=new int[rank][states.size()];
-
-		for (int ind=0; ind<pfs.length;ind++)
-			for (int ind2=0; ind2<pfs[ind].length;ind2++)
-				pfs[ind][ind2] = -1;    //the check MSCAUtil.getIndex(pfs[j], states[i][j])==-1  will not work otherwise because 0 is the initialization value but can also be a state
-
-		for (int j=0;j<rank;j++)
-		{
-			pfs[j][0]=states.get(0)[j];
-			count[j]=1;		//initialising count[j] and doing first iteration (I guess..)
-		}
-		for (int i=1;i<states.size();i++)
-		{
-			for (int j=0;j<rank;j++)
-			{
-				if (getIndex(pfs[j], states.get(i)[j])==-1 )  // if states[i][j] is not in pfs[j]
-				{
-					pfs[j][count[j]]=states.get(i)[j];
-					count[j]++;
-				}
-			}
-		}
-		for (int j=0;j<rank;j++)
-			pfs[j]=	removeTailsNull(pfs[j], count[j]);
-		return pfs;
-	}
-
-
-	private static int[] removeTailsNull(int[] q,int length)
-	{
-		int[] r=new int[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
-
-	private static int getIndex(int[] q, int e)
-	{
-		for (int i=0;i<q.length;i++)
-		{
-			if (q[i]==e)
-				return i;
-		}
-		return -1;
-	}
-
-	private static String[] getArrayString(String arr) throws IOException
-	{
-		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-		if (Arrays.stream(items).anyMatch(item->!(item.startsWith(CALabel.offer)||item.startsWith(CALabel.request)||item.startsWith(CALabel.idle))))
-			throw new IOException("Ill-formed action");
-		return items;
-	}
-
-	private static int[] getArray(String arr)
-	{
-		String[] items = arr.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-		return Arrays.stream(items)
-				.mapToInt(Integer::parseInt)
-				.toArray();
-	}
 }
+
+//	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
+//	{
+//		if (states.parallelStream()
+//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+//				.count()>1)
+//			throw new IllegalArgumentException("Bug: Ambiguous states: there is more than one state with value "+Arrays.toString(value));
+//
+//		return states.parallelStream()
+//				.filter(x->hasSameBasicStateLabelsOf(x, value))//Arrays.equals(x.getState(),value))
+//				.findFirst()
+//				.orElseThrow(IllegalArgumentException::new);
+//	}
+
+///**
+//* parse the mxGraphModel XML description (used by the mxGraph) into an MSCA object
+//* 
+//* 
+//* @param filename  the XML file name
+//* @return the MSCA parsed from the XML
+//* @throws ParserConfigurationException 
+//* @throws SAXException 
+//* @throws IOException 
+//*/
+//public static MSCA parseXMLintoMSCAold(String filename) throws ParserConfigurationException, SAXException, IOException
+//{
+//	File inputFile = new File(filename);
+//	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+//	Document doc = dBuilder.parse(inputFile);
+//	doc.getDocumentElement().normalize();
+//	NodeList nodeList = (NodeList) doc.getElementsByTagName("mxCell");
+//
+//	Map<Integer, CAState> id2castate = new HashMap<>(nodeList.getLength());
+//	Set<MSCATransition> transitions= new HashSet<MSCATransition>();
+//
+//	//first read all the states, then all the edges
+//	for (int i = 0; i < nodeList.getLength(); i++) 
+//	{
+//		Node nNode = nodeList.item(i);
+//		if ((nNode.getNodeType() == Node.ELEMENT_NODE))
+//		{
+//			Element eElement = (Element) nNode;
+//			if (Integer.parseInt(eElement.getAttribute("id"))>1 && !eElement.hasAttribute("edge"))
+//			{
+//				Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
+//				int[] st=Arrays.stream(eElement.getAttribute("value").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(","))
+//						.mapToInt(Integer::parseInt)
+//						.toArray();
+//				CAState castate=new CAState(st,
+//						geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
+//								geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0,//useful when not morphing (e.g. adding handles to edges)
+//										Arrays.equals(st, new int[st.length]), //initial
+//										eElement.getAttribute("style").contains("terminate.png"));//final
+//				if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
+//					throw new IOException("Duplicate states!");
+//			}
+//		}
+//	}
+//
+//	if (id2castate.isEmpty())
+//		throw new IOException("No states!");
+//
+//	Set<CAState> castates = id2castate.entrySet().stream()
+//			.map(Entry::getValue)
+//			.collect(Collectors.toSet());
+//
+//	//transitions
+//	for (int i = 0; i < nodeList.getLength(); i++) 
+//	{
+//		Node nNode = nodeList.item(i);
+//		if ((nNode.getNodeType() == Node.ELEMENT_NODE))
+//		{
+//			Element eElement = (Element) nNode;	
+//
+//			if (Integer.parseInt(eElement.getAttribute("id"))>1 && eElement.hasAttribute("edge")) {
+//				List<String> labels = Arrays.asList(eElement.getAttribute("value").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(","));
+//				if (labels.stream().anyMatch(item->!(item.startsWith(CALabel.offer)||item.startsWith(CALabel.request)||item.startsWith(CALabel.idle))))
+//					throw new IOException("Ill-formed action");
+//				transitions.add(new MSCATransition(id2castate.get(Integer.parseInt(eElement.getAttribute("source"))),
+//						new CALabel(labels),//label
+//						id2castate.get(Integer.parseInt(eElement.getAttribute("target"))), 
+//						(eElement.getAttribute("style").contains("strokeColor=#FF0000"))? MSCATransition.Modality.URGENT: //red
+//							(eElement.getAttribute("style").contains("strokeColor=#00FF00"))? MSCATransition.Modality.LAZY: //green
+//								MSCATransition.Modality.PERMITTED));
+//			}
+//		}
+//	}
+//
+//	int rank=castates.iterator().next().getState().size();
+//	MSCA aut= new MSCA(rank, 
+//			principalsFinalStates(castates.stream()
+//					.filter(CAState::isFinalstate)
+//					.map(s->s.getState().stream()
+//							.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+//							.toArray())
+//					.collect(Collectors.toList())),
+//			transitions);
+//	return aut;
+//}
+///**
+//* save the MSCA aut as a mxGraphModel  (used by mxGraph) File with XML extension
+//* @param fileName the name of the xml file where to write the automaton
+//* @param aut the automaton to be saved
+//* @return the File containing the xml for the automaton aut
+//* @throws ParserConfigurationException 
+//* @throws TransformerException 
+//*/
+//public static File convertMSCAintoXMLold(String fileName, MSCA aut) throws ParserConfigurationException, TransformerException
+//{
+//	DocumentBuilderFactory dbFactory =
+//			DocumentBuilderFactory.newInstance();
+//	DocumentBuilder dBuilder = 
+//			dbFactory.newDocumentBuilder();
+//	Document doc = dBuilder.newDocument();
+//	// root element
+//	Element rootElement = doc.createElement("mxGraphModel");
+//	doc.appendChild(rootElement);
+//
+//	Element root = doc.createElement("root");
+//	rootElement.appendChild(root);
+//
+//
+//	Element mxcell0 = doc.createElement("mxCell");
+//	mxcell0.setAttribute("id", "0");
+//	root.appendChild(mxcell0);
+//	Element mxcell1 = doc.createElement("mxCell");
+//	mxcell1.setAttribute("id", "1");
+//	mxcell1.setAttribute("parent", "0");
+//	root.appendChild(mxcell1);
+//
+//	Map<CAState,Element> state2element = new HashMap<CAState, Element>();
+//
+//	int id=2;
+//	for (CAState s : aut.getStates())
+//	{
+//		state2element.put(s, createElementState(doc, root,Integer.toString(id), s));
+//		id+=1;
+//	}
+//
+//	Set<? extends MSCATransition> tr= aut.getTransition();
+//	for (MSCATransition t : tr)
+//	{
+//		createElementEdge(doc,root,Integer.toString(id),
+//				state2element.get(t.getSource()),
+//				state2element.get(t.getTarget()),
+//				Arrays.toString(t.getLabelAsList().stream().toArray(String[]::new)),t.getModality());
+//		id+=1;
+//	}
+//
+//	TransformerFactory transformerFactory =
+//			TransformerFactory.newInstance();
+//	Transformer transformer =
+//			transformerFactory.newTransformer();
+//	DOMSource source = new DOMSource(doc);
+//	if (fileName.contains("."))
+//		fileName=fileName.substring(0,fileName.indexOf("."));
+//	File file = new File(fileName+".mxe");
+//	StreamResult result =
+//			new StreamResult(file);
+//	transformer.transform(source, result);
+//
+//	return file;
+//}
