@@ -44,7 +44,7 @@ public class CALabel {
 		REQUEST,OFFER,MATCH
 	}
 	
-	private ActionType actiontype;
+	private final ActionType actiontype;
 
 
 	/*@ invariant rank!=null && rank>0; @*/

@@ -34,9 +34,9 @@ The directory demoLMCS2020 contains an executable jar and the models used in thi
 
 The third video tutorial, available at https://youtu.be/QJjT7f7vlZ4, shows the recent refactoring and improvements of the tool published in Coordination2021.
 
-<h2>Architecture</h2>
+<h2>Package Structure</h2>
 
-The architecture of the Contract Automata Tool is composed of two  packages:
+The structure of the Contract Automata Tool is composed of two  packages:
 
 **contractAutomata** This package (depicted below) is the core of the tool. 
 The core is the class `MSCA.java` implementing the algorithm

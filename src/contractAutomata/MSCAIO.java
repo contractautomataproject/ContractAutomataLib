@@ -364,7 +364,6 @@ public class MSCAIO {
 			}
 		}
 
-	//	int rank=castates.iterator().next().getState().size();
 		MSCA aut= new MSCA(transitions);
 		return aut;
 	}
@@ -609,7 +608,7 @@ public class MSCAIO {
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
 
 		Attr value=doc.createAttribute("value");
-		value.setValue(castate.getState().toString());//Arrays.toString(castate.getState()));
+		value.setValue(castate.getState().toString());
 
 		Element mxcell1 = doc.createElement("mxCell");
 		Attr id1=doc.createAttribute("id");
@@ -655,8 +654,10 @@ public class MSCAIO {
 		root.appendChild(mxcell1);
 		return mxcell1;		
 	}
-
 }
+
+//END OF CLASS
+
 
 //	private static CAState getCAStateWithValue(int[] value, Set<CAState> states)
 //	{

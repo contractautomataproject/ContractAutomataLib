@@ -56,7 +56,7 @@ public class MSCA
 			throw new IllegalArgumentException("Null element");
 
 		MSCATransition tt = tr.stream().findFirst().orElse(null);
-		if (tt!=null && tr.parallelStream()
+		if (tr.parallelStream()
 				.anyMatch(t->t.getRank()!=tt.getRank()))
 			throw new IllegalArgumentException("Transitions with different rank");
 

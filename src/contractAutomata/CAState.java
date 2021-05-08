@@ -14,17 +14,17 @@ public class CAState {
 	/**
 	 * The list of states of principal
 	 */
-	private List<BasicState> state;
+	private final List<BasicState> state;
 	
-	private float x;
-	private float y;
+	private final float x;
+	private final float y;
 
 
 	public CAState(List<BasicState> lstate, float x, float y)
 	{
 		if (lstate==null||lstate.isEmpty())
 			throw new IllegalArgumentException();
-		this.setState(lstate);
+		this.state = lstate;
 		this.x=x;
 		this.y=y;
 	}
@@ -33,10 +33,13 @@ public class CAState {
 	{
 		if (states==null)
 			throw new IllegalArgumentException();
-	
-		this.setState(states.stream()
+		
+		this.state = states.stream()
 		.map(CAState::getState)
-		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;}));
+		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;});
+		
+		this.x=0;
+		this.y=0;
 	}
 
 	public List<BasicState> getState(){
@@ -48,10 +51,6 @@ public class CAState {
 	}
 
 	public void setState(List<BasicState> state) {
-		if (state==null)
-			throw new IllegalArgumentException();
-
-		this.state = state;
 	}
 
 	public float getX() {

@@ -619,6 +619,7 @@ public class Family {
 				//aut.setInitialCA(storeinitial); 
 				//FMCATransition[] tr=FMCATransition.getTransitionFrom(aut.getInitialCA(),aut.getTransition());
 				
+				//TODO this methods are used for union, try to not use them so that they are private
 				for (MSCATransition t : aut.getForwardStar(storeinitial))
 				{	
 					aut.setInitialCA(t.getTarget());
