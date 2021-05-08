@@ -50,9 +50,6 @@ public class CAState {
 		return state.size();
 	}
 
-	public void setState(List<BasicState> state) {
-	}
-
 	public float getX() {
 		return x;
 	}

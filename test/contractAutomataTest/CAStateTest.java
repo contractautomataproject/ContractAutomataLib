@@ -79,15 +79,15 @@ public class CAStateTest {
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
-	@Test
-	public void setState_Exception_nullArgument() {
-		BasicState bs0 = new BasicState("0",true,false);
-		BasicState bs1 = new BasicState("1",true,false);
-		BasicState bs2 = new BasicState("2",true,false);
-		
-		assertThatThrownBy(() -> new CAState(Arrays.asList(bs0,bs1,bs2),0,0).setState(null))
-	    .isInstanceOf(IllegalArgumentException.class);
-	}
+//	@Test
+//	public void setState_Exception_nullArgument() {
+//		BasicState bs0 = new BasicState("0",true,false);
+//		BasicState bs1 = new BasicState("1",true,false);
+//		BasicState bs2 = new BasicState("2",true,false);
+//		
+//		assertThatThrownBy(() -> new CAState(Arrays.asList(bs0,bs1,bs2),0,0).setState(null))
+//	    .isInstanceOf(IllegalArgumentException.class);
+//	}
 	
 //	@Test
 //	public void hasSameState_Exception_nullArgument() {
