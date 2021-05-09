@@ -490,19 +490,19 @@ public class MSCA
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
-		final int upperbound=aut.parallelStream()
-				.flatMap(x->x.getStates().parallelStream())
-				.mapToInt(x->
-				x.getState().stream()
-				.mapToInt(bs->Integer.parseInt(bs.getLabel()))
-				.max().orElse(0))
-				.max().orElse(0)+1; //for renaming states
+//		final int upperbound=aut.parallelStream()
+//				.flatMap(x->x.getStates().parallelStream())
+//				.mapToInt(x->
+//				x.getState().stream()
+//				.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+//				.max().orElse(0))
+//				.max().orElse(0)+1; //for renaming states
 
 		//relabeling
 		IntStream.range(0, aut.size())
 		.forEach(id ->{
 			aut.get(id).getStates().forEach(x->{
-				x.getState().forEach(s->s.setLabel(Integer.parseInt(s.getLabel())+upperbound*(id+1)+""));
+				x.getState().forEach(s->s.setLabel(id+"_"+s.getLabel()));
 			});
 		}); 
 
@@ -570,7 +570,7 @@ public class MSCA
 					this.getBasicStates().get(i).stream()
 					.filter(BasicState::isFin)
 					.map(BasicState::getLabel)
-					.mapToInt(Integer::parseInt)
+					//.mapToInt(Integer::parseInt)
 					.toArray()));
 		}
 		pr.append("]\n");

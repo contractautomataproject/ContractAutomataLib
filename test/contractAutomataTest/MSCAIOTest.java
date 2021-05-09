@@ -27,8 +27,9 @@ public class MSCAIOTest {
 		assertNotEquals(dummy,null);
 	}
 	
+
 	@Test
-	public void loadVSparseSCP2020_BusinessClient() throws ParserConfigurationException, SAXException, IOException {		
+	public void loadVSparseSCP2020_BusinessClient() throws Exception {		
 		//check that loading .data and parsing .mxe are equals 
 		String dir = System.getProperty("user.dir");
 		MSCA comp= MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
@@ -37,7 +38,7 @@ public class MSCAIOTest {
 	}
 
 	@Test
-	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws ParserConfigurationException, SAXException, IOException {		
+	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
@@ -47,9 +48,8 @@ public class MSCAIOTest {
 	}
 
 	@Test
-	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws ParserConfigurationException, SAXException, IOException {		
+	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
-
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
 
@@ -64,9 +64,8 @@ public class MSCAIOTest {
 	}
 	
 	@Test
-	public void parseAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws ParserConfigurationException, SAXException, IOException {		
+	public void parseAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
-
 		String dir = System.getProperty("user.dir");
 //		MSCA aut = MSCAIO.parseXMLintoMSCAnew(dir+"/CAtest/testnew.mxe");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
@@ -115,7 +114,7 @@ public class MSCAIOTest {
 	}
 //	
 //	@Test
-//	public void conversionXMLNew() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+//	public void conversionXMLNew() throws Exception, TransformerException {
 //		//check if by converting and parsing the automaton does not change
 //		String dir = System.getProperty("user.dir");
 ////		MSCA comp= MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");		
@@ -127,7 +126,7 @@ public class MSCAIOTest {
 //	}
 	
 	@Test
-	public void conversionXMLtestSCP2020_BusinessClientxHotel() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public void conversionXMLtestSCP2020_BusinessClientxHotel() throws Exception, TransformerException {
 		//check if by converting and parsing the automaton does not change
 		String dir = System.getProperty("user.dir");
 		MSCA comp= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");			
@@ -138,12 +137,12 @@ public class MSCAIOTest {
 	}
 
 	@Test
-	public void parsePrintLoadTest_SCP2020_BusinessClientxHotelxEconomyClient() throws ParserConfigurationException, SAXException, IOException {		
+	public void parsePrintLoadTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by parsing and printing the automaton does not change
 
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
-		MSCAIO.printToFile(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data",aut);
+		MSCAIO.printToFile(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe",aut);
 		MSCA test = MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
 
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
@@ -151,7 +150,7 @@ public class MSCAIOTest {
 	}
 	
 	@Test
-	public void parse_noxy() throws ParserConfigurationException, SAXException, IOException, TransformerException {		
+	public void parse_noxy() throws Exception, TransformerException {		
 		//check if by parsing and printing the automaton does not change
 
 		String dir = System.getProperty("user.dir");
@@ -165,7 +164,7 @@ public class MSCAIOTest {
 
 
 	@Test
-	public void loadConvertSCP2020_BusinessClientxHotel() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public void loadConvertSCP2020_BusinessClientxHotel() throws Exception, TransformerException {
 		//check if by loading and converting the automaton does not change
 		String dir = System.getProperty("user.dir");
 		MSCA comp= MSCAIO.load(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");			
@@ -178,7 +177,7 @@ public class MSCAIOTest {
 	
 	//****************************Exceptions**********************************
 	@Test
-	public void wrongFormatData_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void wrongFormatData_exception() throws IOException
 	{
 		//
 		String dir = System.getProperty("user.dir");
@@ -202,8 +201,8 @@ public class MSCAIOTest {
 	{
 		String dir = System.getProperty("user.dir");
 		assertThatThrownBy(() -> MSCAIO.load(dir+"/CAtest//illformed.data"))
-	    .isInstanceOf(IOException.class)
-	    .hasMessageContaining("Problem in loading a label");
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("The label is not well-formed");
 	}
 	
 	@Test
@@ -222,6 +221,24 @@ public class MSCAIOTest {
 		assertThatThrownBy(() -> MSCAIO.load(dir+"/CAtest//illformed3.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed transitions, different ranks");
+	}
+	
+	@Test
+	public void loadIllRankInitialStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+		String dir = System.getProperty("user.dir");
+		assertThatThrownBy(() -> MSCAIO.load(dir+"/CAtest//illformed4.data"))
+	    .isInstanceOf(IOException.class)
+	    .hasMessageContaining("Initial state with different rank");
+	}
+	
+	@Test
+	public void loadIllRankFinalStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+		String dir = System.getProperty("user.dir");
+		assertThatThrownBy(() -> MSCAIO.load(dir+"/CAtest//illformed5.data"))
+	    .isInstanceOf(IOException.class)
+	    .hasMessageContaining("Final states with different rank");
 	}
 	
 	

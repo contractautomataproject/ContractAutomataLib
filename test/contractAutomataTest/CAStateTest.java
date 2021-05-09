@@ -16,7 +16,6 @@ import contractAutomata.CAState;
 
 public class CAStateTest {
 	
-	
 	@Test
 	public void constructorTest() {
 		BasicState bs0 = new BasicState("0",true,false);

@@ -1,20 +1,6 @@
 package familyTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
-import contractAutomata.FMCA;
-import contractAutomata.MSCA;
-import contractAutomata.MSCAIO;
-import contractAutomataTest.MSCATest;
-import family.Product;
-
 import static org.junit.Assert.assertEquals;
 /*
 import java.util.Arrays;
@@ -23,6 +9,14 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
  */
+
+import org.junit.Test;
+
+import contractAutomata.FMCA;
+import contractAutomata.MSCA;
+import contractAutomata.MSCAIO;
+import contractAutomataTest.MSCATest;
+import family.Product;
 
 /**
  * 
@@ -40,7 +34,7 @@ public class FMCATest {
 	}
 
 	@Test
-	public void getAut_test() throws ParserConfigurationException, SAXException, IOException 
+	public void getAut_test() throws Exception 
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA a = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
@@ -50,7 +44,7 @@ public class FMCATest {
 	}
 	
 	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -61,7 +55,7 @@ public class FMCATest {
 	}
 	
 	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");

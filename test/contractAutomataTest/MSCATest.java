@@ -4,8 +4,6 @@ package contractAutomataTest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,11 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import contractAutomata.BasicState;
 import contractAutomata.CALabel;
@@ -32,7 +28,7 @@ public class MSCATest {
 	//**********************************SCICO2020 case study*******************************************************************
 
 	@Test
-	public void compositionTestSCP2020_nonassociative() throws ParserConfigurationException, SAXException, IOException {
+	public void compositionTestSCP2020_nonassociative() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -43,7 +39,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compositionTestSCP2020_BusinessClientxHotel_closed() throws ParserConfigurationException, SAXException, IOException {
+	public void compositionTestSCP2020_BusinessClientxHotel_closed() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -55,7 +51,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compositionTestSCP2020_BusinessClientxHotel_open() throws ParserConfigurationException, SAXException, IOException {
+	public void compositionTestSCP2020_BusinessClientxHotel_open() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -67,7 +63,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions() throws ParserConfigurationException, SAXException, IOException {
+	public void compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -79,7 +75,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_numStates() throws ParserConfigurationException, SAXException, IOException {
+	public void compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_numStates() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -91,7 +87,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient_numStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient_numStates() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
@@ -103,7 +99,7 @@ public class MSCATest {
 	}	
 
 	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -113,7 +109,7 @@ public class MSCATest {
 	}	
 
 	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_numStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_numStates() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -122,20 +118,21 @@ public class MSCATest {
 	}	
 
 	@Test
-	public void unionTest() throws ParserConfigurationException, SAXException, IOException {
+	public void unionTest() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/EconomyClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
+		MSCA union = MSCA.union(aut);
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/union_BusinessClient_EconomyClient_Hotel.mxe");
-		assertEquals(checkTransitions(MSCA.union(aut),test),true);
+		assertEquals(checkTransitions(union,test),true);
 	}
 
 	//*******************************************LMCS2020 case study********************************************************
 
 	@Test
-	public void chorTestLMCS2020numStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTestLMCS2020numStates() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -144,7 +141,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorTestLMCS2020Transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException, TransformerException
+	public void chorTestLMCS2020Transitions() throws Exception, TransformerException
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
@@ -178,7 +175,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorSmallerTestTransitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorSmallerTestTransitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -193,7 +190,7 @@ public class MSCATest {
 
 
 	@Test
-	public void orcTestLMCS2020numStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestLMCS2020numStates() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -202,7 +199,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void orcTestLMCS2020Transitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTestLMCS2020Transitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -213,7 +210,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void mpcEmptyTestLMCS2020() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void mpcEmptyTestLMCS2020() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -227,7 +224,7 @@ public class MSCATest {
 
 
 	@Test
-	public void chorTestControllableLazyOffernumStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTestControllableLazyOffernumStates() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -236,7 +233,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorTestControllableLazyOfferTransitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTestControllableLazyOfferTransitions() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -246,7 +243,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void cloneTest() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void cloneTest() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -255,7 +252,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compTestSimple() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void compTestSimple() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
@@ -270,7 +267,7 @@ public class MSCATest {
 
 
 	@Test
-	public void compTestEmptySimple() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void compTestEmptySimple() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
@@ -283,7 +280,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void mpcTest_nonempty() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void mpcTest_nonempty() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_urgent.mxe");
@@ -291,7 +288,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void orcTest_empty() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTest_empty() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc.mxe");
@@ -299,7 +296,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void orcTest_empty_lazy() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTest_empty_lazy() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
@@ -307,7 +304,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void orcTest_nonempty() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orcTest_nonempty() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
@@ -315,7 +312,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorTest_empty() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTest_empty() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -324,7 +321,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chorTest_urgent_empty() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chorTest_urgent_empty() throws Exception
 	{
 
 		String dir = System.getProperty("user.dir");
@@ -347,7 +344,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void setInitialCATest() throws ParserConfigurationException, SAXException, IOException {
+	public void setInitialCATest() throws Exception {
 		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
 
@@ -367,9 +364,22 @@ public class MSCATest {
 		assertEquals(MSCA.union(null),null);
 	}
 
+	@Test
+	public void union_statelabelsnotnumbers() throws Exception {
+		List<MSCA> aut = new ArrayList<>(2);
+		String dir = System.getProperty("user.dir");
+		aut.add(MSCAIO.load(dir+"/CAtest/testgraph.data"));
+		aut.add(MSCAIO.load(dir+"/CAtest/testgraph.data"));
+		
+		MSCA union = MSCA.union(aut);
+//		MSCAIO.convertMSCAintoXML(dir+"/CAtest/union_testgraph_testgraph.mxe", union);
+		
+		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/union_testgraph_testgraph.mxe");
+		assertEquals(checkTransitions(union,test),true);
+	}
 
 //	@Test
-//	public void getRankZero() throws ParserConfigurationException, SAXException, IOException {
+//	public void getRankZero() throws Exception {
 //		String dir = System.getProperty("user.dir");
 //		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 //		aut.setTransition(new HashSet<MSCATransition>());
@@ -394,7 +404,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void constructor_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
+	public void constructor_Exception_nullArgument() throws Exception {
 		Set<MSCATransition> tr = new HashSet<>();
 		tr.add(null);
 	//	MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
@@ -404,7 +414,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void constructor_Exception_differentRank() throws ParserConfigurationException, SAXException, IOException {
+	public void constructor_Exception_differentRank() throws Exception {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.idle);
 		lab.add(CALabel.offer+"a");
@@ -439,7 +449,7 @@ public class MSCATest {
 	}
 	
 	//	@Test
-	//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws ParserConfigurationException, SAXException, IOException {
+	//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws Exception {
 	//		String dir = System.getProperty("user.dir");
 	//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 	//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
@@ -448,7 +458,7 @@ public class MSCATest {
 	//	}
 
 	@Test
-	public void mpc_lazy_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void mpc_lazy_exception() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
@@ -457,7 +467,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void chor_lazy_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void chor_lazy_exception() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
@@ -466,7 +476,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void orc_necessaryoffer_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void orc_necessaryoffer_exception() throws Exception
 	{
 		//
 		String dir = System.getProperty("user.dir");
@@ -476,7 +486,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void union_differentrank_exception() throws ParserConfigurationException, SAXException, IOException {
+	public void union_differentrank_exception() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
@@ -487,7 +497,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void noInitialState_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void noInitialState_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
@@ -508,7 +518,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void noFinalStatesInTransitions_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void noFinalStatesInTransitions_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
@@ -529,7 +539,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void compTestBound_noTransitions() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void compTestBound_noTransitions() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
 		String dir = System.getProperty("user.dir");
@@ -542,7 +552,7 @@ public class MSCATest {
 	}
 
 	@Test
-	public void ambiguousStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	public void ambiguousStates_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
