@@ -63,24 +63,23 @@ public class MSCA
 		this.tra=tr;
 
 		Set<CAState> states = this.getStates();
-		
+
 		if(states.stream()
 				.anyMatch(x-> states.stream()
 						.filter(y->x!=y && x.getState().equals(y.getState()))
 						.count()!=0))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 
-
 		if (states.parallelStream()
 				.filter(CAState::isInitial)
 				.count()!=1)
-			throw new IllegalArgumentException("Not Exactly one Initial State found!");
+			throw new IllegalArgumentException("Not Exactly one Initial State found! ");
 
 		if (!states.parallelStream()
 				.filter(CAState::isFinalstate)
 				.findAny().isPresent())
 			throw new IllegalArgumentException("No Final States!");
-		
+
 	}
 
 	public  Set<MSCATransition> getTransition()
@@ -156,7 +155,7 @@ public class MSCA
 			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
 
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUrgent());
+				(x,t,bad) -> x.isUrgent()&&!t.contains(x));
 	}
 
 
@@ -171,8 +170,31 @@ public class MSCA
 			throw new UnsupportedOperationException("The automaton contains necessary offers that are not allowed in the orchestration synthesis");
 
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableOrchestration(t, bad));
+				(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))
+								||(x.isUrgent()&&!t.contains(x)));
 	}
+
+//	public MSCA choreography_()
+//	{
+//		if (this.getTransition().parallelStream()
+//				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
+//			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
+//
+//		MSCA aut = this;
+//		MSCATransition toRemove=null;
+//		do 
+//		{ aut = aut.synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget()),
+//				(x,t,bad) -> (bad.contains(x.getTarget())||!t.contains(x)) && x.isUncontrollableChoreography(t, bad));
+//		if (aut==null)
+//			break;
+//		final Set<MSCATransition> trf = aut.getTransition();
+//		toRemove=(aut.getTransition().parallelStream()
+//				.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
+//				.findAny() 
+//				.orElse(null));
+//		} while (aut.getTransition().remove(toRemove));
+//		return aut;
+//	}
 
 	/** 
 	 * invokes the synthesis method for synthesising the choreography in strong agreement
@@ -186,20 +208,21 @@ public class MSCA
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
 
-		MSCA aut = this;
-		MSCATransition toRemove=null;
+		MSCATransition toRemove=null; 
+		Set<String> violatingbc = new HashSet<>();
+		MSCA aut;
 		do 
-		{ aut = aut.synthesis((x,t,bad) -> 
-		!x.getLabel().isMatch()||bad.contains(x.getTarget()),
-		(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
-		if (aut==null)
-			break;
-		final Set<MSCATransition> trf = aut.getTransition();
-		toRemove=(aut.getTransition().parallelStream()
-				.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
-				.findAny() 
-				.orElse(null));
-		} while (aut.getTransition().remove(toRemove));
+		{ 
+			aut = this.clone().synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget())||violatingbc.contains(x.toCSV()),
+					(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableChoreography(t, bad))||(x.isUrgent()&&!t.contains(x)));
+			if (aut==null)
+				break;
+			final Set<MSCATransition> trf = aut.getTransition();
+			toRemove=(aut.getTransition().parallelStream()
+					.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
+					.findAny() 
+					.orElse(null));
+		} while (toRemove!=null && violatingbc.add(toRemove.toCSV()));
 		return aut;
 	}
 
@@ -235,13 +258,14 @@ public class MSCA
 			update=Rf.size()!=R.size()|| trf.size()!=this.getTransition().size();
 		} while(update);
 
+	
+		if (R.contains(init)||this.getTransition().size()==0)
+			return null;
+		
 		//remove dangling transitions
 		this.getTransition().removeAll(this.getTransition().parallelStream()
 				.filter(x->!this.reachable.get(x.getSource())||!this.successful.get(x.getTarget()))
 				.collect(Collectors.toSet()));
-
-		if (R.contains(init)||this.getTransition().size()==0)
-			return null;
 
 		return this;
 	}
@@ -490,13 +514,13 @@ public class MSCA
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
-//		final int upperbound=aut.parallelStream()
-//				.flatMap(x->x.getStates().parallelStream())
-//				.mapToInt(x->
-//				x.getState().stream()
-//				.mapToInt(bs->Integer.parseInt(bs.getLabel()))
-//				.max().orElse(0))
-//				.max().orElse(0)+1; //for renaming states
+		//		final int upperbound=aut.parallelStream()
+		//				.flatMap(x->x.getStates().parallelStream())
+		//				.mapToInt(x->
+		//				x.getState().stream()
+		//				.mapToInt(bs->Integer.parseInt(bs.getLabel()))
+		//				.max().orElse(0))
+		//				.max().orElse(0)+1; //for renaming states
 
 		//relabeling
 		IntStream.range(0, aut.size())
@@ -511,7 +535,7 @@ public class MSCA
 				.mapToObj(i->new BasicState("0",true,false))
 				.collect(Collectors.toList()),0,0);
 
-			Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
+		Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+aut.size());  //Initialized to the total number of transitions
@@ -579,6 +603,49 @@ public class MSCA
 			pr.append(t.toString()+"\n");
 		return pr.toString();
 	}
+
+
+
+	/**
+	 * compute the projection on the i-th principal
+	 * @param indexprincipal index of the MSCA
+	 * @param function returning the index of the necessary principal in a transition, if any
+	 * @return	the ith principal
+	 * 
+	 */
+	public MSCA projection(int indexprincipal, Function<MSCATransition, Integer> getNecessaryPrincipal)
+	{
+		if ((indexprincipal<0)||(indexprincipal>this.getRank())) 
+			throw new IllegalArgumentException("Index out of rank");
+
+		//extracting the basicstates of the principal and creating the castates of the projection
+		Map<BasicState,CAState> bs2cs = this.getTransition().parallelStream()
+				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
+				.map(s->s.getState().get(indexprincipal))
+				.distinct()
+				.collect(Collectors.toMap(Function.identity(), bs->new CAState(new ArrayList<BasicState>(Arrays.asList(bs)),0,0)));
+
+		//associating each castate of the composition with the castate of the principal
+		Map<CAState,CAState> map2princst = 
+				this.getTransition().parallelStream()
+				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
+				.distinct()
+				.collect(Collectors.toMap(Function.identity(), s->bs2cs.get(s.getState().get(indexprincipal))));
+
+
+		return new MSCA(this.getTransition().parallelStream()
+				.filter(t-> t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
+				.map(t-> new MSCATransition(map2princst.get(t.getSource()),
+						t.getLabel().getOfferer().equals(indexprincipal)?
+								new CALabel(1,0,t.getLabel().getAction())
+								:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getAction()
+										:t.getLabel().getCoAction()),
+								map2princst.get(t.getTarget()),
+								t.isPermitted()||!getNecessaryPrincipal.apply(t).equals(indexprincipal)?MSCATransition.Modality.PERMITTED
+										:t.isLazy()?MSCATransition.Modality.LAZY:MSCATransition.Modality.URGENT
+						))
+				.collect(Collectors.toSet())); 
+	}
 }
 
 
@@ -588,73 +655,6 @@ public class MSCA
 
 
 
-
-//	/**
-//	 * compute the projection on the i-th principal
-//	 * @param indexprincipal		index of the FMCA
-//	 * @return		the ith principal
-//	 * 
-//	 * @deprecated the XML representation must be fixed to store final states of principals for projection to work
-//	 */
-//	MSCA proj(int indexprincipal)
-//	{
-//		if ((indexprincipal<0)||(indexprincipal>this.getRank())) //check if the parameter i is in the rank of the FMCA
-//			return null;
-//		if (this.getRank()==1)
-//			return this;
-//		MSCATransition[] tra = this.getTransition().toArray(new MSCATransition[] {});
-//		//int[] numberofstatesprincipal= new int[1];
-//		//numberofstatesprincipal[0]= this.getNumStatesPrinc()[indexprincipal];
-//		MSCATransition[] transitionsprincipal = new MSCATransition[tra.length];
-//		int pointer=0;
-//		for (int ind=0;ind<tra.length;ind++)
-//		{
-//			MSCATransition tt= ((MSCATransition)tra[ind]);
-//			String label = tt.getLabel()[indexprincipal];
-//			if(label!=CATransition.idle)
-//			{
-//				int source =  tt.getSource().getState()[indexprincipal];
-//				int dest = tt.getTarget().getState()[indexprincipal];
-//				int[] sou = new int[1];
-//				sou[0]=source;
-//				int[] des = new int[1];
-//				des[0]=dest;
-//				String[] lab = new String[1];
-//				lab[0]=label;
-//				MSCATransition selected = null;
-//				if (label.substring(0,1).equals(CATransition.offer))
-//				{
-//					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),MSCATransition.action.PERMITTED);
-//				}
-//				else {
-//					selected = new MSCATransition(new CAState(sou),lab, new CAState(des),tt.getType());
-//				}
-//
-//				if (!MSCAUtils.contains(selected, transitionsprincipal, pointer))
-//				{
-//					transitionsprincipal[pointer]=selected;
-//					pointer++;
-//				}
-//			}
-//		}
-//
-//		transitionsprincipal = MSCAUtils.removeTailsNull(transitionsprincipal, pointer, new MSCATransition[] {});
-//		Set<MSCATransition> transitionprincipalset = new HashSet<MSCATransition>(Arrays.asList(transitionsprincipal));
-//		Set<CAState> fstates = CAState.extractCAStatesFromTransitions(transitionprincipalset);
-//		int[] init=new int[1]; init[0]=0;
-//		CAState initialstateprincipal = CAState.getCAStateWithValue(init, fstates);
-//		initialstateprincipal.setInitial(true);  //if is dangling will throw exception
-//		int[][] finalstatesprincipal = new int[1][];
-//		finalstatesprincipal[0]=this.getFinalStatesofPrincipals()[indexprincipal];
-//		for (int ind=0;ind<finalstatesprincipal[0].length;ind++)
-//		{
-//			int[] value=new int[1]; value[0]=finalstatesprincipal[0][ind];
-//			CAState.getCAStateWithValue(value, fstates).setFinalstate(true); //if is dangling will throw exception
-//		}
-//
-//		return new MSCA(1,initialstateprincipal,
-//				finalstatesprincipal,transitionprincipalset,fstates); 
-//	}
 
 
 

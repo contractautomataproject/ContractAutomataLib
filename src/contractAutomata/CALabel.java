@@ -482,4 +482,11 @@ public class CALabel {
 		return action.equals(other.action)&&offerer.equals(other.offerer)
 				&&rank.equals(other.rank)&&requester.equals(other.requester);
 	}
+
+	
+	public String toCSV() {
+		return "[rank=" + rank + ", offerer=" + offerer + ", requester=" + requester + ", action=" + action
+				+ ", actiontype=" + actiontype + "]";
+	}
+	
 }

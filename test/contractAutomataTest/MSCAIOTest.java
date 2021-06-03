@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -80,38 +77,38 @@ public class MSCAIOTest {
 				.count()>0),false);
 	}
 
-//	@Test
-	public void parseAndConvertAllMxe() {
-		String dir = System.getProperty("user.dir");
-
-		try {
-			Files.list(Paths.get(dir+"/Catest/"))
-					.map(Path::toFile)
-					.filter(f->f.getName().endsWith("data")&&!f.getName().startsWith("ill"))
-					.map(f->{
-						try {
-							System.out.println(f.getAbsolutePath());
-							return new AbstractMap.SimpleEntry<String,MSCA>(f.getAbsolutePath(),
-//									MSCAIO.parseXMLintoMSCA(f.getAbsolutePath()));
-									MSCAIO.load(f.getAbsolutePath()));
-
-						} catch (Exception e) {
-							throw new RuntimeException();
-						}
-					})
-					.forEach(e->{
-						try {
-	//						MSCAIO.convertMSCAintoXMLnew(e.getKey(),e.getValue());
-						} catch (Exception ex) {
-							throw new RuntimeException();
-						}
-					});
-		} catch (IOException e1) {
-			System.out.println(e1.toString());
-			e1.printStackTrace();
-			return;
-		}
-	}
+////	@Test
+//	public void parseAndConvertAllMxe() {
+//		String dir = System.getProperty("user.dir");
+//
+//		try {
+//			Files.list(Paths.get(dir+"/Catest/"))
+//					.map(Path::toFile)
+//					.filter(f->f.getName().endsWith("data")&&!f.getName().startsWith("ill"))
+//					.map(f->{
+//						try {
+//							System.out.println(f.getAbsolutePath());
+//							return new AbstractMap.SimpleEntry<String,MSCA>(f.getAbsolutePath(),
+////									MSCAIO.parseXMLintoMSCA(f.getAbsolutePath()));
+//									MSCAIO.load(f.getAbsolutePath()));
+//
+//						} catch (Exception e) {
+//							throw new RuntimeException();
+//						}
+//					})
+//					.forEach(e->{
+//						try {
+//	//						MSCAIO.convertMSCAintoXMLnew(e.getKey(),e.getValue());
+//						} catch (Exception ex) {
+//							throw new RuntimeException();
+//						}
+//					});
+//		} catch (IOException e1) {
+//			System.out.println(e1.toString());
+//			e1.printStackTrace();
+//			return;
+//		}
+//	}
 //	
 //	@Test
 //	public void conversionXMLNew() throws Exception, TransformerException {
@@ -174,8 +171,18 @@ public class MSCAIOTest {
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
 	}
 	
-	
 	//****************************Exceptions**********************************
+	
+	@Test
+	public void importMXENewPrincipalNoBasicStates() throws Exception {
+		String dir = System.getProperty("user.dir");
+
+		assertThatThrownBy(() -> MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_newPrincipalWithNoBasicStates.mxe"))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("source, label or target with different ranks");
+
+	}
+	
 	@Test
 	public void wrongFormatData_exception() throws IOException
 	{
@@ -285,6 +292,15 @@ public class MSCAIOTest {
 		assertThatThrownBy(() -> MSCAIO.parseXMLintoMSCA(dir+"/CAtest//illformed5.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Problems with final states in .mxe");
+	}
+
+	@Test
+	public void parseMxeDuplicateBasicStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
+	{
+		String dir = System.getProperty("user.dir");
+		assertThatThrownBy(() -> MSCAIO.parseXMLintoMSCA(dir+"/CAtest//illformed_duplicatebasicstates.mxe"))
+	    .isInstanceOf(IOException.class)
+	    .hasMessageContaining("Duplicate basic states labels");
 	}
 
 }

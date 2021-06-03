@@ -71,6 +71,13 @@ public class MSCATransition extends CATransition {
 		else 
 			return "("+getSource().getState().toString()+","+getLabelAsList()+","+getTarget().getState().toString()+")";
 	}
+	
+	public String toCSV()
+	{
+		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
+				+",label="+this.getLabel().toCSV()
+				+",target="+this.getTarget().toCSV()+"]";
+	}
 
 	/**
 	 * 
@@ -107,9 +114,10 @@ public class MSCATransition extends CATransition {
 		if (this.isPermitted()||(this.getLabel().isMatch()&&tr.contains(this)))
 			return false;
 		return !tr.parallelStream()
-				.anyMatch(t->t.getLabel().isMatch()
-						&&(t.isLazy()&&this.isLazy())
-						&&pred.test(t,this));
+				.filter(t->t.getLabel().isMatch()
+						&&!badStates.contains(t.getSource()))
+					//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
+				.anyMatch(t->pred.test(t,this));
 	}
 
 
@@ -131,16 +139,14 @@ public class MSCATransition extends CATransition {
 
 		return ftr.parallelStream()
 				.map(x->x.getSource())
-				.filter(x->x!=this.getSource()&& //!x.hasSameBasicStateLabelsOf(this.getSource())&&
+				.filter(x->x!=this.getSource()&&
 						this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
 						.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
 				//it's not the same state of this but sender is in the same state of this
 				
-
 				.allMatch(s -> ftr.parallelStream()
-						.filter(x->x.getSource()==s //x.getSource().hasSameBasicStateLabelsOf(s)
-								&& this.getLabel().equals(x.getLabel()))
-						.count()>0  //for all such states there exists an outgoing transition with the same label of this
+						.anyMatch(x->x.getSource()==s && this.getLabel().equals(x.getLabel()))
+						 //for all such states there exists an outgoing transition with the same label of this
 						);
 	}
 

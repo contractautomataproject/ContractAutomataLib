@@ -27,11 +27,11 @@ public class FMCA {
 	 */
 	public MSCA orchestration(Product p)
 	{
-		aut.synthesis( (x,t,bad) -> 
-		x.getLabel().isRequest()||p.isForbidden(x)||bad.contains(x.getTarget()), 
-		(x,t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableOrchestration(t, bad));
+		aut=aut.synthesis( (x,t,bad) -> 
+		x.getLabel().isRequest()||bad.contains(x.getTarget())||p.isForbidden(x), 
+		(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))||(x.isUrgent()&&!t.contains(x)));
 
-		if (aut==null||!p.checkRequired(aut.getTransition()))
+		if (aut!=null&&!p.checkRequired(aut.getTransition()))
 			aut=null;
 		
 		return aut;

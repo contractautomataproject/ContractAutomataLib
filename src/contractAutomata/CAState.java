@@ -2,6 +2,7 @@ package contractAutomata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class representing a state of a Contract Automaton
@@ -69,21 +70,28 @@ public class CAState {
 	public boolean isFinalstate() {
 		return state.stream().allMatch(BasicState::isFin);
 	}
+	
+	public String toCSV()
+	{
+		return "[state="+getState().stream()
+		.map(bs->bs.toCSV())
+		.collect(Collectors.joining())+"]";
+	}
 
 
-//	@Override
-//	public String toString()
-//	{
-//		StringBuilder sb = new StringBuilder();
-//		if (this.isInitial())
-//			sb.append(" Initial ");
-//		if (this.isFinalstate())
-//			sb.append(" Final ");
-//
-//		sb.append(this.getState().toString());
-//
-//		return sb.toString();
-//	}
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		if (this.isInitial())
+			sb.append(" Initial ");
+		if (this.isFinalstate())
+			sb.append(" Final ");
+
+		sb.append(this.getState().toString());
+
+		return sb.toString();
+	}
 	
 //	public boolean hasSameBasicStateLabelsOf(CAState s) {
 //		if (s.getState().size()!=this.state.size())

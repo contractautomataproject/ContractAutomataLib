@@ -35,6 +35,7 @@ public class BasicState {
 	public void setLabel(String label) {
 		this.label=label;
 	}
+	
 	@Override
 	public String toString() {
 		return label;//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
@@ -66,6 +67,6 @@ public class BasicState {
 		
 	}
 	
-	//TODO check if equals create problems or no
+	//equals creates problems
 	
 }

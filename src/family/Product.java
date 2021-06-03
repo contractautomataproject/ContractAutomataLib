@@ -14,7 +14,7 @@ import contractAutomata.MSCATransition;
  *
  */
 public class Product {
-	private String[] required; //TODO use ArrayList
+	private String[] required; //TODO use Set
 	private String[] forbidden;
 	
 	public Product(String[] r, String[] f)

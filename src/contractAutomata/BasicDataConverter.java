@@ -141,7 +141,6 @@ public class BasicDataConverter implements DataConverter{
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-
 		CALabel label = new CALabel(Arrays.asList(tr[1]));
 
 		return new MSCATransition(source,label,target,type); 

@@ -67,35 +67,59 @@ public class BasicMxeConverter implements MxeConverter {
 					{
 						Integer principal = Integer.parseInt(value.substring(value.indexOf("=")+1, value.indexOf(",")));//first entry is principal
 						BasicState bs = BasicState.readCSV(value.substring(value.indexOf(",")+1));
-							
+
 						if (princ2bs.containsKey(principal))
-							princ2bs.get(principal).add(bs);
+						{
+							Set<BasicState> sbs = princ2bs.get(principal);
+							if (sbs.stream()
+									.map(BasicState::getLabel)
+									.anyMatch(s->s.equals(bs.getLabel())))
+								throw new IOException("Duplicate basic states labels");
+							else
+								sbs.add(bs);
+						}
 						else 
 							princ2bs.put(principal, new HashSet<BasicState>(Arrays.asList(bs)));
 					}
 					else {//castate
 						Element geom= (Element) (NodeList)eElement.getElementsByTagName("mxGeometry").item(0);
 						String[] st=Arrays.stream(eElement.getAttribute("value").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(","))
-								//.mapToObj(Integer::parseInt)
 								.toArray(String[]::new);
+
 						//\forall i. \exists bs \in princ2bs(i). bs==st[i]
 
 						List<BasicState> lbs = IntStream.range(0, st.length)
-						.mapToObj(ind->princ2bs.get(ind).stream()
-								.filter(bs->bs.getLabel().equals(st[ind]))
-								.findFirst()
-								.orElseThrow(RuntimeException::new))
-						.collect(Collectors.toList());
+								.mapToObj(ind-> {
+									if (princ2bs.containsKey(ind))
+									{
+										Set<BasicState> sbs = princ2bs.get(ind);
+										return sbs.stream()
+												.filter(bs->bs.getLabel().equals(st[ind]))
+												.findFirst()
+												.orElseGet(()->
+												{BasicState bs = new BasicState(st[ind],st[ind].equals("0"),eElement.getAttribute("style").contains("terminate.png"));
+												sbs.add(bs);	
+												return bs;});
+									}
+									else 
+									{
+										BasicState bs = new BasicState(st[ind],st[ind].equals("0"),eElement.getAttribute("style").contains("terminate.png"));
+										princ2bs.put(ind, new HashSet<BasicState>(Arrays.asList(bs)));
+										return bs;  //orElseGet and the else branch are needed when those basicstates are not written in the xml, e.g. when 
+										// one is editing with mxGraph.
+									}})
+								.collect(Collectors.toList());
 						CAState castate = new CAState(lbs, 
-							geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
-									geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0);
-								//useful when not morphing (e.g. adding handles to edges)					
-								
+								geom.hasAttribute("x")?Float.parseFloat(geom.getAttribute("x")):0,
+										geom.hasAttribute("y")?Float.parseFloat(geom.getAttribute("y")):0);
+						//useful when not morphing (e.g. adding handles to edges)					
+
 						if (castate.isFinalstate()!=eElement.getAttribute("style").contains("terminate.png"))
 							throw new IOException("Problems with final states in .mxe");
 
 						if (id2castate.put(Integer.parseInt(eElement.getAttribute("id")), castate)!=null)
 							throw new IOException("Duplicate states!");
+
 					}
 				}
 			}
@@ -103,11 +127,7 @@ public class BasicMxeConverter implements MxeConverter {
 
 		if (id2castate.isEmpty())
 			throw new IOException("No states!");
-
-//		Set<CAState> castates = id2castate.entrySet().stream()
-//				.map(Entry::getValue)
-//				.collect(Collectors.toSet());
-
+		
 		//transitions
 		for (int i = 0; i < nodeList.getLength(); i++) 
 		{
@@ -134,6 +154,7 @@ public class BasicMxeConverter implements MxeConverter {
 		return aut;
 
 	}
+
 
 	/**
 	 * save the MSCA aut as a mxGraphModel  (used by mxGraph) File with XML extension
