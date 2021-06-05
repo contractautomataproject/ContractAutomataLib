@@ -54,7 +54,18 @@ public class FMCATest {
 		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
 		assertEquals(MSCATest.checkTransitions(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"})),test),true);
 	}
-	
+
+
+	@Test
+	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty() throws Exception
+	{
+
+		String dir = System.getProperty("user.dir");
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		
+		assertEquals(aut.orchestration(new Product(new String[] {"dummy"}, new String[] {""})),null);
+	}
+
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
 	{
@@ -108,9 +119,11 @@ public class FMCATest {
 		String fileName =dir+"/CATest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		int pindex=Integer.parseInt("100");
-		Product p=fam.getProducts()[pindex];
+		Product p=
+				fam.getProducts()[pindex];
 		int[] subind = fam.getSubProductsofProduct(pindex);
-		Product[] subprod = fam.subsetOfProductsFromIndex(subind);
+		//Product[] subprod = 
+			fam.subsetOfProductsFromIndex(subind);
 	}
 	
 	@Test
@@ -120,9 +133,11 @@ public class FMCATest {
 		String fileName =dir+"/CATest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		int pindex=Integer.parseInt("100");
-		Product p=fam.getProducts()[pindex];
+		Product p=
+				fam.getProducts()[pindex];
 		int[] subind = fam.getSuperProductsofProduct(pindex);
-		Product[] subprod = fam.subsetOfProductsFromIndex(subind);
+		//Product[] subprod = 
+				fam.subsetOfProductsFromIndex(subind);
 	}
 	
 	@Test

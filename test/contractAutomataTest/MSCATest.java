@@ -4,6 +4,7 @@ package contractAutomataTest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,13 +26,15 @@ import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
 
 public class MSCATest {
+	private final String dir = System.getProperty("user.dir");
+
 
 	//**********************************SCICO2020 case study*******************************************************************
 
 	@Test
 	public void compositionTestSCP2020_nonassociative() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
@@ -42,7 +45,7 @@ public class MSCATest {
 	@Test
 	public void compositionTestSCP2020_BusinessClientxHotel_closed() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
 
@@ -54,7 +57,7 @@ public class MSCATest {
 	@Test
 	public void compositionTestSCP2020_BusinessClientxHotel_open() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
 
@@ -66,7 +69,7 @@ public class MSCATest {
 	@Test
 	public void compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/EconomyClient.mxe.data"));
@@ -79,7 +82,7 @@ public class MSCATest {
 	public void compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/EconomyClient.mxe.data"));
@@ -95,7 +98,7 @@ public class MSCATest {
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
 		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient)_test.mxe");
 		assertEquals(checkTransitions(aut.orchestration(),test),true);
@@ -105,13 +108,24 @@ public class MSCATest {
 	@Test
 	public void unionTest() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/EconomyClient.mxe.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/Hotel.mxe.data"));
 		MSCA union = MSCA.union(aut);
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/union_BusinessClient_EconomyClient_Hotel.mxe");
 		assertEquals(checkTransitions(union,test),true);
+	}
+	
+	@Test
+	public void projectionTestSCP2020_BusinessClient() throws Exception{
+		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
+		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClient.mxe");
+		aut=aut.projection(0, t->t.getLabel().getRequester());
+//		System.out.println(aut);
+//		System.out.println(test);
+		assertEquals(checkTransitions(aut,test),true);
+		
 	}
 
 	//*******************************************LMCS2020 case study********************************************************
@@ -120,7 +134,7 @@ public class MSCATest {
 	@Test
 	public void chorTestLMCS2020Transitions() throws Exception, TransformerException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		MSCA test1 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		MSCA test2 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_1.mxe");
@@ -155,7 +169,7 @@ public class MSCATest {
 	public void chorSmallerTestTransitions() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		MSCA cor=aut.clone();
 		cor=cor.synthesis((x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
@@ -170,7 +184,7 @@ public class MSCATest {
 	public void orcTestLMCS2020Transitions() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
 
@@ -181,7 +195,7 @@ public class MSCATest {
 	public void mpcEmptyTestLMCS2020() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).mxe");
 		MSCA mpc=aut.mpc();
 
@@ -192,7 +206,7 @@ public class MSCATest {
 	public void mpcEmptyTestNoDangling() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_mpc_nodangling.mxe");
 		MSCA mpc=aut.mpc();
 
@@ -203,7 +217,7 @@ public class MSCATest {
 	public void orcEmptyTestNoDangling() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_nodangling.mxe");
 		assertEquals(aut.orchestration(),null);
 	}
@@ -215,7 +229,7 @@ public class MSCATest {
 	public void chorTestControllableLazyOfferTransitions() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(test_chor_controllablelazyoffer).mxe");
 		assertEquals(checkTransitions(aut.choreography(),test),true);
@@ -225,7 +239,7 @@ public class MSCATest {
 	public void cloneTest() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_urgent.mxe");
 		assertEquals(checkTransitions(aut,aut.clone()),true);
 	}
@@ -234,7 +248,7 @@ public class MSCATest {
 	public void compTestSimple() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/A.mxe"));
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/B.mxe"));
 
@@ -249,7 +263,7 @@ public class MSCATest {
 	public void compTestEmptySimple() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 
@@ -261,7 +275,7 @@ public class MSCATest {
 	@Test
 	public void mpcTest_nonempty() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_urgent.mxe");
 		assertEquals(aut.mpc().getNumStates(),2);
 	}
@@ -269,7 +283,7 @@ public class MSCATest {
 	@Test
 	public void orcTest_empty() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc.mxe");
 		assertEquals(orc.orchestration(),null);
 	}
@@ -277,7 +291,7 @@ public class MSCATest {
 	@Test
 	public void orcTest_empty_lazy() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertEquals(orc.orchestration(),null);
 	}
@@ -285,7 +299,7 @@ public class MSCATest {
 	@Test
 	public void orcTest_nonempty() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertEquals(orc.orchestration(),null);
 	}
@@ -294,7 +308,7 @@ public class MSCATest {
 	public void chorTest_empty() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_lazy_empty_cor.mxe");
 		assertEquals(aut.choreography(),null);
 	}
@@ -303,7 +317,7 @@ public class MSCATest {
 	public void chorTest_urgent_empty() throws Exception
 	{
 
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_urgentoffer.mxe");
 		assertEquals(aut.choreography(),null);
 	}
@@ -324,7 +338,7 @@ public class MSCATest {
 
 	@Test
 	public void setInitialCATest() throws Exception {
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
 
 		CAState newInitial = aut.getStates().parallelStream()
@@ -346,7 +360,7 @@ public class MSCATest {
 	@Test
 	public void union_statelabelsnotnumbers() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/testgraph.data"));
 		aut.add(MSCAIO.load(dir+"/CAtest/testgraph.data"));
 		
@@ -359,7 +373,7 @@ public class MSCATest {
 	
 	@Test
 	public void choreoConcur2021ex25() throws Exception {
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/testcor_concur21_Example25.mxe");
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->t.satisfiesBranchingCondition(aut.getTransition(), 
@@ -369,7 +383,7 @@ public class MSCATest {
 	
 	@Test
 	public void choreoConcur2021ex34() throws Exception {
-		String dir = System.getProperty("user.dir");
+		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/testcor_concur21_Example34.mxe");
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->t.satisfiesBranchingCondition(aut.getTransition(), 
@@ -380,7 +394,6 @@ public class MSCATest {
 
 	@Test
 	public void choreoConcur2021projectAndComposeTest() throws Exception {
-		String dir = System.getProperty("user.dir");
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/testcor_concur21_Example34.mxe");
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
 		.mapToObj(i->aut.projection(i, t->t.getLabel().getOfferer()))
@@ -397,7 +410,7 @@ public class MSCATest {
 
 //	@Test
 //	public void getRankZero() throws Exception {
-//		String dir = System.getProperty("user.dir");
+//		
 //		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 //		aut.setTransition(new HashSet<MSCATransition>());
 //		assertEquals(aut.getRank(),0);
@@ -405,7 +418,25 @@ public class MSCATest {
 	
 	//************************************exceptions*********************************************
 
-	
+	@Test
+	public void projectionException1() throws IOException {
+
+		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
+		assertThatThrownBy(() -> aut.projection(-1, null))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Index out of rank");
+		
+	}
+
+	@Test
+	public void projectionException2() throws IOException {
+
+		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
+		assertThatThrownBy(() -> aut.projection(2, null))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("Index out of rank");
+		
+	}
 	
 	@Test
 	public void constructorTest_Exception_nullArgument() {
@@ -469,7 +500,7 @@ public class MSCATest {
 	
 	//	@Test
 	//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws Exception {
-	//		String dir = System.getProperty("user.dir");
+	//		
 	//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 	//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
 	//	    .isInstanceOf(IllegalArgumentException.class)
@@ -479,7 +510,7 @@ public class MSCATest {
 	@Test
 	public void mpc_lazy_exception() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertThatThrownBy(() -> orc.mpc())
 		.isInstanceOf(UnsupportedOperationException.class);
@@ -488,7 +519,7 @@ public class MSCATest {
 	@Test
 	public void chor_lazy_exception() throws Exception
 	{
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_empty_orc_lazy.mxe");
 		assertThatThrownBy(() -> orc.choreography())
 		.isInstanceOf(UnsupportedOperationException.class);
@@ -498,7 +529,7 @@ public class MSCATest {
 	public void orc_necessaryoffer_exception() throws Exception
 	{
 		//
-		String dir = System.getProperty("user.dir");
+		
 		MSCA orc = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
 		assertThatThrownBy(() -> orc.orchestration())
 		.isInstanceOf(UnsupportedOperationException.class);
@@ -507,7 +538,7 @@ public class MSCATest {
 	@Test
 	public void union_differentrank_exception() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
@@ -561,7 +592,7 @@ public class MSCATest {
 	public void compTestBound_noTransitions() throws Exception
 	{
 		List<MSCA> aut = new ArrayList<>(2);
-		String dir = System.getProperty("user.dir");
+		
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 		aut.add(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 

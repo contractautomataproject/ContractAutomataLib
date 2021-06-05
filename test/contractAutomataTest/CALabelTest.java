@@ -59,7 +59,7 @@ public class CALabelTest {
 		lab.add(CALabel.idle);
 		lab.add(CALabel.offer+"a");
 		lab.add(CALabel.request+"a");
-	assertEquals(new CALabel(lab).equals(null),false);
+		assertEquals(new CALabel(lab).equals(null),false);
 	}
 	
 	@Test

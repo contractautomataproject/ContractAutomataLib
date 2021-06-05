@@ -6,8 +6,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import contractAutomata.BasicState;
@@ -15,9 +17,10 @@ import contractAutomata.CAState;
 
 
 public class CAStateTest {
+	private CAState test;
 	
-	@Test
-	public void constructorTest() {
+	@Before
+	public void setup() {
 		BasicState bs0 = new BasicState("0",true,false);
 		BasicState bs1 = new BasicState("1",true,false);
 		BasicState bs2 = new BasicState("2",true,false);
@@ -29,8 +32,11 @@ public class CAStateTest {
 		l.add(new CAState(Arrays.asList(bs0,bs0),0,0));//(new int[] {0,0},true,false));
 		l.add(new CAState(Arrays.asList(bs4,bs10),0,0));//(new int[] {4,10},true,false));
 		
-		CAState test = new CAState(l);
-		
+		test = new CAState(l);
+	}
+	
+	@Test
+	public void constructorTest() {
 		assertEquals(hasSameBasicStateLabelsOf(test, new int[] {0,1,2,0,0,4,10}),true);
 		assertEquals(test.isInitial(),true);
 		assertEquals(test.isFinalstate(),false);
@@ -41,13 +47,26 @@ public class CAStateTest {
 		.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
 	}
 	
-//	@Test
-//	public void toStringTest() {
-//		CAState cs = new CAState(new int[] {0,1,2},true,false);
-//		System.out.println(cs.toString());
-//		assertEquals(cs.getStateL().toString(),Arrays.toString(getArrayState(cs)));
-//	}
+	@Test
+	public void toStringInitialTest() {
+		assertEquals(test.toString()," Initial [0, 1, 2, 0, 0, 4, 10]");
+	}
 	
+	@Test
+	public void toStringFinalTest() {
+		CAState test2=new CAState(test.getState().stream()
+		.map(bs->new BasicState(bs.getLabel(),false,true))
+		.collect(Collectors.toList()),0,0);
+		assertEquals(test2.toString()," Final [0, 1, 2, 0, 0, 4, 10]");
+	}
+	
+	@Test
+	public void toStringNoInitialNoFinalTest() {
+		CAState test2=new CAState(test.getState().stream()
+		.map(bs->new BasicState(bs.getLabel(),false,false))
+		.collect(Collectors.toList()),0,0);
+		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
+	}
 	
 //	@Test
 //	public void hasSameLabels() {

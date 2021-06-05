@@ -461,16 +461,16 @@ public class CALabel {
 			return new CALabel(rank,offerer,requester,action);
 	}
 	
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result + ((action == null) ? 0 : action.hashCode());
-//		result = prime * result + ((offerer == null) ? 0 : offerer.hashCode());
-//		result = prime * result + ((rank == null) ? 0 : rank.hashCode());
-//		result = prime * result + ((requester == null) ? 0 : requester.hashCode());
-//		return result;
-//	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + action.hashCode();
+		result = prime * result + offerer.hashCode();
+		result = prime * result + rank.hashCode();
+		result = prime * result + requester.hashCode();
+		return result;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

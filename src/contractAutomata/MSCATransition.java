@@ -51,11 +51,6 @@ public class MSCATransition extends CATransition {
 		return (this.mod==Modality.PERMITTED);
 	}
 
-	public boolean isSemiControllable()
-	{
-		return (this.mod==Modality.LAZY);
-	}
-
 	public Modality getModality()
 	{
 		return this.mod;
@@ -108,14 +103,15 @@ public class MSCATransition extends CATransition {
 
 	private boolean isUncontrollable(Set<? extends MSCATransition> tr, Set<CAState> badStates, BiPredicate<MSCATransition,MSCATransition> pred)
 	{
-
 		if (this.isUrgent())
 			return true;
-		if (this.isPermitted()||(this.getLabel().isMatch()&&tr.contains(this)))
+		if (this.isPermitted()//||(this.getLabel().isMatch()&&tr.contains(this))
+				)
 			return false;
 		return !tr.parallelStream()
 				.filter(t->t.getLabel().isMatch()
-						&&!badStates.contains(t.getSource()))
+						&&
+						!badStates.contains(t.getSource()))
 					//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
 				.anyMatch(t->pred.test(t,this));
 	}
@@ -163,25 +159,21 @@ public class MSCATransition extends CATransition {
 				.collect(Collectors.toSet());
 	}*/
 
-	/*	@Override
+		@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((mod == null) ? 0 : mod.hashCode());
+		result = prime * result + mod.hashCode();
 		return result;
-	}*/
+	}
 
-	//	@Override
-	//	public boolean equals(Object obj) {
-	//		if (this == obj)
-	//			return true;
-	//		if (!super.equals(obj))
-	//			return false;
-	//		if (getClass() != obj.getClass())
-	//			return false;
-	//		MSCATransition other = (MSCATransition) obj;
-	//		if (mod != other.mod)
-	//			return false;
-	//		return true;
-	//	}
+		@Override
+		public boolean equals(Object obj) {
+			if (!super.equals(obj))
+				return false;
+			MSCATransition other = (MSCATransition) obj;
+			if (mod != other.mod)
+				return false;
+			return true;
+		}
 }

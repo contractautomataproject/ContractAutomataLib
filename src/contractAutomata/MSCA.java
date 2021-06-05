@@ -151,7 +151,7 @@ public class MSCA
 	public MSCA mpc()
 	{
 		if (this.getTransition().parallelStream()
-				.anyMatch(t-> t.isSemiControllable()))
+				.anyMatch(t-> t.isLazy()))
 			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
 
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
@@ -170,31 +170,9 @@ public class MSCA
 			throw new UnsupportedOperationException("The automaton contains necessary offers that are not allowed in the orchestration synthesis");
 
 		return synthesis((x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))
-								||(x.isUrgent()&&!t.contains(x)));
+				(x,t,bad) -> //(x.isUrgent()&&!t.contains(x))||(!x.isUrgent()&&
+		!t.contains(x)&&x.isUncontrollableOrchestration(t, bad));
 	}
-
-//	public MSCA choreography_()
-//	{
-//		if (this.getTransition().parallelStream()
-//				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
-//			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
-//
-//		MSCA aut = this;
-//		MSCATransition toRemove=null;
-//		do 
-//		{ aut = aut.synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget()),
-//				(x,t,bad) -> (bad.contains(x.getTarget())||!t.contains(x)) && x.isUncontrollableChoreography(t, bad));
-//		if (aut==null)
-//			break;
-//		final Set<MSCATransition> trf = aut.getTransition();
-//		toRemove=(aut.getTransition().parallelStream()
-//				.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
-//				.findAny() 
-//				.orElse(null));
-//		} while (aut.getTransition().remove(toRemove));
-//		return aut;
-//	}
 
 	/** 
 	 * invokes the synthesis method for synthesising the choreography in strong agreement
@@ -214,7 +192,7 @@ public class MSCA
 		do 
 		{ 
 			aut = this.clone().synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget())||violatingbc.contains(x.toCSV()),
-					(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableChoreography(t, bad))||(x.isUrgent()&&!t.contains(x)));
+					(x,t,bad) -> (!t.contains(x)&&x.isUncontrollableChoreography(t, bad)));
 			if (aut==null)
 				break;
 			final Set<MSCATransition> trf = aut.getTransition();
@@ -258,10 +236,10 @@ public class MSCA
 			update=Rf.size()!=R.size()|| trf.size()!=this.getTransition().size();
 		} while(update);
 
-	
+
 		if (R.contains(init)||this.getTransition().size()==0)
 			return null;
-		
+
 		//remove dangling transitions
 		this.getTransition().removeAll(this.getTransition().parallelStream()
 				.filter(x->!this.reachable.get(x.getSource())||!this.successful.get(x.getTarget()))
@@ -474,7 +452,7 @@ public class MSCA
 
 					if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
 						dontvisit.addAll(trans.parallelStream()
-								.filter(x->x.isSemiControllable()&&pruningPred.test(x))
+								.filter(x->x.isLazy()&&pruningPred.test(x))
 								.map(MSCATransition::getTarget)
 								.collect(toList()));
 
@@ -609,7 +587,7 @@ public class MSCA
 	/**
 	 * compute the projection on the i-th principal
 	 * @param indexprincipal index of the MSCA
-	 * @param function returning the index of the necessary principal in a transition, if any
+	 * @param function returning the index of the necessary principal in a match transition (either the offerer or the requester), if any
 	 * @return	the ith principal
 	 * 
 	 */
@@ -634,17 +612,20 @@ public class MSCA
 
 
 		return new MSCA(this.getTransition().parallelStream()
-				.filter(t-> t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
+				.filter(t-> t.getLabel().isMatch()
+						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
+								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
 				.map(t-> new MSCATransition(map2princst.get(t.getSource()),
-						t.getLabel().getOfferer().equals(indexprincipal)?
+						(!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
 								new CALabel(1,0,t.getLabel().getAction())
 								:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getAction()
 										:t.getLabel().getCoAction()),
 								map2princst.get(t.getTarget()),
-								t.isPermitted()||!getNecessaryPrincipal.apply(t).equals(indexprincipal)?MSCATransition.Modality.PERMITTED
+								(t.isPermitted()||(t.getLabel().isMatch()&&!getNecessaryPrincipal.apply(t).equals(indexprincipal)))
+								?MSCATransition.Modality.PERMITTED
 										:t.isLazy()?MSCATransition.Modality.LAZY:MSCATransition.Modality.URGENT
 						))
-				.collect(Collectors.toSet())); 
+				.collect(Collectors.toSet()));
 	}
 }
 
