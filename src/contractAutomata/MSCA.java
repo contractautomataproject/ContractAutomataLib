@@ -191,7 +191,7 @@ public class MSCA
 		MSCA aut;
 		do 
 		{ 
-			aut = this.clone().synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget())||violatingbc.contains(x.toCSV()),
+			aut = this.synthesis((x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget())||violatingbc.contains(x.toCSV()),
 					(x,t,bad) -> (!t.contains(x)&&x.isUncontrollableChoreography(t, bad)));
 			if (aut==null)
 				break;
@@ -206,49 +206,70 @@ public class MSCA
 
 	/**
 	 * The generic synthesis algorithm
-	 * TODO remove return value or make it return a copy
 	 * 
 	 * @param pruningPred  predicate for pruning transitions
 	 * @param forbiddenPred   predicate for forbidden states
-	 * @return  the synthesis automaton according to the predicates
+	 * @return  the synthesized automaton according to the predicates
 	 */
 	public MSCA synthesis(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred, 
 			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred) 
 	{
-		Set<MSCATransition> trbackup = new HashSet<MSCATransition>(this.getTransition());
-		Set<CAState> statesbackup= this.getStates(); 
-		CAState init = this.getInitial();
-		Set<CAState> R = new HashSet<CAState>(this.getDanglingStates(statesbackup,init));//R0
+		MSCA aut=this.copy();
+		Set<MSCATransition> trbackup = new HashSet<MSCATransition>(aut.getTransition());
+		Set<CAState> statesbackup= aut.getStates(); 
+		CAState init = aut.getInitial();
+		Set<CAState> R = new HashSet<CAState>(aut.getDanglingStates(statesbackup,init));//R0
 		boolean update=false;
 		do{
 			final Set<CAState> Rf = new HashSet<CAState>(R); 
-			final Set<MSCATransition> trf= new HashSet<MSCATransition>(this.getTransition());
+			final Set<MSCATransition> trf= new HashSet<MSCATransition>(aut.getTransition());
 
-			if (this.getTransition().removeAll(this.getTransition().parallelStream()
+			if (aut.getTransition().removeAll(aut.getTransition().parallelStream()
 					.filter(x->pruningPred.test(x,trf, Rf))
 					.collect(Collectors.toSet()))) //Ki
-				R.addAll(this.getDanglingStates(statesbackup,init));
+				R.addAll(aut.getDanglingStates(statesbackup,init));
 
 			R.addAll(trbackup.parallelStream() 
 					.filter(x->forbiddenPred.test(x,trf, Rf))
 					.map(MSCATransition::getSource)
 					.collect(Collectors.toSet())); //Ri
 
-			update=Rf.size()!=R.size()|| trf.size()!=this.getTransition().size();
+			update=Rf.size()!=R.size()|| trf.size()!=aut.getTransition().size();
 		} while(update);
 
 
-		if (R.contains(init)||this.getTransition().size()==0)
+		if (R.contains(init)||aut.getTransition().size()==0)
 			return null;
 
 		//remove dangling transitions
-		this.getTransition().removeAll(this.getTransition().parallelStream()
-				.filter(x->!this.reachable.get(x.getSource())||!this.successful.get(x.getTarget()))
+		aut.getTransition().removeAll(aut.getTransition().parallelStream()
+				.filter(x->!aut.reachable.get(x.getSource())||!aut.successful.get(x.getTarget()))
 				.collect(Collectors.toSet()));
 
-		return this;
+		return aut;
 	}
 
+	private MSCA copy()
+	{	
+		Map<BasicState,BasicState> clonedstate = this.getStates().stream()
+				.flatMap(x->x.getState().stream())
+				.distinct()
+				.collect(Collectors.toMap(Function.identity(), s->new BasicState(s.getLabel(),s.isInit(),s.isFin())));
+
+		Map<CAState,CAState> clonedcastates  = this.getStates().stream()
+				.collect(Collectors.toMap(Function.identity(), 
+						x->new CAState(x.getState().stream()
+								.map(s->clonedstate.get(s))
+								.collect(Collectors.toList()),
+								x.getX(),x.getY())));
+
+		return new MSCA(this.getTransition().stream()
+				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
+						t.getLabel().getClone(),
+						clonedcastates.get(t.getTarget()),
+						t.getModality()))
+				.collect(Collectors.toSet()));
+	}
 
 
 	/**
@@ -551,29 +572,6 @@ public class MSCA
 	}
 
 	@Override
-	public MSCA clone()
-	{	
-		Map<BasicState,BasicState> clonedstate = this.getStates().stream()
-				.flatMap(x->x.getState().stream())
-				.distinct()
-				.collect(Collectors.toMap(Function.identity(), s->new BasicState(s.getLabel(),s.isInit(),s.isFin())));
-
-		Map<CAState,CAState> clonedcastates  = this.getStates().stream()
-				.collect(Collectors.toMap(Function.identity(), 
-						x->new CAState(x.getState().stream()
-								.map(s->clonedstate.get(s))
-								.collect(Collectors.toList()),
-								x.getX(),x.getY())));
-
-		return new MSCA(this.getTransition().stream()
-				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
-						t.getLabel().getClone(),
-						clonedcastates.get(t.getTarget()),
-						t.getModality()))
-				.collect(Collectors.toSet()));
-	}
-
-
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
 		int rank = this.getRank();

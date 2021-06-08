@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
  */
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 
@@ -82,18 +83,59 @@ public class ProductTest {
 				"F:[blueberry]</html>");
 	}
 
+	@Test
+	public void testContainFeature()
+	{
+		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
+		assertTrue(p.containFeature(new Feature("cherry")));
+	}
+	
+	@Test
+	public void testContainAllRequiredFeature()
+	{
+		Product p1 = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
+		Product p2 = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
+		
+		assertTrue(p1.containsAllRequiredFeatures(p2));
+	}
+	
+	@Test
+	public void testContainAllForbiddenFeature()
+	{
+		Product p1 = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
+		Product p2 = new Product(new String[] {"cherry"}, new String[] {"blueberry","ananas"});
+		
+		assertTrue(p2.containsAllForbiddenFeatures(p1));
+	}
 	//***EXCEPTIONS
 
 
 	@Test
 	public void constructorTest_Exception_nullArgument() {
 		assertThatThrownBy(() -> new Product(null,new String[0]))
-		.isInstanceOf(IllegalArgumentException.class);
+		.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
 	public void constructorTest_Exception_nullArgument2() {
 		assertThatThrownBy(() -> new Product(null,new HashSet<Feature>()))
 		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	@Test
+	public void constructorTest_Exception_3() {
+		assertThatThrownBy(() -> new Product(new String[] {"pippo"}, new String[] {"pippo"}))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessageContaining("A feature is both required and forbidden");
+	}
+	
+	@Test 
+	public void testCompareToException()
+	{
+		assertThatThrownBy(() -> new Product(new String[] {"pippo"}, new String[] {"pluto"})
+		.compareTo(new Product(new String[] {"ananas"}, new String[] {"banana"})))
+		.isInstanceOf(UnsupportedOperationException.class)
+		.hasMessageContaining("Products are not comparable");
+		
 	}
 }

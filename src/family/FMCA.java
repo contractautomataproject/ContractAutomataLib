@@ -2,15 +2,13 @@ package family;
 
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import contractAutomata.CALabel;
-import contractAutomata.CAState;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 
@@ -22,7 +20,7 @@ import contractAutomata.MSCATransition;
  */
 public class FMCA {
 	
-	private MSCA aut;
+	private final MSCA aut;
 	private final Family family;
 	
 	public FMCA(MSCA aut, Family family)
@@ -33,9 +31,9 @@ public class FMCA {
 		this.family=family;
 	}
 	
-	public Family getFamily() {
-		return family;
-	}
+//	public Family getFamily() {
+//		return family;
+//	}
 
 	/**
 	 * @return the synthesised orchestration/mpc of product p in agreement
@@ -43,14 +41,14 @@ public class FMCA {
 	 */
 	public MSCA orchestration(Product p)
 	{
-		aut=aut.synthesis( (x,t,bad) -> 
+		MSCA a=aut.synthesis( (x,t,bad) -> 
 		x.getLabel().isRequest()||bad.contains(x.getTarget())||p.isForbidden(x), 
 		(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))||(x.isUrgent()&&!t.contains(x)));
 
-		if (aut!=null&&!p.checkRequired(aut.getTransition()))
-			aut=null;
+		if (a!=null&&!p.checkRequired(a.getTransition()))
+			return null;
 		
-		return aut;
+		return a;
 	}
 
 	public MSCA getAut() {
@@ -70,10 +68,10 @@ public class FMCA {
 		
 		Map<Set<Feature>, Map<Product,MSCA>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
-				.map(p->new AbstractMap.SimpleEntry<Product,MSCA>(p,new FMCA(aut.clone(),this.family).orchestration(p)))
+				.map(p->new AbstractMap.SimpleEntry<Product,MSCA>(p,new FMCA(aut,this.family).orchestration(p)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
-					e.getKey().getForbiddenf().stream()
+					e.getKey().getForbidden().stream()
 					.filter(f->act.contains(f.getName()))
 					.collect(Collectors.toSet()),//ignoring forbidden features not present in aut (this is an improvement of Def.32 of JSCP2020).
 						Collectors.toMap(Entry::getKey, Entry::getValue)));
@@ -108,7 +106,7 @@ public class FMCA {
 				.parallelStream()
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
-				.map(p->new AbstractMap.SimpleEntry<Product, MSCA>(p,new FMCA(aut.clone(),this.family).orchestration(p)))
+				.map(p->new AbstractMap.SimpleEntry<Product, MSCA>(p,new FMCA(aut,this.family).orchestration(p)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
@@ -139,7 +137,7 @@ public class FMCA {
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
-		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new FMCA(aut.clone(),this.family).orchestration(p)!=null);
+		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new FMCA(aut,this.family).orchestration(p)!=null);
 	}
 	
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(MSCA a,Predicate<Product> pred)
@@ -163,35 +161,35 @@ public class FMCA {
 	}
 
 
-	public Set<Product> productsWithNonEmptyOrchestrationFamily()
-	{
-		return applyOnFamilyOrchestration(aut,this::productsWithNonEmptyOrchestration);
-	}
+//	public Set<Product> productsWithNonEmptyOrchestrationFamily()
+//	{
+//		return applyOnFamilyOrchestration(aut,this::productsWithNonEmptyOrchestration);
+//	}
 
-	public Set<Product> respectingValidityFamily()
-	{
-		return applyOnFamilyOrchestration(aut, this::productsRespectingValidity);
-	}
+//	public Set<Product> respectingValidityFamily()
+//	{
+//		return applyOnFamilyOrchestration(aut, this::productsRespectingValidity);
+//	}
 
-	private Set<Product> applyOnFamilyOrchestration(MSCA aut, Function<MSCA,Set<Product>> fun)
-	{
-		if (!aut.getForwardStar(aut.getInitial()).stream()
-				.map(MSCATransition::getLabel)
-				.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
-			throw new UnsupportedOperationException();
-
-		return aut.getForwardStar(aut.getInitial()).stream()
-				.map(MSCATransition::getTarget)
-				.map(s1->{
-					MSCA a=aut.clone();
-					a.getInitial().setInitial(false);
-					CAState s = a.getStates().parallelStream()
-							.filter(s2->s2.getState().toString().equals(s1.getState().toString()))//ignoring initial flag
-							.findAny().orElseThrow(IllegalArgumentException::new);
-					s.setInitial(true);
-					return fun.apply(a);
-				})
-				.flatMap(Set::stream)
-				.collect(Collectors.toSet());
-	}
+//	private Set<Product> applyOnFamilyOrchestration(MSCA aut, Function<MSCA,Set<Product>> fun)
+//	{
+//		if (!aut.getForwardStar(aut.getInitial()).stream()
+//				.map(MSCATransition::getLabel)
+//				.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
+//			throw new UnsupportedOperationException();
+//
+//		return aut.getForwardStar(aut.getInitial()).stream()
+//				.map(MSCATransition::getTarget)
+//				.map(s1->{
+//					MSCA a=aut.clone();
+//					a.getInitial().setInitial(false);
+//					CAState s = a.getStates().parallelStream()
+//							.filter(s2->s2.getState().toString().equals(s1.getState().toString()))//ignoring initial flag
+//							.findAny().orElseThrow(IllegalArgumentException::new);
+//					s.setInitial(true);
+//					return fun.apply(a);
+//				})
+//				.flatMap(Set::stream)
+//				.collect(Collectors.toSet());
+//	}
 }

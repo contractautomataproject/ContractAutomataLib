@@ -14,11 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,7 +47,7 @@ public class Family {
 	{
 		if (products==null)
 			throw new IllegalArgumentException();
-		
+
 		this.products=new HashSet<>(products);
 
 		pom=products.parallelStream()
@@ -64,11 +66,11 @@ public class Family {
 	public Set<Product> getProducts() {
 		return products;
 	}
-	
+
 	public Map<Product, Map<Boolean, Set<Product>>> getPom() {
 		return pom;
 	}
-	
+
 	public static Set<Product> readFileNew(String filename) throws IOException{
 		//Path p=Paths.get(currentdir, filename);
 		Path p=Paths.get("", filename);
@@ -93,7 +95,7 @@ public class Family {
 						.collect(Collectors.toSet())))
 				.collect(Collectors.toSet());
 	}
-	
+
 	public static void writeFile(String filename, Set<Product> pr) throws IOException
 	{	
 		if (filename=="")
@@ -101,12 +103,12 @@ public class Family {
 
 		if (!filename.endsWith(".prod"))
 			filename+=".prod";
-		
+
 		List<Product> ar = new ArrayList<Product>(pr);
 		PrintWriter pw = new PrintWriter(filename); 
 		pw.print(IntStream.range(0, ar.size())
-		.mapToObj(i->ar.get(i).toStringFile(i))
-		.collect(Collectors.joining(System.lineSeparator())));
+				.mapToObj(i->ar.get(i).toStringFile(i))
+				.collect(Collectors.joining(System.lineSeparator())));
 		pw.close();
 	}
 
@@ -142,95 +144,152 @@ public class Family {
 				.collect(Collectors.toSet());
 	}
 
-	//************************TODO still to be refactored***************//
-	
 	/**
 	 * loads the list of products generated through FeatureIDE
 	 * 
 	 * @param currentdir
 	 * @param filename
 	 * @return
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
-	public static Product[] importFamily(String currentdir, String filename)
+	public static Set<Product> importFamily(String currentdir, String filename) throws ParserConfigurationException, SAXException, IOException
 	{	
-		String[] features=getFeatures(filename);
+		Set<String> features=getFeatures(filename);
 		String[][] eq = detectDuplicates(filename);
-		//int counteq=0;
 		for (int i=0;i<eq.length;i++)
 		{
-			if (FamilyUtils.contains(eq[i][0], features)&&FamilyUtils.contains(eq[i][1], features))
-			{
-				int index=FamilyUtils.getIndex(features, eq[i][1]);
-				features[index]=null;
-				//		counteq++;
-			}
+			if (features.contains(eq[i][0])&&features.contains(eq[i][1]))
+				features.remove(eq[i][1]);
 		}
-		features=FamilyUtils.removeHoles(features, new String[] {}); //,counteq);
-		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"));
-		currentdir+="\\products\\";
+
+		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"))+"\\products\\";
+
 		File folder = new File(currentdir);
-		File[] listOfFiles = folder.listFiles();
-		Product[] pr=new Product[listOfFiles.length];
-		int prlength=0;
-		for (int i = 0; i < listOfFiles.length; i++) {
-			Path p=null;
-			boolean found=true;
-			if (listOfFiles[i].isFile()&&listOfFiles[i].getName().contains("config")) { //no sub-directory on products
-				p=Paths.get("", listOfFiles[i].getAbsolutePath());
-			}
-			else if (listOfFiles[i].isDirectory())
-			{
-				File[] ff = listOfFiles[i].listFiles();
-				if (ff!=null && ff.length>0 && ff[0]!=null && ff[0].isFile()&&ff[0].getName().contains("config")) //each product has its own sub-directory
-				{
-					//this condition is never satisfied in the tests
+		List<File> listOfFiles = Arrays.asList(folder.listFiles());
 
-					p=Paths.get("", ff[0].getAbsolutePath());
-				}
-				else
-					found=false;
-			}
-			if (found)
-			{
-				Charset charset = Charset.forName("ISO-8859-1");
-				List<String> lines = null;
-				try {
-					lines = Files.readAllLines(p, charset);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				/*if (prlength==0||prlength==15)
+		Set<Product> setprod=listOfFiles.parallelStream()
+				.map(f->{
+					if (f.isFile()&&f.getName().contains("config"))
+						return f.getAbsolutePath();//no sub-directory on products
+					if (f.isDirectory())
 					{
-						System.out.println();
+						File[] ff = f.listFiles();
+						if (ff!=null && ff.length>0 && ff[0]!=null && ff[0].isFile()&&ff[0].getName().contains("config"))//each product has its own sub-directory
+							return ff[0].getAbsolutePath();//this condition is never satisfied in the tests
 					}
-				 */					String[] f1 = lines.toArray(new String[lines.size()]); //required features
-				 Product pro = new Product(FamilyUtils.setIntersection(f1, features, new String[] {}), FamilyUtils.setDifference(features, f1, new String[] {}), eq); 
-				 boolean alreadyinserted=false;
-				 /**
-				  * product generation of featureide may generate duplicate products!
-				  */
-				 for (int z=0;z<prlength;z++) 
-				 {
-					 if (pro.equals(pr[z]))
-					 {
-						 //this condition is never satisfied in the tests
+					return "";	
+				})
+				.filter(s->s.length()>0)
+				.map(s->{
+					try {
+						return Files.readAllLines(Paths.get("", s), Charset.forName("ISO-8859-1"));//required features
+					} catch (IOException e) {
+						throw new IllegalArgumentException();
+					}
+				})
+				.map(l->{
+					return new Product(features.parallelStream()
+							.filter(s->l.contains(s))//required
+							.map(s->new Feature(s))
+							.collect(Collectors.toSet()),
+							features.parallelStream()
+							.filter(s->!l.contains(s))//forbidden
+							.map(s->new Feature(s))
+							.collect(Collectors.toSet()));})
+				.collect(Collectors.toSet());
+		
+		/**
+		 * 
+		 * given two products p1 p2 identical but for a feature f activated in one 
+		 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
+		 * This method generates all possible super products. 
+		 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
+		 * This condition holds for the method.
+		 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
+		 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
+		 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
+         *
+		 **/
+		return Stream.iterate(setprod, s->!s.isEmpty(), sp->{
+			Map<Product,Set<Product>> map = features.stream()
+					.map(f->sp.stream()
+							.collect(Collectors.groupingByConcurrent(p->p.removeFeature(new Feature(f)), Collectors.toSet())))
+					.reduce(new ConcurrentHashMap<Product,Set<Product>>(),(x,y)->{x.putAll(y); return x;});	
+			return map.entrySet().parallelStream()
+					.filter(e->e.getValue().size()>1)
+					.map(Entry::getKey)
+					.collect(Collectors.toSet());})
+		.reduce(new HashSet<Product>(),(x,y)->{x.addAll(y); return x;});
 
-						 alreadyinserted=true;
-						 break;
-					 }
-				 }
-				 if (!alreadyinserted)
-				 {
-					 pr[prlength]=pro;
-					 prlength++;
-				 }
-			}		      
+	}
+
+	private static Set<String> getFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
+	{
+		File inputFile = new File(filename);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(inputFile);
+		doc.getDocumentElement().normalize();
+
+		NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
+
+		Set<String> features=new HashSet<>();
+		for (int i = 0; i < nodeList.getLength(); i++) 
+		{
+			Node nNode = nodeList.item(i);
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+				features.add(((Element) nNode).getAttribute("name"));    
 		}
-		pr=FamilyUtils.removeTailsNull(pr, prlength, new Product[] {});
-		return generateSuperProducts(pr,features);
+		return features;		
 	}
 
 	/**
+	 * reads all iff constraints (eq node) and returns a table such that forall i table[i][0] equals table[i][1]
+	 * @param filename
+	 * @return
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 */
+	private static String[][] detectDuplicates(String filename) throws ParserConfigurationException, SAXException, IOException
+	{
+		File inputFile = new File(filename);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
+		Document doc = dBuilder.parse(inputFile);
+		doc.getDocumentElement().normalize();
+
+		NodeList nodeList = (NodeList) doc.getElementsByTagName("eq");
+
+		String[][] table= new String[nodeList.getLength()][2]; //exact length
+
+		int ind =0;
+		for (int i = 0; i < nodeList.getLength(); i++) 
+		{
+			Node nNode = nodeList.item(i);
+			//  System.out.println("\nCurrent Element :" 
+			//     + nNode.getNodeName());
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+			{
+				NodeList childs = (NodeList) nNode.getChildNodes();
+				Node first = childs.item(1);
+				Node second = childs.item(3);
+				table[ind][0]= first.getTextContent();    
+				table[ind][1]= second.getTextContent();          
+				ind++;
+			}       
+		}
+		return table;		
+	}
+
+}
+
+//END OF THE CLASS
+
+/**
 	 * 
 	 * given two products p1 p2 identical but for a feature f activated in one 
 	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
@@ -246,202 +305,99 @@ public class Family {
 	 * @param features  the features of the products
 	 * @return  list containing all valid superproducts (aka subfamily)
 	 */
-	private static Product[] generateSuperProducts(Product[] p, String[] features)
-	{
-		if ((p==null)||features==null)
-			return null;
+	//	private static Product[] generateSuperProducts(Product[] p, String[] features)
+	//	{
+	//		Product[][] pl= new Product[features.length][];
+	//		pl[features.length-1]=p;
+	//		for (int level=features.length; level>1;level--)//start from the bottom of the tree, all features instantiated
+	//		{
+	//			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
+	//			//String[]  featuresremoved = new String[pl[level-1].length*(pl[level-1].length-1)]; //debug
+	//			int newprodind=0;
+	//			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
+	//			{
+	//				for (int prodind=0; prodind<pl[level-1].length;prodind++)
+	//				{
+	//					if (pl[level-1][prodind].getForbiddenAndRequiredNumber()==level && 
+	//							pl[level-1][prodind].containFeature(new Feature(features[removedfeature])))
+	//					{
+	//						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
+	//						{
+	//							//debug
+	//							/*
+	//							 * if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9)) { boolean
+	//							 * debug=true; }
+	//							 */
+	//
+	//
+	//							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level 
+	//									&& pl[level-1][prodcompare].containFeature(new Feature(features[removedfeature]))) 
+	//								/*for each pair of products at the same level check if by removing the selected feature they 
+	//								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
+	//								  product (the feature is contained in both products). No duplicates are inserted.
+	//								 */
+	//							{
+	//								/*								Product debug=pl[level-1][prodind];
+	//								Product debug2=pl[level-1][prodcompare];
+	//								if (debug.equals(debug2))
+	//								{
+	//									boolean error=true;
+	//								}
+	//								 */								
+	//								 String[] rf=new String[1];
+	//								 rf[0]=features[removedfeature];
+	//
+	//								 Product p1 = new Product(FamilyUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
+	//										 FamilyUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
+	//								 Product p2 = new Product(FamilyUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
+	//										 FamilyUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
+	//								 if (p1.equals(p2))
+	//								 {	//featuresremoved[newprodind]=features[removedfeature];
+	//									 boolean alreadyinserted=false;
+	//									 for (int z=0;z<newprodind;z++) //check if the product was not inserted previously by removing a different feature
+	//									 {
+	//										 if (p1.equals(newproducts[z]))
+	//										 {
+	//											 alreadyinserted=true;
+	//											 break;
+	//										 }
+	//									 }
+	//									 if (!alreadyinserted)
+	//									 {
+	//										 //new super product discovered!
+	//										 newproducts[newprodind]=p1;
+	//										 newprodind++;
+	//									 }
+	//
+	//								 }
+	//							}			
+	//						}
+	//					}
+	//				}
+	//			}
+	//			if (newprodind>0)
+	//			{
+	//				newproducts=FamilyUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
+	//				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
+	//				pl[level-2]=newproducts;
+	//			}
+	//			else
+	//				break; //stop earlier when no products are discovered
+	//		}
+	//		for (int i=features.length-2;i>=0;i--)
+	//		{	
+	//			if (pl[i]!=null)
+	//			{
+	//				List<Product> lp= new ArrayList<>(Arrays.asList(p));
+	//				lp.addAll(Arrays.asList(pl[i]));
+	//				p=lp.toArray(p);
+	//				//FMCAUtil.concat(p, pl[i]);  
+	//			}
+	//		}
+	//		return p;
+	//	}
 
-		Product[][] pl= new Product[features.length][];
-		pl[features.length-1]=p;
-		for (int level=features.length; level>1;level--)//start from the bottom of the tree, all features instantiated
-		{
-			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
-			//String[]  featuresremoved = new String[pl[level-1].length*(pl[level-1].length-1)]; //debug
-			int newprodind=0;
-			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
-			{
-				for (int prodind=0; prodind<pl[level-1].length;prodind++)
-				{
-					if (pl[level-1][prodind].getForbiddenAndRequiredNumber()==level && pl[level-1][prodind].containFeature(new Feature(features[removedfeature])))
-					{
-						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
-						{
-							//debug
-							/*
-							 * if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9)) { boolean
-							 * debug=true; }
-							 */
 
-
-							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level && pl[level-1][prodcompare].containFeature(new Feature(features[removedfeature]))) 
-								/*for each pair of products at the same level check if by removing the selected feature they 
-								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
-								  product (the feature is contained in both products). No duplicates are inserted.
-								 */
-							{
-								/*								Product debug=pl[level-1][prodind];
-								Product debug2=pl[level-1][prodcompare];
-								if (debug.equals(debug2))
-								{
-									boolean error=true;
-								}
-								 */								String[] rf=new String[1];
-								 rf[0]=features[removedfeature];
-
-								 Product p1 = new Product(FamilyUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
-										 FamilyUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
-								 Product p2 = new Product(FamilyUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
-										 FamilyUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
-								 if (p1.equals(p2))
-								 {	//featuresremoved[newprodind]=features[removedfeature];
-									 boolean alreadyinserted=false;
-									 for (int z=0;z<newprodind;z++) //check if the product was not inserted previously by removing a different feature
-									 {
-										 if (p1.equals(newproducts[z]))
-										 {
-											 alreadyinserted=true;
-											 break;
-										 }
-									 }
-									 if (!alreadyinserted)
-									 {
-										 //new super product discovered!
-										 newproducts[newprodind]=p1;
-										 newprodind++;
-									 }
-
-								 }
-							}			
-						}
-					}
-				}
-			}
-			if (newprodind>0)
-			{
-				newproducts=FamilyUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
-				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
-				pl[level-2]=newproducts;
-			}
-			else
-				break; //stop earlier when no products are discovered
-		}
-		for (int i=features.length-2;i>=0;i--)
-		{	
-			if (pl[i]!=null)
-			{
-				List<Product> lp= new ArrayList<>(Arrays.asList(p));
-				lp.addAll(Arrays.asList(pl[i]));
-				p=lp.toArray(p);
-				//FMCAUtil.concat(p, pl[i]);  
-			}
-		}
-		return p;
-	}
-
-	private static String[] getFeatures(String filename)
-	{
-		String[] features=null;
-		try {
-			File inputFile = new File(filename);
-			DocumentBuilderFactory dbFactory 
-			= DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder;
-
-			dBuilder = dbFactory.newDocumentBuilder();
-
-			Document doc = dBuilder.parse(inputFile);
-			doc.getDocumentElement().normalize();
-
-			//XPath xPath =  XPathFactory.newInstance().newXPath();
-
-			//NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
-			NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
-
-			features=new String[nodeList.getLength()];
-
-			int ind =0;
-			for (int i = 0; i < nodeList.getLength(); i++) 
-			{
-				Node nNode = nodeList.item(i);
-				//  System.out.println("\nCurrent Element :" 
-				//     + nNode.getNodeName());
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
-				{
-					Element eElement = (Element) nNode;
-					features[i]=eElement.getAttribute("name");    
-					ind++;
-				}       
-			}
-			features=FamilyUtils.removeTailsNull(features, ind, new String[] {});
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		return features;		
-	}
-
-	/**
-	 * reads all iff constraints (eq node) and returns a table such that forall i table[i][0] equals table[i][1]
-	 * @param filename
-	 * @return
-	 */
-	private static String[][] detectDuplicates(String filename)
-	{
-		String[][] table = null;
-		try {
-			File inputFile = new File(filename);
-			DocumentBuilderFactory dbFactory 
-			= DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder;
-
-			dBuilder = dbFactory.newDocumentBuilder();
-
-			Document doc = dBuilder.parse(inputFile);
-			doc.getDocumentElement().normalize();
-
-			//XPath xPath =  XPathFactory.newInstance().newXPath();
-
-			//NodeList nodeList = (NodeList) xPath.compile("").evaluate(doc, XPathConstants.NODESET);
-			NodeList nodeList = (NodeList) doc.getElementsByTagName("eq");
-
-			table= new String[nodeList.getLength()][2]; //exact length
-
-			int ind =0;
-			for (int i = 0; i < nodeList.getLength(); i++) 
-			{
-				Node nNode = nodeList.item(i);
-				//  System.out.println("\nCurrent Element :" 
-				//     + nNode.getNodeName());
-				if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
-				{
-					NodeList childs = (NodeList) nNode.getChildNodes();
-					Node first = childs.item(1);
-					Node second = childs.item(3);
-					table[ind][0]= first.getTextContent();    
-					table[ind][1]= second.getTextContent();          
-					ind++;
-				}       
-			}
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		return table;		
-	}
-
-}
-
-//END OF THE CLASS
 
 // old snippet
 //

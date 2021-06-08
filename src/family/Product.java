@@ -19,93 +19,33 @@ public class Product {
 	private final Set<Feature> required;
 	private final Set<Feature> forbidden;
 	
-	public Product(String[] r, String[] f)
-	{
-		if (r==null || f==null)
-			throw new IllegalArgumentException();
-		//all positive integers, to avoid sign mismatches
-//		String[] rp = new String[r.length];
-//		for (int i=0;i<r.length;i++)
-//			rp[i]=CALabel.getUnsignedAction(r[i]);
-//
-//		String[] fp = new String[f.length];
-//		for (int i=0;i<f.length;i++)
-//			fp[i]=CALabel.getUnsignedAction(f[i]);
-		
-		this.required=Arrays.stream(r).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet());
-		this.forbidden=Arrays.stream(f).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet());
-	}
-
-
-	/**
-	 * 
-	 * instantiate a product considering only one element of those that are equals
-	 * 
-	 * @param r
-	 * @param f
-	 * @param eq an array of elements such that eq[i][0] is equal to eq[i][1]
-	 */
-	public Product(String[] r, String[] f, String[][] eq)
-	{
-		//this method is only using when importing from featureide, probably 
-		//there are duplicate strings and this method remove duplicates... need
-		//to check better
-		
-		String[] rp = new String[r.length];
-		for (int i=0;i<r.length;i++)
-			rp[i]=CALabel.getUnsignedAction(r[i]);
-
-		String[] fp = new String[f.length];
-		for (int i=0;i<f.length;i++)
-			fp[i]=CALabel.getUnsignedAction(f[i]);
-
-		for (int i=0;i<eq.length;i++)
-		{
-			if (FamilyUtils.contains(eq[i][0], rp)&&FamilyUtils.contains(eq[i][1], rp))
-			{
-				//condition never satisfied during tests!
-				
-				int index=FamilyUtils.getIndex(rp, eq[i][1]);
-				rp[index]=null;
-			}
-			else if (FamilyUtils.contains(eq[i][0], fp)&&FamilyUtils.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
-			{
-				//condition never satisfied during tests!
-				
-				int index=FamilyUtils.getIndex(fp, eq[i][1]);
-				fp[index]=null;
-			}
-		}
-		rp=FamilyUtils.removeHoles(rp, new String[] {});
-		fp=FamilyUtils.removeHoles(fp, new String[] {}); 
-
-		this.required=Arrays.stream(rp).map(s->new Feature(s)).collect(Collectors.toSet());
-		this.forbidden=Arrays.stream(fp).map(s->new Feature(s)).collect(Collectors.toSet());
-	}
-	
 	public Product(Set<Feature> required, Set<Feature> forbidden)
 	{
 		if (required==null||forbidden==null)
 			throw new IllegalArgumentException();
+		if (required.parallelStream()
+				.anyMatch(f->forbidden.contains(f))
+				||
+				forbidden.parallelStream()
+				.anyMatch(f->required.contains(f)))
+			throw new IllegalArgumentException("A feature is both required and forbidden");
+		
 		this.required=required;
 		this.forbidden=forbidden;
 	}
 	
-	public String[] getRequired()
+	public Product(String[] r, String[] f)
 	{
-		return required.stream().map(f->f.getName()).toArray(String[]::new);
+		this(Arrays.stream(r).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet()),
+		Arrays.stream(f).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet()));
 	}
 	
-	public String[] getForbidden()
-	{
-		return forbidden.stream().map(f->f.getName()).toArray(String[]::new);
-	}
-	
-	public Set<Feature> getRequiredf()
+	public Set<Feature> getRequired()
 	{
 		return required;
 	}
-	public Set<Feature> getForbiddenf()
+	
+	public Set<Feature> getForbidden()
 	{
 		return forbidden;
 	}
@@ -122,16 +62,7 @@ public class Product {
 	 */
 	public boolean containsAllFeatures(Product p)
 	{
-//		String[] rp=p.getRequired();
-//		String[] rf=p.getForbidden();
-//		for(int i=0;i<rp.length;i++)
-//			if (!FamilyUtils.contains(rp[i], this.required))
-//				return false;
-//		for(int i=0;i<rf.length;i++)
-//			if (!FamilyUtils.contains(rf[i], this.forbidden))
-//				return false;
-//		return true;
-		return this.forbidden.containsAll(p.getForbiddenf())&&this.required.containsAll(p.getRequiredf());
+		return this.forbidden.containsAll(p.getForbidden())&&this.required.containsAll(p.getRequired());
 	}
 	
 	/**
@@ -141,14 +72,7 @@ public class Product {
 	 */
 	public boolean containsAllForbiddenFeatures(Product p)
 	{
-//		String[] rf=p.getForbidden();
-//		for(int i=0;i<rf.length;i++)
-//			if (!FamilyUtils.contains(rf[i], this.forbidden))
-//				return false;
-//		
-//		return true;
-
-		return this.forbidden.containsAll(p.getForbiddenf());
+		return this.forbidden.containsAll(p.getForbidden());
 	}
 	
 	/**
@@ -158,12 +82,7 @@ public class Product {
 	 */
 	public boolean containsAllRequiredFeatures(Product p)
 	{
-//		String[] rf=p.getRequired();
-//		for(int i=0;i<rf.length;i++)
-//			if (!FamilyUtils.contains(rf[i], this.required))
-//				return false;		
-//		return true;
-		return this.required.containsAll(p.getRequiredf());
+		return this.required.containsAll(p.getRequired());
 	}
 	
 	
@@ -174,11 +93,21 @@ public class Product {
 	 */
 	public boolean containFeature(Feature f)
 	{
-		Product temp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>(Arrays.asList(f)));
-		return (this.containsAllRequiredFeatures(temp)||this.containsAllForbiddenFeatures(temp));
+		Product rp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>());
+		Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
+		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
 	}
 	
-	
+	public Product removeFeature(Feature f)
+	{
+		Set<Feature> req = new HashSet<>(this.required);
+		Set<Feature> frb = new HashSet<>(this.forbidden);
+		
+		if (!req.remove(f))
+			if (!frb.remove(f))
+				return this;
+		return new Product(req,frb);
+	}
 	/**
 	 * 
 	 * @param tr
@@ -192,19 +121,6 @@ public class Product {
 		return required.stream()
 		.map(Feature::getName)
 		.allMatch(s->act.contains(s));
-
-//		for (int i=0;i<this.required.length;i++)
-//		{
-//			boolean found=false;
-//			for (MSCATransition t : tr)
-//			{
-//				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.required[i]))  //do not differ between requests and offers
-//					found=true;
-//			}
-//			if (!found)
-//				return false;
-//		}
-//		return true;
 	}
 	
 	/**
@@ -220,22 +136,12 @@ public class Product {
 		return forbidden.stream()
 		.map(Feature::getName)
 		.allMatch(s->!act.contains(s));
-//		for (int i=0;i<this.forbidden.length;i++)
-//		{
-//			for (MSCATransition t : tr)
-//			{
-//				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
-//					return false;
-//			}
-//		}
-//		return true;
 	}
 
 	public boolean isForbidden(MSCATransition t)
 	{
 		Feature f = new Feature(t.getLabel().getUnsignedAction());
-		return this.getForbiddenf().contains(f);
-//		return (FamilyUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
+		return this.getForbidden().contains(f);
 	}
 
 //	private boolean isRequired(MSCATransition t)
@@ -253,21 +159,10 @@ public class Product {
 	public String toString()
 	{
 		return "R:"+required.toString()+";\nF:"+forbidden.toString()+";\n";
-//		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
 	}
 	
 	public String toStringFile(int id)
 	{
-//		String req="";
-//		for (int i=0;i<required.length;i++)
-//		{
-//			req+=required[i]+",";
-//		}
-//		String forb="";
-//		for (int i=0;i<forbidden.length;i++)
-//		{
-//			forb+=forbidden[i]+",";
-//		}
 		String req=required.stream()
 				.map(f->f.getName())
 				.collect(Collectors.joining(","));

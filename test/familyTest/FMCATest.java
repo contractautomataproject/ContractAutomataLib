@@ -89,23 +89,23 @@ public class FMCATest {
 	}
 	
 
-	@Test
-	public void validProductsOrcFam() throws Exception
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
-
-		Set<Product> rv = aut.respectingValidityFamily();
-
-		Set<Product> test = Family.readFileNew(dir+"/CATest/respectingValidityTest.prod");
-//		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
-//				.mapToObj(i->fam.getElements()[i])
-//				.collect(Collectors.toSet());
-//		
-		assertTrue(rv.equals(test));
-	}
+//	@Test
+//	public void validProductsOrcFam() throws Exception
+//	{
+//		String dir = System.getProperty("user.dir");
+//		String fileName =dir+"/CATest/ValidProducts.prod";
+//		Family fam=new Family(fileName);
+//		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
+//
+//		Set<Product> rv = aut.respectingValidityFamily();
+//
+//		Set<Product> test = Family.readFileNew(dir+"/CATest/respectingValidityTest.prod");
+////		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
+////				.mapToObj(i->fam.getElements()[i])
+////				.collect(Collectors.toSet());
+////		
+//		assertTrue(rv.equals(test));
+//	}
 	
 	@Test
 	public void testValidProductsOrc() throws Exception
@@ -142,6 +142,19 @@ public class FMCATest {
 		assertTrue(cps.equals(test));
 	}
 
+	@Test
+	public void testProductsWithNonEmptyOrchestration() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
+		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
+
+		Set<Product> test = Family.readFileNew(dir+"/CATest/productsWithNonEmptyOrchestration.prod");
+		
+		assertTrue(vp.equals(test));
+	}
 
 	@Test
 	public void testFamilyOrc() throws Exception
@@ -173,7 +186,33 @@ public class FMCATest {
 		assertEquals(MSCATest.checkTransitions(ofe, test),true);
 
 	}
+
+	//exceptions
 	
+	@Test
+	public void testCanonicalProductsException() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
+
+		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
+		.isInstanceOf(UnsupportedOperationException.class);
+		
+	}
+
+	@Test
+	public void testSelectProductSatisfyingPredicateException() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
+		
+		assertThatThrownBy(() ->aut.productsWithNonEmptyOrchestration())
+		.isInstanceOf(UnsupportedOperationException.class);
+	}
 }
 
 

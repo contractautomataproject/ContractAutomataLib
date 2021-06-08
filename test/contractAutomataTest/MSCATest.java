@@ -171,8 +171,7 @@ public class MSCATest {
 
 		
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		MSCA cor=aut.clone();
-		cor=cor.synthesis((x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
+		MSCA cor=aut.synthesis((x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
 				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
 
 		assertEquals(cor,null);
@@ -235,14 +234,12 @@ public class MSCATest {
 		assertEquals(checkTransitions(aut.choreography(),test),true);
 	}
 
-	@Test
-	public void cloneTest() throws Exception
-	{
-
-		
-		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_urgent.mxe");
-		assertEquals(checkTransitions(aut,aut.clone()),true);
-	}
+//	@Test
+//	public void cloneTest() throws Exception
+//	{	
+//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/test_urgent.mxe");
+//		assertEquals(checkTransitions(aut,aut.clone()),true);
+//	}
 
 	@Test
 	public void compTestSimple() throws Exception
