@@ -9,8 +9,7 @@ They are used for specifying services' interface, called behavioral contracts,
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA).
 
-The tool is undergoing a refactoring in Java 8 and redesigning.
-At the time of writing, the package contractAutomata is almost totally rewritten in Java 8.
+The source code has been almost totally redesigned and refactored  in Java 8.
 
 <h2>Usage</h2>
 
@@ -43,8 +42,6 @@ The core is the class `MSCA.java` implementing the algorithm
 for synthesising a safe orchestration, choreography, or most permissive controller.
 This class offers functionalities for composing automata, for computing the union
 of `MSCA` and other utilities. 
-The class `FMCA.java` decorates MSCA by adding a method for computing orchestrations 
-of a product.
 The stand-alone Java class `MSCAIO.java` concerns with the storing of file descriptors. 
 There are two types of formats: 
 An automaton is stored in either a readable textual representation
@@ -58,9 +55,13 @@ the graphical visualization of the CA.
 
 ![The class diagram of contractAutomata package](./doc/CATdiagram.png)[fig:the class diagram of contractAutomata package]
 
-**family** This package contains the class `Family.java` that uses another class `Product.java` for
-memorising the various products composing a given product line. It
-contains the methods for computing the valid products of a family, for
+**family** 
+This package has been recently refactored, the documentation is not up to date.
+This package contains the classese `Family.java` that uses another  `Product.java` for
+memorising the various products composing a given product line. 
+The class `FMCA.java` decorates MSCA by adding a method for computing orchestrations 
+of a product.
+It contains the methods for computing the valid products of a family, for
 computing the partial order of products and the canonical product. 
 It is
 also used  for computing the the union of the orchestrations of the canonical
@@ -70,7 +71,6 @@ The package also contains, under the class `Product.java`, the Partial Order
 Generation from a `*.prod` file, computed when the product
 files are loaded, where `*.prod`
 files contain textual descriptions of products. 
-At the moment of writing, the package family has not been refactored to Java 8. 
 The wiki contains an excerpt from a published paper regarding the product lines functionalities of the tool.
 
 ![The class diagram of family package](./doc/familyDiagram.png)[fig:the class diagram of family package]

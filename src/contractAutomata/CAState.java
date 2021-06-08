@@ -73,9 +73,9 @@ public class CAState {
 	
 	public String toCSV()
 	{
-		return "[state="+getState().stream()
+		return "[state=["+getState().stream()
 		.map(bs->bs.toCSV())
-		.collect(Collectors.joining())+"]";
+		.collect(Collectors.joining())+"]]";
 	}
 
 

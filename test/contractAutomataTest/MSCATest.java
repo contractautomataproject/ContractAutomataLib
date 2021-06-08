@@ -336,20 +336,20 @@ public class MSCATest {
 				.allMatch(t->autTr.contains(t));
 	}
 
-	@Test
-	public void setInitialCATest() throws Exception {
-		
-		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
-
-		CAState newInitial = aut.getStates().parallelStream()
-				.filter(s->s!=aut.getInitial())
-				.findFirst()
-				.orElse(null);
-
-		aut.setInitialCA(newInitial);
-
-		assertEquals(aut.getInitial(),newInitial);
-	}
+//	@Test
+//	public void setInitialCATest() throws Exception {
+//		
+//		MSCA aut = MSCAIO.load(dir+"/CAtest/BusinessClient.mxe.data");
+//
+//		CAState newInitial = aut.getStates().parallelStream()
+//				.filter(s->s!=aut.getInitial())
+//				.findFirst()
+//				.orElse(null);
+//
+//		aut.setInitialCA(newInitial);
+//
+//		assertEquals(aut.getInitial(),newInitial);
+//	}
 
 	@Test
 	public void union_null() 

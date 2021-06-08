@@ -71,7 +71,7 @@ public class BasicMxeConverter implements MxeConverter {
 						if (princ2bs.containsKey(principal))
 						{
 							Set<BasicState> sbs = princ2bs.get(principal);
-							if (sbs.stream()
+							if (!sbs.isEmpty()&&sbs.stream()
 									.map(BasicState::getLabel)
 									.anyMatch(s->s.equals(bs.getLabel())))
 								throw new IOException("Duplicate basic states labels");

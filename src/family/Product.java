@@ -1,7 +1,9 @@
 package family;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import contractAutomata.CALabel;
 import contractAutomata.MSCA;
@@ -14,23 +16,26 @@ import contractAutomata.MSCATransition;
  *
  */
 public class Product {
-	private String[] required; //TODO use Set
-	private String[] forbidden;
+	private final Set<Feature> required;
+	private final Set<Feature> forbidden;
 	
 	public Product(String[] r, String[] f)
 	{
+		if (r==null || f==null)
+			throw new IllegalArgumentException();
 		//all positive integers, to avoid sign mismatches
-		String[] rp = new String[r.length];
-		for (int i=0;i<r.length;i++)
-			rp[i]=CALabel.getUnsignedAction(r[i]);
-
-		String[] fp = new String[f.length];
-		for (int i=0;i<f.length;i++)
-			fp[i]=CALabel.getUnsignedAction(f[i]);
-
-		this.required=rp;
-		this.forbidden=fp;
+//		String[] rp = new String[r.length];
+//		for (int i=0;i<r.length;i++)
+//			rp[i]=CALabel.getUnsignedAction(r[i]);
+//
+//		String[] fp = new String[f.length];
+//		for (int i=0;i<f.length;i++)
+//			fp[i]=CALabel.getUnsignedAction(f[i]);
+		
+		this.required=Arrays.stream(r).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet());
+		this.forbidden=Arrays.stream(f).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet());
 	}
+
 
 	/**
 	 * 
@@ -42,7 +47,10 @@ public class Product {
 	 */
 	public Product(String[] r, String[] f, String[][] eq)
 	{
-		//all positive integers, to avoid sign mismatches
+		//this method is only using when importing from featureide, probably 
+		//there are duplicate strings and this method remove duplicates... need
+		//to check better
+		
 		String[] rp = new String[r.length];
 		for (int i=0;i<r.length;i++)
 			rp[i]=CALabel.getUnsignedAction(r[i]);
@@ -51,43 +59,60 @@ public class Product {
 		for (int i=0;i<f.length;i++)
 			fp[i]=CALabel.getUnsignedAction(f[i]);
 
-//		int countreq=0;
-//		int countforb=0;
-//		
 		for (int i=0;i<eq.length;i++)
 		{
 			if (FamilyUtils.contains(eq[i][0], rp)&&FamilyUtils.contains(eq[i][1], rp))
 			{
+				//condition never satisfied during tests!
+				
 				int index=FamilyUtils.getIndex(rp, eq[i][1]);
 				rp[index]=null;
-				//countreq++;
 			}
 			else if (FamilyUtils.contains(eq[i][0], fp)&&FamilyUtils.contains(eq[i][1], fp)) //the feature cannot be both required and forbidden
 			{
+				//condition never satisfied during tests!
+				
 				int index=FamilyUtils.getIndex(fp, eq[i][1]);
 				fp[index]=null;
-				//countforb++;
 			}
 		}
-		rp=FamilyUtils.removeHoles(rp, new String[] {}); //countreq
-		fp=FamilyUtils.removeHoles(fp, new String[] {}); //countforb
-		this.required=rp;
-		this.forbidden=fp;
+		rp=FamilyUtils.removeHoles(rp, new String[] {});
+		fp=FamilyUtils.removeHoles(fp, new String[] {}); 
+
+		this.required=Arrays.stream(rp).map(s->new Feature(s)).collect(Collectors.toSet());
+		this.forbidden=Arrays.stream(fp).map(s->new Feature(s)).collect(Collectors.toSet());
+	}
+	
+	public Product(Set<Feature> required, Set<Feature> forbidden)
+	{
+		if (required==null||forbidden==null)
+			throw new IllegalArgumentException();
+		this.required=required;
+		this.forbidden=forbidden;
 	}
 	
 	public String[] getRequired()
 	{
-		return required;
+		return required.stream().map(f->f.getName()).toArray(String[]::new);
 	}
 	
 	public String[] getForbidden()
+	{
+		return forbidden.stream().map(f->f.getName()).toArray(String[]::new);
+	}
+	
+	public Set<Feature> getRequiredf()
+	{
+		return required;
+	}
+	public Set<Feature> getForbiddenf()
 	{
 		return forbidden;
 	}
 	
 	public int getForbiddenAndRequiredNumber()
 	{
-		return required.length+forbidden.length;
+		return required.size()+forbidden.size();
 	}
 	
 	/**
@@ -95,18 +120,18 @@ public class Product {
 	 * @param p
 	 * @return
 	 */
-	public boolean containsFeatures(Product p)
+	public boolean containsAllFeatures(Product p)
 	{
-		String[] rp=p.getRequired();
-		String[] rf=p.getForbidden();
-		for(int i=0;i<rp.length;i++)
-			if (!FamilyUtils.contains(rp[i], this.required))
-				return false;
-		for(int i=0;i<rf.length;i++)
-			if (!FamilyUtils.contains(rf[i], this.forbidden))
-				return false;
-		
-		return true;
+//		String[] rp=p.getRequired();
+//		String[] rf=p.getForbidden();
+//		for(int i=0;i<rp.length;i++)
+//			if (!FamilyUtils.contains(rp[i], this.required))
+//				return false;
+//		for(int i=0;i<rf.length;i++)
+//			if (!FamilyUtils.contains(rf[i], this.forbidden))
+//				return false;
+//		return true;
+		return this.forbidden.containsAll(p.getForbiddenf())&&this.required.containsAll(p.getRequiredf());
 	}
 	
 	/**
@@ -114,14 +139,16 @@ public class Product {
 	 * @param p
 	 * @return
 	 */
-	public boolean containsForbiddenFeatures(Product p)
+	public boolean containsAllForbiddenFeatures(Product p)
 	{
-		String[] rf=p.getForbidden();
-		for(int i=0;i<rf.length;i++)
-			if (!FamilyUtils.contains(rf[i], this.forbidden))
-				return false;
-		
-		return true;
+//		String[] rf=p.getForbidden();
+//		for(int i=0;i<rf.length;i++)
+//			if (!FamilyUtils.contains(rf[i], this.forbidden))
+//				return false;
+//		
+//		return true;
+
+		return this.forbidden.containsAll(p.getForbiddenf());
 	}
 	
 	/**
@@ -129,62 +156,56 @@ public class Product {
 	 * @param p
 	 * @return
 	 */
-	public boolean containsRequiredFeatures(Product p)
+	public boolean containsAllRequiredFeatures(Product p)
 	{
-		String[] rf=p.getRequired();
-		for(int i=0;i<rf.length;i++)
-			if (!FamilyUtils.contains(rf[i], this.required))
-				return false;
-		
-		return true;
+//		String[] rf=p.getRequired();
+//		for(int i=0;i<rf.length;i++)
+//			if (!FamilyUtils.contains(rf[i], this.required))
+//				return false;		
+//		return true;
+		return this.required.containsAll(p.getRequiredf());
 	}
+	
 	
 	/**
 	 * 
 	 * @param f
 	 * @return  true if feature f is contained (either required or forbidden)
 	 */
-	public boolean containFeature(String f)
+	public boolean containFeature(Feature f)
 	{
-		String[] s= new String[1];
-		s[0]=f;
-		Product temp = new Product(s,s);
-		return (this.containsRequiredFeatures(temp)||this.containsForbiddenFeatures(temp));
+		Product temp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>(Arrays.asList(f)));
+		return (this.containsAllRequiredFeatures(temp)||this.containsAllForbiddenFeatures(temp));
 	}
 	
 	
 	/**
 	 * 
-	 * @param t
-	 * @return true if all required actions are available in the transitions t
+	 * @param tr
+	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends MSCATransition> set)
+	public boolean checkRequired(Set<? extends MSCATransition> tr)
 	{
-		for (int i=0;i<this.required.length;i++)
-		{
-			boolean found=false;
-			for (MSCATransition t : set)
-			{
-				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.required[i]))  //do not differ between requests and offers
-					found=true;
-			}
-			if (!found)
-				return false;
-		}
-		return true;
+		Set<String> act=tr.parallelStream()
+				.map(t->CALabel.getUnsignedAction(t.getLabel().getAction()))
+				.collect(Collectors.toSet());
+		return required.stream()
+		.map(Feature::getName)
+		.allMatch(s->act.contains(s));
+
+//		for (int i=0;i<this.required.length;i++)
+//		{
+//			boolean found=false;
+//			for (MSCATransition t : tr)
+//			{
+//				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.required[i]))  //do not differ between requests and offers
+//					found=true;
+//			}
+//			if (!found)
+//				return false;
+//		}
+//		return true;
 	}
-	
-
-	public boolean isForbidden(MSCATransition t)
-	{
-		return (FamilyUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
-	}
-
-//	private boolean isRequired(MSCATransition t)
-//	{
-//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
-//	}
-
 	
 	/**
 	 * 
@@ -193,57 +214,82 @@ public class Product {
 	 */
 	public boolean checkForbidden(Set<? extends MSCATransition> tr)
 	{
-		
-		for (int i=0;i<this.forbidden.length;i++)
-		{
-			for (MSCATransition t : tr)
-			{
-				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
-					return false;
-			}
-		}
-		return true;
+		Set<String> act=tr.parallelStream()
+				.map(t->CALabel.getUnsignedAction(t.getLabel().getAction()))
+				.collect(Collectors.toSet());
+		return forbidden.stream()
+		.map(Feature::getName)
+		.allMatch(s->!act.contains(s));
+//		for (int i=0;i<this.forbidden.length;i++)
+//		{
+//			for (MSCATransition t : tr)
+//			{
+//				if (CALabel.getUnsignedAction(t.getLabel().getAction()).equals(this.forbidden[i]))  //do not differ between requests and offers
+//					return false;
+//			}
+//		}
+//		return true;
 	}
-	
-	
+
+	public boolean isForbidden(MSCATransition t)
+	{
+		Feature f = new Feature(t.getLabel().getUnsignedAction());
+		return this.getForbiddenf().contains(f);
+//		return (FamilyUtils.getIndex(this.getForbidden(),t.getLabel().getUnsignedAction())>=0);
+	}
+
+//	private boolean isRequired(MSCATransition t)
+//	{
+//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
+//	}
+
+		
 	public boolean isValid(MSCA aut)
 	{
-		Set<? extends MSCATransition> t=aut.getTransition();
-		return this.checkForbidden(t)&&this.checkRequired(t);
+		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
 	}
 	
+	@Override
 	public String toString()
 	{
-		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
+		return "R:"+required.toString()+";\nF:"+forbidden.toString()+";\n";
+//		return "R:"+Arrays.toString(required)+";\nF:"+Arrays.toString(forbidden)+";\n";
 	}
 	
 	public String toStringFile(int id)
 	{
-		String req="";
-		for (int i=0;i<required.length;i++)
-		{
-			req+=required[i]+",";
-		}
-		String forb="";
-		for (int i=0;i<forbidden.length;i++)
-		{
-			forb+=forbidden[i]+",";
-		}
-		return "p"+id+": R={"+req+"} F={"+forb+"}";
+//		String req="";
+//		for (int i=0;i<required.length;i++)
+//		{
+//			req+=required[i]+",";
+//		}
+//		String forb="";
+//		for (int i=0;i<forbidden.length;i++)
+//		{
+//			forb+=forbidden[i]+",";
+//		}
+		String req=required.stream()
+				.map(f->f.getName())
+				.collect(Collectors.joining(","));
+		String forb=forbidden.stream()
+				.map(f->f.getName())
+				.collect(Collectors.joining(","));
+		return "p"+id+": R={"+req+",} F={"+forb+",}";
 	}
 	
 	public String toHTMLString(String s)
 	{
-        return "<html>"+s+"R:"+Arrays.toString(required)+"<br />F:"+Arrays.toString(forbidden)+"</html>";
+        return "<html>"+s+" R:"+required.toString()+"<br />F:"+forbidden.toString()+"</html>";
 	
 	}
-	
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(forbidden);
-		result = prime * result + Arrays.hashCode(required);
+		result = prime * result + forbidden.hashCode();
+		result = prime * result + required.hashCode();
 		return result;
 	}
 
@@ -256,29 +302,27 @@ public class Product {
 		if (getClass() != obj.getClass())
 			return false;
 		Product other = (Product) obj;
-		if (!Arrays.equals(forbidden, other.forbidden))
-			return false;
-		if (!Arrays.equals(required, other.required))
-			return false;
-		return true;
+		return forbidden.equals(other.forbidden)&&required.equals(other.required);
 	}
+
+	public boolean isComparableWith(Product p)
+	{
+		return this.containsAllFeatures(p)||p.containsAllFeatures(this);
+	}
+	
+	
+	public int compareTo(Product p) {
+		if (this.isComparableWith(p))
+			return p.getForbiddenAndRequiredNumber()-this.getForbiddenAndRequiredNumber();
+		else 
+			throw new UnsupportedOperationException("Products are not comparable");
+			
+	}
+
 }
 
 //END OF CLASS
 
-//	/**
-//	 * 
-//	 * @param p
-//	 * @return true if both products have the same required and forbidden features
-//	 */
-//	public boolean equals(Product p)
-//	{
-//		return (
-//			((p.getRequired().length==required.length)&&(this.containsRequiredFeatures(p)))
-//			&&
-//			((p.getForbidden().length==forbidden.length)&&(this.containsForbiddenFeatures(p)))			
-//			);
-//	}
 	
 //	@Override
 //	public Product clone()

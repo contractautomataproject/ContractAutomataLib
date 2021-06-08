@@ -9,20 +9,23 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
  */
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
-import contractAutomata.FMCA;
 import contractAutomata.MSCA;
 import contractAutomata.MSCAIO;
 import contractAutomataTest.MSCATest;
+import family.FMCA;
 import family.Family;
 import family.Product;
 
 /**
  * 
- * using for testing that code cleaning is correct
- * @author Davide
+ ** @author Davide
  *
  */
 public class FMCATest {
@@ -30,7 +33,7 @@ public class FMCATest {
 			
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new FMCA(null))
+		assertThatThrownBy(() -> new FMCA(null, new Family(new HashSet<Product>())))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -39,7 +42,7 @@ public class FMCATest {
 	{
 		String dir = System.getProperty("user.dir");
 		MSCA a = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
-		FMCA aut = new FMCA(a);	
+		FMCA aut = new FMCA(a,new Family(new HashSet<Product>()));	
 		
 		assertEquals(aut.getAut(),a);
 	}
@@ -49,7 +52,7 @@ public class FMCATest {
 	{
 
 		String dir = System.getProperty("user.dir");
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
 		
 		MSCA test= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
 		assertEquals(MSCATest.checkTransitions(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"})),test),true);
@@ -61,7 +64,7 @@ public class FMCATest {
 	{
 
 		String dir = System.getProperty("user.dir");
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
 		
 		assertEquals(aut.orchestration(new Product(new String[] {"dummy"}, new String[] {""})),null);
 	}
@@ -71,136 +74,106 @@ public class FMCATest {
 	{
 
 		String dir = System.getProperty("user.dir");
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
 		
 		assertEquals(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"})),null);
 	}	
 	
 	@Test
-	public void maximalProducts()
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-	//	Product[] pr=Family.importFamily(fileName,fileName);
-		Family fam=new Family(fileName);
-		int[] pid = fam.getMaximalProducts();
-		fam.subsetOfProductsFromIndex(pid);
-
-	}
-	
-	@Test
-	public void validProducts() throws Exception
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-		int[] vp=fam.validProducts(aut.getAut());
-		fam.subsetOfProductsFromIndex(vp);
-	}
-	
-	@Test
-	public void canonicalProducts() throws Exception
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-		int[][] ind=new int[1][];
-
-		//Product[] cp=
-		fam.getCanonicalProducts(aut.getAut(),null,false,ind);
-	}
-	
-	@Test
-	public void getSubProductsofProduct()
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		int pindex=Integer.parseInt("100");
-		Product p=
-				fam.getProducts()[pindex];
-		int[] subind = fam.getSubProductsofProduct(pindex);
-		//Product[] subprod = 
-			fam.subsetOfProductsFromIndex(subind);
-	}
-	
-	@Test
-	public void getSuperProductsofProduct()
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		int pindex=Integer.parseInt("100");
-		Product p=
-				fam.getProducts()[pindex];
-		int[] subind = fam.getSuperProductsofProduct(pindex);
-		//Product[] subprod = 
-				fam.subsetOfProductsFromIndex(subind);
-	}
-	
-	@Test
-	public void familyOrc() throws Exception
-	{
-		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
-		Family fam=new Family(fileName);
-		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-		MSCA aut = faut.getAut();
-
-		MSCA controller = fam.getMPCofFamily(aut);		
-		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_fam_test.mxe");
-		
-		assertEquals(MSCATest.checkTransitions(controller, test),true);
-
-	}
-	
-
-	@Test
 	public void testForte2021() throws Exception {
 		String dir = System.getProperty("user.dir");
 		MSCA aut= MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(AlicexBob).mxe");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		assertEquals(null,new FMCA(aut).orchestration(p));
+		assertEquals(null,new FMCA(aut,new Family(new HashSet<Product>())).orchestration(p));
 		
 	}
 	
-//	@Test
-//	public void familyWithoutPO() throws Exception
-//	{
-//		String dir = System.getProperty("user.dir");
-//		String fileName =dir+"/CATest/ValidProducts.prod";
-//		Family fam=new Family(fileName);
-//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-//		MSCA aut = faut.getAut();
-//
+
+	@Test
+	public void validProductsOrcFam() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
+
+		Set<Product> rv = aut.respectingValidityFamily();
+
+		Set<Product> test = Family.readFileNew(dir+"/CATest/respectingValidityTest.prod");
+//		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
+//				.mapToObj(i->fam.getElements()[i])
+//				.collect(Collectors.toSet());
+//		
+		assertTrue(rv.equals(test));
+	}
+	
+	@Test
+	public void testValidProductsOrc() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
+//		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
+//				.mapToObj(i->fam.getElements()[i])
+//				.collect(Collectors.toSet());
+		Set<Product> vp = aut.productsRespectingValidity();
+
+		Set<Product> test = Family.readFileNew(dir+"/CATest/validProductsOrcTest.prod");
+		
+		assertTrue(vp.equals(test));
+	}
+
+	@Test
+	public void testCanonicalProducts() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
+
+		Set<Product> cps = aut.getCanonicalProducts().keySet();
+		
+		Set<Product> test = Family.readFileNew(dir+"/CATest/canonicalProductsTest.prod");
+//		int[][] ind=new int[1][];
+//		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
+//		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
+//		
+		assertTrue(cps.equals(test));
+	}
+
+
+	@Test
+	public void testFamilyOrc() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
+		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
+
+		MSCA controller = faut.getOrchestrationOfFamily();		
+
+		assertEquals(MSCATest.checkTransitions(controller, test),true);
+	}
+	@Test
+	public void testOrchestrationOfFamilyEnumerative() throws Exception
+	{
+		String dir = System.getProperty("user.dir");
+		String fileName =dir+"/CATest/ValidProducts.prod";
+		Family fam=new Family(fileName);
+		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
+		
+		MSCA ofe =  aut.getOrchestrationOfFamilyEnumerative();
+		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CATest/Orc_fam_wopo_test.mxe");
+					
 //		int[][] vpdummy = new int[1][];
-//		MSCA controller = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
-//		
-//		MSCAIO.convertMSCAintoXML(dir+"/CATest/Orc_fam_wopo_test", controller);
-//		
-//		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_fam_wopo_test.mxe");
-//		
-//		assertEquals(MSCATest.checkTransitions(controller, test),true);
-//
-//	}
+//		MSCA test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
+		
+		assertEquals(MSCATest.checkTransitions(ofe, test),true);
 
-//	@Test
-//	public void productsWithNonEmptyMPC() throws Exception
-//	{
-//		String dir = System.getProperty("user.dir");
-//		String fileName =dir+"/CATest/ValidProducts.prod";
-//		Family fam=new Family(fileName);
-//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-//		MSCA aut = faut.getAut();
-//		
-////		int[] vp= 
-//				fam.productsWithNonEmptyMPC(aut);
-//
-//	}
-
-
+	}
+	
 }
 
 

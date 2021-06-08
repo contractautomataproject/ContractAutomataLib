@@ -1,0 +1,2 @@
+p0: R={card,sharedBathroom,} F={cash,}
+p1: R={card,} F={sharedRoom,cash,}

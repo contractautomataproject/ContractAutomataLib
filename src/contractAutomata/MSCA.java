@@ -120,24 +120,24 @@ public class MSCA
 				.findFirst().orElseThrow(NullPointerException::new);
 	}
 
-	/**
-	 * the only initial state in the set of states is set to be the one equal to argument initial
-	 * @param initial the state to be set
-	 */
-	public void setInitialCA(CAState initial)
-	{
-		Set<CAState> states=this.getStates();
-
-		states.parallelStream()
-		.filter(CAState::isInitial)
-		.forEach(x->x.setInitial(false));
-
-		CAState init = states.parallelStream()
-				.filter(x->x==initial)
-				.findAny().orElseThrow(IllegalArgumentException::new);
-
-		init.setInitial(true);
-	}
+//	/**
+//	 * the only initial state in the set of states is set to be the one equal to argument initial
+//	 * @param initial the state to be set
+//	 */
+//	private void setInitialCA(CAState initial)
+//	{
+//		Set<CAState> states=this.getStates();
+//
+//		states.parallelStream()
+//		.filter(CAState::isInitial)
+//		.forEach(x->x.setInitial(false));
+//
+//		CAState init = states.parallelStream()
+//				.filter(x->x==initial)
+//				.findAny().orElseThrow(IllegalArgumentException::new);
+//
+//		init.setInitial(true);
+//	}
 
 	public int getRank()
 	{
@@ -206,6 +206,7 @@ public class MSCA
 
 	/**
 	 * The generic synthesis algorithm
+	 * TODO remove return value or make it return a copy
 	 * 
 	 * @param pruningPred  predicate for pruning transitions
 	 * @param forbiddenPred   predicate for forbidden states
@@ -500,11 +501,24 @@ public class MSCA
 		//				.max().orElse(0))
 		//				.max().orElse(0)+1; //for renaming states
 
+		if (aut.parallelStream()
+		.map(MSCA::getStates)
+		.flatMap(Set::stream)
+		.map(CAState::getState)
+		.flatMap(List::stream)
+		.map(BasicState::getLabel)
+		.anyMatch(s->s.contains("_")))
+			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
+	
+		
 		//relabeling
 		IntStream.range(0, aut.size())
 		.forEach(id ->{
 			aut.get(id).getStates().forEach(x->{
-				x.getState().forEach(s->s.setLabel(id+"_"+s.getLabel()));
+				x.getState().forEach(s->{
+					if (!s.getLabel().contains("_"))
+						s.setLabel(id+"_"+s.getLabel());
+				});
 			});
 		}); 
 

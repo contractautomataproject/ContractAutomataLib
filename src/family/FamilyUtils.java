@@ -15,13 +15,6 @@ import java.util.Objects;
  */
 public class FamilyUtils 
 {
-	static int[] removeTailsNull(int[] q,int length)
-	{
-		int[] r=new int[length];
-		for (int i=0;i<length;i++)
-			r[i]=q[i];
-		return r;
-	}
 	
 	static <T> T[] removeTailsNull(T[] q, int length, T[] type)
 	{
