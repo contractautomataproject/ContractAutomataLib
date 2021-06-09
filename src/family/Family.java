@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 public class Family {
 
 	private final Set<Product> products;
-	private final Map<Product,Map<Boolean,Set<Product>>> pom; 
+	private final Map<Product,Map<Boolean,Set<Product>>> po; 
 
 	public Family(Set<Product> products)
 	{
@@ -50,7 +50,7 @@ public class Family {
 
 		this.products=new HashSet<>(products);
 
-		pom=products.parallelStream()
+		po=products.parallelStream()
 				.collect(Collectors.toMap(Function.identity(), 
 						prod->products.parallelStream()
 						.filter(p->p.isComparableWith(prod))
@@ -67,8 +67,8 @@ public class Family {
 		return products;
 	}
 
-	public Map<Product, Map<Boolean, Set<Product>>> getPom() {
-		return pom;
+	public Map<Product, Map<Boolean, Set<Product>>> getPo() {
+		return po;
 	}
 
 	public static Set<Product> readFileNew(String filename) throws IOException{
@@ -124,12 +124,12 @@ public class Family {
 
 	public Set<Product> getSubProductsofProduct(Product prod)
 	{
-		return this.pom.get(prod).get(false);
+		return this.po.get(prod).get(false);
 	}
 
 	public Set<Product> getSuperProductsofProduct(Product prod)
 	{
-		return this.pom.get(prod).get(true);
+		return this.po.get(prod).get(true);
 	}
 
 
@@ -138,7 +138,7 @@ public class Family {
 	 */
 	public Set<Product> getMaximalProducts()
 	{
-		return this.pom.entrySet().parallelStream()
+		return this.po.entrySet().parallelStream()
 				.filter(e->e.getValue().get(true).isEmpty())
 				.map(Entry::getKey)
 				.collect(Collectors.toSet());
@@ -154,9 +154,9 @@ public class Family {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
-	public static Set<Product> importFamily(String currentdir, String filename) throws ParserConfigurationException, SAXException, IOException
+	public static Set<Product> importFeatureIDEmodel(String currentdir, String filename) throws ParserConfigurationException, SAXException, IOException
 	{	
-		Set<String> features=getFeatures(filename);
+		Set<String> features=parseFeatures(filename);
 		String[][] eq = detectDuplicates(filename);
 		for (int i=0;i<eq.length;i++)
 		{
@@ -200,8 +200,7 @@ public class Family {
 							.collect(Collectors.toSet()));})
 				.collect(Collectors.toSet());
 		
-		/**
-		 * 
+		/* 
 		 * given two products p1 p2 identical but for a feature f activated in one 
 		 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
 		 * This method generates all possible super products. 
@@ -210,11 +209,10 @@ public class Family {
 		 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
 		 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
 		 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
-         *
-		 **/
+		 */
 		return Stream.iterate(setprod, s->!s.isEmpty(), sp->{
 			Map<Product,Set<Product>> map = features.stream()
-					.map(f->sp.stream()
+					.map(f->sp.parallelStream()
 							.collect(Collectors.groupingByConcurrent(p->p.removeFeature(new Feature(f)), Collectors.toSet())))
 					.reduce(new ConcurrentHashMap<Product,Set<Product>>(),(x,y)->{x.putAll(y); return x;});	
 			return map.entrySet().parallelStream()
@@ -225,7 +223,7 @@ public class Family {
 
 	}
 
-	private static Set<String> getFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
+	private static Set<String> parseFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
 		File inputFile = new File(filename);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -270,8 +268,6 @@ public class Family {
 		for (int i = 0; i < nodeList.getLength(); i++) 
 		{
 			Node nNode = nodeList.item(i);
-			//  System.out.println("\nCurrent Element :" 
-			//     + nNode.getNodeName());
 			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
 			{
 				NodeList childs = (NodeList) nNode.getChildNodes();
@@ -290,17 +286,6 @@ public class Family {
 //END OF THE CLASS
 
 /**
-	 * 
-	 * given two products p1 p2 identical but for a feature f activated in one 
-	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
-	 * This method generates all possible super products. 
-	 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
-	 * This condition holds for the method.
-	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
-	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
-	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
-	 * 
-	 * 
 	 * @param p list of pairwise different products
 	 * @param features  the features of the products
 	 * @return  list containing all valid superproducts (aka subfamily)

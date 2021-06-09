@@ -30,10 +30,6 @@ public class FMCA {
 		this.aut=aut;
 		this.family=family;
 	}
-	
-//	public Family getFamily() {
-//		return family;
-//	}
 
 	/**
 	 * @return the synthesised orchestration/mpc of product p in agreement
@@ -99,10 +95,9 @@ public class FMCA {
 		.collect(Collectors.toList()));
 	}
 
-	
 	public Map<Product,MSCA> getTotalProductsWithNonemptyOrchestration()
 	{
-		return this.family.getPom().entrySet()
+		return this.family.getPo().entrySet()
 				.parallelStream()
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
@@ -151,7 +146,7 @@ public class FMCA {
 				.filter(pred)
 				.collect(Collectors.toSet()),
 				s->!s.isEmpty(),
-				s->this.family.getPom().entrySet().parallelStream()
+				s->this.family.getPo().entrySet().parallelStream()
 				.filter(e->s.contains(e.getKey()))
 				.flatMap(e->e.getValue().get(false).stream())
 				.filter(pred)
@@ -160,36 +155,36 @@ public class FMCA {
 				.collect(Collectors.toSet());	
 	}
 
-
-//	public Set<Product> productsWithNonEmptyOrchestrationFamily()
-//	{
-//		return applyOnFamilyOrchestration(aut,this::productsWithNonEmptyOrchestration);
-//	}
-
-//	public Set<Product> respectingValidityFamily()
-//	{
-//		return applyOnFamilyOrchestration(aut, this::productsRespectingValidity);
-//	}
-
-//	private Set<Product> applyOnFamilyOrchestration(MSCA aut, Function<MSCA,Set<Product>> fun)
-//	{
-//		if (!aut.getForwardStar(aut.getInitial()).stream()
-//				.map(MSCATransition::getLabel)
-//				.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
-//			throw new UnsupportedOperationException();
-//
-//		return aut.getForwardStar(aut.getInitial()).stream()
-//				.map(MSCATransition::getTarget)
-//				.map(s1->{
-//					MSCA a=aut.clone();
-//					a.getInitial().setInitial(false);
-//					CAState s = a.getStates().parallelStream()
-//							.filter(s2->s2.getState().toString().equals(s1.getState().toString()))//ignoring initial flag
-//							.findAny().orElseThrow(IllegalArgumentException::new);
-//					s.setInitial(true);
-//					return fun.apply(a);
-//				})
-//				.flatMap(Set::stream)
-//				.collect(Collectors.toSet());
-//	}
 }
+
+//public Set<Product> productsWithNonEmptyOrchestrationFamily()
+//{
+//	return applyOnFamilyOrchestration(aut,this::productsWithNonEmptyOrchestration);
+//}
+
+//public Set<Product> respectingValidityFamily()
+//{
+//	return applyOnFamilyOrchestration(aut, this::productsRespectingValidity);
+//}
+
+//private Set<Product> applyOnFamilyOrchestration(MSCA aut, Function<MSCA,Set<Product>> fun)
+//{
+//	if (!aut.getForwardStar(aut.getInitial()).stream()
+//			.map(MSCATransition::getLabel)
+//			.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
+//		throw new UnsupportedOperationException();
+//
+//	return aut.getForwardStar(aut.getInitial()).stream()
+//			.map(MSCATransition::getTarget)
+//			.map(s1->{
+//				MSCA a=aut.clone();
+//				a.getInitial().setInitial(false);
+//				CAState s = a.getStates().parallelStream()
+//						.filter(s2->s2.getState().toString().equals(s1.getState().toString()))//ignoring initial flag
+//						.findAny().orElseThrow(IllegalArgumentException::new);
+//				s.setInitial(true);
+//				return fun.apply(a);
+//			})
+//			.flatMap(Set::stream)
+//			.collect(Collectors.toSet());
+//}

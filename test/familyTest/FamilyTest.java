@@ -150,7 +150,7 @@ public class FamilyTest {
 	public void testImportFamily() throws IOException, ParserConfigurationException, SAXException
 	{
 		String dir = System.getProperty("user.dir");
-		Set<Product> pr=Family.importFamily(dir+"\\CATest\\FeatureIDEmodel\\",dir+"\\CATest\\FeatureIDEmodel\\model.xml");
+		Set<Product> pr=Family.importFeatureIDEmodel(dir+"\\CATest\\FeatureIDEmodel\\",dir+"\\CATest\\FeatureIDEmodel\\model.xml");
 		Family f1=new Family(pr);
 		Family f2=new Family(dir+"/CATest/ValidProducts.prod");
 		assertTrue(f1.getProducts().equals(f2.getProducts()));
