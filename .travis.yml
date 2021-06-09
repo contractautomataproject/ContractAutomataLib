@@ -1,2 +1,6 @@
 language: java
-script: ant build
+addons:
+  apt:
+    packages:
+      - ant
+script: ant main
