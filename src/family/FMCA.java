@@ -25,7 +25,7 @@ public class FMCA {
 	
 	public FMCA(MSCA aut, Family family)
 	{
-		if (aut==null)
+		if (aut==null||family==null)
 			throw new IllegalArgumentException();
 		this.aut=aut;
 		this.family=family;
