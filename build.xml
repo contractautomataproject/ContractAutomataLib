@@ -21,10 +21,6 @@
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
     </path>
-    <path id="run.App.classpath">
-        <path refid="FMCAT.classpath"/>
-    </path>
-    <path id="run.App.bootclasspath"/>
     <path id="run.CALabelTest.constructorTest_Exception_notWellFormedIdleLabel2.classpath">
         <path refid="FMCAT.classpath"/>
         <pathelement location="lib/jgraphx.jar"/>
@@ -935,14 +931,6 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
-    </target>
-    <target name="App">
-        <java classname="com.mxgraph.examples.swing.editor.App" failonerror="true" fork="yes">
-            <classpath refid="run.App.classpath"/>
-            <bootclasspath>
-                <path refid="run.App.bootclasspath"/>
-            </bootclasspath>
-        </java>
     </target>
     <target name="CALabelTest.constructorTest_Exception_notWellFormedIdleLabel2">
         <mkdir dir="${junit.output.dir}"/>
