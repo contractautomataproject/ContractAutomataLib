@@ -3,3 +3,11 @@ before_install:
    
 language: java
 script: ant main
+jdk:      oraclejdk9
+
+after_success: "sbt coveralls"
+
+notifications:
+  email:
+    recipients:
+      - davide.basile@isti.cnr.it
