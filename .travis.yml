@@ -1,2 +1,5 @@
+before_install:
+   - sudo apt-get install ant-optional
+   
 language: java
 script: ant main
