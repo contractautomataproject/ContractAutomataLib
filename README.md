@@ -67,10 +67,10 @@ When importing from FeatureIDE, the sub-families are also generated, called part
 `Family.java` organises the products into a partial order (variable po), and there are methods for accessing adjacent products 
 of a product in the partial ordering relation.
 Each object of  `Product.java` contains two sets of features (required and forbidden) described in `Feature.java`.
-The class `FMCA.java` decorates MSCA by adding a method for computing the orchestration of a product.
+The class `FMCA.java` contains an MSCA object and its corresponding Family. 
 `FMCA.java`  contains the methods for computing the products respecting validity of a family (see references JSCP2020), 
-for computing the canonical product, for computing the orchestration of the service product line, either exploiting the partial order 
-of with an enumerative approach.
+for computing the canonical products, for computing the orchestration of either a product or the service product line, either exploiting the partial order 
+or with an enumerative approach. 
 The wiki contains an excerpt from a published paper regarding the product lines functionalities of the tool.
 
 ![The class diagram of family package](./doc/family_classdiagram.png)[fig:the class diagram of family package]
