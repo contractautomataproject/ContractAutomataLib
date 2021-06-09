@@ -1,4 +1,5 @@
 language: java
 install: ant deps
-jdk: jdk-9.0.4
+os: windows
+jdk: JavaSE-9
 script: ant build
