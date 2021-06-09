@@ -11,8 +11,8 @@
     <property name="target" value="9"/>
     <property name="source" value="9"/>
     <path id="JUnit 4.libraryclasspath">
-        <pathelement location="../../.p2/pool/plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
-        <pathelement location="../../.p2/pool/plugins/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="FMCAT.classpath">
         <pathelement location="bin"/>
@@ -20,6 +20,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CALabelTest.constructorTest_Exception_notWellFormedIdleLabel2.classpath">
         <path refid="FMCAT.classpath"/>
@@ -27,6 +29,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CALabelTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -34,6 +38,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CAStateTest.constructorTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -41,6 +47,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CAStateTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -48,6 +56,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CAStateTest.toStringFinalTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -55,6 +65,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CAStateTest.toStringInitialTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -62,6 +74,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.CAStateTest.toStringTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -69,6 +83,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.contractAutomataTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -76,6 +92,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.family.classpath">
         <path refid="FMCAT.classpath"/>
@@ -83,6 +101,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.familyTest (1).classpath">
         <path refid="FMCAT.classpath"/>
@@ -90,6 +110,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.familyOrc.classpath">
         <path refid="FMCAT.classpath"/>
@@ -97,6 +119,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.familyWithoutPO.classpath">
         <path refid="FMCAT.classpath"/>
@@ -104,6 +128,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.getSubProductsofProduct.classpath">
         <path refid="FMCAT.classpath"/>
@@ -111,6 +137,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.getSuperProductsofProduct.classpath">
         <path refid="FMCAT.classpath"/>
@@ -118,6 +146,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.familyTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -125,6 +155,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.maximalProducts.classpath">
         <path refid="FMCAT.classpath"/>
@@ -132,6 +164,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testCanonicalProducts.classpath">
         <path refid="FMCAT.classpath"/>
@@ -139,6 +173,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testFamilyOrc.classpath">
         <path refid="FMCAT.classpath"/>
@@ -146,6 +182,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testImportFamily.classpath">
         <path refid="FMCAT.classpath"/>
@@ -153,6 +191,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testMaximumDepth.classpath">
         <path refid="FMCAT.classpath"/>
@@ -160,6 +200,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testOrchestrationOfFamilyEnumerative.classpath">
         <path refid="FMCAT.classpath"/>
@@ -167,6 +209,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testPO.classpath">
         <path refid="FMCAT.classpath"/>
@@ -174,6 +218,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testReadProducts.classpath">
         <path refid="FMCAT.classpath"/>
@@ -181,6 +227,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testSubsetOfProductsFromIndex.classpath">
         <path refid="FMCAT.classpath"/>
@@ -188,6 +236,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testValidProductsOrc.classpath">
         <path refid="FMCAT.classpath"/>
@@ -195,6 +245,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.testWriteException.classpath">
         <path refid="FMCAT.classpath"/>
@@ -202,6 +254,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.validProducts.classpath">
         <path refid="FMCAT.classpath"/>
@@ -209,6 +263,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FamilyTest.validProductsOrcFam.classpath">
         <path refid="FMCAT.classpath"/>
@@ -216,6 +272,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FeatureTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -223,6 +281,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCAT.classpath">
         <path refid="FMCAT.classpath"/>
@@ -230,6 +290,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.familyWithoutPO.classpath">
         <path refid="FMCAT.classpath"/>
@@ -237,6 +299,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.getSuperProductsofProduct.classpath">
         <path refid="FMCAT.classpath"/>
@@ -244,6 +308,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.importFamily.classpath">
         <path refid="FMCAT.classpath"/>
@@ -251,6 +317,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -258,6 +326,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.maximalProducts.classpath">
         <path refid="FMCAT.classpath"/>
@@ -265,6 +335,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty.classpath">
         <path refid="FMCAT.classpath"/>
@@ -272,6 +344,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -279,6 +353,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.testForte2021.classpath">
         <path refid="FMCAT.classpath"/>
@@ -286,6 +362,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.testSelectProductSatisfyingPredicateException.classpath">
         <path refid="FMCAT.classpath"/>
@@ -293,6 +371,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.testToString.classpath">
         <path refid="FMCAT.classpath"/>
@@ -300,6 +380,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCATest.validProductsOrcFam.classpath">
         <path refid="FMCAT.classpath"/>
@@ -307,6 +389,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.FMCAUtilTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -314,6 +398,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.JsonConverterTest.importTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -321,6 +407,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.JsonConverterTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -328,6 +416,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.JsonConverterTest.loadConvert.classpath">
         <path refid="FMCAT.classpath"/>
@@ -335,6 +425,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.JsonConverterTest.test.classpath">
         <path refid="FMCAT.classpath"/>
@@ -342,6 +434,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.JsonConverterTest.testTr.classpath">
         <path refid="FMCAT.classpath"/>
@@ -349,6 +443,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.conversionXMLNew.classpath">
         <path refid="FMCAT.classpath"/>
@@ -356,6 +452,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.conversionXMLNewtestSCP2020_BusinessClientxHotel.classpath">
         <path refid="FMCAT.classpath"/>
@@ -363,6 +461,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.conversionXMLtestSCP2020_BusinessClientxHotel.classpath">
         <path refid="FMCAT.classpath"/>
@@ -370,6 +470,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.dumbForCoverage.classpath">
         <path refid="FMCAT.classpath"/>
@@ -377,6 +479,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.importMXENewPrincipalNoBasicStates.classpath">
         <path refid="FMCAT.classpath"/>
@@ -384,6 +488,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -391,6 +497,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.loadConvertSCP2020_BusinessClientxHotel.classpath">
         <path refid="FMCAT.classpath"/>
@@ -398,6 +506,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.loadIllActions_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -405,6 +515,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.loadIllFinalStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -412,6 +524,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.p.classpath">
         <path refid="FMCAT.classpath"/>
@@ -419,6 +533,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -426,6 +542,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseAndConvertAllMxe.classpath">
         <path refid="FMCAT.classpath"/>
@@ -433,6 +551,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseCoordination2021.classpath">
         <path refid="FMCAT.classpath"/>
@@ -440,6 +560,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseEmptyElements_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -447,6 +569,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseIllActions_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -454,6 +578,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseMxeDuplicateBasicStates.classpath">
         <path refid="FMCAT.classpath"/>
@@ -461,6 +587,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseNoFinalStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -468,6 +596,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parsePrintLoadTest_SCP2020_BusinessClientxHotelxEconomyClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -475,6 +605,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parseWrongFinalStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -482,6 +614,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.parse_noxy.classpath">
         <path refid="FMCAT.classpath"/>
@@ -489,6 +623,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCAIOTest.wrongFormatData_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -496,6 +632,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.ambiguousStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -503,6 +641,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.choreoConcur2021.classpath">
         <path refid="FMCAT.classpath"/>
@@ -510,6 +650,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.choreoConcur2021projectAndComposeTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -517,6 +659,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.choreoConcur2021_2.classpath">
         <path refid="FMCAT.classpath"/>
@@ -524,6 +668,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.chorTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -531,6 +677,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.chorTestControllableLazyOfferTransitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -538,6 +686,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.chorTestLMCS2020Transitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -545,6 +695,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.chorTestLMCS2020TransitionsToString.classpath">
         <path refid="FMCAT.classpath"/>
@@ -552,6 +704,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.chorTest_urgent_empty.classpath">
         <path refid="FMCAT.classpath"/>
@@ -559,6 +713,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.cloneTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -566,6 +722,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compositionTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -573,6 +731,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compositionTestSCP2020_BusinessClientxHotelxEconomyClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -580,6 +740,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compositionTestSCP2020_BusinessClientxHotel_closed.classpath">
         <path refid="FMCAT.classpath"/>
@@ -587,6 +749,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compositionTestSCP2020_BusinessClientxHotel_open.classpath">
         <path refid="FMCAT.classpath"/>
@@ -594,6 +758,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compositionTestSCP2020_nonassociative.classpath">
         <path refid="FMCAT.classpath"/>
@@ -601,6 +767,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compTestBound.classpath">
         <path refid="FMCAT.classpath"/>
@@ -608,6 +776,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compTestBound_noTransitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -615,6 +785,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compTestEmptySimple.classpath">
         <path refid="FMCAT.classpath"/>
@@ -622,6 +794,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.compTestSimple.classpath">
         <path refid="FMCAT.classpath"/>
@@ -629,6 +803,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.conflictingFinalStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -636,6 +812,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.constructorTest_Exception_emptyTransitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -643,6 +821,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.conversionXMLtestSCP2020_BusinessClientxHotel.classpath">
         <path refid="FMCAT.classpath"/>
@@ -650,6 +830,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.getRankZero.classpath">
         <path refid="FMCAT.classpath"/>
@@ -657,6 +839,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -664,6 +848,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -671,6 +857,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.loadTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -678,6 +866,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.loadVSparseSCP2020_BusinessClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -685,6 +875,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.mpcEmptyTestLMCS2020.classpath">
         <path refid="FMCAT.classpath"/>
@@ -692,6 +884,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.mpcEmptyTestNoDangling.classpath">
         <path refid="FMCAT.classpath"/>
@@ -699,6 +893,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.mpcTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -706,6 +902,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.noFinalStatesArray_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -713,6 +911,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.noFinalStatesInTransitions_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -720,6 +920,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.noFinalStates_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -727,6 +929,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.noInitialState_exception.classpath">
         <path refid="FMCAT.classpath"/>
@@ -734,6 +938,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcEmptyTestNoDangling.classpath">
         <path refid="FMCAT.classpath"/>
@@ -741,6 +947,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -748,6 +956,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTestLMCS2020Transitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -755,6 +965,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTestLMCS2020TransitionsToString.classpath">
         <path refid="FMCAT.classpath"/>
@@ -762,6 +974,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions.classpath">
         <path refid="FMCAT.classpath"/>
@@ -769,6 +983,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTest_empty_lazy.classpath">
         <path refid="FMCAT.classpath"/>
@@ -776,6 +992,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.orcTest_nonempty.classpath">
         <path refid="FMCAT.classpath"/>
@@ -783,6 +1001,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.parseAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -790,6 +1010,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.print_SCP2020_BusinessClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -797,6 +1019,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.projectionTestSCP2020_BusinessClient.classpath">
         <path refid="FMCAT.classpath"/>
@@ -804,6 +1028,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.setFinalStatesOfPrinc_Exception_nullArgument.classpath">
         <path refid="FMCAT.classpath"/>
@@ -811,6 +1037,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.setTransition_Exception_nullArgument.classpath">
         <path refid="FMCAT.classpath"/>
@@ -818,6 +1046,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.unionTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -825,6 +1055,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATest.union_statelabelsnotnumbers.classpath">
         <path refid="FMCAT.classpath"/>
@@ -832,6 +1064,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATransitionTest.branchingCondition.classpath">
         <path refid="FMCAT.classpath"/>
@@ -839,6 +1073,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATransitionTest.constructorException.classpath">
         <path refid="FMCAT.classpath"/>
@@ -846,6 +1082,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATransitionTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -853,6 +1091,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATransitionTest.testEquals.classpath">
         <path refid="FMCAT.classpath"/>
@@ -860,6 +1100,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.MSCATransitionTest.toStringException.classpath">
         <path refid="FMCAT.classpath"/>
@@ -867,6 +1109,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.ProductTest.classpath">
         <path refid="FMCAT.classpath"/>
@@ -874,6 +1118,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.src.classpath">
         <path refid="FMCAT.classpath"/>
@@ -881,6 +1127,8 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="run.test.classpath">
         <path refid="FMCAT.classpath"/>
@@ -888,18 +1136,18 @@
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/json-20210307.jar"/>
+        <pathelement location="lib/junit.jar"/>
+        <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="test">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -918,7 +1166,6 @@
             <classpath refid="FMCAT.classpath"/>
         </javac>
     </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">
             <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
