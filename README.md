@@ -1,6 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
-[![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
-
 <h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
@@ -118,3 +115,6 @@ https://doi.org/10.1145/3109729.3109741
 Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In Proceedings of the 5th International Conference on Model-Driven Engineering and Software Development (MODELSWARD'17), Volume 1. SciTePress, pp. 679-686.
 https://doi.org/10.5220/0006291106790686
 (pdf at http://openportal.isti.cnr.it/data/2017/386223/2017_386223.preprint.pdf)
+
+[![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
+[![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
