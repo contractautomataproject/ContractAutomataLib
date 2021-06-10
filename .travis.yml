@@ -20,13 +20,11 @@ env:
 
 
 #script:
-#  - mvn clean verify pom.xml 
-#-Pjacoco coveralls:report
-
 
 #  - ant main
 
-#after_success: 
+after_success: 
+  - mvn clean test jacoco:report coveralls:report
 
 #notifications:
 #  email:
