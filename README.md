@@ -1,5 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
 [![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
+
 <h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
