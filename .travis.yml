@@ -17,8 +17,9 @@ env:
 - TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
 
 
-script:
-  - mvn -f clean verify pom.xml 
+#script:
+#  - mvn clean verify pom.xml 
+
 #  - ant main
 #-Pjacoco coveralls:report
 
