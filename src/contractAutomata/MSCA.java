@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -409,7 +410,7 @@ public class MSCA
 				//						.count()==0);
 
 				//firstly match transitions are generated
-				Map<MSCATransition, List<Entry<MSCATransition,List<CAState>>>> matchtransitions=
+				Map<MSCATransition, List<SimpleEntry<MSCATransition,List<CAState>>>> matchtransitions=
 						trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
 								.filter(ee->(e.ind<ee.ind) && CALabel.match(e.tra.getLabel(), ee.tra.getLabel()))
@@ -426,11 +427,11 @@ public class MSCA
 											new CAState(v)), 
 											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
-									return Stream.of((Entry<MSCATransition, Entry<MSCATransition,List<CAState>>>) 
-											new AbstractMap.SimpleEntry<MSCATransition, Entry<MSCATransition,List<CAState>>>(e.tra, 
+									return Stream.of((SimpleEntry<MSCATransition, SimpleEntry<MSCATransition,List<CAState>>>) 
+											new AbstractMap.SimpleEntry<MSCATransition, SimpleEntry<MSCATransition,List<CAState>>>(e.tra, 
 													new AbstractMap.SimpleEntry<MSCATransition,List<CAState>>(tradd,targetlist)),
-											(Entry<MSCATransition, Entry<MSCATransition,List<CAState>>>)//dummy, ee.tra is matched
-											new AbstractMap.SimpleEntry<MSCATransition, Entry<MSCATransition,List<CAState>>>(ee.tra, 
+											(SimpleEntry<MSCATransition, SimpleEntry<MSCATransition,List<CAState>>>)//dummy, ee.tra is matched
+											new AbstractMap.SimpleEntry<MSCATransition, SimpleEntry<MSCATransition,List<CAState>>>(ee.tra, 
 													new AbstractMap.SimpleEntry<MSCATransition,List<CAState>>(tradd, (List<CAState>)new ArrayList<CAState>())));
 								}))
 						.collect( 
@@ -439,7 +440,7 @@ public class MSCA
 								);
 
 				//collecting match transitions and adding unmatched transitions
-				Set<Entry<MSCATransition,List<CAState>>> trmap=
+				Set<SimpleEntry<MSCATransition,List<CAState>>> trmap=
 						trans2index.parallelStream()
 						.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
 						.collect(mapping(e->{List<CAState> targetlist = new ArrayList<CAState>(source);

@@ -6,9 +6,11 @@ language: java
 jdk:
    - oraclejdk9
 
-script: ant main
+script: 
+	- ant main
+	- mvn pom.xml -Pjacoco coveralls:report
 
-after_success: "sbt coveralls"
+after_success: 
 
 notifications:
   email:

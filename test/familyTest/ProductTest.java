@@ -29,21 +29,21 @@ public class ProductTest {
 	}
 
 	@Test
-	public void testeEquals1() {
+	public void testEquals1() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
 		assertEquals(p.equals(p),true);
 	}
 
 	@Test
-	public void testeEquals2() {
+	public void testEquals2() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
 		assertEquals(p.equals(null),false);
 	}
 
 	@Test
-	public void testeEquals3() {
+	public void testEquals3() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.equals("String"),false);
+		assertEquals(p.equals(new Object()),false);
 	}
 
 	@Test

@@ -19,21 +19,21 @@ public class FeatureTest {
 	
 
 	@Test
-	public void testeEquals1() {
+	public void testEquals1() {
 		Feature p = new Feature("cherry");
 		assertEquals(p.equals(p),true);
 	}
 
 	@Test
-	public void testeEquals2() {
+	public void testEquals2() {
 		Feature p = new Feature("cherry");
 		assertEquals(p.equals(null),false);
 	}
 
 	@Test
-	public void testeEquals3() {
+	public void testEquals3() {
 		Feature p = new Feature("cherry");
-		assertEquals(p.equals("String"),false);
+		assertEquals(p.equals(new Object()),false);
 	}
 
 	@Test
@@ -53,8 +53,6 @@ public class FeatureTest {
 	}
 
 	//***EXCEPTIONS
-
-
 	@Test
 	public void constructorTest_Exception_nullArgument() {
 		assertThatThrownBy(() -> new Feature(null))
