@@ -73,7 +73,8 @@ public class Family {
 
 	public static Set<Product> readFileNew(String filename) throws IOException{
 		//Path p=Paths.get(currentdir, filename);
-		Path p=Paths.get("", filename);
+		Path p=Paths.get(filename);
+		
 
 		Charset charset = Charset.forName("ISO-8859-1");
 		List<String> lines = Files.readAllLines(p, charset);
