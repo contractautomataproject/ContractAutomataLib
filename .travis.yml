@@ -1,18 +1,19 @@
-before_install:
-   - sudo apt-get install ant-optional
+#before_install:
+#  - sudo apt-get install ant-optional
      
 language: java
 
 jdk:
    - oraclejdk9
 
-script: 
-   - ant main
-   - mvn -f testpom.xml -Pjacoco coveralls:report
+script:
+   - mvn install pom.xml 
+#  - ant main
+#-Pjacoco coveralls:report
 
-after_success: 
+#after_success: 
 
-notifications:
-  email:
-    recipients:
-      - davide.basile@isti.cnr.it
+#notifications:
+#  email:
+#    recipients:
+#      - davide.basile@isti.cnr.it

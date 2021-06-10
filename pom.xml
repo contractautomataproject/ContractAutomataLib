@@ -6,6 +6,27 @@
 	<artifactId>FMCAT</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>FMCAT</name>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.10.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
@@ -15,16 +36,6 @@
 				<version>3.8.0</version>
 				<configuration>
 					<release>10</release>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eluder.coveralls</groupId>
-				<artifactId>coveralls-maven-plugin</artifactId>
-				<version>4.3.0</version>
-				<configuration>
-					<jacocoReports>
-						<jacocoReport>${project.basedir}/bin/site/jacoco/report.xml</jacocoReport>
-					</jacocoReports>
 				</configuration>
 			</plugin>
 		</plugins>
