@@ -1,4 +1,5 @@
-#before_install:
+before_install:
+- rm ~/.m2/settings.xml
 #  - sudo apt-get install ant-optional
 
 # https://docs.travis-ci.com/user/languages/java/     
@@ -16,8 +17,8 @@ env:
 - TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
 
 
-#script:
-#   - mvn -f clean verify pom.xml 
+script:
+  - mvn -f clean verify pom.xml 
 #  - ant main
 #-Pjacoco coveralls:report
 
