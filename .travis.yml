@@ -7,7 +7,7 @@ jdk:
    - oraclejdk9
 
 script:
-   - mvn install pom.xml 
+   - mvn -f clean verify pom.xml 
 #  - ant main
 #-Pjacoco coveralls:report
 
