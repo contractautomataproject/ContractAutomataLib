@@ -3,19 +3,25 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="FMCAT">
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="FMCAT" xmlns:jacoco="antlib:org.jacoco.ant">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../eclipse/java-2018-09/eclipse/"/>
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="9"/>
     <property name="source" value="9"/>
+	<property name="src.dir" location="./src" />
+	<property name="result.dir" location="./bin" />
+	<property name="result.classes.dir" location="${result.dir}/classes" />
+	<property name="result.report.dir" location="${result.dir}/site/jacoco" />
+	<property name="result.exec.file" location="${result.dir}/jacoco.exec" />
     <path id="JUnit 4.libraryclasspath">
         <pathelement location="lib/junit.jar"/>
         <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
     <path id="FMCAT.classpath">
-        <pathelement location="bin"/>
+        <pathelement location="${result.classes.dir}"/>
         <pathelement location="lib/jgraphx.jar"/>
         <pathelement location="test-libs/assertj-core-3.10.0.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
@@ -23,6 +29,9 @@
         <pathelement location="lib/junit.jar"/>
         <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        		<classpath path="lib/jacocoant.jar" />
+    </taskdef>
     <path id="run.CALabelTest.constructorTest_Exception_notWellFormedIdleLabel2.classpath">
         <path refid="FMCAT.classpath"/>
         <pathelement location="lib/jgraphx.jar"/>
@@ -1141,12 +1150,13 @@
     </path>
     <target name="init" depends="clean">
         <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
+    	<mkdir dir="${result.classes.dir}" />
+        <copy includeemptydirs="false" todir="${result.classes.dir}">
             <fileset dir="src">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="${result.classes.dir}">
             <fileset dir="test">
                 <exclude name="**/*.java"/>
             </fileset>
@@ -1160,7 +1170,7 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${result.classes.dir}" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <src path="test"/>
             <classpath refid="FMCAT.classpath"/>
@@ -2303,21 +2313,23 @@
     </target>
     <target name="test">
         <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="contractAutomataTest.CALabelTest" todir="${junit.output.dir}"/>
-            <test name="contractAutomataTest.CAStateTest" todir="${junit.output.dir}"/>
-            <test name="contractAutomataTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <test name="contractAutomataTest.MSCAIOTest" todir="${junit.output.dir}"/>
-            <test name="contractAutomataTest.MSCATest" todir="${junit.output.dir}"/>
-            <test name="contractAutomataTest.MSCATransitionTest" todir="${junit.output.dir}"/>
-            <test name="familyTest.FMCATest" todir="${junit.output.dir}"/>
-            <test name="familyTest.FamilyTest" todir="${junit.output.dir}"/>
-            <test name="familyTest.FeatureTest" todir="${junit.output.dir}"/>
-            <test name="familyTest.ProductTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.test.classpath"/>
-        </junit>
+		<jacoco:coverage destfile="${result.exec.file}">
+	        <junit fork="yes" printsummary="withOutAndErr">
+	            <formatter type="xml"/>
+	            <test name="contractAutomataTest.CALabelTest" todir="${junit.output.dir}"/>
+	            <test name="contractAutomataTest.CAStateTest" todir="${junit.output.dir}"/>
+	            <test name="contractAutomataTest.JsonConverterTest" todir="${junit.output.dir}"/>
+	            <test name="contractAutomataTest.MSCAIOTest" todir="${junit.output.dir}"/>
+	            <test name="contractAutomataTest.MSCATest" todir="${junit.output.dir}"/>
+	            <test name="contractAutomataTest.MSCATransitionTest" todir="${junit.output.dir}"/>
+	            <test name="familyTest.FMCATest" todir="${junit.output.dir}"/>
+	            <test name="familyTest.FamilyTest" todir="${junit.output.dir}"/>
+	            <test name="familyTest.FeatureTest" todir="${junit.output.dir}"/>
+	            <test name="familyTest.ProductTest" todir="${junit.output.dir}"/>
+	            <jvmarg line="-ea"/>
+	            <classpath refid="run.test.classpath"/>
+	        </junit>
+		</jacoco:coverage>
     </target>
     <target name="junitreport">
         <junitreport todir="${junit.output.dir}">
@@ -2327,5 +2339,32 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
-   	<target name="main" depends="init,build,test"/>
+
+
+	<target name="report" depends="test">
+		<!-- Step 3: Create coverage report -->
+		<jacoco:report>
+
+			<!-- This task needs the collected execution data and ... -->
+			<executiondata>
+				<file file="${result.exec.file}" />
+			</executiondata>
+
+			<!-- the class files and optional source files ... -->
+			<structure name="JaCoCo Ant Example">
+				<classfiles>
+					<fileset dir="${result.classes.dir}" />
+				</classfiles>
+				<sourcefiles encoding="UTF-8">
+					<fileset dir="${src.dir}" />
+				</sourcefiles>
+			</structure>
+
+			<!-- to produce reports in different formats. -->
+			<html destdir="${result.report.dir}" />
+			<csv destfile="${result.report.dir}/report.csv" />
+			<xml destfile="${result.report.dir}/report.xml" />
+		</jacoco:report>
+	</target>
+   	<target name="main" depends="init,build,test,report"/>
 </project>
