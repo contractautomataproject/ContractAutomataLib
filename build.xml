@@ -1139,7 +1139,7 @@
         <pathelement location="lib/junit.jar"/>
         <pathelement location="lib/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
     </path>
-    <target name="init">
+    <target name="init" depends="clean">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
@@ -2327,5 +2327,5 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
-   	<target name="main" depends="init,build,contractAutomataTest,familyTest"/>
+   	<target name="main" depends="init,build,test"/>
 </project>
