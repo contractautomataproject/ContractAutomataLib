@@ -7,9 +7,7 @@ before_install:
 language: java
 jdk:
    - oraclejdk9
-   
-
-skip_cleanup: true
+ 
    
 #https://dzone.com/articles/travis-ci-tutorial-java-projects
 #cache:

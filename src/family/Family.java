@@ -164,7 +164,7 @@ public class Family {
 				features.remove(eq[i][1]);
 		}
 
-		currentdir=currentdir.substring(0, currentdir.lastIndexOf("\\"))+"\\products\\";
+		currentdir=currentdir.substring(0, currentdir.lastIndexOf("//"))+"//products//";
 
 		File folder = new File(currentdir);
 		List<File> listOfFiles = Arrays.asList(folder.listFiles());
