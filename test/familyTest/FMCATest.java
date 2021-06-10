@@ -93,13 +93,13 @@ public class FMCATest {
 //	public void validProductsOrcFam() throws Exception
 //	{
 //		String dir = System.getProperty("user.dir");
-//		String fileName =dir+"/CATest/ValidProducts.prod";
+//		String fileName =dir+"/CAtest/ValidProducts.prod";
 //		Family fam=new Family(fileName);
 //		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 //
 //		Set<Product> rv = aut.respectingValidityFamily();
 //
-//		Set<Product> test = Family.readFileNew(dir+"/CATest/respectingValidityTest.prod");
+//		Set<Product> test = Family.readFileNew(dir+"/CAtest/respectingValidityTest.prod");
 ////		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
 ////				.mapToObj(i->fam.getElements()[i])
 ////				.collect(Collectors.toSet());
@@ -111,7 +111,7 @@ public class FMCATest {
 	public void testValidProductsOrc() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 //		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
@@ -119,7 +119,7 @@ public class FMCATest {
 //				.collect(Collectors.toSet());
 		Set<Product> vp = aut.productsRespectingValidity();
 
-		Set<Product> test = Family.readFileNew(dir+"/CATest/validProductsOrcTest.prod");
+		Set<Product> test = Family.readFileNew(dir+"/CAtest/validProductsOrcTest.prod");
 		
 		assertTrue(vp.equals(test));
 	}
@@ -128,13 +128,13 @@ public class FMCATest {
 	public void testCanonicalProducts() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 
 		Set<Product> cps = aut.getCanonicalProducts().keySet();
 		
-		Set<Product> test = Family.readFileNew(dir+"/CATest/canonicalProductsTest.prod");
+		Set<Product> test = Family.readFileNew(dir+"/CAtest/canonicalProductsTest.prod");
 //		int[][] ind=new int[1][];
 //		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
 //		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
@@ -146,12 +146,12 @@ public class FMCATest {
 	public void testProductsWithNonEmptyOrchestration() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
 
-		Set<Product> test = Family.readFileNew(dir+"/CATest/productsWithNonEmptyOrchestration.prod");
+		Set<Product> test = Family.readFileNew(dir+"/CAtest/productsWithNonEmptyOrchestration.prod");
 		
 		assertTrue(vp.equals(test));
 	}
@@ -160,7 +160,7 @@ public class FMCATest {
 	public void testFamilyOrc() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
@@ -173,12 +173,12 @@ public class FMCATest {
 	public void testOrchestrationOfFamilyEnumerative() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		
 		MSCA ofe =  aut.getOrchestrationOfFamilyEnumerative();
-		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CATest/Orc_fam_wopo_test.mxe");
+		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_fam_wopo_test.mxe");
 					
 //		int[][] vpdummy = new int[1][];
 //		MSCA test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
@@ -193,7 +193,7 @@ public class FMCATest {
 	public void testCanonicalProductsException() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
@@ -206,7 +206,7 @@ public class FMCATest {
 	public void testSelectProductSatisfyingPredicateException() throws Exception
 	{
 		String dir = System.getProperty("user.dir");
-		String fileName =dir+"/CATest/ValidProducts.prod";
+		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 		
