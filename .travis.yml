@@ -1,3 +1,4 @@
+#https://github.com/travis-ci/travis-ci/issues/5805
 before_install:
 - rm ~/.m2/settings.xml
 #  - sudo apt-get install ant-optional
@@ -8,9 +9,9 @@ jdk:
    - oraclejdk9
    
 #https://dzone.com/articles/travis-ci-tutorial-java-projects
-cache:
-  directories:
-  - $HOME/.m2
+#cache:
+#  directories:
+#  - $HOME/.m2
   
 #https://docs.travis-ci.com/user/environment-variables#Default-Environment-Variables
 env:
@@ -19,9 +20,10 @@ env:
 
 #script:
 #  - mvn clean verify pom.xml 
+#-Pjacoco coveralls:report
+
 
 #  - ant main
-#-Pjacoco coveralls:report
 
 #after_success: 
 
