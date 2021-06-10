@@ -1,13 +1,23 @@
 #before_install:
 #  - sudo apt-get install ant-optional
-     
-language: java
 
+# https://docs.travis-ci.com/user/languages/java/     
+language: java
 jdk:
    - oraclejdk9
+   
+#https://dzone.com/articles/travis-ci-tutorial-java-projects
+cache:
+  directories:
+  - $HOME/.m2
+  
+#https://docs.travis-ci.com/user/environment-variables#Default-Environment-Variables
+env:
+- TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
 
-script:
-   - mvn -f clean verify pom.xml 
+
+#script:
+#   - mvn -f clean verify pom.xml 
 #  - ant main
 #-Pjacoco coveralls:report
 
