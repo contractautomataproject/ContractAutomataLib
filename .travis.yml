@@ -7,8 +7,8 @@ jdk:
    - oraclejdk9
 
 script: 
-	- ant main
-	- mvn -f pom.xml -Pjacoco coveralls:report
+   - ant main
+   - mvn -f pom.xml -Pjacoco coveralls:report
 
 after_success: 
 
