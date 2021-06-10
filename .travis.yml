@@ -1,7 +1,11 @@
 before_install:
    - sudo apt-get install ant-optional
-   
+     
 language: java
+
+jdk:
+	- oraclejdk11
+
 script: ant main
 
 after_success: "sbt coveralls"
