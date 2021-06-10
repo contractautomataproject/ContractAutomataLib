@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,11 +72,14 @@ public class Family {
 
 	public static Set<Product> readFileNew(String filename) throws IOException{
 		//Path p=Paths.get(currentdir, filename);
-		Path p=Paths.get(filename);
+		
+		//Path p=Paths.get(filename);
+		
+		File f = new File(filename);
 		
 
 		Charset charset = Charset.forName("ISO-8859-1");
-		List<String> lines = Files.readAllLines(p, charset);
+		List<String> lines = Files.readAllLines(f.toPath(), charset);
 
 		Pattern pattern = Pattern.compile("p[0-9]*: R=\\{(.*)\\} F=\\{(.*)\\}");
 
@@ -185,7 +187,7 @@ public class Family {
 				.filter(s->s.length()>0)
 				.map(s->{
 					try {
-						return Files.readAllLines(Paths.get("", s), Charset.forName("ISO-8859-1"));//required features
+						return Files.readAllLines(Paths.get(s), Charset.forName("ISO-8859-1"));//required features
 					} catch (IOException e) {
 						throw new IllegalArgumentException();
 					}
