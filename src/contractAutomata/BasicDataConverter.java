@@ -24,17 +24,17 @@ public class BasicDataConverter implements DataConverter{
 	 * @throws FileNotFoundException 
 	 */
 	@Override
-	public void exportDATA(MSCA aut, String filename) throws FileNotFoundException {
+	public void exportDATA(String filename, MSCA aut) throws FileNotFoundException {
 		if (filename=="")
 			throw new IllegalArgumentException("Empty file name");
 
-		if (!filename.endsWith(".data"))
-			filename+=".data";
-		PrintWriter pr = new PrintWriter(filename); 
-		pr.print(aut.toString());
-		pr.close();
+		String suffix=(!filename.endsWith(".data"))?".data":"";
+		try (PrintWriter pr = new PrintWriter(filename+suffix))
+		{
+			pr.print(aut.toString());
+		}
 	}
-	
+
 	/**
 	 * load a MSCA described in a text file,  
 	 * it also loads the must transitions but it does not load the states
@@ -46,78 +46,79 @@ public class BasicDataConverter implements DataConverter{
 	@Override
 	public MSCA importDATA(String filename) throws IOException {
 		// Open the file
-		FileInputStream fstream;
-		if (filename.endsWith(".data"))
-			fstream = new FileInputStream(filename);
-		else
+		if (!filename.endsWith(".data"))
 			throw new IllegalArgumentException("Not a .data format");
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-		int rank=0;
-		String[] initial = new String[1];
-		String[][] fin = new String[1][];
-		Set<MSCATransition> tr = new HashSet<MSCATransition>();
-		Set<CAState> states = new HashSet<CAState>();
-		Map<Integer,Set<BasicState>> mapBasicStates = new HashMap<>();
-
-		String strLine;
-		while ((strLine = br.readLine()) != null)   
+		Set<MSCATransition> tr;
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename))))
 		{
-			if (strLine.length()>0)
-			{
-				switch(strLine.substring(0,1))
-				{
-				case "R":  //Rank Line
-				{
-					rank = Integer.parseInt(strLine.substring(6));
-					break;
-				}
-				case "I": //Initial state
-				{
-					initial=Arrays.stream(strLine.split("[\\[\\],]"))
-							.filter(s->!s.contains("Initial state"))
-							.map(String::trim)
-							.toArray(String[]::new);
-					if (initial.length!=rank)
-						throw new IOException("Initial state with different rank");
-					break;
-				}
-				case "F": //Final state
-				{
-					fin=Arrays.stream(strLine.split("]"))
-							.map(sar->Arrays.stream(sar.split("[,|\\[]"))
-									.filter(s->!s.contains("Final states"))
-									.map(String::trim)
-									.filter(s->!s.equals(""))
-									.toArray(String[]::new))
-							.toArray(String[][]::new);
-					if (fin.length!=rank)
-						throw new IOException("Final states with different rank");
+			int rank=0;
+			String[] initial = new String[1];
+			String[][] fin = new String[1][];
+			tr = new HashSet<MSCATransition>();
+			Set<CAState> states = new HashSet<CAState>();
+			Map<Integer,Set<BasicState>> mapBasicStates = new HashMap<>();
 
-					break;
-				}
-				case "(": //a may transition
+			String strLine;
+			while ((strLine = br.readLine()) != null)   
+			{
+				if (strLine.length()>0)
 				{
-					tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
-					break;
-				}
-				case "!": //a must transition
-				{
-					String stype= strLine.substring(1,2);
-					MSCATransition.Modality type=null;
-					switch (stype)
+					String subStrLine=strLine.substring(0,1);
+					switch(subStrLine)
 					{
-					case "U": type=MSCATransition.Modality.URGENT;break;
-					case "L": type=MSCATransition.Modality.LAZY;break;
+					case "R":  //Rank Line
+					{
+						rank = Integer.parseInt(strLine.substring(6));
+						break;
 					}
-					tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
-					break;
-				}
+					case "I": //Initial state
+					{
+						initial=Arrays.stream(strLine.split("[\\[\\],]"))
+								.filter(s->!s.contains("Initial state"))
+								.map(String::trim)
+								.toArray(String[]::new);
+						if (initial.length!=rank)
+							throw new IOException("Initial state with different rank");
+						break;
+					}
+					case "F": //Final state
+					{
+						fin=Arrays.stream(strLine.split("]"))
+								.map(sar->Arrays.stream(sar.split("[,|\\[]"))
+										.filter(s->!s.contains("Final states"))
+										.map(String::trim)
+										.filter(s->!s.isEmpty())
+										.toArray(String[]::new))
+								.toArray(String[][]::new);
+						if (fin.length!=rank)
+							throw new IOException("Final states with different rank");
+
+						break;
+					}
+					case "(": //a may transition
+					{
+						tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
+						break;
+					}
+					case "!": //a must transition
+					{
+						String stype= strLine.substring(1,2);
+						MSCATransition.Modality type=null;
+						if ("U".equals(stype))
+							type=MSCATransition.Modality.URGENT;
+						else if ("L".equals(stype))
+							type=MSCATransition.Modality.LAZY;
+						
+						tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
+						break;
+					}
+					}
 				}
 			}
-		}
-		br.close();
 
+		}
+		
 		return new MSCA(tr);
 	}
 
@@ -131,10 +132,10 @@ public class BasicDataConverter implements DataConverter{
 
 		matcher.find();
 		String[][] tr=IntStream.range(1,4)
-		.mapToObj(i->Arrays.stream(matcher.group(i).split(","))
-					.map(String::trim)
-					.toArray(String[]::new))
-		.toArray(String[][]::new);
+				.mapToObj(i->Arrays.stream(matcher.group(i).split(","))
+						.map(String::trim)
+						.toArray(String[]::new))
+				.toArray(String[][]::new);
 
 		if (tr[0].length!=rank || tr[1].length!=rank || tr[2].length!=rank)
 			throw new IOException("Ill-formed transitions, different ranks");

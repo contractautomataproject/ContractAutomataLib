@@ -49,7 +49,7 @@ public class MSCA
 		if (tr == null)
 			throw new IllegalArgumentException("Null argument");
 
-		if (tr.size()==0)
+		if (tr.isEmpty())
 			throw new IllegalArgumentException("No transitions");
 
 		if (tr.parallelStream()
@@ -91,14 +91,11 @@ public class MSCA
 	/**
 	 * @return all  states that appear in at least one transition
 	 */
-	public Set<CAState> getStates()
+	public final Set<CAState> getStates()
 	{
-		Set<CAState> cs= this.getTransition().stream()
+		return this.getTransition().stream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
 				.collect(Collectors.toSet()); //CAState without equals, duplicates objects are detected
-
-		return cs;
-
 	}
 
 	/**
@@ -506,7 +503,7 @@ public class MSCA
 	 */
 	public static MSCA union(List<MSCA> aut)
 	{
-		if (aut==null||aut.size()==0)
+		if (aut==null||aut.isEmpty())
 			return null;
 
 		int rank=aut.get(0).getRank(); 

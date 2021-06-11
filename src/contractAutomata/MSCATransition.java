@@ -1,6 +1,7 @@
 package contractAutomata;
 
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -24,10 +25,10 @@ public class MSCATransition extends CATransition {
 	public MSCATransition(CAState source, CALabel label, CAState target, Modality type)
 	{
 		super(source,label,target);
-		if (type!=null)
-			this.mod=type;
-		else		
+		if (type==null)
 			throw new RuntimeException("Ill-formed transition");
+		else		
+			this.mod=type;
 
 	}
 
@@ -66,7 +67,7 @@ public class MSCATransition extends CATransition {
 		else 
 			return "("+getSource().getState().toString()+","+getLabelAsList()+","+getTarget().getState().toString()+")";
 	}
-	
+
 	public String toCSV()
 	{
 		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
@@ -112,7 +113,7 @@ public class MSCATransition extends CATransition {
 				.filter(t->t.getLabel().isMatch()
 						&&
 						!badStates.contains(t.getSource()))
-					//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
+				//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
 				.anyMatch(t->pred.test(t,this));
 	}
 
@@ -136,13 +137,13 @@ public class MSCATransition extends CATransition {
 		return ftr.parallelStream()
 				.map(x->x.getSource())
 				.filter(x->x!=this.getSource()&&
-						this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
-						.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
+				this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
+				.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
 				//it's not the same state of this but sender is in the same state of this
-				
+
 				.allMatch(s -> ftr.parallelStream()
 						.anyMatch(x->x.getSource()==s && this.getLabel().equals(x.getLabel()))
-						 //for all such states there exists an outgoing transition with the same label of this
+						//for all such states there exists an outgoing transition with the same label of this
 						);
 	}
 
@@ -159,21 +160,16 @@ public class MSCATransition extends CATransition {
 				.collect(Collectors.toSet());
 	}*/
 
-		@Override
+	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + mod.hashCode();
-		return result;
+		return Objects.hash(super.hashCode(),mod.hashCode());
 	}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (!super.equals(obj))
-				return false;
-			MSCATransition other = (MSCATransition) obj;
-			if (mod != other.mod)
-				return false;
-			return true;
-		}
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj))
+			return false;
+		MSCATransition other = (MSCATransition) obj;
+		return mod==other.mod;
+	}
 }

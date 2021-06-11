@@ -166,7 +166,7 @@ public class BasicMxeConverter implements MxeConverter {
 	 */
 
 	@Override
-	public File exportMxe(MSCA aut, String fileName) throws ParserConfigurationException, TransformerException
+	public File exportMxe(String fileName, MSCA aut) throws ParserConfigurationException, TransformerException
 	{
 		DocumentBuilderFactory dbFactory =
 				DocumentBuilderFactory.newInstance();

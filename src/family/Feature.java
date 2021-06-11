@@ -1,5 +1,7 @@
 package family;
 
+import java.util.Objects;
+
 public class Feature {
 	private final String name;
 	
@@ -20,10 +22,7 @@ public class Feature {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result +  name.hashCode();
-		return result;
+		return Objects.hash(name.hashCode());
 	}
 
 	@Override

@@ -24,28 +24,12 @@ import family.Family;
 import family.Product;
 
 public class FamilyTest {
-
-	//	@Test
-	//	public void familyOrc() throws Exception
-	//	{
-	//		String dir = System.getProperty("user.dir");
-	//		String fileName =dir+"/CAtest/ValidProducts.prod";
-	//		Family fam=new Family(fileName);
-	//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-	//		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
-	//
-	//		MSCA aut = faut.getAut();
-	//
-	//		MSCA controller = fam.getMPCofFamily(aut);		
-	//
-	//		assertEquals(MSCAtest.checkTransitions(controller, test),true);
-	//	}
-
+	private final String dir = System.getProperty("user.dir");
 
 	@Test
 	public void maximalProducts() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		//		Set<Product> mp = Arrays.stream(fam.getMaximalProducts())
@@ -64,7 +48,7 @@ public class FamilyTest {
 	@Test
 	public void testMaximumDepth() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		assertTrue(fam.getMaximumDepth()==11);
@@ -72,7 +56,7 @@ public class FamilyTest {
 	@Test
 	public void testReadProducts() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		Set<Product> prod = fam.getProducts();
@@ -83,7 +67,7 @@ public class FamilyTest {
 	@Test
 	public void getSuperProductsofProduct() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		Set<Product> pr=fam.getProducts();
@@ -96,15 +80,19 @@ public class FamilyTest {
 		//				.collect(Collectors.toSet());
 
 		Set<Product> products = fam.getSuperProductsofProduct(ar.get(pindex));
-
-		Set<Product> test = Family.readFileNew(dir+"/CAtest/superProductsofProductTest.prod");		
+		//Family.writeFile(dir+"/CAtest/superProductsOfProduct_test", products);
+		
+		Set<Product> test = Family.readFileNew(dir+"/CAtest/superProductsOfProduct_test.prod"); //)superProductsofProductTest.prod");	
+		
+		System.out.println(test.toString()+"\n"+products.toString());
+		
 		assertTrue(products.equals(test));
 	}
 
 	@Test
 	public void getSubProductsofProduct() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(fileName);
 		Set<Product> pr=fam.getProducts();
@@ -119,16 +107,19 @@ public class FamilyTest {
 
 		Set<Product> products = fam.getSubProductsofProduct(ar.get(pindex));
 
-		Set<Product> test = Family.readFileNew(dir+"/CAtest/subProductsOfProductTest.prod");
 
+		//Family.writeFile(dir+"/CAtest/subProductsOfProduct_test", products);
+		Set<Product> test = Family.readFileNew(dir+"/CAtest/subProductsOfProduct_test.prod"); 
+		// subProductsOfProductTest.prod");
+
+
+		
 		assertTrue(products.equals(test));
 	}
 
 	@Test
 	public void writeTest() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
-
 		Set<Product> pr = Family.readFileNew(dir+"/CAtest/maximalProductsTest.prod");
 		Family.writeFile(dir+"/CAtest/write_test", pr);
 
@@ -149,7 +140,7 @@ public class FamilyTest {
 	@Test
 	public void testImportFamily() throws IOException, ParserConfigurationException, SAXException
 	{
-		String dir = System.getProperty("user.dir");
+		
 		Set<Product> pr=Family.importFeatureIDEmodel(dir+"//CAtest//FeatureIDEmodel//",dir+"//CAtest//FeatureIDEmodel//model.xml");
 		Family f1=new Family(pr);
 		Family f2=new Family(dir+"/CAtest/ValidProducts.prod");
@@ -159,7 +150,7 @@ public class FamilyTest {
 	@Test
 	public void testWriteException() throws IOException
 	{
-		String dir = System.getProperty("user.dir");
+		
 
 		Set<Product> pr = Family.readFileNew(dir+"/CAtest/maximalProductsTest.prod");
 		assertThatThrownBy(() -> Family.writeFile("", pr))
@@ -169,10 +160,29 @@ public class FamilyTest {
 }
 
 
+//	@Test
+//	public void familyOrc() throws Exception
+//	{
+//		
+//		String fileName =dir+"/CAtest/ValidProducts.prod";
+//		Family fam=new Family(fileName);
+//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
+//		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
+//
+//		MSCA aut = faut.getAut();
+//
+//		MSCA controller = fam.getMPCofFamily(aut);		
+//
+//		assertEquals(MSCAtest.checkTransitions(controller, test),true);
+//	}
+
+
+
+
 //@Test
 //public void testPO() throws IOException
 //{
-//	String dir = System.getProperty("user.dir");
+//	
 //	String fileName =dir+"/CAtest/ValidProducts.prod";
 //	Family fam=new Family(fileName);
 //	Product[] products = fam.getElements();

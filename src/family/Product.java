@@ -2,6 +2,7 @@ package family;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,8 +104,7 @@ public class Product {
 		Set<Feature> req = new HashSet<>(this.required);
 		Set<Feature> frb = new HashSet<>(this.forbidden);
 		
-		if (!req.remove(f))
-			if (!frb.remove(f))
+		if (!req.remove(f)&&!frb.remove(f))
 				return this;
 		return new Product(req,frb);
 	}
@@ -180,11 +180,7 @@ public class Product {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + forbidden.hashCode();
-		result = prime * result + required.hashCode();
-		return result;
+		return Objects.hash(required.hashCode(),forbidden.hashCode());
 	}
 
 	@Override
@@ -199,12 +195,14 @@ public class Product {
 		return forbidden.equals(other.forbidden)&&required.equals(other.required);
 	}
 
+	
 	public boolean isComparableWith(Product p)
 	{
 		return this.containsAllFeatures(p)||p.containsAllFeatures(this);
 	}
 	
 	
+
 	public int compareTo(Product p) {
 		if (this.isComparableWith(p))
 			return p.getForbiddenAndRequiredNumber()-this.getForbiddenAndRequiredNumber();

@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
+[![Code Quality Score](https://www.code-inspector.com/project/23716/score/svg)](https://www.code-inspector.com/project/23716/score/svg)
+[![Code Grade](https://www.code-inspector.com/project/23716/status/svg)](https://www.code-inspector.com/project/23716/status/svg)
+
 
 <h1>Contract Automata Tool (Lib) </h1>
 
@@ -49,7 +52,8 @@ of `MSCA` and other utilities.
 ![The class diagram of contractAutomata package](./doc/contractAutomata_classdiagram.png)
 [fig:the class diagram of contractAutomata package]
 
-The stand-alone Java class `MSCAIO.java` concerns with the storing of file descriptors. 
+The Java classes `BasicDataConverter.java` and `BasicMxeConverter.java`, implementing 
+the corresponding interfaces,   are used for the storing of file descriptors.
 There are two types of formats: 
 An automaton is stored in either a readable textual representation
 (`*.data`) or an XML format (`*.mxe)`. The `*.data` format can be 
@@ -58,9 +62,8 @@ declaration of states and transitions of each automaton. The XML
 representation of a contract (`*.mxe`) is used by the GUI for saving and
 loading CA. This file descriptor also stores information related to
 the graphical visualization of the CA.  
+A JsonConverter is also under construction.
 
-![The class diagram concerning MSCAIO](./doc/MSCAIO_classdiagram.png)
-[fig:the class diagram of MSCAIO class and related entities]
 
 **family** 
 This package contains the classes `Family.java` containing a set of products  `Product.java` composing a given product line.  

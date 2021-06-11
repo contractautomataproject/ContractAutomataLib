@@ -104,15 +104,15 @@ public class Family {
 		if (filename=="")
 			throw new IllegalArgumentException("Empty file name");
 
-		if (!filename.endsWith(".prod"))
-			filename+=".prod";
-
+		String suffix = (!filename.endsWith(".prod"))?".prod":"";
 		List<Product> ar = new ArrayList<Product>(pr);
-		PrintWriter pw = new PrintWriter(filename); 
-		pw.print(IntStream.range(0, ar.size())
-				.mapToObj(i->ar.get(i).toStringFile(i))
-				.collect(Collectors.joining(System.lineSeparator())));
-		pw.close();
+		try (PrintWriter pw = new PrintWriter(filename+suffix))
+		{
+			pw.print(IntStream.range(0, ar.size())
+					.mapToObj(i->ar.get(i).toStringFile(i))
+					.collect(Collectors.joining(System.lineSeparator())));
+			
+		}
 	}
 
 	/**
@@ -167,9 +167,8 @@ public class Family {
 				features.remove(eq[i][1]);
 		}
 
-		currentdir=currentdir.substring(0, currentdir.lastIndexOf("//"))+"//products//";
 
-		File folder = new File(currentdir);
+		File folder = new File(currentdir.substring(0, currentdir.lastIndexOf("//"))+"//products//");
 		List<File> listOfFiles = Arrays.asList(folder.listFiles());
 
 		Set<Product> setprod=listOfFiles.parallelStream()
@@ -189,7 +188,9 @@ public class Family {
 					try {
 						return Files.readAllLines(Paths.get(s), Charset.forName("ISO-8859-1"));//required features
 					} catch (IOException e) {
-						throw new IllegalArgumentException();
+						IllegalArgumentException iae = new IllegalArgumentException();
+						iae.addSuppressed(e);
+						throw iae;
 					}
 				})
 				.map(l->{

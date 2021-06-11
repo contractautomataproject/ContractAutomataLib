@@ -1,6 +1,7 @@
 package contractAutomata;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Transition of a contract automaton
@@ -50,12 +51,7 @@ public class CATransition {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + label.hashCode();
-		result = prime * result + source.hashCode();
-		result = prime * result + target.hashCode();
-		return result;
+		return Objects.hash(source.hashCode(),label.hashCode(),target.hashCode());
 	}
 
 	@Override

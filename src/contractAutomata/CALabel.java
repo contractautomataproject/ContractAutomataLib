@@ -1,6 +1,7 @@
 package contractAutomata;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -130,8 +131,8 @@ public class CALabel {
 					+ "or out of rank");
 
 		this.rank = rank;
-		this.offerer=(lab.offerer!=-1)?lab.offerer+shift:-1;
-		this.requester=(lab.requester!=-1)?lab.requester+shift:-1;
+		this.offerer=(lab.offerer==-1)?-1:lab.offerer+shift;
+		this.requester=(lab.requester==-1)?-1:lab.requester+shift;
 		this.action=lab.action;
 		this.actiontype=lab.actiontype;
 	}
@@ -224,7 +225,7 @@ public class CALabel {
 				if (requtemp!=-1)
 					throw new IllegalArgumentException("The label is not well-formed");
 				requtemp=i; 
-				acttemp = (acttemp!=null)?acttemp:label.get(i);
+				acttemp = (acttemp==null)?label.get(i):acttemp;
 			}
 			else if (!label.get(i).equals(idle)) 
 				throw new IllegalArgumentException("The label is not well-formed");
@@ -259,10 +260,11 @@ public class CALabel {
 	 * @	ensures !this.isRequest() ==> \result == this.offerer
 	 */
 	public /*@ pure @*/ Integer getOfferer() {
-		if (!this.isRequest())
-			return offerer;
-		else 
+		if (this.isRequest())
 			throw new UnsupportedOperationException("No offerer in a request action");
+		else 
+			return offerer;
+
 	}
 
 	/*
@@ -271,10 +273,11 @@ public class CALabel {
 	 * @	ensures !this.isOffer() ==> \result == this.offerer
 	 */	
 	public /*@ pure @*/ Integer getRequester() {
-		if (!this.isOffer())
-			return requester;
-		else
+		if (this.isOffer())
 			throw new UnsupportedOperationException("No requester in an offer action");
+		else 
+			return requester;
+		
 	}
 
 	/*
@@ -340,18 +343,19 @@ public class CALabel {
 	  @		ensures this.isMatch() ==> (\result.get(offerer)==action && \result.get(requester)==this.getCoAction())
 	  */
 	public List<String> getLabelAsList(){
-		if (!this.isMatch())
+		if (this.isMatch())
 		{
 			return IntStream.range(0, rank)
-					.mapToObj(i->((this.isOffer()&&i==offerer)
-							||(this.isRequest()&&i==requester))?action:idle)
+					.mapToObj(i->(i==offerer)?action:(i==requester)?this.getCoAction():idle)
 					.collect(Collectors.toList());
 		}
 		else
 		{
 			return IntStream.range(0, rank)
-					.mapToObj(i->(i==offerer)?action:(i==requester)?this.getCoAction():idle)
+					.mapToObj(i->((this.isOffer()&&i==offerer)
+							||(this.isRequest()&&i==requester))?action:idle)
 					.collect(Collectors.toList());
+
 		}		
 	}
 
@@ -455,21 +459,15 @@ public class CALabel {
 	}
 	
 	public CALabel getClone() {
-		if (!this.isMatch())
-			return new CALabel(rank,(this.isOffer())?offerer:requester,action);
-		else 
+		if (this.isMatch())
 			return new CALabel(rank,offerer,requester,action);
+		else 
+			return new CALabel(rank,(this.isOffer())?offerer:requester,action);
 	}
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + action.hashCode();
-		result = prime * result + offerer.hashCode();
-		result = prime * result + rank.hashCode();
-		result = prime * result + requester.hashCode();
-		return result;
+		return Objects.hash(action.hashCode(),offerer.hashCode(),rank.hashCode(),requester.hashCode());
 	}
 
 	@Override
