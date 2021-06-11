@@ -96,6 +96,16 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>${maven.coveralls.plugin.version}</version>
+					<configuration>
+						<jacocoReports>
+							<jacocoReport>${project.reporting.outputDirectory}/jacoco/jacoco.xml</jacocoReport>
+						</jacocoReports>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

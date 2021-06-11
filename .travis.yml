@@ -26,8 +26,8 @@ script:
 
 #  - ant main
 
-#after_success: 
-#- mvn coveralls:report
+after_success: 
+- mvn coveralls:report
 
 #notifications:
 #  email:
