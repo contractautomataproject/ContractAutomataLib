@@ -19,12 +19,12 @@ env:
 - TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
 
 
-#script:
+script:
+- mvn clean test jacoco:report coveralls:report
 
 #  - ant main
 
-after_success: 
-  - mvn clean test jacoco:report coveralls:report
+#after_success: 
 
 #notifications:
 #  email:
