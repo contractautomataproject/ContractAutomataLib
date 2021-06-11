@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
+[![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
 
 <h1>Contract Automata Tool (Lib) </h1>
 
@@ -118,4 +119,3 @@ Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models 
 https://doi.org/10.5220/0006291106790686
 (pdf at http://openportal.isti.cnr.it/data/2017/386223/2017_386223.preprint.pdf)
 
-[![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
