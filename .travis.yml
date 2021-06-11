@@ -12,9 +12,9 @@ jdk:
  
    
 #https://dzone.com/articles/travis-ci-tutorial-java-projects
-cache:
-  directories:
-  - $HOME/.m2
+#cache:
+#  directories:
+#  - $HOME/.m2
   
 #https://docs.travis-ci.com/user/environment-variables#Default-Environment-Variables
 env:
