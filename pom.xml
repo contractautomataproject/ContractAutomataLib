@@ -33,8 +33,6 @@
 			<version>3.10.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-		<!-- https://github.com/trautonen/coveralls-maven-plugin/issues/141 -->
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -48,15 +46,6 @@
 					<configuration>
 						<source>1.9</source>
 						<target>1.9</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.eluder.coveralls</groupId>
-					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>4.3.0</version>
-					<configuration>
-						<!-- jacocoReports> <jacocoReport>${project.basedir}/target/site/jacoco.xml</jacocoReport> 
-							</jacocoReports -->
 					</configuration>
 				</plugin>
 				<plugin>
@@ -102,6 +91,8 @@
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
 					<version>${maven.coveralls.plugin.version}</version>
+					<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+					<!-- https://github.com/trautonen/coveralls-maven-plugin/issues/141 -->
 					<dependencies>
 						<dependency>
 							<groupId>javax.xml.bind</groupId>
