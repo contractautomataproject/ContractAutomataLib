@@ -131,39 +131,39 @@ public class MSCATest {
 	//*******************************************LMCS2020 case study********************************************************
 
 
-	@Test
-	public void chorTestLMCS2020Transitions() throws Exception, TransformerException
-	{
-		
-		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		MSCA test1 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		MSCA test2 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_1.mxe");
-		MSCA test3 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_2.mxe");
-		MSCA test4 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_3.mxe");
-		MSCA test5 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_4.mxe");
-		MSCA test6 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.mxe");
-		MSCA test7 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_6.mxe");
-		MSCA test8 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_7.mxe");
-
-		aut = aut.choreography();
-		boolean check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
-				||checkTransitions(aut,test4)||checkTransitions(aut,test5)
-				||checkTransitions(aut,test6)||checkTransitions(aut,test7)
-				||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
-
-//		do {
-//			aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-//			aut = aut.choreography();
-//			check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
-//					||checkTransitions(aut,test4)||checkTransitions(aut,test5)
-//					||checkTransitions(aut,test6)||checkTransitions(aut,test7)
-//					||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
-//		} while (check);
-//		if (!check)
-//			MSCAIO.convertMSCAintoXML(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_8.mxe", aut);
-		
-		assertEquals(check,true);
-	}
+//	@Test
+//	public void chorTestLMCS2020Transitions() throws Exception, TransformerException
+//	{
+//		
+//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
+//		MSCA test1 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
+//		MSCA test2 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_1.mxe");
+//		MSCA test3 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_2.mxe");
+//		MSCA test4 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_3.mxe");
+//		MSCA test5 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_4.mxe");
+//		MSCA test6 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.mxe");
+//		MSCA test7 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_6.mxe");
+//		MSCA test8 = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_7.mxe");
+//
+//		aut = aut.choreography();
+//		boolean check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
+//				||checkTransitions(aut,test4)||checkTransitions(aut,test5)
+//				||checkTransitions(aut,test6)||checkTransitions(aut,test7)
+//				||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
+//
+////		do {
+////			aut = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
+////			aut = aut.choreography();
+////			check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
+////					||checkTransitions(aut,test4)||checkTransitions(aut,test5)
+////					||checkTransitions(aut,test6)||checkTransitions(aut,test7)
+////					||checkTransitions(aut,test8);//||checkTransitions(aut,test7); 
+////		} while (check);
+////		if (!check)
+////			MSCAIO.convertMSCAintoXML(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_8.mxe", aut);
+//		
+//		assertEquals(check,true);
+//	}
 
 	@Test
 	public void chorSmallerTestTransitions() throws Exception
