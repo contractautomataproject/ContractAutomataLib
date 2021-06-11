@@ -58,7 +58,7 @@
 				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>${maven.coveralls.plugin.version}</version>
+					<version>4.3.0</version>
 					<configuration> <!-- <https://github.com/trautonen/coveralls-maven-plugin/issues/64> -->
 						<jacocoReports>
 							<jacocoReport>${project.reporting.outputDirectory}/jacoco/jacoco.xml</jacocoReport>
