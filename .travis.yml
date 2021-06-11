@@ -22,12 +22,12 @@ env:
 
 
 script:
-- mvn jacoco:prepare-agent clean test jacoco:report
+- mvn jacoco:prepare-agent clean test jacoco:report coveralls:report
 
 #  - ant main
 
-after_success: 
-- mvn coveralls:report
+#after_success: 
+#- mvn coveralls:report
 
 #notifications:
 #  email:
