@@ -20,7 +20,8 @@ jdk:
 env:
 - TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
 
-
+#https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution-data-file/36305148#36305148
+#https://github.com/jacoco/jacoco/issues/592
 script:
 - mvn jacoco:prepare-agent clean test jacoco:report
 
