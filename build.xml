@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
+<!-- WARNING: This file is a modification of Eclipse auto-generated file.
+			  All library dependencies have to be move to the lib folder.
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
+
 <project basedir="." default="build" name="FMCAT" xmlns:jacoco="antlib:org.jacoco.ant">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../eclipse/java-2018-09/eclipse/"/>
