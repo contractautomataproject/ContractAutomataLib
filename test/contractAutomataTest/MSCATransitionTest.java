@@ -3,6 +3,7 @@ package contractAutomataTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,14 +26,14 @@ import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
 
 public class MSCATransitionTest {
-	private String dir = System.getProperty("user.dir");
+	private final String dir = System.getProperty("user.dir");
 	
-	private BasicState bs0 = new BasicState("0",true,false);
-	private BasicState bs1 = new BasicState("1",true,false);
-	private BasicState bs2 = new BasicState("2",true,false);
-	private BasicState bs3 = new BasicState("3",false,false);
-	private List<CAState> l = new ArrayList<>();
-	private List<String> lab = new ArrayList<>();
+	private final BasicState bs0 = new BasicState("0",true,false);
+	private final BasicState bs1 = new BasicState("1",true,false);
+	private final BasicState bs2 = new BasicState("2",true,false);
+	private final BasicState bs3 = new BasicState("3",false,false);
+	private final List<CAState> l = new ArrayList<>();
+	private final List<String> lab = new ArrayList<>();
 	private CALabel calab;
 	private CAState source;
 	private CAState target;
@@ -170,7 +171,7 @@ public class MSCATransitionTest {
 	
 	@Test
 	public void testEquals6() {
-		assertEquals(t1.equals(null),false);
+		assertFalse(t1.equals(null));
 	}	
 	
 	@Test
