@@ -49,8 +49,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		}
 
 		String currentdir=filename.substring(0, filename.lastIndexOf("//"));
-		File folder = new File(currentdir//.substring(0, currentdir.lastIndexOf("//"))
-				+"//products//");
+		File folder = new File(currentdir+"//products//");
 		
 		List<File> listOfFiles = Arrays.asList(folder.listFiles());
 

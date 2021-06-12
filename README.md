@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://travis-ci.com/davidebasile/ContractAutomataLib)
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
-[![Code Quality Score](https://www.code-inspector.com/project/23729/score/svg)](https://www.code-inspector.com/project/23729/score/svg)
-[![Code Grade](https://www.code-inspector.com/project/23729/status/svg)](https://www.code-inspector.com/project/23729/status/svg)
+[![Code Quality Score](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)
+[![Code Grade](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)
 
 
 <h1>Contract Automata Tool (Lib) </h1>
