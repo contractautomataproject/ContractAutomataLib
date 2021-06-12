@@ -23,9 +23,9 @@ The  package  of the GUI Application has been moved to https://github.com/davide
 Check that repository for an example of usage of this library for developing a tool for specifying and verifying 
 CA.
 
-The following code snippets are examples taken from the test foder (`MSCATest.java` and `FMCATest.java`). 
-The first  snippet loads two CA described in `.data` format, computes their composition and synthesise s
-an orchesration in agreement (all requests are matched, that is, there are no requests transitions left). 
+The following code snippets are examples taken from the test folder (`MSCATest.java` and `FMCATest.java`). 
+The first  snippet loads two CA described in `.data` format, computes their composition and synthesises
+an orchestration in agreement (all requests are matched, that is, there are no requests transitions left). 
 The composition takes two other arguments. The third is a bound to the maximum length of a path in the composition. 
 The second is a pruning predicate, to avoid generating portions of the automaton only reachable by transitions 
 satisfying this predicate. Indeed, the orchestration synthesis would prune these transitions anyway.
