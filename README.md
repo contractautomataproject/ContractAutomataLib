@@ -7,7 +7,7 @@
 <h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
-and experimenting with new developments in the theoretical framework of contract automata.
+and experimenting with new developments in the theoretical framework of Contract Automata (CA).
 Contract automata are a formalism developed in the research area of foundations for services and distributed 
 computing.
 They are used for specifying services' interface, called behavioral contracts, 
@@ -19,25 +19,59 @@ The source code has been redesigned and refactored  in Java 8.
 
 <h2>Usage</h2>
 
-The  package  of the GUI Application, previously in this 
-repository, has been moved to https://github.com/davidebasile/ContractAutomataApp.
-Check that repository for an example of usage of the API of the Contract Automata Tool, contained 
-in this project.
+The  package  of the GUI Application has been moved to https://github.com/davidebasile/ContractAutomataApp.
+Check that repository for an example of usage of this library for developing a tool for specifying and verifying 
+CA.
+
+
+The following code snippet loads two CA described in `.data` format, compute their composition and synthesise 
+an orchestration in agreement (all requests are matched, that is, there are no requests transitions left). 
+The composition takes two other arguments. The third is a bound to the maximum length of a path in the composition. 
+The second is a pruning predicate, to avoid generating portions of the automaton only reachable by transitions 
+satisfying this predicate. Indeed, the orchestration synthesis would prune these transitions anyway.
+This allows to scale up to bigger compositions without losing information.
+```java
+String dir = System.getProperty("user.dir");
+BasicMxeConverter bmc = new BasicMxeConverter();
+List<MSCA> aut = new ArrayList<>(2);	
+aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));//loading textual .data description of a CA
+aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
+MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
+MSCA orc= new OrchestrationSynthesisOperator().apply(comp);
+```
+
+This snippet loads a composition stored in a `.data` format, synthesises the choreography and stores it 
+in a .data format.
+```java
+MSCA aut = bdc.importMxe(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
+MSCA cor = ChoreographySynthesisOperator().apply(aut);
+bdc.exportDATA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
+```
+
+The following snippet loads an MSCA in `.mxe` format, that is the format used by the GUI app. 
+It synthesises an orchestration for a specific product (i.e., a configuration), requiring featured 
+`card` and `sharedBathroom`, and forbidding feature `singleRoom`.
+```java
+MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
+Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
+MSCA orc=new ProductOrchestrationSynthesisFunction().apply(aut,p);	
+```
+
+The following snippet imports a product line (i.e., a family) either in the textual format `.prod` or 
+as a `.xml` FeatureIDE model. Afterwards, the orchestration of the product line is computed.
+```java
+FamilyConverter dfc = new DataFamilyConverter();
+FamilyConverter ffc = new FeatureIDEfamilyConverter();
+Family fam=dfc.importFamily(fileName);// import from .prod textual description of products
+Family fam2=ffc.importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml"); //import from FeatureIDE model
+FMCA faut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
+MSCA controller = faut.getOrchestrationOfFamily();		
+```
 
 <h2>License</h2>
 The tool is available under Creative Common License 4.0,
  https://github.com/davidebasile/ContractAutomataLib/blob/code-cleaning/license.html.
 
-
-<h2>Tutorials</h2>
-
-A first video tutorial is available at https://youtu.be/LAzCEQtYOhU and it shows the usage of the tool for composing automata and compute orchestrations of product lines, using the examples published in JSCP2020.
-The directory demoJSCP contains an executable jar and the models used in this tutorial.
-
-The second video tutorial, available at https://youtu.be/W0BHlgQEhIk, shows the computation of orchestrations and choreographies for the examples published in LMCS2020.
-The directory demoLMCS2020 contains an executable jar and the models used in this tutorial.
-
-The third video tutorial, available at https://youtu.be/QJjT7f7vlZ4, shows the recent refactoring and improvements of the tool published in Coordination2021.
 
 <h2>Package Structure</h2>
 
