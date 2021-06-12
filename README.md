@@ -36,8 +36,8 @@ DataConverter bdc = new BasicDataConverter();
 List<MSCA> aut = new ArrayList<>(2);	
 aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));//loading textual .data description of a CA
 aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
-MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
-MSCA orc= new OrchestrationSynthesisOperator().apply(comp);
+MSCA comp = new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
+MSCA orc = new OrchestrationSynthesisOperator().apply(comp);
 ```
 
 This snippet loads a composition stored in a `.data` format, synthesises the choreography and stores it 
@@ -54,7 +54,7 @@ It synthesises an orchestration for a specific product (i.e., a configuration), 
 ```java
 MSCA aut = new BasicMxeConverter().importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
 Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-MSCA orc=new ProductOrchestrationSynthesisFunction().apply(aut,p);	
+MSCA orc = new ProductOrchestrationSynthesisFunction().apply(aut,p);	
 ```
 
 The following snippet imports a product line (i.e., a family) either in the textual format `.prod` or 
@@ -62,8 +62,8 @@ as a `.xml` FeatureIDE model. Afterwards, the orchestration of the product line 
 ```java
 FamilyConverter dfc = new ProdFamilyConverter();
 FamilyConverter ffc = new FeatureIDEfamilyConverter();
-Family fam=dfc.importFamily(fileName);// import from .prod textual description of products
-Family fam2=ffc.importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml"); //import from FeatureIDE model
+Family fam = dfc.importFamily(fileName);// import from .prod textual description of products
+Family fam2 = ffc.importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml"); //import from FeatureIDE model
 FMCA faut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 MSCA controller = faut.getOrchestrationOfFamily();		
 ```

@@ -10,6 +10,7 @@ import org.junit.Test;
  */
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ import family.FeatureIDEfamilyConverter;
 import family.Product;
 
 public class FamilyTest {
-	private final String dir = System.getProperty("user.dir");
+	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
 	private final FamilyConverter dfc = new ProdFamilyConverter();
 	
 	@Test
@@ -41,7 +42,7 @@ public class FamilyTest {
 
 		Set<Product> mp= fam.getMaximalProducts();
 
-		Set<Product> test = dfc.importFamily(dir+"/CAtest/maximalProductsTest.prod").getProducts();
+		Set<Product> test = dfc.importFamily(dir +"maximalProductsTest.prod").getProducts();
 
 		assertTrue(mp.equals(test));
 	}
@@ -52,7 +53,7 @@ public class FamilyTest {
 	public void testMaximumDepth() throws Exception
 	{
 		
-		String fileName =dir+"/CAtest/ValidProducts.prod";
+		String fileName =dir +"ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		assertTrue(fam.getMaximumDepth()==11);
 	}
@@ -60,7 +61,7 @@ public class FamilyTest {
 	public void testReadProducts() throws Exception
 	{
 		
-		String fileName =dir+"/CAtest/ValidProducts.prod";
+		String fileName =dir +"ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		Set<Product> prod = fam.getProducts();
 		Set<Product> test=dfc.importFamily(fileName).getProducts();
@@ -71,7 +72,7 @@ public class FamilyTest {
 	public void getSuperProductsofProduct() throws Exception
 	{
 		
-		String fileName =dir+"/CAtest/ValidProducts.prod";
+		String fileName =dir +"ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		Set<Product> pr=fam.getProducts();
 		List<Product> ar = new ArrayList<>(pr);
@@ -83,9 +84,9 @@ public class FamilyTest {
 		//				.collect(Collectors.toSet());
 
 		Set<Product> products = fam.getSuperProductsofProduct(ar.get(pindex));
-		//Family.writeFile(dir+"/CAtest/superProductsOfProduct_test", products);
+		//Family.writeFile(dir +"superProductsOfProduct_test", products);
 		
-		Set<Product> test = dfc.importFamily(dir+"/CAtest/superProductsOfProduct_test.prod").getProducts(); //)superProductsofProductTest.prod");	
+		Set<Product> test = dfc.importFamily(dir +"superProductsOfProduct_test.prod").getProducts(); //)superProductsofProductTest.prod");	
 		
 		//System.out.println(test.toString()+"\n"+products.toString());
 		
@@ -96,7 +97,7 @@ public class FamilyTest {
 	public void getSubProductsofProduct() throws Exception
 	{
 		
-		String fileName =dir+"/CAtest/ValidProducts.prod";
+		String fileName =dir +"ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		Set<Product> pr=fam.getProducts();
 		List<Product> ar = new ArrayList<>(pr);
@@ -111,8 +112,8 @@ public class FamilyTest {
 		Set<Product> products = fam.getSubProductsofProduct(ar.get(pindex));
 
 
-		//Family.writeFile(dir+"/CAtest/subProductsOfProduct_test", products);
-		Set<Product> test = dfc.importFamily(dir+"/CAtest/subProductsOfProduct_test.prod").getProducts(); 
+		//Family.writeFile(dir +"subProductsOfProduct_test", products);
+		Set<Product> test = dfc.importFamily(dir +"subProductsOfProduct_test.prod").getProducts(); 
 		// subProductsOfProductTest.prod");
 
 
@@ -123,10 +124,10 @@ public class FamilyTest {
 	@Test
 	public void writeTest() throws Exception
 	{
-		Family fam = dfc.importFamily(dir+"/CAtest/maximalProductsTest.prod");
-		dfc.exportFamily(dir+"/CAtest/write_test", fam);
+		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
+		dfc.exportFamily(dir +"write_test", fam);
 
-		Set<Product> test = dfc.importFamily(dir+"/CAtest/write_test.prod").getProducts();
+		Set<Product> test = dfc.importFamily(dir +"write_test.prod").getProducts();
 
 		assertTrue(fam.getProducts().equals(test));
 
@@ -144,15 +145,15 @@ public class FamilyTest {
 	public void testImportFamily() throws Exception, ParserConfigurationException, SAXException
 	{
 		
-		Family f1= new FeatureIDEfamilyConverter().importFamily(dir+"\\CAtest\\FeatureIDEmodel\\model.xml");
-		Family f2=dfc.importFamily(dir+"/CAtest/ValidProducts.prod");
+		Family f1= new FeatureIDEfamilyConverter().importFamily(dir+"FeatureIDEmodel"+File.separator+"model.xml");
+		Family f2=dfc.importFamily(dir +"ValidProducts.prod");
 		assertTrue(f1.getProducts().equals(f2.getProducts()));
 	}
 
 	@Test
 	public void testWriteException() throws Exception
 	{
-		Family fam = dfc.importFamily(dir+"/CAtest/maximalProductsTest.prod");
+		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
 		assertThatThrownBy(() -> dfc.exportFamily("", fam))
 		.isInstanceOf(IllegalArgumentException.class);
 
@@ -164,10 +165,10 @@ public class FamilyTest {
 //	public void familyOrc() throws Exception
 //	{
 //		
-//		String fileName =dir+"/CAtest/ValidProducts.prod";
+//		String fileName =dir +"ValidProducts.prod";
 //		Family fam=dfc.importFamily(fileName);
-//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"));
-//		MSCA test = MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
+//		FMCA faut = new FMCA(MSCAIO.parseXMLintoMSCA(dir +"(BusinessClientxHotelxEconomyClient).mxe"));
+//		MSCA test = MSCAIO.parseXMLintoMSCA(dir +"Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 //
 //		MSCA aut = faut.getAut();
 //
@@ -183,7 +184,7 @@ public class FamilyTest {
 //public void testPO() throws Exception
 //{
 //	
-//	String fileName =dir+"/CAtest/ValidProducts.prod";
+//	String fileName =dir +"ValidProducts.prod";
 //	Family fam=dfc.importFamily(fileName);
 //	Product[] products = fam.getElements();
 //	int[][] po = fam.getPartialOrder();
