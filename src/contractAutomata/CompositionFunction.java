@@ -36,6 +36,7 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 	 */
 	public MSCA apply(List<MSCA> aut, Predicate<MSCATransition> pruningPred, Integer bound)
 	{
+		//TODO too long function
 
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition

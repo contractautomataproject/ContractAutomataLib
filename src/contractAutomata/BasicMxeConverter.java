@@ -42,6 +42,7 @@ public class BasicMxeConverter implements MxeConverter {
 	 */
 	@Override
 	public MSCA importMxe(String filename) throws ParserConfigurationException, SAXException, IOException {
+		//TODO long function
 		File inputFile = new File(filename);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -150,8 +151,7 @@ public class BasicMxeConverter implements MxeConverter {
 			}
 		}
 
-		MSCA aut= new MSCA(transitions);
-		return aut;
+		return new MSCA(transitions);
 
 	}
 
@@ -224,9 +224,8 @@ public class BasicMxeConverter implements MxeConverter {
 		Transformer transformer =
 				transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		if (fileName.contains("."))
-			fileName=fileName.substring(0,fileName.indexOf("."));
-		File file = new File(fileName+".mxe");
+		
+		File file = new File((fileName.contains("."))?fileName.substring(0,fileName.indexOf(".")):fileName+".mxe");
 		StreamResult result =
 				new StreamResult(file);
 		transformer.transform(source, result);
@@ -276,74 +275,14 @@ public class BasicMxeConverter implements MxeConverter {
 		mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
 		mxGeometry1.appendChild(mxPointTarget);
 
-
-		//source and target are created using createElementState: they have x and y attributes
-		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
-		//		{
-		//			mxPointSource.setAttribute("x", ((Element)source.getChildNodes().item(0)).getAttribute("x"));
-		//		}
-		//		else
-		//			mxPointSource.setAttribute("x", "0.0");
-
-		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
-		//		{
-		//			mxPointSource.setAttribute("y", ((Element)source.getChildNodes().item(0)).getAttribute("y"));
-		//		}
-		//		else
-		//			mxPointSource.setAttribute("y", "0.0");
-
-		//		mxGeometry1.appendChild(mxPointSource);
-		//		Element mxPointTarget=doc.createElement("mxPoint");
-		//		mxPointTarget.setAttribute("as","targetPoint");
-
-		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
-		//			mxPointTarget.setAttribute("x", ((Element)target.getChildNodes().item(0)).getAttribute("x"));
-		//		else
-		//		{
-		//			Attr x=doc.createAttribute("x");
-		//			x.setNodeValue("0.0");
-		//			mxPointTarget.setAttributeNode(x);
-		//		}
-
-		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
-		//			mxPointTarget.setAttribute("y", ((Element)target.getChildNodes().item(0)).getAttribute("y"));
-		//		else
-		//		{
-		//			Attr y=doc.createAttribute("y");
-		//			y.setNodeValue("0.0");
-		//			mxPointTarget.setAttributeNode(y);
-		//		}
-
-
 		Element pointArray=doc.createElement("Array");
 		pointArray.setAttribute("as","points");
 		Element mxPoint=doc.createElement("mxPoint");
-
 
 		float xs=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x"));
 		float xt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"));
 		float ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
 		float yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
-
-		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("x"))
-		//		{
-		//			xs=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("x"));
-		//		}
-		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("x"))
-		//		{
-		//			xt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("x"));
-		//		}
-		//
-		//		if (((Element)source.getChildNodes().item(0)).hasAttribute("y"))
-		//		{
-		//			ys=Float.parseFloat(((Element)source.getChildNodes().item(0)).getAttribute("y"));	
-		//		}
-		//
-		//		if (((Element)target.getChildNodes().item(0)).hasAttribute("y"))
-		//		{
-		//			yt=Float.parseFloat(((Element)target.getChildNodes().item(0)).getAttribute("y"));
-		//		}
-
 
 		float coordinate=(xs+xt)/2;
 		mxPoint.setAttribute("x", coordinate+"");
@@ -392,10 +331,11 @@ public class BasicMxeConverter implements MxeConverter {
 		Attr parent=doc.createAttribute("parent");
 		parent.setValue("1");
 		Attr style=doc.createAttribute("style");
-		if (!castate.isFinalstate())
-			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/event.png");
-		else
+		if (castate.isFinalstate())
 			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/terminate.png");
+		else
+			style.setValue("roundImage;image=/com/mxgraph/examples/swing/images/event.png");
+	
 
 		Attr value=doc.createAttribute("value");
 		value.setValue(castate.getState().toString());

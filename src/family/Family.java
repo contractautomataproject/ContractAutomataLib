@@ -1,35 +1,11 @@
 package family;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * A family contains its products/configurations and subfamilies, organised as a partial order
@@ -57,62 +33,12 @@ public class Family {
 						.collect(Collectors.partitioningBy(p->prod.compareTo(p)==-1,Collectors.toSet()))));
 	}
 
-	public Family(String filename) throws IOException
-	{
-		this(Family.readFileNew(filename));
-	}
-
 	public Set<Product> getProducts() {
 		return products;
 	}
 
 	public Map<Product, Map<Boolean, Set<Product>>> getPo() {
 		return po;
-	}
-
-	public static Set<Product> readFileNew(String filename) throws IOException{
-		//Path p=Paths.get(currentdir, filename);
-		
-		//Path p=Paths.get(filename);
-		
-		File f = new File(filename);
-		
-
-		Charset charset = Charset.forName("ISO-8859-1");
-		List<String> lines = Files.readAllLines(f.toPath(), charset);
-
-		Pattern pattern = Pattern.compile("p[0-9]*: R=\\{(.*)\\} F=\\{(.*)\\}");
-
-		return lines.parallelStream()
-				.map(pattern::matcher)
-				.filter(Matcher::find)
-				.map(matcher ->new Product(Arrays.stream(matcher.group(1).split(","))
-						.map(String::trim)
-						.filter(s->!s.isEmpty())
-						.map(Feature::new)
-						.collect(Collectors.toSet()),
-						Arrays.stream(matcher.group(2).split(","))
-						.map(String::trim)
-						.filter(s->!s.isEmpty())
-						.map(Feature::new)
-						.collect(Collectors.toSet())))
-				.collect(Collectors.toSet());
-	}
-
-	public static void writeFile(String filename, Set<Product> pr) throws IOException
-	{	
-		if (filename=="")
-			throw new IllegalArgumentException("Empty file name");
-
-		String suffix = (!filename.endsWith(".prod"))?".prod":"";
-		List<Product> ar = new ArrayList<Product>(pr);
-		try (PrintWriter pw = new PrintWriter(filename+suffix))
-		{
-			pw.print(IntStream.range(0, ar.size())
-					.mapToObj(i->ar.get(i).toStringFile(i))
-					.collect(Collectors.joining(System.lineSeparator())));
-			
-		}
 	}
 
 	/**
@@ -135,7 +61,6 @@ public class Family {
 		return this.po.get(prod).get(true);
 	}
 
-
 	/**
 	 * @return all maximal products p s.t. there is no p'>p
 	 */
@@ -146,151 +71,21 @@ public class Family {
 				.map(Entry::getKey)
 				.collect(Collectors.toSet());
 	}
-
-	/**
-	 * loads the list of products generated through FeatureIDE
-	 * 
-	 * @param currentdir
-	 * @param filename
-	 * @return
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 */
-	public static Set<Product> importFeatureIDEmodel(String currentdir, String filename) throws ParserConfigurationException, SAXException, IOException
-	{	
-		Set<String> features=parseFeatures(filename);
-		String[][] eq = detectDuplicates(filename);
-		for (int i=0;i<eq.length;i++)
-		{
-			if (features.contains(eq[i][0])&&features.contains(eq[i][1]))
-				features.remove(eq[i][1]);
-		}
-
-
-		File folder = new File(currentdir.substring(0, currentdir.lastIndexOf("//"))+"//products//");
-		List<File> listOfFiles = Arrays.asList(folder.listFiles());
-
-		Set<Product> setprod=listOfFiles.parallelStream()
-				.map(f->{
-					if (f.isFile()&&f.getName().contains("config"))
-						return f.getAbsolutePath();//no sub-directory on products
-					if (f.isDirectory())
-					{
-						File[] ff = f.listFiles();
-						if (ff!=null && ff.length>0 && ff[0]!=null && ff[0].isFile()&&ff[0].getName().contains("config"))//each product has its own sub-directory
-							return ff[0].getAbsolutePath();//this condition is never satisfied in the tests
-					}
-					return "";	
-				})
-				.filter(s->s.length()>0)
-				.map(s->{
-					try {
-						return Files.readAllLines(Paths.get(s), Charset.forName("ISO-8859-1"));//required features
-					} catch (IOException e) {
-						IllegalArgumentException iae = new IllegalArgumentException();
-						iae.addSuppressed(e);
-						throw iae;
-					}
-				})
-				.map(l->{
-					return new Product(features.parallelStream()
-							.filter(s->l.contains(s))//required
-							.map(s->new Feature(s))
-							.collect(Collectors.toSet()),
-							features.parallelStream()
-							.filter(s->!l.contains(s))//forbidden
-							.map(s->new Feature(s))
-							.collect(Collectors.toSet()));})
-				.collect(Collectors.toSet());
-		
-		//TODO  avoid generation of super-products below, use the orchestration of the paired MSCA as plant, 
-		//	    discard features not present in the aut, as well as products requiring those features. 
-		//		order the remaining products only by considering forbidden actions.
-		/* 
-		 * given two products p1 p2 identical but for a feature f activated in one 
-		 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
-		 * This method generates all possible super products. 
-		 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
-		 * This condition holds for the method.
-		 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
-		 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
-		 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
-		 */
-		return Stream.iterate(setprod, s->!s.isEmpty(), sp->{
-			Map<Product,Set<Product>> map = features.stream()
-					.map(f->sp.parallelStream()
-							.collect(Collectors.groupingByConcurrent(p->p.removeFeature(new Feature(f)), Collectors.toSet())))
-					.reduce(new ConcurrentHashMap<Product,Set<Product>>(),(x,y)->{x.putAll(y); return x;});	
-			return map.entrySet().parallelStream()
-					.filter(e->e.getValue().size()>1)
-					.map(Entry::getKey)
-					.collect(Collectors.toSet());})
-		.reduce(new HashSet<Product>(),(x,y)->{x.addAll(y); return x;});
-
-	}
-
-	private static Set<String> parseFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
-	{
-		File inputFile = new File(filename);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(inputFile);
-		doc.getDocumentElement().normalize();
-
-		NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
-
-		Set<String> features=new HashSet<>();
-		for (int i = 0; i < nodeList.getLength(); i++) 
-		{
-			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
-				features.add(((Element) nNode).getAttribute("name"));    
-		}
-		return features;		
-	}
-
-	/**
-	 * reads all iff constraints (eq node) and returns a table such that forall i table[i][0] equals table[i][1]
-	 * @param filename
-	 * @return
-	 * @throws ParserConfigurationException 
-	 * @throws IOException 
-	 * @throws SAXException 
-	 */
-	private static String[][] detectDuplicates(String filename) throws ParserConfigurationException, SAXException, IOException
-	{
-		File inputFile = new File(filename);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-		Document doc = dBuilder.parse(inputFile);
-		doc.getDocumentElement().normalize();
-
-		NodeList nodeList = (NodeList) doc.getElementsByTagName("eq");
-
-		String[][] table= new String[nodeList.getLength()][2]; //exact length
-
-		int ind =0;
-		for (int i = 0; i < nodeList.getLength(); i++) 
-		{
-			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
-			{
-				NodeList childs = (NodeList) nNode.getChildNodes();
-				Node first = childs.item(1);
-				Node second = childs.item(3);
-				table[ind][0]= first.getTextContent();    
-				table[ind][1]= second.getTextContent();          
-				ind++;
-			}       
-		}
-		return table;		
-	}
-
 }
 
 //END OF THE CLASS
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 	 * @param p list of pairwise different products

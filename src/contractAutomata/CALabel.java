@@ -197,6 +197,7 @@ public class CALabel {
   	*/
 	public CALabel(List<String> label)
 	{		
+		//TODO long function
 		super();
 		if (label==null)
 			throw new IllegalArgumentException("Null argument");

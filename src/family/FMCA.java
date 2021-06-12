@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import contractAutomata.CALabel;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
-import contractAutomata.SynthesisFunction;
 import contractAutomata.UnionFunction;
 
 /**
@@ -33,22 +32,6 @@ public class FMCA {
 		this.family=family;
 	}
 
-	/**
-	 * @return the synthesised orchestration/mpc of product p in agreement
-	 * 
-	 */
-	public MSCA orchestration(Product p)
-	{
-		MSCA a= new SynthesisFunction().apply(aut, (x,t,bad) -> 
-		x.getLabel().isRequest()||bad.contains(x.getTarget())||p.isForbidden(x), 
-		(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))||(x.isUrgent()&&!t.contains(x)));
-
-		if (a!=null&&!p.checkRequired(a.getTransition()))
-			return null;
-		
-		return a;
-	}
-
 	public MSCA getAut() {
 		return aut;
 	}
@@ -66,7 +49,8 @@ public class FMCA {
 		
 		Map<Set<Feature>, Map<Product,MSCA>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
-				.map(p->new AbstractMap.SimpleEntry<Product,MSCA>(p,new FMCA(aut,this.family).orchestration(p)))
+				.map(p->new AbstractMap.SimpleEntry<Product,MSCA>(p,
+						new ProductOrchestrationSynthesisFunction().apply(aut,p)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
 					e.getKey().getForbidden().stream()
@@ -103,7 +87,8 @@ public class FMCA {
 				.parallelStream()
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
-				.map(p->new AbstractMap.SimpleEntry<Product, MSCA>(p,new FMCA(aut,this.family).orchestration(p)))
+				.map(p->new AbstractMap.SimpleEntry<Product, MSCA>(p,
+						new ProductOrchestrationSynthesisFunction().apply(aut,p)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
@@ -134,7 +119,7 @@ public class FMCA {
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
-		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new FMCA(aut,this.family).orchestration(p)!=null);
+		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisFunction().apply(aut,p)!=null);
 	}
 	
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(MSCA a,Predicate<Product> pred)

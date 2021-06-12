@@ -28,7 +28,7 @@ public class BasicDataConverter implements DataConverter{
 		if (filename=="")
 			throw new IllegalArgumentException("Empty file name");
 
-		String suffix=(!filename.endsWith(".data"))?".data":"";
+		String suffix=(filename.endsWith(".data"))?"":".data";
 		try (PrintWriter pr = new PrintWriter(filename+suffix))
 		{
 			pr.print(aut.toString());
@@ -45,6 +45,7 @@ public class BasicDataConverter implements DataConverter{
 	 */
 	@Override
 	public MSCA importDATA(String filename) throws IOException {
+		//TODO long method
 		// Open the file
 		if (!filename.endsWith(".data"))
 			throw new IllegalArgumentException("Not a .data format");

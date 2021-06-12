@@ -18,10 +18,14 @@ import org.junit.Test;
 
 import contractAutomata.BasicMxeConverter;
 import contractAutomata.MSCA;
+import contractAutomata.MxeConverter;
 import contractAutomataTest.MSCATest;
+import family.DataFamilyConverter;
 import family.FMCA;
 import family.Family;
+import family.FamilyConverter;
 import family.Product;
+import family.ProductOrchestrationSynthesisFunction;
 
 /**
  * 
@@ -29,9 +33,10 @@ import family.Product;
  *
  */
 public class FMCATest {
-	private final BasicMxeConverter bmc = new BasicMxeConverter();
+	private final MxeConverter bmc = new BasicMxeConverter();
 	private final String dir = System.getProperty("user.dir");
-			
+	private final FamilyConverter dfc = new DataFamilyConverter();
+	
 	@Test
 	public void constructorTest_Exception_nullArgument() {
 		assertThatThrownBy(() -> new FMCA(null, new Family(new HashSet<Product>())))
@@ -53,31 +58,30 @@ public class FMCATest {
 	{
 
 		
-		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
+		MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
 		
 		MSCA test= bmc.importMxe(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
-		assertEquals(MSCATest.checkTransitions(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"})),test),true);
+		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
+		assertEquals(MSCATest.checkTransitions(
+				new ProductOrchestrationSynthesisFunction().apply(aut,p)
+				,test),true);
 	}
 
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty() throws Exception
 	{
-
-		
-		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
-		
-		assertEquals(aut.orchestration(new Product(new String[] {"dummy"}, new String[] {""})),null);
+		MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
+		Product p = new Product(new String[] {"dummy"}, new String[] {""});
+		assertEquals(new ProductOrchestrationSynthesisFunction().apply(aut,p),null);
 	}
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
 	{
-
-		
-		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),new Family(new HashSet<Product>()));
-		
-		assertEquals(aut.orchestration(new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"})),null);
+		MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
+		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
+		assertEquals(new ProductOrchestrationSynthesisFunction().apply(aut,p),null);
 	}	
 	
 	@Test
@@ -85,7 +89,7 @@ public class FMCATest {
 		
 		MSCA aut= bmc.importMxe(dir+"/CAtest/(AlicexBob).mxe");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		assertEquals(null,new FMCA(aut,new Family(new HashSet<Product>())).orchestration(p));
+		assertEquals(null,new ProductOrchestrationSynthesisFunction().apply(aut,p));
 		
 	}
 	
@@ -95,7 +99,7 @@ public class FMCATest {
 //	{
 //		
 //		String fileName =dir+"/CAtest/ValidProducts.prod";
-//		Family fam=new Family(fileName);
+//		Family fam=dfc.importFamily(fileName);
 //		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 //
 //		Set<Product> rv = aut.respectingValidityFamily();
@@ -113,34 +117,33 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 //		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
 //				.mapToObj(i->fam.getElements()[i])
 //				.collect(Collectors.toSet());
 		Set<Product> vp = aut.productsRespectingValidity();
 
-		Set<Product> test = Family.readFileNew(dir+"/CAtest/validProductsOrcTest.prod");
+		Family test = dfc.importFamily(dir+"/CAtest/validProductsOrcTest.prod");
 		
-		assertTrue(vp.equals(test));
+		assertTrue(vp.equals(test.getProducts()));
 	}
 
 	@Test
 	public void testCanonicalProducts() throws Exception
 	{
-		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 
 		Set<Product> cps = aut.getCanonicalProducts().keySet();
 		
-		Set<Product> test = Family.readFileNew(dir+"/CAtest/canonicalProductsTest.prod");
+		Family test = dfc.importFamily(dir+"/CAtest/canonicalProductsTest.prod");
 //		int[][] ind=new int[1][];
 //		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
 //		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
 //		
-		assertTrue(cps.equals(test));
+		assertTrue(cps.equals(test.getProducts()));
 	}
 
 	@Test
@@ -148,13 +151,13 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
 
-		Set<Product> test = Family.readFileNew(dir+"/CAtest/productsWithNonEmptyOrchestration.prod");
+		Family test = dfc.importFamily(dir+"/CAtest/productsWithNonEmptyOrchestration.prod");
 		
-		assertTrue(vp.equals(test));
+		assertTrue(vp.equals(test.getProducts()));
 	}
 
 	@Test
@@ -162,7 +165,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA faut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		MSCA test = bmc.importMxe(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
@@ -175,7 +178,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		
 		MSCA ofe =  aut.getOrchestrationOfFamilyEnumerative();
@@ -197,7 +200,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		MSCA aut = bmc.importMxe(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
 		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
@@ -210,7 +213,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=new Family(fileName);
+		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMxe(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 		
 		assertThatThrownBy(() ->aut.productsWithNonEmptyOrchestration())

@@ -17,7 +17,7 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 	@Override
 	public MSCA apply(List<MSCA> aut)
 	{
-		if (aut==null||aut.size()==0)
+		if (aut==null||aut.isEmpty())
 			throw new IllegalArgumentException();
 
 		
