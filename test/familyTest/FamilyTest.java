@@ -34,7 +34,7 @@ public class FamilyTest {
 	public void maximalProducts() throws Exception
 	{
 		
-		String fileName =dir+"/CAtest/ValidProducts.prod";
+		String fileName =dir+"ValidProducts.prod";
 		Family fam=  dfc.importFamily(fileName);
 		//		Set<Product> mp = Arrays.stream(fam.getMaximalProducts())
 		//				.mapToObj(i->fam.getElements()[i])
