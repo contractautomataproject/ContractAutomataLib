@@ -3,6 +3,7 @@ package contractAutomataTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,9 +23,16 @@ import contractAutomata.BasicMxeConverter;
 import contractAutomata.BasicState;
 import contractAutomata.CALabel;
 import contractAutomata.CAState;
+import contractAutomata.ChoreographySynthesisOperator;
+import contractAutomata.CompositionFunction;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
+import contractAutomata.MpcSynthesisOperator;
+import contractAutomata.OrchestrationSynthesisOperator;
+import contractAutomata.ProjectionFunction;
+import contractAutomata.SynthesisFunction;
+import contractAutomata.UnionFunction;
 
 public class MSCATest {
 	private final String dir = System.getProperty("user.dir");
@@ -40,8 +48,8 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bmc.importMxe(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
-		MSCA comp=MSCA.composition(aut, null,100);
-		assertEquals(comp.orchestration(),null);
+		MSCA comp=new CompositionFunction().apply(aut, null,100);
+		assertEquals(new OrchestrationSynthesisOperator().apply(comp),null);
 	}
 
 	@Test
@@ -51,7 +59,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
 
-		MSCA comp=MSCA.composition(aut, t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
 		MSCA test = bmc.importMxe(dir+"/CAtest/BusinessClientxHotel_closed.mxe");
 		assertEquals(checkTransitions(comp,test),true);
 	}
@@ -63,7 +71,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
 
-		MSCA comp=MSCA.composition(aut, null,100);
+		MSCA comp=new CompositionFunction().apply(aut, null,100);
 		MSCA test = bmc.importMxe(dir+"/CAtest/BusinessClientxHotel_open.mxe");
 		assertEquals(checkTransitions(comp,test),true);
 	}
@@ -75,7 +83,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/EconomyClient.mxe.data"));
-		MSCA comp = MSCA.composition(aut, null,100);
+		MSCA comp = new CompositionFunction().apply(aut, null,100);
 		MSCA test= bmc.importMxe(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
 		assertEquals(checkTransitions(comp,test),true);	
 	}
@@ -88,10 +96,10 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/EconomyClient.mxe.data"));
-		MSCA comp=MSCA.composition(aut, t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
 		
 		MSCA test= bmc.importMxe(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient)_test.mxe");
-		assertEquals(checkTransitions(comp.orchestration(),test),true);
+		assertEquals(checkTransitions(new OrchestrationSynthesisOperator().apply(comp),test),true);
 
 //		assertEquals(comp.orchestration().getNumStates(),14);
 	}	
@@ -103,7 +111,7 @@ public class MSCATest {
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
 		MSCA test= bmc.importMxe(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient)_test.mxe");
-		assertEquals(checkTransitions(aut.orchestration(),test),true);
+		assertEquals(checkTransitions(new OrchestrationSynthesisOperator().apply(aut),test),true);
 	}	
 
 
@@ -114,7 +122,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/EconomyClient.mxe.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
-		MSCA union = MSCA.union(aut);
+		MSCA union = new UnionFunction().apply(aut);
 		MSCA test = bmc.importMxe(dir+"/CAtest/union_BusinessClient_EconomyClient_Hotel.mxe");
 		assertEquals(checkTransitions(union,test),true);
 	}
@@ -123,7 +131,7 @@ public class MSCATest {
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
 		MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
 		MSCA test= bmc.importMxe(dir+"/CAtest/BusinessClient.mxe");
-		aut=aut.projection(0, t->t.getLabel().getRequester());
+		aut=new ProjectionFunction().apply(aut,0, t->t.getLabel().getRequester());
 //		System.out.println(aut);
 //		System.out.println(test);
 		assertEquals(checkTransitions(aut,test),true);
@@ -147,7 +155,8 @@ public class MSCATest {
 		MSCA test7 = bmc.importMxe(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_6.mxe");
 		MSCA test8 = bmc.importMxe(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_7.mxe");
 
-		aut = aut.choreography();
+		//aut = aut.choreography();
+		aut = new ChoreographySynthesisOperator().apply(aut);
 		boolean check = checkTransitions(aut,test1)||checkTransitions(aut,test2)||checkTransitions(aut,test3)
 				||checkTransitions(aut,test4)||checkTransitions(aut,test5)
 				||checkTransitions(aut,test6)||checkTransitions(aut,test7)
@@ -171,9 +180,8 @@ public class MSCATest {
 	public void chorSmallerTestTransitions() throws Exception
 	{
 
-		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		MSCA cor=aut.synthesis((x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
+		MSCA cor=new SynthesisFunction().apply(aut,(x,t,bad) -> 	!x.satisfiesBranchingCondition(t, bad)||!x.getLabel().isMatch()||bad.contains(x.getTarget()),
 				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad));
 
 		assertEquals(cor,null);
@@ -189,19 +197,40 @@ public class MSCATest {
 		MSCA aut = bmc.importMxe(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
 		MSCA test = bmc.importMxe(dir+"/CAtest/Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
 
-		assertEquals(checkTransitions(aut.orchestration(),test),true);
+		assertEquals(checkTransitions(new OrchestrationSynthesisOperator().apply(aut),test),true);
 	}
 
+	@Test
+	public void orcTestLMCS2020Transitions_new() throws Exception
+	{
+
+		
+		MSCA aut = bmc.importMxe(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
+		MSCA test = bmc.importMxe(dir+"/CAtest/Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
+
+		assertEquals(checkTransitions(new OrchestrationSynthesisOperator().apply(aut),test),true);
+	}
+
+	
 	@Test
 	public void mpcEmptyTestLMCS2020() throws Exception
 	{
 
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).mxe");
-		MSCA mpc=aut.mpc();
+		MSCA mpc=new MpcSynthesisOperator().apply(aut);
 
 		assertEquals(mpc,null);
 	}
+	
+	@Test 
+	public void mpcEmptyTestLMCS20202() throws Exception
+	{
+		MSCA aut = bmc.importMxe(dir+"/CAtest/(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).mxe");
+		new MpcSynthesisOperator().apply(aut);
+		assertEquals(new MpcSynthesisOperator().apply(aut),null);	
+	}
+
 
 	@Test
 	public void mpcEmptyTestNoDangling() throws Exception
@@ -209,7 +238,7 @@ public class MSCATest {
 
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_empty_mpc_nodangling.mxe");
-		MSCA mpc=aut.mpc();
+		MSCA mpc=new MpcSynthesisOperator().apply(aut);
 
 		assertEquals(mpc,null);
 	}
@@ -220,7 +249,7 @@ public class MSCATest {
 
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_empty_orc_nodangling.mxe");
-		assertEquals(aut.orchestration(),null);
+		assertEquals(new OrchestrationSynthesisOperator().apply(aut),null);
 	}
 	
 	//**********************************************************************************************
@@ -233,7 +262,7 @@ public class MSCATest {
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_chor_controllablelazyoffer.mxe");
 		MSCA test = bmc.importMxe(dir+"/CAtest/Chor_(test_chor_controllablelazyoffer).mxe");
-		assertEquals(checkTransitions(aut.choreography(),test),true);
+		assertEquals(checkTransitions(new ChoreographySynthesisOperator().apply(aut),test),true);
 	}
 
 //	@Test
@@ -251,7 +280,7 @@ public class MSCATest {
 		aut.add(bmc.importMxe(dir+"/CAtest/A.mxe"));
 		aut.add(bmc.importMxe(dir+"/CAtest/B.mxe"));
 
-		MSCA comp=MSCA.composition(aut,null,100);
+		MSCA comp=new CompositionFunction().apply(aut,null,100);
 		MSCA test = bmc.importMxe(dir+"/CAtest/(AxB).mxe");
 
 		assertEquals(checkTransitions(comp,test),true);
@@ -266,7 +295,7 @@ public class MSCATest {
 		aut.add(bmc.importMxe(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 		aut.add(bmc.importMxe(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 
-		MSCA comp=MSCA.composition(aut,t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction().apply(aut,t->t.getLabel().isRequest(),100);
 
 		assertEquals(comp,null);
 	}
@@ -276,15 +305,23 @@ public class MSCATest {
 	{
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_urgent.mxe");
-		assertEquals(aut.mpc().getNumStates(),2);
+		assertEquals(new MpcSynthesisOperator().apply(aut).getNumStates(),2);
 	}
 
+	@Test 
+	public void mpcTest2() throws Exception
+	{
+		MSCA aut = bmc.importMxe(dir+"/CAtest/test_urgent.mxe");
+		new MpcSynthesisOperator().apply(aut);
+		assertTrue(checkTransitions(new MpcSynthesisOperator().apply(aut),new MpcSynthesisOperator().apply(aut)));	
+	}
+	
 	@Test
 	public void orcTest_empty() throws Exception
 	{
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/test_empty_orc.mxe");
-		assertEquals(orc.orchestration(),null);
+		assertEquals(new OrchestrationSynthesisOperator().apply(orc),null);
 	}
 
 	@Test
@@ -292,7 +329,7 @@ public class MSCATest {
 	{
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/test_empty_orc_lazy.mxe");
-		assertEquals(orc.orchestration(),null);
+		assertEquals(new OrchestrationSynthesisOperator().apply(orc),null);
 	}
 
 	@Test
@@ -300,7 +337,7 @@ public class MSCATest {
 	{
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/test_empty_orc_lazy.mxe");
-		assertEquals(orc.orchestration(),null);
+		assertEquals(new OrchestrationSynthesisOperator().apply(orc),null);
 	}
 
 	@Test
@@ -309,7 +346,7 @@ public class MSCATest {
 
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_lazy_empty_cor.mxe");
-		assertEquals(aut.choreography(),null);
+		assertEquals(new ChoreographySynthesisOperator().apply(aut),null);
 	}
 
 	@Test
@@ -318,7 +355,7 @@ public class MSCATest {
 
 		
 		MSCA aut = bmc.importMxe(dir+"/CAtest/test_chor_urgentoffer.mxe");
-		assertEquals(aut.choreography(),null);
+		assertEquals(new ChoreographySynthesisOperator().apply(aut),null);
 	}
 
 	public static boolean checkTransitions(MSCA aut, MSCA test) {
@@ -350,11 +387,6 @@ public class MSCATest {
 //		assertEquals(aut.getInitial(),newInitial);
 //	}
 
-	@Test
-	public void union_null() 
-	{
-		assertEquals(MSCA.union(null),null);
-	}
 
 	@Test
 	public void union_statelabelsnotnumbers() throws Exception {
@@ -363,7 +395,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/testgraph.data"));
 		aut.add(bdc.importDATA(dir+"/CAtest/testgraph.data"));
 		
-		MSCA union = MSCA.union(aut);
+		MSCA union = new UnionFunction().apply(aut);
 //		MSCAIO.convertMSCAintoXML(dir+"/CAtest/union_testgraph_testgraph.mxe", union);
 		
 		MSCA test = bmc.importMxe(dir+"/CAtest/union_testgraph_testgraph.mxe");
@@ -395,10 +427,10 @@ public class MSCATest {
 	public void choreoConcur2021projectAndComposeTest() throws Exception {
 		MSCA aut = bmc.importMxe(dir+"/CAtest/testcor_concur21_Example34.mxe");
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
-		.mapToObj(i->aut.projection(i, t->t.getLabel().getOfferer()))
+		.mapToObj(i->new ProjectionFunction().apply(aut,i, t->t.getLabel().getOfferer()))
 		.collect(Collectors.toList());
 	//	System.out.println(principals);
-		MSCA closed_aut = MSCA.composition(principals, t->!t.getLabel().isMatch(), 100);
+		MSCA closed_aut = new CompositionFunction().apply(principals, t->!t.getLabel().isMatch(), 100);
 	//	MSCAIO.convertMSCAintoXML(dir+"/CAtest/testcor_concur21_Example34_closed_composition.mxe", closed_aut);
 		
 		boolean bc = closed_aut.getTransition().stream()
@@ -421,7 +453,7 @@ public class MSCATest {
 	public void projectionException1() throws IOException {
 
 		MSCA aut = bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data");
-		assertThatThrownBy(() -> aut.projection(-1, null))
+		assertThatThrownBy(() -> new ProjectionFunction().apply(aut,-1, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 		
@@ -431,7 +463,7 @@ public class MSCATest {
 	public void projectionException2() throws IOException {
 
 		MSCA aut = bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data");
-		assertThatThrownBy(() -> aut.projection(2, null))
+		assertThatThrownBy(() -> new ProjectionFunction().apply(aut,2, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 		
@@ -511,7 +543,7 @@ public class MSCATest {
 	{
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/test_empty_orc_lazy.mxe");
-		assertThatThrownBy(() -> orc.mpc())
+		assertThatThrownBy(() -> new MpcSynthesisOperator().apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 
@@ -520,7 +552,7 @@ public class MSCATest {
 	{
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/test_empty_orc_lazy.mxe");
-		assertThatThrownBy(() -> orc.choreography())
+		assertThatThrownBy(() -> new ChoreographySynthesisOperator().apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 
@@ -530,10 +562,18 @@ public class MSCATest {
 		//
 		
 		MSCA orc = bmc.importMxe(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe");
-		assertThatThrownBy(() -> orc.orchestration())
+		assertThatThrownBy(() -> new OrchestrationSynthesisOperator().apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
+	
 
+	@Test
+	public void union_empty() 
+	{
+		assertThatThrownBy(()->new UnionFunction().apply(new ArrayList<MSCA>()))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
 	@Test
 	public void union_differentrank_exception() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
@@ -541,7 +581,7 @@ public class MSCATest {
 		aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));
 		aut.add(bmc.importMxe(dir+"/CAtest/BusinessClientxHotel_open.mxe"));
 
-		assertThatThrownBy(() -> MSCA.union(aut))
+		assertThatThrownBy(() -> new UnionFunction().apply(aut))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -595,7 +635,7 @@ public class MSCATest {
 		aut.add(bmc.importMxe(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 		aut.add(bmc.importMxe(dir+"/CAtest/forNullClosedAgreementComposition.mxe"));
 
-		assertThatThrownBy(() -> MSCA.composition(aut,null,0))
+		assertThatThrownBy(() -> new CompositionFunction().apply(aut,null,0))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 	}

@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 import contractAutomata.CALabel;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
+import contractAutomata.SynthesisFunction;
+import contractAutomata.UnionFunction;
 
 /**
  * Featured Modal Contract Automata
@@ -37,7 +39,7 @@ public class FMCA {
 	 */
 	public MSCA orchestration(Product p)
 	{
-		MSCA a=aut.synthesis( (x,t,bad) -> 
+		MSCA a= new SynthesisFunction().apply(aut, (x,t,bad) -> 
 		x.getLabel().isRequest()||bad.contains(x.getTarget())||p.isForbidden(x), 
 		(x,t,bad) -> (!x.isUrgent()&&x.isUncontrollableOrchestration(t, bad))||(x.isUrgent()&&!t.contains(x)));
 
@@ -81,7 +83,7 @@ public class FMCA {
 	
 	public MSCA getOrchestrationOfFamilyEnumerative()
 	{
-		 return MSCA.union(this.getTotalProductsWithNonemptyOrchestration().entrySet()
+		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().entrySet()
 					.stream()
 					.map(Entry::getValue)
 					.collect(Collectors.toList()));	
@@ -89,7 +91,7 @@ public class FMCA {
 	
 	public MSCA getOrchestrationOfFamily()
 	{
-		return MSCA.union(this.getCanonicalProducts()
+		return new UnionFunction().apply(this.getCanonicalProducts()
 		.values()
 		.stream()
 		.collect(Collectors.toList()));
