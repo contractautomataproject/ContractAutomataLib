@@ -11,10 +11,10 @@ import java.util.stream.IntStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class VoxLogicaJsonConverter implements JsonConverter {
+public class VoxLogicaJsonConverter implements MSCAConverter {
 
 	@Override
-	public MSCA importJSON(String filename) throws IOException {
+	public MSCA importMSCA(String filename) throws IOException {
 
 		String content = Files.readAllLines(Paths.get(filename)).stream()
 				.collect(Collectors.joining(" "));
@@ -47,9 +47,11 @@ public class VoxLogicaJsonConverter implements JsonConverter {
 				.collect(Collectors.toSet()));
 	}
 
+
 	@Override
-	public void exportJSON(MSCA aut, String path) {
+	public void exportMSCA(String filename, MSCA aut) throws IOException {
 		// TODO Auto-generated method stub
+		
 	}
 
 

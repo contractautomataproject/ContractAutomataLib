@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class DataFamilyConverter implements FamilyConverter {
+public class ProdFamilyConverter implements FamilyConverter {
 
 	@Override
 	public Family importFamily(String filename) throws IOException {

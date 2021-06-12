@@ -4,28 +4,28 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import contractAutomata.BasicMxeConverter;
-import contractAutomata.JsonConverter;
+import contractAutomata.MxeConverter;
 import contractAutomata.MSCA;
+import contractAutomata.MSCAConverter;
 import contractAutomata.VoxLogicaJsonConverter;
 
 public class JsonConverterTest {
-	private final BasicMxeConverter bmc = new BasicMxeConverter();
+	private final MxeConverter bmc = new MxeConverter();
 	private String dir = System.getProperty("user.dir");
 	
 	@Test
 	public void importTest() throws Exception {
-		JsonConverter jc = new VoxLogicaJsonConverter();
-		MSCA aut = jc.importJSON(dir+"/CAtest/testgraph.json");
-	    bmc.exportMxe(dir+"/CAtest/testgraph.mxe", aut);
-	    MSCA test= bmc.importMxe(dir+"/CAtest/voxlogicajsonimporttest.mxe");
+		MSCAConverter jc = new VoxLogicaJsonConverter();
+		MSCA aut = jc.importMSCA(dir+"/CAtest/testgraph.json");
+	    bmc.exportMSCA(dir+"/CAtest/testgraph.mxe", aut);
+	    MSCA test= bmc.importMSCA(dir+"/CAtest/voxlogicajsonimporttest.mxe");
 	    assertEquals(MSCATest.checkTransitions(aut, test),true);
 	}
 
 	@Test
 	public void exportTest() throws Exception {
-		JsonConverter jc = new VoxLogicaJsonConverter();
-		jc.exportJSON(null, dir);//only for coverage
+		MSCAConverter jc = new VoxLogicaJsonConverter();
+		jc.exportMSCA(dir,null);//only for coverage
 	}
 
 }

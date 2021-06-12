@@ -11,21 +11,21 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import contractAutomata.BasicDataConverter;
-import contractAutomata.BasicMxeConverter;
+import contractAutomata.DataConverter;
+import contractAutomata.MxeConverter;
 import contractAutomata.BasicState;
 import contractAutomata.MSCA;
 
 public class MSCAIOTest {
-	private final BasicMxeConverter bmc = new BasicMxeConverter();
-	private final BasicDataConverter bdc = new BasicDataConverter();
+	private final MxeConverter bmc = new MxeConverter();
+	private final DataConverter bdc = new DataConverter();
 	String dir = System.getProperty("user.dir");
 
 	@Test
 	public void loadVSparseSCP2020_BusinessClient() throws Exception {		
 		//check that loading .data and parsing .mxe are equals 
-		MSCA comp= bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data");
-		MSCA comp2= bmc.importMxe(dir+"/CAtest/BusinessClient.mxe");
+		MSCA comp= bdc.importMSCA(dir+"/CAtest/BusinessClient.mxe.data");
+		MSCA comp2= bmc.importMSCA(dir+"/CAtest/BusinessClient.mxe");
 		assertEquals(MSCATest.checkTransitions(comp,comp2),true);
 	}
 
@@ -33,9 +33,9 @@ public class MSCAIOTest {
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
 		
-		MSCA aut = bdc.importDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
-		bdc.exportDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data",aut);
-		MSCA test = bdc.importDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
+		MSCA aut = bdc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
+		bdc.exportMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data",aut);
+		MSCA test = bdc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
 	}
 
@@ -43,7 +43,7 @@ public class MSCAIOTest {
 	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
 		
-		MSCA aut = bdc.importDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
+		MSCA aut = bdc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
 
 		assertEquals(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
@@ -60,7 +60,7 @@ public class MSCAIOTest {
 		//check if there are different objects for the same basic state
 		
 //		MSCA aut = MSCAIO.parseXMLintoMSCAnew(dir+"/CAtest/testnew.mxe");
-		MSCA aut = bmc.importMxe(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
+		MSCA aut = bmc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
 
 		assertEquals(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
@@ -121,9 +121,9 @@ public class MSCAIOTest {
 	public void conversionXMLtestSCP2020_BusinessClientxHotel() throws Exception, TransformerException {
 		//check if by converting and parsing the automaton does not change
 		
-		MSCA comp= bmc.importMxe(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");			
-		bmc.exportMxe(dir+"/CAtest/test.mxe",comp);
-		MSCA test=bmc.importMxe(dir+"/CAtest/test.mxe");
+		MSCA comp= bmc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");			
+		bmc.exportMSCA(dir+"/CAtest/test.mxe",comp);
+		MSCA test=bmc.importMSCA(dir+"/CAtest/test.mxe");
 
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
 	}
@@ -133,9 +133,9 @@ public class MSCAIOTest {
 		//check if by parsing and printing the automaton does not change
 
 		
-		MSCA aut = bmc.importMxe(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
-		bdc.exportDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe",aut);
-		MSCA test = bdc.importDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
+		MSCA aut = bmc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe");
+		bdc.exportMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe",aut);
+		MSCA test = bdc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");
 
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
 
@@ -146,10 +146,10 @@ public class MSCAIOTest {
 		//check if by parsing and printing the automaton does not change
 
 		
-		MSCA aut = bmc.importMxe(dir+"/CAtest/test_parse_noxy.mxe");
-		bmc.exportMxe(dir+"/CAtest/test_parse_withxy.mxe",aut);
+		MSCA aut = bmc.importMSCA(dir+"/CAtest/test_parse_noxy.mxe");
+		bmc.exportMSCA(dir+"/CAtest/test_parse_withxy.mxe",aut);
 
-		MSCA test = bmc.importMxe(dir+"/CAtest/test_parse_withxy.mxe");
+		MSCA test = bmc.importMSCA(dir+"/CAtest/test_parse_withxy.mxe");
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
 
 	}
@@ -159,9 +159,9 @@ public class MSCAIOTest {
 	public void loadConvertSCP2020_BusinessClientxHotel() throws Exception, TransformerException {
 		//check if by loading and converting the automaton does not change
 		
-		MSCA comp= bdc.importDATA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");			
-		bmc.exportMxe(dir+"/CAtest/test.mxe",comp);
-		MSCA test=bmc.importMxe(dir+"/CAtest/test.mxe");
+		MSCA comp= bdc.importMSCA(dir+"/CAtest/BusinessClientxHotelxEconomyClient.mxe.data");			
+		bmc.exportMSCA(dir+"/CAtest/test.mxe",comp);
+		MSCA test=bmc.importMSCA(dir+"/CAtest/test.mxe");
 
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
 	}
@@ -172,7 +172,7 @@ public class MSCAIOTest {
 	public void importMXENewPrincipalNoBasicStates() throws Exception {
 		
 
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest/test_newPrincipalWithNoBasicStates.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest/test_newPrincipalWithNoBasicStates.mxe"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("source, label or target with different ranks");
 
@@ -183,7 +183,7 @@ public class MSCAIOTest {
 	{
 		//
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//BusinessClient.mxe"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//BusinessClient.mxe"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Not a .data format");
 	}
@@ -192,7 +192,7 @@ public class MSCAIOTest {
 	public void emptyFileName_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.exportDATA("",null))
+		assertThatThrownBy(() -> bdc.exportMSCA("",null))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Empty file name");
 	}
@@ -202,7 +202,7 @@ public class MSCAIOTest {
 	public void loadIllActions_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//illformed.data"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//illformed.data"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("The label is not well-formed");
 	}
@@ -211,7 +211,7 @@ public class MSCAIOTest {
 	public void loadIllRankStatesHigher_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//illformed2.data"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//illformed2.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed transitions, different ranks");
 	}
@@ -220,7 +220,7 @@ public class MSCAIOTest {
 	public void loadIllRankStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//illformed3.data"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//illformed3.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed transitions, different ranks");
 	}
@@ -229,7 +229,7 @@ public class MSCAIOTest {
 	public void loadIllRankInitialStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//illformed4.data"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//illformed4.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Initial state with different rank");
 	}
@@ -238,7 +238,7 @@ public class MSCAIOTest {
 	public void loadIllRankFinalStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bdc.importDATA(dir+"/CAtest//illformed5.data"))
+		assertThatThrownBy(() -> bdc.importMSCA(dir+"/CAtest//illformed5.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Final states with different rank");
 	}
@@ -248,7 +248,7 @@ public class MSCAIOTest {
 	public void parseDuplicateStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Duplicate states!");
 	}
@@ -257,7 +257,7 @@ public class MSCAIOTest {
 	public void parseIllActions_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed2.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed2.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed action");
 	}
@@ -266,7 +266,7 @@ public class MSCAIOTest {
 	public void parseNoFinalStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed3.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed3.mxe"))
 	    .isInstanceOf(IllegalArgumentException.class) //IOException.class)
 	    .hasMessageContaining("No Final States!");
 	}
@@ -275,7 +275,7 @@ public class MSCAIOTest {
 	public void parseEmptyElements_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed4.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed4.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("No states!");
 	}
@@ -284,7 +284,7 @@ public class MSCAIOTest {
 	public void parseWrongFinalStates_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed5.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed5.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Problems with final states in .mxe");
 	}
@@ -293,7 +293,7 @@ public class MSCAIOTest {
 	public void parseMxeDuplicateBasicStates() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
 	{
 		
-		assertThatThrownBy(() -> bmc.importMxe(dir+"/CAtest//illformed_duplicatebasicstates.mxe"))
+		assertThatThrownBy(() -> bmc.importMSCA(dir+"/CAtest//illformed_duplicatebasicstates.mxe"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Duplicate basic states labels");
 	}

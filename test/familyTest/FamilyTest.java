@@ -19,7 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import family.DataFamilyConverter;
+import family.ProdFamilyConverter;
 import family.Family;
 import family.FamilyConverter;
 import family.FeatureIDEfamilyConverter;
@@ -27,7 +27,7 @@ import family.Product;
 
 public class FamilyTest {
 	private final String dir = System.getProperty("user.dir");
-	private final FamilyConverter dfc = new DataFamilyConverter();
+	private final FamilyConverter dfc = new ProdFamilyConverter();
 	
 	@Test
 	public void maximalProducts() throws Exception
@@ -144,7 +144,7 @@ public class FamilyTest {
 	public void testImportFamily() throws Exception, ParserConfigurationException, SAXException
 	{
 		
-		Family f1= new FeatureIDEfamilyConverter().importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml");
+		Family f1= new FeatureIDEfamilyConverter().importFamily(dir+"\\CAtest\\FeatureIDEmodel\\model.xml");
 		Family f2=dfc.importFamily(dir+"/CAtest/ValidProducts.prod");
 		assertTrue(f1.getProducts().equals(f2.getProducts()));
 	}

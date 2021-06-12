@@ -48,8 +48,8 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 				features.remove(eq[i][1]);
 		}
 
-		String currentdir=filename.substring(0, filename.lastIndexOf("//"));
-		File folder = new File(currentdir+"//products//");
+		
+		File folder = new File(filename.substring(0, filename.lastIndexOf(File.separator))+File.separator+"products"+File.separator);
 		
 		List<File> listOfFiles = Arrays.asList(folder.listFiles());
 

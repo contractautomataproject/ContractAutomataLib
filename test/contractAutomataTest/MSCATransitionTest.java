@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
-import contractAutomata.BasicDataConverter;
+import contractAutomata.DataConverter;
 import contractAutomata.BasicState;
 import contractAutomata.CALabel;
 import contractAutomata.CAState;
@@ -59,7 +59,7 @@ public class MSCATransitionTest {
 	@Test
 	public void branchingCondition() throws NumberFormatException, IOException {
 	
-		MSCA aut = new BasicDataConverter().importDATA(dir+"/CAtest/violatingbranchingcondition.mxe.data");
+		MSCA aut = new DataConverter().importMSCA(dir+"/CAtest/violatingbranchingcondition.mxe.data");
 
 		final Set<MSCATransition> trf = aut.getTransition();
 		Set<MSCATransition> violatingBC = aut.getTransition().stream()

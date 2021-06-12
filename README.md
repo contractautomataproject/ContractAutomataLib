@@ -60,7 +60,7 @@ MSCA orc=new ProductOrchestrationSynthesisFunction().apply(aut,p);
 The following snippet imports a product line (i.e., a family) either in the textual format `.prod` or 
 as a `.xml` FeatureIDE model. Afterwards, the orchestration of the product line is computed.
 ```java
-FamilyConverter dfc = new DataFamilyConverter();
+FamilyConverter dfc = new ProdFamilyConverter();
 FamilyConverter ffc = new FeatureIDEfamilyConverter();
 Family fam=dfc.importFamily(fileName);// import from .prod textual description of products
 Family fam2=ffc.importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml"); //import from FeatureIDE model
