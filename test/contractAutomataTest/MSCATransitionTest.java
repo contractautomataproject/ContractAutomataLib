@@ -21,6 +21,7 @@ import contractAutomata.BasicState;
 import contractAutomata.CALabel;
 import contractAutomata.CAState;
 import contractAutomata.CATransition;
+import contractAutomata.ChoreographySynthesisOperator;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
@@ -63,7 +64,7 @@ public class MSCATransitionTest {
 
 		final Set<MSCATransition> trf = aut.getTransition();
 		Set<MSCATransition> violatingBC = aut.getTransition().stream()
-		.filter(x->!x.satisfiesBranchingCondition(trf, new HashSet<CAState>()))
+		.filter(x->!new ChoreographySynthesisOperator().satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
 		.collect(Collectors.toSet());
 	
 		

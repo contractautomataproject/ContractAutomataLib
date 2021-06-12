@@ -4,7 +4,6 @@ package contractAutomata;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 
 
@@ -75,77 +74,20 @@ public class MSCATransition extends CATransition {
 				+",target="+this.getTarget().toCSV()+"]";
 	}
 
-	/**
-	 * 
-	 * @return	true if the transition is uncontrollable for an orchestration
-	 */
-	public boolean isUncontrollableOrchestration(Set<? extends MSCATransition> tr, Set<CAState> badStates)
-	{
-		return 	isUncontrollable(tr,badStates, 
-				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
-				&&(t.getSource().getState().get(t.getLabel().getRequester())
-						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state					
-				&&(tt.getLabel().isRequest()&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())|| 
-						tt.getLabel().isMatch()&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
-	}
 
-	/**
-	 * 
-	 * @param aut
-	 * @return	true if the transition is uncontrollable for a choreography
-	 */
-	public boolean  isUncontrollableChoreography(Set<? extends MSCATransition> tr, Set<CAState> badStates)
-	{
-		return 	isUncontrollable(tr,badStates, 
-				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
-				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer 
-				&&t.getSource().equals(tt.getSource()));//the same global source state
-	}
-
-	private boolean isUncontrollable(Set<? extends MSCATransition> tr, Set<CAState> badStates, BiPredicate<MSCATransition,MSCATransition> pred)
+	public boolean isUncontrollable(Set<? extends MSCATransition> tr, Set<CAState> badStates, BiPredicate<MSCATransition,MSCATransition> controllabilityPred)
 	{
 		if (this.isUrgent())
 			return true;
-		if (this.isPermitted()//||(this.getLabel().isMatch()&&tr.contains(this))
-				)
+		if (this.isPermitted())//||(this.getLabel().isMatch()&&tr.contains(this))
 			return false;
 		return !tr.parallelStream()
 				.filter(t->t.getLabel().isMatch()
-						&&
-						!badStates.contains(t.getSource()))
+						&& !badStates.contains(t.getSource()))
 				//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
-				.anyMatch(t->pred.test(t,this));
+				.anyMatch(t->controllabilityPred.test(t,this));
 	}
 
-
-	/**
-	 * 
-	 * this method is used by the choreography synthesis 
-	 * @param trans the set of transitions to check
-	 * @param bad  the set of bad (dangling) states
-	 * @return true if the set of transitions and bad states violate the branching condition
-	 */
-	public boolean satisfiesBranchingCondition(Set<MSCATransition> trans, Set<CAState> bad) 
-	{
-		if (!this.getLabel().isMatch()||bad.contains(this.getSource()) || bad.contains(this.getTarget()))
-			return false;		//ignore this transition because it is going to be pruned in the synthesis
-
-		final Set<MSCATransition> ftr = trans.parallelStream()
-				.filter(x->x.getLabel().isMatch()&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
-				.collect(Collectors.toSet()); //only valid candidates
-
-		return ftr.parallelStream()
-				.map(x->x.getSource())
-				.filter(x->x!=this.getSource()&&
-				this.getSource().getState().get(this.getLabel().getOfferer()).getLabel()
-				.equals(x.getState().get(this.getLabel().getOfferer()).getLabel()))
-				//it's not the same state of this but sender is in the same state of this
-
-				.allMatch(s -> ftr.parallelStream()
-						.anyMatch(x->x.getSource()==s && this.getLabel().equals(x.getLabel()))
-						//for all such states there exists an outgoing transition with the same label of this
-						);
-	}
 
 
 	/*	//**
