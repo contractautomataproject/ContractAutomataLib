@@ -174,7 +174,7 @@ public class MSCATest {
 //		if (!check)
 //			MSCAIO.convertMSCAintoXML(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_8.mxe", aut);
 		
-		assertEquals(check,true);
+		assertTrue(check);
 	}
 
 	@Test
