@@ -23,16 +23,16 @@ The  package  of the GUI Application has been moved to https://github.com/davide
 Check that repository for an example of usage of this library for developing a tool for specifying and verifying 
 CA.
 
-
-The following code snippet loads two CA described in `.data` format, compute their composition and synthesise 
-an orchestration in agreement (all requests are matched, that is, there are no requests transitions left). 
+The following code snippets are examples taken from the test foder (`MSCATest.java` and `FMCATest.java`). 
+The first  snippet loads two CA described in `.data` format, computes their composition and synthesise s
+an orchesration in agreement (all requests are matched, that is, there are no requests transitions left). 
 The composition takes two other arguments. The third is a bound to the maximum length of a path in the composition. 
 The second is a pruning predicate, to avoid generating portions of the automaton only reachable by transitions 
 satisfying this predicate. Indeed, the orchestration synthesis would prune these transitions anyway.
 This allows to scale up to bigger compositions without losing information.
 ```java
 String dir = System.getProperty("user.dir");
-BasicMxeConverter bmc = new BasicMxeConverter();
+DataConverter bdc = new BasicDataConverter();
 List<MSCA> aut = new ArrayList<>(2);	
 aut.add(bdc.importDATA(dir+"/CAtest/BusinessClient.mxe.data"));//loading textual .data description of a CA
 aut.add(bdc.importDATA(dir+"/CAtest/Hotel.mxe.data"));
@@ -43,16 +43,16 @@ MSCA orc= new OrchestrationSynthesisOperator().apply(comp);
 This snippet loads a composition stored in a `.data` format, synthesises the choreography and stores it 
 in a .data format.
 ```java
-MSCA aut = bdc.importMxe(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
+MSCA aut = bdc.importData(dir+"/CAtest/(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
 MSCA cor = ChoreographySynthesisOperator().apply(aut);
 bdc.exportDATA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 ```
 
 The following snippet loads an MSCA in `.mxe` format, that is the format used by the GUI app. 
-It synthesises an orchestration for a specific product (i.e., a configuration), requiring featured 
+It synthesises an orchestration for a specific product (i.e., a configuration), requiring features 
 `card` and `sharedBathroom`, and forbidding feature `singleRoom`.
 ```java
-MSCA aut = bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
+MSCA aut = new BasicMxeConverter().importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
 Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
 MSCA orc=new ProductOrchestrationSynthesisFunction().apply(aut,p);	
 ```
