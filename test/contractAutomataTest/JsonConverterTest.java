@@ -7,7 +7,7 @@ import org.junit.Test;
 import contractAutomata.MxeConverter;
 import contractAutomata.MSCA;
 import contractAutomata.MSCAConverter;
-import contractAutomata.VoxLogicaJsonConverter;
+import contractAutomata.JsonConverter;
 
 public class JsonConverterTest {
 	private final MxeConverter bmc = new MxeConverter();
@@ -15,7 +15,7 @@ public class JsonConverterTest {
 	
 	@Test
 	public void importTest() throws Exception {
-		MSCAConverter jc = new VoxLogicaJsonConverter();
+		MSCAConverter jc = new JsonConverter();
 		MSCA aut = jc.importMSCA(dir+"/CAtest/testgraph.json");
 	    bmc.exportMSCA(dir+"/CAtest/testgraph.mxe", aut);
 	    MSCA test= bmc.importMSCA(dir+"/CAtest/voxlogicajsonimporttest.mxe");
@@ -24,7 +24,7 @@ public class JsonConverterTest {
 
 	@Test
 	public void exportTest() throws Exception {
-		MSCAConverter jc = new VoxLogicaJsonConverter();
+		MSCAConverter jc = new JsonConverter();
 		jc.exportMSCA(dir,null);//only for coverage
 	}
 

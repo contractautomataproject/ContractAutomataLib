@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class VoxLogicaJsonConverter implements MSCAConverter {
+public class JsonConverter implements MSCAConverter {
 
 	@Override
 	public MSCA importMSCA(String filename) throws IOException {
