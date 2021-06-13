@@ -17,15 +17,16 @@ import java.util.Set;
 import org.junit.Test;
 
 import contractAutomata.MSCA;
-import contractAutomata.MSCAConverter;
-import contractAutomata.MxeConverter;
+import contractAutomata.converters.MSCAConverter;
+import contractAutomata.converters.MxeConverter;
+import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
+import contractAutomata.requirements.Agreement;
 import contractAutomataTest.MSCATest;
 import family.FMCA;
 import family.Family;
-import family.FamilyConverter;
-import family.ProdFamilyConverter;
 import family.Product;
-import family.ProductOrchestrationSynthesisFunction;
+import family.converters.FamilyConverter;
+import family.converters.ProdFamilyConverter;
 
 /**
  * 
@@ -63,7 +64,7 @@ public class FMCATest {
 		MSCA test= bmc.importMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
 		assertEquals(MSCATest.checkTransitions(
-				new ProductOrchestrationSynthesisFunction().apply(aut,p)
+				new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)
 				,test),true);
 	}
 
@@ -73,7 +74,7 @@ public class FMCATest {
 	{
 		MSCA aut = bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
 		Product p = new Product(new String[] {"dummy"}, new String[] {""});
-		assertEquals(new ProductOrchestrationSynthesisFunction().apply(aut,p),null);
+		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
 	}
 
 	@Test
@@ -81,7 +82,7 @@ public class FMCATest {
 	{
 		MSCA aut = bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-		assertEquals(new ProductOrchestrationSynthesisFunction().apply(aut,p),null);
+		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
 	}	
 	
 	@Test
@@ -89,7 +90,7 @@ public class FMCATest {
 		
 		MSCA aut= bmc.importMSCA(dir+"/CAtest/(AlicexBob).mxe");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		assertEquals(null,new ProductOrchestrationSynthesisFunction().apply(aut,p));
+		assertEquals(null,new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 		
 	}
 	

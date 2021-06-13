@@ -1,4 +1,6 @@
-package contractAutomata;
+package contractAutomata.converters;
+
+import contractAutomata.MSCA;
 
 public interface MSCAConverter {
 	public MSCA importMSCA(String filename) throws Exception;

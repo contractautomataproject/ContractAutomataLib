@@ -1,24 +1,39 @@
-package contractAutomata;
+package contractAutomata.operators;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class SynthesisFunction implements TriFunction<MSCA,TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>>, 
-														TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>>,MSCA>{
+import contractAutomata.BasicState;
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
+
+public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 	private Map<CAState,Boolean> reachable;
 	private Map<CAState,Boolean> successful;
+	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred;
+	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred;
+	
+	
+	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
+			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate) {
+		super();
+		this.pruningPred = pruningPredicate;
+		this.forbiddenPred = forbiddenPredicate;
+	}
+
+	
+	
 
 	@Override
-	public MSCA apply(MSCA arg1, TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> arg2,
-			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> arg3) {
+	public MSCA apply(MSCA arg1) {
 		{
 			MSCA aut=copy(arg1);
-			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred=arg2;
-			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred=arg3;
 			
 			Set<MSCATransition> trbackup = new HashSet<MSCATransition>(aut.getTransition());
 			Set<CAState> statesbackup= aut.getStates(); 

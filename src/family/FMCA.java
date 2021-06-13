@@ -11,7 +11,9 @@ import java.util.stream.Stream;
 import contractAutomata.CALabel;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
-import contractAutomata.UnionFunction;
+import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
+import contractAutomata.operators.UnionFunction;
+import contractAutomata.requirements.Agreement;
 
 /**
  * Featured Modal Contract Automata
@@ -50,7 +52,7 @@ public class FMCA {
 		Map<Set<Feature>, Map<Product,MSCA>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
 				.map(p->new AbstractMap.SimpleEntry<Product,MSCA>(p,
-						new ProductOrchestrationSynthesisFunction().apply(aut,p)))
+						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
 					e.getKey().getForbidden().stream()
@@ -88,7 +90,7 @@ public class FMCA {
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
 				.map(p->new AbstractMap.SimpleEntry<Product, MSCA>(p,
-						new ProductOrchestrationSynthesisFunction().apply(aut,p)))
+						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
@@ -119,7 +121,7 @@ public class FMCA {
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
-		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisFunction().apply(aut,p)!=null);
+		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)!=null);
 	}
 	
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(MSCA a,Predicate<Product> pred)

@@ -1,4 +1,4 @@
-package contractAutomata;
+package contractAutomata.converters;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,6 +10,12 @@ import java.util.stream.IntStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import contractAutomata.BasicState;
+import contractAutomata.CALabel;
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class JsonConverter implements MSCAConverter {
 

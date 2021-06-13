@@ -1,4 +1,4 @@
-package contractAutomata;
+package contractAutomata.converters;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,6 +15,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import contractAutomata.BasicState;
+import contractAutomata.CALabel;
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class DataConverter implements MSCAConverter{
 

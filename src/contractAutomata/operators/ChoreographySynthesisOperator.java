@@ -1,17 +1,26 @@
-package contractAutomata;
+package contractAutomata.operators;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
+
 public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
-	private final SynthesisFunction synth = new SynthesisFunction();
+	private SynthesisOperator synth;
+	private Predicate<MSCATransition> req;
+	public ChoreographySynthesisOperator(Predicate<MSCATransition> req){
+		this.req=req;
+	}
 
 	/** 
-	 * invokes the synthesis method for synthesising the choreography in strong agreement
-	 * @return the synthesised choreography in strong agreement, removing only one transition violating the branching condition 
+	 * invokes the synthesis method for synthesising the choreography
+	 * @return the synthesised choreography, removing only one transition violating the branching condition 
 	 * each time no further updates are possible. The transition to remove is chosen nondeterministically with findAny().
 	 * 
 	 */
@@ -27,8 +36,11 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 		MSCA chor;
 		do 
 		{ 
-			chor = synth.apply(aut,(x,t,bad) -> !x.getLabel().isMatch()||bad.contains(x.getTarget())||violatingbc.contains(x.toCSV()),
-					(x,st,bad) -> (!st.contains(x)&&isUncontrollableChoreography(x,st, bad)));
+			this.synth=new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())||
+					!req.test(x)||violatingbc.contains(x.toCSV()),
+						(x,st,bad) -> (!st.contains(x)&&isUncontrollableChoreography(x,st, bad)));
+
+			chor = synth.apply(aut);
 			if (chor==null)
 				break;
 			final Set<MSCATransition> trf = chor.getTransition();

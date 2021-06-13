@@ -11,10 +11,10 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import contractAutomata.DataConverter;
-import contractAutomata.MxeConverter;
 import contractAutomata.BasicState;
 import contractAutomata.MSCA;
+import contractAutomata.converters.DataConverter;
+import contractAutomata.converters.MxeConverter;
 
 public class MSCAIOTest {
 	private final MxeConverter bmc = new MxeConverter();

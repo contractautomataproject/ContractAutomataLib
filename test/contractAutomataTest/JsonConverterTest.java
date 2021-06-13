@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import contractAutomata.MxeConverter;
 import contractAutomata.MSCA;
-import contractAutomata.MSCAConverter;
-import contractAutomata.JsonConverter;
+import contractAutomata.converters.JsonConverter;
+import contractAutomata.converters.MSCAConverter;
+import contractAutomata.converters.MxeConverter;
 
 public class JsonConverterTest {
 	private final MxeConverter bmc = new MxeConverter();

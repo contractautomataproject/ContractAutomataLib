@@ -1,4 +1,4 @@
-package family;
+package family.converters;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import family.Family;
+import family.Feature;
+import family.Product;
 
 public class ProdFamilyConverter implements FamilyConverter {
 

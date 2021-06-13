@@ -1,15 +1,27 @@
-package contractAutomata;
+package contractAutomata.operators;
 
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 
-	private final SynthesisFunction synth = new SynthesisFunction();
+	private final SynthesisOperator synth;
 
+	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req)
+	{
+		this.synth = new SynthesisOperator((x,st,bad) -> bad.contains(x.getTarget())|| !req.test(x), 
+				(x,st,bad) -> //(x.isUrgent()&&!t.contains(x))||(!x.isUrgent()&&
+		!st.contains(x)&&isUncontrollableOrchestration(x,st, bad));
+	}
+	
 	/**
-	 * invokes the synthesis method for synthesising the orchestration in agreement
-	 * @return the synthesised orchestration in agreement
+	 * invokes the synthesis method for synthesising the orchestration
+	 * @return the synthesised orchestration 
 	 */
 	@Override
 	public MSCA apply(MSCA aut)
@@ -18,13 +30,11 @@ public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isOffer()))
 			throw new UnsupportedOperationException("The automaton contains necessary offers that are not allowed in the orchestration synthesis");
 
-		return synth.apply(aut,(x,st,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,st,bad) -> //(x.isUrgent()&&!t.contains(x))||(!x.isUrgent()&&
-		!st.contains(x)&&isUncontrollableOrchestration(x,st, bad));
+		return synth.apply(aut);
 	}
 
 
-	public boolean isUncontrollableOrchestration(MSCATransition tra,Set<? extends MSCATransition> str, Set<CAState> badStates)
+	private boolean isUncontrollableOrchestration(MSCATransition tra,Set<? extends MSCATransition> str, Set<CAState> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal

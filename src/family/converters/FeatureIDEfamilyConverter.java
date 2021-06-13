@@ -1,4 +1,4 @@
-package family;
+package family.converters;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,6 +24,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import family.Family;
+import family.Feature;
+import family.Product;
 
 public class FeatureIDEfamilyConverter implements FamilyConverter {
 

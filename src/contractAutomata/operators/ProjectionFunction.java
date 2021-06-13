@@ -1,4 +1,4 @@
-package contractAutomata;
+package contractAutomata.operators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import contractAutomata.BasicState;
+import contractAutomata.CALabel;
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSCATransition, Integer>,MSCA> {
 	/**

@@ -1,11 +1,21 @@
-package contractAutomata;
+package contractAutomata.operators;
 
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 		
-	private final SynthesisFunction synth = new SynthesisFunction();
+	private final SynthesisOperator synth;
 
+	public MpcSynthesisOperator(Predicate<MSCATransition> req) {
+		super();
+		this.synth = new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x), 
+				(x,t,bad) -> x.isUrgent()&&!t.contains(x));
+	}	
+	
 	/**
 	 * invokes the synthesis method for synthesising the mpc in agreement
 	 * @return the synthesised most permissive controller in agreement
@@ -16,8 +26,7 @@ public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 				.anyMatch(t-> t.isLazy()))
 			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
 
-		return synth.apply(aut,(x,t,bad) -> bad.contains(x.getTarget())|| x.getLabel().isRequest(), 
-				(x,t,bad) -> x.isUrgent()&&!t.contains(x));
+		return synth.apply(aut);
 
 	}
 

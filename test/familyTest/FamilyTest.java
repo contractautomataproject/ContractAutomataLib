@@ -20,11 +20,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import family.ProdFamilyConverter;
 import family.Family;
-import family.FamilyConverter;
-import family.FeatureIDEfamilyConverter;
 import family.Product;
+import family.converters.FamilyConverter;
+import family.converters.FeatureIDEfamilyConverter;
+import family.converters.ProdFamilyConverter;
 
 public class FamilyTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;

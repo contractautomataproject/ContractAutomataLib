@@ -1,4 +1,4 @@
-package contractAutomata;
+package contractAutomata.operators;
 
 import static java.util.stream.Collectors.groupingByConcurrent;
 import static java.util.stream.Collectors.mapping;
@@ -23,6 +23,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import contractAutomata.CALabel;
+import contractAutomata.CAState;
+import contractAutomata.MSCA;
+import contractAutomata.MSCATransition;
 
 public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSCATransition>,Integer,MSCA>{
 

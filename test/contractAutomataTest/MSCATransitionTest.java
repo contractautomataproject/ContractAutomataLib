@@ -16,15 +16,16 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
-import contractAutomata.DataConverter;
 import contractAutomata.BasicState;
 import contractAutomata.CALabel;
 import contractAutomata.CAState;
 import contractAutomata.CATransition;
-import contractAutomata.ChoreographySynthesisOperator;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
+import contractAutomata.converters.DataConverter;
+import contractAutomata.operators.ChoreographySynthesisOperator;
+import contractAutomata.requirements.StrongAgreement;
 
 public class MSCATransitionTest {
 	private final String dir = System.getProperty("user.dir");
@@ -64,7 +65,7 @@ public class MSCATransitionTest {
 
 		final Set<MSCATransition> trf = aut.getTransition();
 		Set<MSCATransition> violatingBC = aut.getTransition().stream()
-		.filter(x->!new ChoreographySynthesisOperator().satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
+		.filter(x->!new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
 		.collect(Collectors.toSet());
 	
 		
