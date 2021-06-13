@@ -5,21 +5,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import contractAutomata.CAState;
 import contractAutomata.MSCA;
 import contractAutomata.converters.DataConverter;
 import contractAutomata.converters.MxeConverter;
-import contractAutomata.operators.ChoreographySynthesisOperator;
-import contractAutomata.operators.CompositionFunction;
 import contractAutomata.operators.ProjectionFunction;
-import contractAutomata.requirements.StrongAgreement;
 import contractAutomataTest.MSCATest;
 
 public class ProjectionTest {
@@ -40,21 +32,7 @@ public class ProjectionTest {
 
 	}
 
-	@Test
-	public void choreoConcur2021projectAndComposeTest() throws Exception {
-		MSCA aut = bmc.importMSCA(dir+"testcor_concur21_Example34.mxe");
-		List<MSCA> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction().apply(aut,i, t->t.getLabel().getOfferer()))
-				.collect(Collectors.toList());
-		//	System.out.println(principals);
-		MSCA closed_aut = new CompositionFunction().apply(principals, t->!t.getLabel().isMatch(), 100);
-		//	MSCAIO.convertMSCAintoXML(dir+"testcor_concur21_Example34_closed_composition.mxe", closed_aut);
 
-		boolean bc = closed_aut.getTransition().stream()
-				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(t,aut.getTransition(), 
-						new HashSet<CAState>()));
-		assertEquals(bc,false);	
-	}
 	
 	//************************************exceptions*********************************************
 

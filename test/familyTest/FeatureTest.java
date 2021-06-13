@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
  */
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -16,6 +17,11 @@ import family.Feature;
 
 public class FeatureTest {
 
+	@Test
+	public void constructorTestAction() {
+		Feature f = new Feature("!a");
+		assertTrue(f.getName().equals("a"));
+	}
 	
 
 	@Test

@@ -15,7 +15,7 @@ import contractAutomata.operators.MpcSynthesisOperator;
 import contractAutomata.requirements.Agreement;
 
 
-public class MpcSynthesis {
+public class MpcSynthesisTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
 	private final MxeConverter bmc = new MxeConverter();
 //	private final DataConverter bdc = new DataConverter();

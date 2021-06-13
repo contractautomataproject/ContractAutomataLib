@@ -68,11 +68,11 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 	 */
 	public boolean satisfiesBranchingCondition(MSCATransition tra, Set<MSCATransition> trans, Set<CAState> bad) 
 	{
-		if (!tra.getLabel().isMatch()||bad.contains(tra.getSource()) || bad.contains(tra.getTarget()))
-			return false;		//ignore tra transition because it is going to be pruned in the synthesis
+//		if (!req.test(tra)||bad.contains(tra.getSource()) || bad.contains(tra.getTarget()))
+//			return false;		//ignore tra transition because it is going to be pruned in the synthesis
 
 		final Set<MSCATransition> ftr = trans.parallelStream()
-				.filter(x->x.getLabel().isMatch()&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
+				.filter(x->req.test(x)&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 
 		return ftr.parallelStream()
@@ -87,6 +87,4 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 						//for all such states there exists an outgoing transition with the same label of tra
 						);
 	}
-
-
 }

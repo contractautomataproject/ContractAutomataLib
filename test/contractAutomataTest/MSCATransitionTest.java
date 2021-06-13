@@ -5,13 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,15 +16,11 @@ import contractAutomata.BasicState;
 import contractAutomata.CALabel;
 import contractAutomata.CAState;
 import contractAutomata.CATransition;
-import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 import contractAutomata.MSCATransition.Modality;
-import contractAutomata.converters.DataConverter;
-import contractAutomata.operators.ChoreographySynthesisOperator;
-import contractAutomata.requirements.StrongAgreement;
 
 public class MSCATransitionTest {
-	private final String dir = System.getProperty("user.dir");
+//	private final String dir = System.getProperty("user.dir");
 	
 	private final BasicState bs0 = new BasicState("0",true,false);
 	private final BasicState bs1 = new BasicState("1",true,false);
@@ -56,20 +48,6 @@ public class MSCATransitionTest {
 		target = new CAState(Arrays.asList(bs0,bs1,bs3),0,0);
 		t1 = new MSCATransition(source,calab,target,Modality.PERMITTED);
 
-	}
-	
-	@Test
-	public void branchingCondition() throws NumberFormatException, IOException {
-	
-		MSCA aut = new DataConverter().importMSCA(dir+"/CAtest/violatingbranchingcondition.mxe.data");
-
-		final Set<MSCATransition> trf = aut.getTransition();
-		Set<MSCATransition> violatingBC = aut.getTransition().stream()
-		.filter(x->!new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
-		.collect(Collectors.toSet());
-	
-		
-		assertEquals(violatingBC.size(),6);
 	}
 	
 	@Test
