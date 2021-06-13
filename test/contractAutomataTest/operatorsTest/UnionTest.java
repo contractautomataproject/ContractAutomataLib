@@ -66,4 +66,28 @@ public class UnionTest {
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@Test
+	public void union_illegalcharacter() throws Exception {
+		List<MSCA> aut = new ArrayList<>(2);
+
+		MSCA test = bmc.importMSCA(dir+"union_testgraph_testgraph.mxe");
+		
+		aut.add(test);
+		aut.add(test);
+
+		assertThatThrownBy(() -> new UnionFunction().apply(aut))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessage("Illegal label containing _ in some basic state");
+	}
+
+	@Test
+	public void union_nullElement() throws Exception {
+		List<MSCA> aut = new ArrayList<>(2);	
+		aut.add(null);
+		aut.add(null);
+
+		assertThatThrownBy(() -> new UnionFunction().apply(aut))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+
 }

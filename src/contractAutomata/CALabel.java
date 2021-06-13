@@ -430,19 +430,6 @@ public class CALabel {
 //			return action;
 	}
 
-	/*
-	 * @ public normal_behaviour
-	 * @	requires action != null;
-	 * @	requires (action.startsWith(offer)||action.startsWith(request));
-	 * @	ensures \result == action.substring(1);
-	 */
-	public static String getUnsignedAction(String action)
-	{
-		if (action.startsWith(offer)||action.startsWith(request))
-			return action.substring(1,action.length());
-		else
-			return action;
-	}
 	
 	@Override
 	public int hashCode() {

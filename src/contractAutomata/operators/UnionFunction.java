@@ -2,6 +2,7 @@ package contractAutomata.operators;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,9 +26,9 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 	{
 		if (aut==null||aut.isEmpty())
 			throw new IllegalArgumentException();
-
 		
-		if (aut.get(0)==null)
+		if (aut.parallelStream()
+				.anyMatch(x->Objects.isNull(x)))
 			throw new IllegalArgumentException();
 
 		int rank=aut.get(0).getRank(); 
