@@ -50,7 +50,7 @@ strong agreement (all requests and offers are matched) and stores it in a .data 
 ```java
 MSCA aut = bdc.importData(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
 MSCA cor = ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
-bdc.exportDATA(dir+"/CAtest/Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
+bdc.exportDATA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 ```
 
 The following snippet loads an MSCA in `.mxe` format, that is the format used by the GUI app. 
@@ -68,8 +68,8 @@ as a `.xml` FeatureIDE model. Afterwards, the orchestration of the product line 
 FamilyConverter dfc = new ProdFamilyConverter();
 FamilyConverter ffc = new FeatureIDEfamilyConverter();
 Family fam = dfc.importFamily(fileName);// import from .prod textual description of products
-Family fam2 = ffc.importFamily(dir+"//CAtest//FeatureIDEmodel//model.xml"); //import from FeatureIDE model
-FMCA faut = new FMCA(bmc.importMxe(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
+Family fam2 = ffc.importFamily(dir+"FeatureIDEmodel//model.xml"); //import from FeatureIDE model
+FMCA faut = new FMCA(bmc.importMxe(dir+"(BusinessClientxHotelxEconomyClient).mxe"),fam);
 MSCA controller = faut.getOrchestrationOfFamily();		
 ```
 
