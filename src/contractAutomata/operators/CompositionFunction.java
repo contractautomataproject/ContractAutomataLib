@@ -99,7 +99,7 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 				Map<MSCATransition, List<SimpleEntry<MSCATransition,List<CAState>>>> matchtransitions=
 						trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
-								.filter(ee->(e.ind<ee.ind) && CALabel.match(e.tra.getLabel(), ee.tra.getLabel()))
+								.filter(ee->(e.ind<ee.ind) && e.tra.getLabel().match(ee.tra.getLabel()))
 								.flatMap(ee->{ 
 									List<CAState> targetlist =  new ArrayList<CAState>(source);
 									targetlist.set(e.ind, e.tra.getTarget());

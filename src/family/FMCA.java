@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import contractAutomata.CALabel;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
@@ -42,11 +41,11 @@ public class FMCA {
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
 				.map(MSCATransition::getLabel)
-				.anyMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
+				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
 		Set<String> act=aut.getTransition().parallelStream()
-		.map(x->CALabel.getUnsignedAction(x.getLabel().getAction()))
+		.map(x-> x.getLabel().getUnsignedAction())//CALabel.getUnsignedAction(x.getLabel().getAction()))
 		.collect(Collectors.toSet());
 		
 		Map<Set<Feature>, Map<Product,MSCA>>  quotientClasses = 
@@ -128,7 +127,7 @@ public class FMCA {
 	{
 		if (a.getForwardStar(a.getInitial()).stream()
 				.map(MSCATransition::getLabel)
-				.anyMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
+				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
 		return Stream.iterate(this.family.getMaximalProducts().parallelStream()

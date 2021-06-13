@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import contractAutomata.CALabel;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
 
@@ -37,8 +36,8 @@ public class Product {
 	
 	public Product(String[] r, String[] f)
 	{
-		this(Arrays.stream(r).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet()),
-		Arrays.stream(f).map(s->new Feature(CALabel.getUnsignedAction(s))).collect(Collectors.toSet()));
+		this(Arrays.stream(r).map(s->new Feature(s)).collect(Collectors.toSet()),
+		Arrays.stream(f).map(s->new Feature(s)).collect(Collectors.toSet()));
 	}
 	
 	public Set<Feature> getRequired()
@@ -116,7 +115,7 @@ public class Product {
 	public boolean checkRequired(Set<? extends MSCATransition> tr)
 	{
 		Set<String> act=tr.parallelStream()
-				.map(t->CALabel.getUnsignedAction(t.getLabel().getAction()))
+				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet());
 		return required.stream()
 		.map(Feature::getName)
@@ -131,7 +130,7 @@ public class Product {
 	public boolean checkForbidden(Set<? extends MSCATransition> tr)
 	{
 		Set<String> act=tr.parallelStream()
-				.map(t->CALabel.getUnsignedAction(t.getLabel().getAction()))
+				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet());
 		return forbidden.stream()
 		.map(Feature::getName)

@@ -19,8 +19,6 @@ import org.junit.Test;
 import contractAutomata.MSCA;
 import contractAutomata.converters.MSCAConverter;
 import contractAutomata.converters.MxeConverter;
-import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
-import contractAutomata.requirements.Agreement;
 import contractAutomataTest.MSCATest;
 import family.FMCA;
 import family.Family;
@@ -54,69 +52,10 @@ public class FMCATest {
 		assertEquals(aut.getAut(),a);
 	}
 	
-	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws Exception
-	{
-
-		
-		MSCA aut = bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
-		
-		MSCA test= bmc.importMSCA(dir+"/CAtest/Orc_(BusinessClientxHotelxEconomyClient).mxe");
-		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
-		assertEquals(MSCATest.checkTransitions(
-				new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)
-				,test),true);
-	}
-
-
-	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty() throws Exception
-	{
-		MSCA aut = bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");
-		Product p = new Product(new String[] {"dummy"}, new String[] {""});
-		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
-	}
-
-	@Test
-	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
-	{
-		MSCA aut = bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe");		
-		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
-	}	
-	
-	@Test
-	public void testForte2021() throws Exception {
-		
-		MSCA aut= bmc.importMSCA(dir+"/CAtest/(AlicexBob).mxe");		
-		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		assertEquals(null,new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
-		
-	}
-	
-
-//	@Test
-//	public void validProductsOrcFam() throws Exception
-//	{
-//		
-//		String fileName =dir+"/CAtest/ValidProducts.prod";
-//		Family fam=dfc.importFamily(fileName);
-//		FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
-//
-//		Set<Product> rv = aut.respectingValidityFamily();
-//
-//		Set<Product> test = Family.readFileNew(dir+"/CAtest/respectingValidityTest.prod");
-////		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
-////				.mapToObj(i->fam.getElements()[i])
-////				.collect(Collectors.toSet());
-////		
-//		assertTrue(rv.equals(test));
-//	}
 	
 	@Test
 	public void testValidProductsOrc() throws Exception
 	{
-		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
@@ -199,20 +138,17 @@ public class FMCATest {
 	@Test
 	public void testCanonicalProductsException() throws Exception
 	{
-		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		MSCA aut = bmc.importMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
 		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
-		.isInstanceOf(UnsupportedOperationException.class);
-		
+		.isInstanceOf(UnsupportedOperationException.class);	
 	}
 
 	@Test
 	public void testSelectProductSatisfyingPredicateException() throws Exception
 	{
-		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
@@ -222,12 +158,32 @@ public class FMCATest {
 	}
 }
 
-
-
-
-
-
 //END OF THE CLASS
+
+
+
+//@Test
+//public void validProductsOrcFam() throws Exception
+//{
+//	
+//	String fileName =dir+"/CAtest/ValidProducts.prod";
+//	Family fam=dfc.importFamily(fileName);
+//	FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
+//
+//	Set<Product> rv = aut.respectingValidityFamily();
+//
+//	Set<Product> test = Family.readFileNew(dir+"/CAtest/respectingValidityTest.prod");
+////	Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
+////			.mapToObj(i->fam.getElements()[i])
+////			.collect(Collectors.toSet());
+////	
+//	assertTrue(rv.equals(test));
+//}
+
+
+
+
+
 
 //old FMCA util 
 

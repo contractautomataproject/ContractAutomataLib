@@ -52,18 +52,6 @@ public class CALabel {
 	/*@ public invariant action!=null && action.length()>1 && 
 			(action.startsWith(offer) || action.startsWith(request)); @*/
 	
-	/*
-	  @ public normal_behaviour
-	  @     requires this.rank >=0;
-	  @     requires this.action != null; 
-	  @		requires this.action.length()>=2;
-	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
-	 */
-//	@Override
-//	public String toString() {
-//		return this.getLabelAsList().toString();		
-//	}
-	
 	
 	/*
 	 * @ public normal_behavior
@@ -405,29 +393,27 @@ public class CALabel {
 				&& this.actiontype==CALabel.ActionType.REQUEST;
 	}
 
-
-	/*
-	 * @ public normal behavior
-	 * @ 	requires l1 != null && l2!=null;
-	 * @ 	requires l1.getAction()!=null && l2.getAction()!=null;
-	 * @    requires l1.getAction().length()>1 && l2.getAction().length()>1;
-	 * @ 	ensures ( (l1.isMatch()||l2.isMatch()) || (l1.isOffer()&&l2.isOffer()) || (l1.isRequest()&&l2.isRequest()) ) 
-	 * 				==> \result == false;
-	 * @ 	ensures !( (l1.isMatch()||l2.isMatch()) || (l1.isOffer()&&l2.isOffer()) || (l1.isRequest()&&l2.isRequest()) ) 
-	 * 				==> \result == l1.getAction().substring(1,l1.getAction().length()).equals(l2.getAction().substring(1,l2.getAction().length()));
-	 */
-	public static boolean match(CALabel l1,CALabel l2)
+	public boolean match(CALabel l2)
 	{
-		if (l1.isMatch()||l2.isMatch())	//both transitions must not be match (non-associative)
+		if (l2!=null&&(this.isOffer()&&l2.isRequest())||this.isRequest()&&l2.isOffer())
+		{
+			String la1 = this.getAction();
+			String la2 = l2.getAction();
+			return la1.substring(1,la1.length()).equals(la2.substring(1,la2.length()));			
+		}
+		else
 			return false;
-		if (l1.isOffer()&&l2.isOffer())
-			return false;
-		if (l1.isRequest()&&l2.isRequest())
-			return false;
+//		if (this.isMatch()||l2.isMatch())	//both transitions must not be match (non-associative)
+//			return false;
+//		if (this.isOffer()&&l2.isOffer())
+//			return false;
+//		if (this.isRequest()&&l2.isRequest())
+//			return false;
+//
+//		String la1 = this.getAction();
+//		String la2 = l2.getAction();
+//		return la1.substring(1,la1.length()).equals(la2.substring(1,la2.length()));			
 
-		String la1 = l1.getAction();
-		String la2 = l2.getAction();
-		return la1.substring(1,la1.length()).equals(la2.substring(1,la2.length()));
 	}
 
 	/*
@@ -438,11 +424,10 @@ public class CALabel {
 	 */
 	public String getUnsignedAction()
 	{
-//		String action=this.getAction();
 //		if (action.startsWith(offer)||action.startsWith(request))
 			return action.substring(1,action.length());
 //		else
-//			throw new RuntimeException("Bug: irregular label action");
+//			return action;
 	}
 
 	/*
@@ -457,13 +442,6 @@ public class CALabel {
 			return action.substring(1,action.length());
 		else
 			return action;
-	}
-	
-	public CALabel getClone() {
-		if (this.isMatch())
-			return new CALabel(rank,offerer,requester,action);
-		else 
-			return new CALabel(rank,(this.isOffer())?offerer:requester,action);
 	}
 	
 	@Override
@@ -489,3 +467,20 @@ public class CALabel {
 	}
 	
 }
+
+
+
+
+
+
+/*
+@ public normal_behaviour
+@     requires this.rank >=0;
+@     requires this.action != null; 
+@		requires this.action.length()>=2;
+@		requires this.action.startsWith(offer) || this.action.startsWith(request);
+*/
+//@Override
+//public String toString() {
+//	return this.getLabelAsList().toString();		
+//}

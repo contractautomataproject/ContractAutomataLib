@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import contractAutomata.BasicState;
+import contractAutomata.CALabel;
 import contractAutomata.CAState;
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
@@ -86,10 +87,18 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 		return new MSCA(aut.getTransition().stream()
 				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
-						t.getLabel().getClone(),
+						getClone(t.getLabel()),
 						clonedcastates.get(t.getTarget()),
 						t.getModality()))
 				.collect(Collectors.toSet()));
+	}
+	
+
+	private CALabel getClone(CALabel la) {
+		if (la.isMatch())
+			return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
+		else 
+			return new CALabel(la.getRank(),(la.isOffer())?la.getOfferer():la.getRequester(),la.getAction());
 	}
 
 	/**

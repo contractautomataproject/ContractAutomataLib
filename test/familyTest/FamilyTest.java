@@ -15,15 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import family.Family;
 import family.Product;
 import family.converters.FamilyConverter;
-import family.converters.FeatureIDEfamilyConverter;
 import family.converters.ProdFamilyConverter;
 
 public class FamilyTest {
@@ -56,16 +52,6 @@ public class FamilyTest {
 		String fileName =dir +"ValidProducts.prod";
 		Family fam=dfc.importFamily(fileName);
 		assertTrue(fam.getMaximumDepth()==11);
-	}
-	@Test
-	public void testReadProducts() throws Exception
-	{
-		
-		String fileName =dir +"ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
-		Set<Product> prod = fam.getProducts();
-		Set<Product> test=dfc.importFamily(fileName).getProducts();
-		assertTrue(prod.equals(test));
 	}
 
 	@Test
@@ -121,17 +107,6 @@ public class FamilyTest {
 		assertTrue(products.equals(test));
 	}
 
-	@Test
-	public void writeTest() throws Exception
-	{
-		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
-		dfc.exportFamily(dir +"write_test", fam);
-
-		Set<Product> test = dfc.importFamily(dir +"write_test.prod").getProducts();
-
-		assertTrue(fam.getProducts().equals(test));
-
-	}
 
 	@Test
 	public void constructorException()
@@ -141,23 +116,8 @@ public class FamilyTest {
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Test
-	public void testImportFamily() throws Exception, ParserConfigurationException, SAXException
-	{
-		
-		Family f1= new FeatureIDEfamilyConverter().importFamily(dir+"FeatureIDEmodel"+File.separator+"model.xml");
-		Family f2=dfc.importFamily(dir +"ValidProducts.prod");
-		assertTrue(f1.getProducts().equals(f2.getProducts()));
-	}
 
-	@Test
-	public void testWriteException() throws Exception
-	{
-		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
-		assertThatThrownBy(() -> dfc.exportFamily("", fam))
-		.isInstanceOf(IllegalArgumentException.class);
 
-	}
 }
 
 

@@ -2,13 +2,19 @@ package family;
 
 import java.util.Objects;
 
+import contractAutomata.CALabel;
+
 public class Feature {
 	private final String name;
 	
 	public Feature(String name) {
 		if (name==null)
 			throw new IllegalArgumentException();
-		this.name = name;
+		
+		//features are unsigned actions of CALabel
+		this.name = (name.startsWith(CALabel.offer)||name.startsWith(CALabel.request))?
+				new CALabel(1,0,name).getUnsignedAction()
+				:name;
 	}
 
 	public String getName() {
@@ -36,6 +42,4 @@ public class Feature {
 		Feature other = (Feature) obj;
 		return (name.equals(other.name));
 	}
-	
-
 }

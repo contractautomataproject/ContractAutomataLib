@@ -49,7 +49,7 @@ This snippet loads a composition stored in a `.data` format, synthesises the cho
 strong agreement (all requests and offers are matched) and stores it in a .data format.
 ```java
 MSCA aut = bdc.importData(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).mxe.data");
-MSCA cor = ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
+MSCA cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
 bdc.exportDATA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 ```
 

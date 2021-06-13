@@ -1,4 +1,4 @@
-package contractAutomataTest;
+package contractAutomataTest.convertersTest;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,7 @@ import contractAutomata.MSCA;
 import contractAutomata.converters.JsonConverter;
 import contractAutomata.converters.MSCAConverter;
 import contractAutomata.converters.MxeConverter;
+import contractAutomataTest.MSCATest;
 
 public class JsonConverterTest {
 	private final MxeConverter bmc = new MxeConverter();
