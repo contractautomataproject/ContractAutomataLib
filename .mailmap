@@ -1,0 +1,9 @@
+# firstly found here https://www.reddit.com/r/github/comments/hutsqi/adding_an_invalid_email_to_your_account/
+# here for github https://stackoverflow.com/questions/53629125/does-github-consider-mailmap-for-contribution-graph
+# here guides
+# https://git-scm.com/docs/gitmailmap,
+# https://improveandrepeat.com/2019/06/little-git-tricks-use-mailmap-to-merge-different-authors/
+#
+Davide Basile <davide.basile@isti.cnr.it> Davide <Davide@DESKTOP-TUUKUJ4>
+Davide Basile <davide.basile@isti.cnr.it> DELL <DELL@DESKTOP-PQJ3P0K>
+Davide Basile <davide.basile@isti.cnr.it> davidebasile <davidebasile@DESKTOP-BTO98MG>
