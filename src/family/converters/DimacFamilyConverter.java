@@ -86,9 +86,6 @@ public class DimacFamilyConverter implements FamilyConverter {
 								.allMatch(l->l.get(i-1)==l.get(i1-1)))
 						.collect(Collectors.toSet())))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-								
-					
-				
 		//Map<Integer,String> map = readConcreteFeatures(filename,concfeat);
 		
 		return null;
