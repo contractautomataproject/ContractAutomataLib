@@ -22,19 +22,19 @@ public class ProdFamilyConverterTest {
 	{
 		
 		String fileName =dir +"ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		Set<Product> prod = fam.getProducts();
-		Set<Product> test=dfc.importFamily(fileName).getProducts();
+		Set<Product> test=dfc.importProducts(fileName);
 		assertTrue(prod.equals(test));
 	}
 
 	@Test
 	public void testImportExport() throws Exception
 	{
-		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
+		Family fam = new Family(dfc.importProducts(dir +"maximalProductsTest.prod"));
 		dfc.exportFamily(dir +"write_test", fam);
 
-		Set<Product> test = dfc.importFamily(dir +"write_test.prod").getProducts();
+		Set<Product> test = dfc.importProducts(dir +"write_test.prod");
 
 		assertTrue(fam.getProducts().equals(test));
 
@@ -43,7 +43,7 @@ public class ProdFamilyConverterTest {
 	@Test
 	public void testExportException() throws Exception
 	{
-		Family fam = dfc.importFamily(dir +"maximalProductsTest.prod");
+		Family fam = new Family(dfc.importProducts(dir +"maximalProductsTest.prod"));
 		assertThatThrownBy(() -> dfc.exportFamily("", fam))
 		.isInstanceOf(IllegalArgumentException.class);
 	}

@@ -57,14 +57,14 @@ public class FMCATest {
 	public void testValidProductsOrc() throws Exception
 	{
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam= new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 //		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
 //				.mapToObj(i->fam.getElements()[i])
 //				.collect(Collectors.toSet());
 		Set<Product> vp = aut.productsRespectingValidity();
 
-		Family test = dfc.importFamily(dir+"/CAtest/validProductsOrcTest.prod");
+		Family test = new Family(dfc.importProducts(dir+"/CAtest/validProductsOrcTest.prod"));
 		
 		assertTrue(vp.equals(test.getProducts()));
 	}
@@ -73,12 +73,12 @@ public class FMCATest {
 	public void testCanonicalProducts() throws Exception
 	{
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 
 		Set<Product> cps = aut.getCanonicalProducts().keySet();
 		
-		Family test = dfc.importFamily(dir+"/CAtest/canonicalProductsTest.prod");
+		Family test = new Family(dfc.importProducts(dir+"/CAtest/canonicalProductsTest.prod"));
 //		int[][] ind=new int[1][];
 //		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
 //		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
@@ -91,11 +91,11 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/Orc_BusinessClientxHotelxEconomyClient.mxe"),fam);
 		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
 
-		Family test = dfc.importFamily(dir+"/CAtest/productsWithNonEmptyOrchestration.prod");
+		Family test = new Family(dfc.importProducts(dir+"/CAtest/productsWithNonEmptyOrchestration.prod"));
 		
 		assertTrue(vp.equals(test.getProducts()));
 	}
@@ -105,7 +105,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA faut = new FMCA(bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		MSCA test = bmc.importMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
@@ -118,7 +118,7 @@ public class FMCATest {
 	{
 		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);
 		
 		MSCA ofe =  aut.getOrchestrationOfFamilyEnumerative();
@@ -139,7 +139,7 @@ public class FMCATest {
 	public void testCanonicalProductsException() throws Exception
 	{
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		MSCA aut = bmc.importMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe");
 
 		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
@@ -150,7 +150,7 @@ public class FMCATest {
 	public void testSelectProductSatisfyingPredicateException() throws Exception
 	{
 		String fileName =dir+"/CAtest/ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bmc.importMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 		
 		assertThatThrownBy(() ->aut.productsWithNonEmptyOrchestration())
@@ -167,7 +167,7 @@ public class FMCATest {
 //{
 //	
 //	String fileName =dir+"/CAtest/ValidProducts.prod";
-//	Family fam=dfc.importFamily(fileName);
+//	Family fam=new Family(dfc.importFamily(fileName));
 //	FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"/CAtest/Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 //
 //	Set<Product> rv = aut.respectingValidityFamily();

@@ -31,14 +31,14 @@ public class FamilyTest {
 	{
 		
 		String fileName =dir+"ValidProducts.prod";
-		Family fam=  dfc.importFamily(fileName);
+		Family fam=  new Family(dfc.importProducts(fileName));
 		//		Set<Product> mp = Arrays.stream(fam.getMaximalProducts())
 		//				.mapToObj(i->fam.getElements()[i])
 		//				.collect(Collectors.toSet());
 
 		Set<Product> mp= fam.getMaximalProducts();
 
-		Set<Product> test = dfc.importFamily(dir +"maximalProductsTest.prod").getProducts();
+		Set<Product> test = dfc.importProducts(dir +"maximalProductsTest.prod");
 
 		assertTrue(mp.equals(test));
 	}
@@ -50,7 +50,7 @@ public class FamilyTest {
 	{
 		
 		String fileName =dir +"ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		assertTrue(fam.getMaximumDepth()==11);
 	}
 
@@ -59,7 +59,7 @@ public class FamilyTest {
 	{
 		
 		String fileName =dir +"ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		Set<Product> pr=fam.getProducts();
 		List<Product> ar = new ArrayList<>(pr);
 
@@ -72,7 +72,7 @@ public class FamilyTest {
 		Set<Product> products = fam.getSuperProductsofProduct(ar.get(pindex));
 		//Family.writeFile(dir +"superProductsOfProduct_test", products);
 		
-		Set<Product> test = dfc.importFamily(dir +"superProductsOfProduct_test.prod").getProducts(); //)superProductsofProductTest.prod");	
+		Set<Product> test = dfc.importProducts(dir +"superProductsOfProduct_test.prod"); //)superProductsofProductTest.prod");	
 		
 		//System.out.println(test.toString()+"\n"+products.toString());
 		
@@ -84,7 +84,7 @@ public class FamilyTest {
 	{
 		
 		String fileName =dir +"ValidProducts.prod";
-		Family fam=dfc.importFamily(fileName);
+		Family fam=new Family(dfc.importProducts(fileName));
 		Set<Product> pr=fam.getProducts();
 		List<Product> ar = new ArrayList<>(pr);
 
@@ -99,10 +99,8 @@ public class FamilyTest {
 
 
 		//Family.writeFile(dir +"subProductsOfProduct_test", products);
-		Set<Product> test = dfc.importFamily(dir +"subProductsOfProduct_test.prod").getProducts(); 
+		Set<Product> test = dfc.importProducts(dir +"subProductsOfProduct_test.prod"); 
 		// subProductsOfProductTest.prod");
-
-
 		
 		assertTrue(products.equals(test));
 	}

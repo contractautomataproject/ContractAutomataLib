@@ -114,6 +114,11 @@ public class MSCA
 				.collect(Collectors.toSet());
 	}
 
+	public Set<String> getUnsignedActions(){
+		return this.getTransition().parallelStream()
+		.map(t->t.getLabel().getUnsignedAction())
+		.collect(Collectors.toSet());
+	}
 
 	@Override
 	public String toString() {

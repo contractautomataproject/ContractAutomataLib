@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import family.Product;
 public class ProdFamilyConverter implements FamilyConverter {
 
 	@Override
-	public Family importFamily(String filename) throws IOException {
+	public Set<Product> importProducts(String filename) throws IOException {
 		File f = new File(filename);
 		
 		Charset charset = Charset.forName("ISO-8859-1");
@@ -28,7 +29,7 @@ public class ProdFamilyConverter implements FamilyConverter {
 
 		Pattern pattern = Pattern.compile("p[0-9]*: R=\\{(.*)\\} F=\\{(.*)\\}");
 
-		return new Family(lines.parallelStream()
+		return lines.parallelStream()
 				.map(pattern::matcher)
 				.filter(Matcher::find)
 				.map(matcher ->new Product(Arrays.stream(matcher.group(1).split(","))
@@ -41,7 +42,7 @@ public class ProdFamilyConverter implements FamilyConverter {
 						.filter(s->!s.isEmpty())
 						.map(Feature::new)
 						.collect(Collectors.toSet())))
-				.collect(Collectors.toSet()));
+				.collect(Collectors.toSet());
 	}
 
 	@Override

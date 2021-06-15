@@ -3,6 +3,7 @@ package family;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,6 +72,29 @@ public class Family {
 				.map(Entry::getKey)
 				.collect(Collectors.toSet());
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(products);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null||getClass() != obj.getClass())
+			return false;
+		Family other = (Family) obj;
+		return products.equals(other.products);
+	}
+
+	@Override
+	public String toString() {
+		return "Family [products=" + products + "]";
+	}
+	
+	
+	
 }
 
 //END OF THE CLASS

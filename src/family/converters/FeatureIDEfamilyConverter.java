@@ -8,12 +8,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,7 +38,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	 * @throws ParserConfigurationException 
 	 */
 	@Override
-	public Family importFamily(String filename) throws ParserConfigurationException, SAXException, IOException
+	public Set<Product> importProducts(String filename) throws ParserConfigurationException, SAXException, IOException
 	{	
 		Set<String> features=parseFeatures(filename);
 		String[][] eq = detectDuplicates(filename);
@@ -90,35 +86,11 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 							.collect(Collectors.toSet()));})
 				.collect(Collectors.toSet());
 		
-			return new Family(generateProducts(setprod,features));
+			return setprod; //generateProducts(setprod,features));
 
 	}
 	
-	//TODO  avoid generation of super-products below, use the orchestration of the paired MSCA as plant, 
-	//	    discard features not present in the aut, as well as products requiring those features. 
-	//		order the remaining products only by considering forbidden actions.
-	/* 
-	 * given two products p1 p2 identical but for a feature f activated in one 
-	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
-	 * This method generates all possible super products. 
-	 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
-	 * This condition holds for the method.
-	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
-	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
-	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
-	 */
-	private Set<Product> generateProducts(Set<Product> setprod, Set<String> features){
-		return Stream.iterate(setprod, s->!s.isEmpty(), sp->{
-			Map<Product,Set<Product>> map = features.stream()
-					.map(f->sp.parallelStream()
-							.collect(Collectors.groupingByConcurrent(p->p.removeFeature(new Feature(f)), Collectors.toSet())))
-					.reduce(new ConcurrentHashMap<Product,Set<Product>>(),(x,y)->{x.putAll(y); return x;});	
-			return map.entrySet().parallelStream()
-					.filter(e->e.getValue().size()>1)
-					.map(Entry::getKey)
-					.collect(Collectors.toSet());})
-		.reduce(new HashSet<Product>(),(x,y)->{x.addAll(y); return x;});
-	}
+	
 	private Set<String> parseFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
 		File inputFile = new File(filename);

@@ -18,7 +18,7 @@ import contractAutomata.MSCATransition;
 public class Product {
 	private final Set<Feature> required;
 	private final Set<Feature> forbidden;
-	
+
 	public Product(Set<Feature> required, Set<Feature> forbidden)
 	{
 		if (required==null||forbidden==null)
@@ -29,32 +29,32 @@ public class Product {
 				forbidden.parallelStream()
 				.anyMatch(f->required.contains(f)))
 			throw new IllegalArgumentException("A feature is both required and forbidden");
-		
+
 		this.required=required;
 		this.forbidden=forbidden;
 	}
-	
+
 	public Product(String[] r, String[] f)
 	{
 		this(Arrays.stream(r).map(s->new Feature(s)).collect(Collectors.toSet()),
-		Arrays.stream(f).map(s->new Feature(s)).collect(Collectors.toSet()));
+				Arrays.stream(f).map(s->new Feature(s)).collect(Collectors.toSet()));
 	}
-	
+
 	public Set<Feature> getRequired()
 	{
 		return required;
 	}
-	
+
 	public Set<Feature> getForbidden()
 	{
 		return forbidden;
 	}
-	
+
 	public int getForbiddenAndRequiredNumber()
 	{
 		return required.size()+forbidden.size();
 	}
-	
+
 	/**
 	 * check if all features of p are contained 
 	 * @param p
@@ -64,7 +64,7 @@ public class Product {
 	{
 		return this.forbidden.containsAll(p.getForbidden())&&this.required.containsAll(p.getRequired());
 	}
-	
+
 	/**
 	 * check if all forbidden features of p are contained 
 	 * @param p
@@ -74,7 +74,7 @@ public class Product {
 	{
 		return this.forbidden.containsAll(p.getForbidden());
 	}
-	
+
 	/**
 	 * check if all required features of p are contained 
 	 * @param p
@@ -84,8 +84,8 @@ public class Product {
 	{
 		return this.required.containsAll(p.getRequired());
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param f
@@ -97,16 +97,27 @@ public class Product {
 		Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
 		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
 	}
-	
-	public Product removeFeature(Feature f)
+
+	public Product removeFeatures(Set<Feature> sf)
 	{
-		Set<Feature> req = new HashSet<>(this.required);
-		Set<Feature> frb = new HashSet<>(this.forbidden);
-		
-		if (!req.remove(f)&&!frb.remove(f))
-				return this;
-		return new Product(req,frb);
+		return new Product(this.required.stream()
+				.filter(f->!sf.contains(f))
+				.collect(Collectors.toSet()),
+				this.forbidden.stream()
+				.filter(f->!sf.contains(f))
+				.collect(Collectors.toSet()));
 	}
+	
+	public Product retainFeatures(Set<Feature> sf)
+	{
+		return new Product(this.required.stream()
+				.filter(f->sf.contains(f))
+				.collect(Collectors.toSet()),
+				this.forbidden.stream()
+				.filter(f->sf.contains(f))
+				.collect(Collectors.toSet()));
+	}
+	
 	/**
 	 * 
 	 * @param tr
@@ -118,10 +129,10 @@ public class Product {
 				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet());
 		return required.stream()
-		.map(Feature::getName)
-		.allMatch(s->act.contains(s));
+				.map(Feature::getName)
+				.allMatch(s->act.contains(s));
 	}
-	
+
 	/**
 	 * 
 	 * @param t
@@ -133,8 +144,8 @@ public class Product {
 				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet());
 		return forbidden.stream()
-		.map(Feature::getName)
-		.allMatch(s->!act.contains(s));
+				.map(Feature::getName)
+				.allMatch(s->!act.contains(s));
 	}
 
 	public boolean isForbidden(MSCATransition t)
@@ -143,23 +154,23 @@ public class Product {
 		return this.getForbidden().contains(f);
 	}
 
-//	private boolean isRequired(MSCATransition t)
-//	{
-//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
-//	}
+	//	private boolean isRequired(MSCATransition t)
+	//	{
+	//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
+	//	}
 
-		
+
 	public boolean isValid(MSCA aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
 	}
-	
+
 	@Override
 	public String toString()
 	{
 		return "R:"+required.toString()+";\nF:"+forbidden.toString()+";\n";
 	}
-	
+
 	public String toStringFile(int id)
 	{
 		String req=required.stream()
@@ -170,11 +181,11 @@ public class Product {
 				.collect(Collectors.joining(","));
 		return "p"+id+": R={"+req+",} F={"+forb+",}";
 	}
-	
+
 	public String toHTMLString(String s)
 	{
-        return "<html>"+s+" R:"+required.toString()+"<br />F:"+forbidden.toString()+"</html>";
-	
+		return "<html>"+s+" R:"+required.toString()+"<br />F:"+forbidden.toString()+"</html>";
+
 	}
 
 	@Override
@@ -194,27 +205,27 @@ public class Product {
 		return forbidden.equals(other.forbidden)&&required.equals(other.required);
 	}
 
-	
+
 	public boolean isComparableWith(Product p)
 	{
 		return this.containsAllFeatures(p)||p.containsAllFeatures(this);
 	}
-	
-	
+
+
 
 	public int compareTo(Product p) {
 		if (this.isComparableWith(p))
 			return p.getForbiddenAndRequiredNumber()-this.getForbiddenAndRequiredNumber();
 		else 
 			throw new UnsupportedOperationException("Products are not comparable");
-			
+
 	}
 
 }
 
 //END OF CLASS
 
-	
+
 //	@Override
 //	public Product clone()
 //	{
