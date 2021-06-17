@@ -5,8 +5,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import contractAutomata.MSCA;
+import contractAutomata.operators.OrchestrationSynthesisOperator;
+import contractAutomata.requirements.Agreement;
 
 /**
  * A family contains its products/configurations and subfamilies, organised as a partial order
@@ -26,12 +32,43 @@ public class Family {
 
 		this.products=new HashSet<>(products);
 
-		po=products.parallelStream()
+		po=computePo((p1,p2) -> (p2.getForbidden().containsAll(p1.getForbidden()) && p2.getRequired().containsAll(p1.getRequired()))
+				|| (p1.getForbidden().containsAll(p2.getForbidden())&&	p1.getRequired().containsAll(p2.getRequired())), 
+				(p1,p2) -> p1.getForbiddenAndRequiredNumber()-p2.getForbiddenAndRequiredNumber());
+		
+	}
+
+	/**
+	 */
+	public Family(Set<Product> products, MSCA aut)
+	{
+		if (products==null||aut==null)
+			throw new IllegalArgumentException();
+		
+		MSCA orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
+
+		Set<Feature> availableFeatures = orc.getUnsignedActions().stream()
+				.map(Feature::new)
+				.collect(Collectors.toSet());
+
+		this.products=products.parallelStream()
+				.filter(p->availableFeatures.containsAll(p.getRequired()))
+				.collect(Collectors.toSet());
+
+		po=computePo((p1,p2) -> p2.getForbidden().containsAll(p1.getForbidden())||
+				p1.getForbidden().containsAll(p2.getForbidden()), 
+				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
+	}
+
+	private  Map<Product, Map<Boolean, Set<Product>>>  computePo(BiPredicate<Product,Product> areComparable, BiFunction<Product, Product, Integer> compare)
+	{
+		return products.parallelStream()
 				.collect(Collectors.toMap(Function.identity(), 
-						prod->products.parallelStream()
-						.filter(p->p.isComparableWith(prod))
-						.filter(p->prod.compareTo(p)==1||prod.compareTo(p)==-1)
-						.collect(Collectors.partitioningBy(p->prod.compareTo(p)==-1,Collectors.toSet()))));
+						p1->products.parallelStream()
+						.filter(p2-> areComparable.test(p1,p2))//are comparable
+						.filter(p2-> compare.apply(p1,p2)==1||compare.apply(p1,p2)==-1)
+						.collect(Collectors.partitioningBy(p2->compare.apply(p2, p1)==-1,Collectors.toSet()))));
+
 	}
 
 	public Set<Product> getProducts() {
@@ -92,9 +129,9 @@ public class Family {
 	public String toString() {
 		return "Family [products=" + products + "]";
 	}
-	
-	
-	
+
+
+
 }
 
 //END OF THE CLASS
@@ -112,101 +149,101 @@ public class Family {
 
 
 /**
-	 * @param p list of pairwise different products
-	 * @param features  the features of the products
-	 * @return  list containing all valid superproducts (aka subfamily)
-	 */
-	//	private static Product[] generateSuperProducts(Product[] p, String[] features)
-	//	{
-	//		Product[][] pl= new Product[features.length][];
-	//		pl[features.length-1]=p;
-	//		for (int level=features.length; level>1;level--)//start from the bottom of the tree, all features instantiated
-	//		{
-	//			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
-	//			//String[]  featuresremoved = new String[pl[level-1].length*(pl[level-1].length-1)]; //debug
-	//			int newprodind=0;
-	//			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
-	//			{
-	//				for (int prodind=0; prodind<pl[level-1].length;prodind++)
-	//				{
-	//					if (pl[level-1][prodind].getForbiddenAndRequiredNumber()==level && 
-	//							pl[level-1][prodind].containFeature(new Feature(features[removedfeature])))
-	//					{
-	//						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
-	//						{
-	//							//debug
-	//							/*
-	//							 * if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9)) { boolean
-	//							 * debug=true; }
-	//							 */
-	//
-	//
-	//							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level 
-	//									&& pl[level-1][prodcompare].containFeature(new Feature(features[removedfeature]))) 
-	//								/*for each pair of products at the same level check if by removing the selected feature they 
-	//								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
-	//								  product (the feature is contained in both products). No duplicates are inserted.
-	//								 */
-	//							{
-	//								/*								Product debug=pl[level-1][prodind];
-	//								Product debug2=pl[level-1][prodcompare];
-	//								if (debug.equals(debug2))
-	//								{
-	//									boolean error=true;
-	//								}
-	//								 */								
-	//								 String[] rf=new String[1];
-	//								 rf[0]=features[removedfeature];
-	//
-	//								 Product p1 = new Product(FamilyUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
-	//										 FamilyUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
-	//								 Product p2 = new Product(FamilyUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
-	//										 FamilyUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
-	//								 if (p1.equals(p2))
-	//								 {	//featuresremoved[newprodind]=features[removedfeature];
-	//									 boolean alreadyinserted=false;
-	//									 for (int z=0;z<newprodind;z++) //check if the product was not inserted previously by removing a different feature
-	//									 {
-	//										 if (p1.equals(newproducts[z]))
-	//										 {
-	//											 alreadyinserted=true;
-	//											 break;
-	//										 }
-	//									 }
-	//									 if (!alreadyinserted)
-	//									 {
-	//										 //new super product discovered!
-	//										 newproducts[newprodind]=p1;
-	//										 newprodind++;
-	//									 }
-	//
-	//								 }
-	//							}			
-	//						}
-	//					}
-	//				}
-	//			}
-	//			if (newprodind>0)
-	//			{
-	//				newproducts=FamilyUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
-	//				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
-	//				pl[level-2]=newproducts;
-	//			}
-	//			else
-	//				break; //stop earlier when no products are discovered
-	//		}
-	//		for (int i=features.length-2;i>=0;i--)
-	//		{	
-	//			if (pl[i]!=null)
-	//			{
-	//				List<Product> lp= new ArrayList<>(Arrays.asList(p));
-	//				lp.addAll(Arrays.asList(pl[i]));
-	//				p=lp.toArray(p);
-	//				//FMCAUtil.concat(p, pl[i]);  
-	//			}
-	//		}
-	//		return p;
-	//	}
+ * @param p list of pairwise different products
+ * @param features  the features of the products
+ * @return  list containing all valid superproducts (aka subfamily)
+ */
+//	private static Product[] generateSuperProducts(Product[] p, String[] features)
+//	{
+//		Product[][] pl= new Product[features.length][];
+//		pl[features.length-1]=p;
+//		for (int level=features.length; level>1;level--)//start from the bottom of the tree, all features instantiated
+//		{
+//			Product[] newproducts= new Product[pl[level-1].length*(pl[level-1].length-1)]; //upperbound to the possible number of discovered new products 
+//			//String[]  featuresremoved = new String[pl[level-1].length*(pl[level-1].length-1)]; //debug
+//			int newprodind=0;
+//			for (int removedfeature=0; removedfeature<features.length;removedfeature++) //for each possible feature to be removed
+//			{
+//				for (int prodind=0; prodind<pl[level-1].length;prodind++)
+//				{
+//					if (pl[level-1][prodind].getForbiddenAndRequiredNumber()==level && 
+//							pl[level-1][prodind].containFeature(new Feature(features[removedfeature])))
+//					{
+//						for (int prodcompare=prodind+1; prodcompare<pl[level-1].length;prodcompare++)
+//						{
+//							//debug
+//							/*
+//							 * if ((prodind==0)&&(prodcompare==96)&&(removedfeature==9)) { boolean
+//							 * debug=true; }
+//							 */
+//
+//
+//							if (pl[level-1][prodcompare].getForbiddenAndRequiredNumber()==level 
+//									&& pl[level-1][prodcompare].containFeature(new Feature(features[removedfeature]))) 
+//								/*for each pair of products at the same level check if by removing the selected feature they 
+//								  are equals. This can happen only if the feature is forbidden in one product and required in the other 
+//								  product (the feature is contained in both products). No duplicates are inserted.
+//								 */
+//							{
+//								/*								Product debug=pl[level-1][prodind];
+//								Product debug2=pl[level-1][prodcompare];
+//								if (debug.equals(debug2))
+//								{
+//									boolean error=true;
+//								}
+//								 */								
+//								 String[] rf=new String[1];
+//								 rf[0]=features[removedfeature];
+//
+//								 Product p1 = new Product(FamilyUtils.setDifference(pl[level-1][prodind].getRequired(),rf,new String[] {}),
+//										 FamilyUtils.setDifference(pl[level-1][prodind].getForbidden(),rf,new String[] {}));
+//								 Product p2 = new Product(FamilyUtils.setDifference(pl[level-1][prodcompare].getRequired(),rf,new String[] {}),
+//										 FamilyUtils.setDifference(pl[level-1][prodcompare].getForbidden(),rf,new String[] {}));
+//								 if (p1.equals(p2))
+//								 {	//featuresremoved[newprodind]=features[removedfeature];
+//									 boolean alreadyinserted=false;
+//									 for (int z=0;z<newprodind;z++) //check if the product was not inserted previously by removing a different feature
+//									 {
+//										 if (p1.equals(newproducts[z]))
+//										 {
+//											 alreadyinserted=true;
+//											 break;
+//										 }
+//									 }
+//									 if (!alreadyinserted)
+//									 {
+//										 //new super product discovered!
+//										 newproducts[newprodind]=p1;
+//										 newprodind++;
+//									 }
+//
+//								 }
+//							}			
+//						}
+//					}
+//				}
+//			}
+//			if (newprodind>0)
+//			{
+//				newproducts=FamilyUtils.removeTailsNull(newproducts, newprodind, new Product[] {});
+//				//p=FMCAUtil.concat(p, newproducts);  // this can be optimised, because in the next iteration only newproducts need to be checked
+//				pl[level-2]=newproducts;
+//			}
+//			else
+//				break; //stop earlier when no products are discovered
+//		}
+//		for (int i=features.length-2;i>=0;i--)
+//		{	
+//			if (pl[i]!=null)
+//			{
+//				List<Product> lp= new ArrayList<>(Arrays.asList(p));
+//				lp.addAll(Arrays.asList(pl[i]));
+//				p=lp.toArray(p);
+//				//FMCAUtil.concat(p, pl[i]);  
+//			}
+//		}
+//		return p;
+//	}
 
 
 

@@ -73,6 +73,11 @@ FMCA faut = new FMCA(bmc.importMxe(dir+"(BusinessClientxHotelxEconomyClient).mxe
 MSCA controller = faut.getOrchestrationOfFamily();		
 ```
 
+<h2>Videos</h2>
+The playlist of video tutorials and presentations about CAT is available at
+
+https://www.youtube.com/playlist?list=PLory_2tIDsJvZB2eVlpji-baIz0320TwM
+
 <h2>License</h2>
 The tool is available under Creative Common License 4.0,
  https://github.com/davidebasile/ContractAutomataLib/blob/code-cleaning/license.html.

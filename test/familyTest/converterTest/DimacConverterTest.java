@@ -2,17 +2,19 @@ package familyTest.converterTest;
 
 import static org.junit.Assert.assertTrue;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import contractAutomata.MSCA;
 import contractAutomata.converters.MSCAConverter;
 import contractAutomata.converters.MxeConverter;
-import family.Family;
-import family.Feature;
+import family.FMCA;
+import family.Product;
 import family.converters.DimacFamilyConverter;
 import family.converters.FamilyConverter;
 import family.converters.FeatureIDEfamilyConverter;
@@ -26,18 +28,26 @@ public class DimacConverterTest {
 	@Test
 	public void testImport() throws Exception
 	{
-		Family fam = new Family(dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs"));
+		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
 		MSCA aut = bmc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
-		Set<Feature> actions = aut.getUnsignedActions().stream()
-				.map(Feature::new)
-				.collect(Collectors.toSet());
-		
-		fam = new Family(fam.getProducts().parallelStream()
-		.map(p->p.retainFeatures(actions))
-		.collect(Collectors.toSet()));
-		
-		Family test=new Family(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
-		
-		assertTrue(fam.equals(test));
+		FMCA fa = new FMCA(aut,prod);
+		FMCA fa2 = new FMCA(aut, ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
+		assertTrue(fa.getFamily().equals(fa2.getFamily()));
+	}
+	
+	@Test
+	public void testUnsat() throws Exception
+	{
+		Set<Product> prod= dfc.importProducts(dir+"unsat.dimacs");
+		assertTrue(prod.isEmpty());
+	}
+	
+	@Test
+	public void testExport() throws IOException
+	{
+		assertThatThrownBy(()->dfc.exportFamily(null, null))
+		.isInstanceOf(UnsupportedOperationException.class);
+		//just for coverage
 	}
 }
+

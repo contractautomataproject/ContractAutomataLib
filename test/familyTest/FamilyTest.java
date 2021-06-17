@@ -1,6 +1,7 @@
 package familyTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertFalse;
 /*
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,17 +91,10 @@ public class FamilyTest {
 
 		int pindex=100;
 
-		//		int[] subind = fam.getSubProductsofProduct(pindex);
-		//		Set<Product> products=Arrays.stream(subind)
-		//				.mapToObj(i->pr[i])
-		//				.collect(Collectors.toSet());
-
 		Set<Product> products = fam.getSubProductsofProduct(ar.get(pindex));
-
 
 		//Family.writeFile(dir +"subProductsOfProduct_test", products);
 		Set<Product> test = dfc.importProducts(dir +"subProductsOfProduct_test.prod"); 
-		// subProductsOfProductTest.prod");
 		
 		assertTrue(products.equals(test));
 	}
@@ -113,8 +107,42 @@ public class FamilyTest {
 		assertThatThrownBy(() -> new Family(pr))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
+	
+	@Test
+	public void constructorException2()
+	{
+		Set<Product> pr = null;
+		assertThatThrownBy(() -> new Family(pr,null))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
 
+	@Test
+	public void testEquals1() throws Exception {
+		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
+		assertTrue(fam.equals(fam));
+	}
+	
+	@Test
+	public void testEquals2() throws Exception {
+		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
+		assertFalse(fam.equals(null));
+	}
 
+	@Test
+	public void testToString() throws Exception {
+		String ln = System.lineSeparator();
+		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
+		assertTrue(fam.toString().equals("Family [products=[R:[apple];"+ln+"F:[];"+ln+"]]"));
+	}
+	
+	@Test
+	public void testHashCode() throws Exception {
+		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
+
+		Family fam2 = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
+		
+		assertTrue(fam.hashCode()==fam2.hashCode());
+	}
 
 }
 

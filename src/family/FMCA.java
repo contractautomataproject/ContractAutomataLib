@@ -24,7 +24,7 @@ public class FMCA {
 	
 	private final MSCA aut;
 	private final Family family;
-	
+
 	public FMCA(MSCA aut, Family family)
 	{
 		if (aut==null||family==null)
@@ -33,8 +33,33 @@ public class FMCA {
 		this.family=family;
 	}
 
+	public FMCA(MSCA aut, Set<Product> products)
+	{
+		if (products==null||aut==null)
+			throw new IllegalArgumentException();
+		
+
+		Set<Feature> actions = aut.getUnsignedActions().stream()
+				.map(Feature::new)
+				.collect(Collectors.toSet());
+		
+		//products are polished from features not present in the automaton
+		//(e.g. equivalent features, abstract features)
+		Set<Product> refinedProducts = products.parallelStream()
+				.map(p->p.retainFeatures(actions))
+				.collect(Collectors.toSet());
+		
+		this.aut=aut;
+		this.family= new Family(refinedProducts,aut);
+	}
+	
 	public MSCA getAut() {
 		return aut;
+	}
+	
+
+	public Family getFamily() {
+		return family;
 	}
 		
 	public Map<Product,MSCA> getCanonicalProducts()
@@ -44,9 +69,10 @@ public class FMCA {
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
-		Set<String> act=aut.getTransition().parallelStream()
-		.map(x-> x.getLabel().getUnsignedAction())//CALabel.getUnsignedAction(x.getLabel().getAction()))
-		.collect(Collectors.toSet());
+		Set<String> act=aut.getUnsignedActions(); 
+//				.getTransition().parallelStream()
+//		.map(x-> x.getLabel().getUnsignedAction())//CALabel.getUnsignedAction(x.getLabel().getAction()))
+//		.collect(Collectors.toSet());
 		
 		Map<Set<Feature>, Map<Product,MSCA>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()

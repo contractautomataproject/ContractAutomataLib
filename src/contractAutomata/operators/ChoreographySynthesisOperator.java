@@ -1,10 +1,13 @@
 package contractAutomata.operators;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import contractAutomata.CAState;
 import contractAutomata.MSCA;
@@ -12,10 +15,17 @@ import contractAutomata.MSCATransition;
 
 public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
-	private SynthesisOperator synth;
 	private Predicate<MSCATransition> req;
+	private Function<Stream<MSCATransition>,Optional<MSCATransition>> choice;
+	
 	public ChoreographySynthesisOperator(Predicate<MSCATransition> req){
 		this.req=req;
+		this.choice=Stream::findAny;
+	}
+	
+	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, Function<Stream<MSCATransition>,Optional<MSCATransition>> choice){
+		this.req=req;
+		this.choice=choice;
 	}
 
 	/** 
@@ -33,10 +43,12 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
 		MSCATransition toRemove=null; 
 		Set<String> violatingbc = new HashSet<>();
+
+		SynthesisOperator synth;
 		MSCA chor;
 		do 
 		{ 
-			this.synth=new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())||
+			synth=new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())||
 					!req.test(x)||violatingbc.contains(x.toCSV()),
 						(x,st,bad) -> (!st.contains(x)&&isUncontrollableChoreography(x,st, bad)));
 
@@ -44,10 +56,9 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 			if (chor==null)
 				break;
 			final Set<MSCATransition> trf = chor.getTransition();
-			toRemove=(chor.getTransition().parallelStream()
-					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
-					.findAny() 
-					.orElse(null));
+			toRemove=choice.apply(chor.getTransition().parallelStream()
+					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<CAState>())))
+					.orElse(null);
 		} while (toRemove!=null && violatingbc.add(toRemove.toCSV()));
 		return chor;
 	}

@@ -18,7 +18,7 @@ public class JsonConverterTest {
 	public void importTest() throws Exception {
 		MSCAConverter jc = new JsonConverter();
 		MSCA aut = jc.importMSCA(dir+"/CAtest/testgraph.json");
-	    bmc.exportMSCA(dir+"/CAtest/testgraph.mxe", aut);
+	    bmc.exportMSCA(dir+"/CAtest/testgraph", aut);
 	    MSCA test= bmc.importMSCA(dir+"/CAtest/voxlogicajsonimporttest.mxe");
 	    assertEquals(MSCATest.checkTransitions(aut, test),true);
 	}

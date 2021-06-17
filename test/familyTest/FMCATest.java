@@ -156,6 +156,14 @@ public class FMCATest {
 		assertThatThrownBy(() ->aut.productsWithNonEmptyOrchestration())
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
+	
+	@Test
+	public void constructorException2()
+	{
+		Set<Product> pr = null;
+		assertThatThrownBy(() -> new FMCA(null,pr))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
 }
 
 //END OF THE CLASS

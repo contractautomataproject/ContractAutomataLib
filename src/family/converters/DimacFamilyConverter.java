@@ -29,14 +29,12 @@ public class DimacFamilyConverter implements FamilyConverter {
 
 	@Override
 	public Set<Product> importProducts(String filename) throws Exception {
-		
 		ISolver solver = SolverFactory.newDefault();
         ModelIterator mi = new ModelIterator(solver);
 		solver.setTimeout(3600); // 1 hour timeout
 		Reader reader = new DimacsReader(mi);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintWriter out = new PrintWriter(baos,true);
-		
 		
 		IProblem problem = reader.parseInstance(filename);// CNF filename
 		boolean unsat=true;
@@ -47,13 +45,13 @@ public class DimacFamilyConverter implements FamilyConverter {
 		}
 		if (unsat) // do something for unsat case
 		{
-			System.out.println("Unsatisfiable !");
+		//	System.out.println("Unsatisfiable !");
 			return new HashSet<Product>();
 		}
 		
 		Map<Integer,String> i2s = readFeatureStrings(filename);
 		
-		System.out.println(i2s.toString());
+		//System.out.println(i2s.toString());
 		
 		return Arrays.stream(baos.toString().split(System.lineSeparator()))
 		.map(s->Arrays.stream(s.split(" "))
@@ -80,8 +78,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 	
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 }
 

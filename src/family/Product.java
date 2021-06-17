@@ -1,7 +1,6 @@
 package family;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,48 +54,38 @@ public class Product {
 		return required.size()+forbidden.size();
 	}
 
-	/**
-	 * check if all features of p are contained 
-	 * @param p
-	 * @return
-	 */
-	public boolean containsAllFeatures(Product p)
-	{
-		return this.forbidden.containsAll(p.getForbidden())&&this.required.containsAll(p.getRequired());
-	}
 
-	/**
-	 * check if all forbidden features of p are contained 
-	 * @param p
-	 * @return
-	 */
-	public boolean containsAllForbiddenFeatures(Product p)
-	{
-		return this.forbidden.containsAll(p.getForbidden());
-	}
-
-	/**
-	 * check if all required features of p are contained 
-	 * @param p
-	 * @return
-	 */
-	public boolean containsAllRequiredFeatures(Product p)
-	{
-		return this.required.containsAll(p.getRequired());
-	}
-
-
-	/**
-	 * 
-	 * @param f
-	 * @return  true if feature f is contained (either required or forbidden)
-	 */
-	public boolean containFeature(Feature f)
-	{
-		Product rp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>());
-		Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
-		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
-	}
+//	/**
+//	 * check if all forbidden features of p are contained 
+//	 * @param p
+//	 * @return
+//	 */
+//	public boolean containsAllForbiddenFeatures(Product p)
+//	{
+//		return this.forbidden.containsAll(p.getForbidden());
+//	}
+//
+//	/**
+//	 * check if all required features of p are contained 
+//	 * @param p
+//	 * @return
+//	 */
+//	public boolean containsAllRequiredFeatures(Product p)
+//	{
+//		return this.required.containsAll(p.getRequired());
+//	}
+//
+//	/**
+//	 * 
+//	 * @param f
+//	 * @return  true if feature f is contained (either required or forbidden)
+//	 */
+//	public boolean containFeature(Feature f)
+//	{
+//		Product rp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>());
+//		Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
+//		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
+//	}
 
 	public Product removeFeatures(Set<Feature> sf)
 	{
@@ -159,7 +148,6 @@ public class Product {
 	//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
 	//	}
 
-
 	public boolean isValid(MSCA aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
@@ -168,7 +156,9 @@ public class Product {
 	@Override
 	public String toString()
 	{
-		return "R:"+required.toString()+";\nF:"+forbidden.toString()+";\n";
+
+		String ln = System.lineSeparator();
+		return "R:"+required.toString()+";"+ln+"F:"+forbidden.toString()+";"+ln;
 	}
 
 	public String toStringFile(int id)
@@ -204,23 +194,7 @@ public class Product {
 		Product other = (Product) obj;
 		return forbidden.equals(other.forbidden)&&required.equals(other.required);
 	}
-
-
-	public boolean isComparableWith(Product p)
-	{
-		return this.containsAllFeatures(p)||p.containsAllFeatures(this);
-	}
-
-
-
-	public int compareTo(Product p) {
-		if (this.isComparableWith(p))
-			return p.getForbiddenAndRequiredNumber()-this.getForbiddenAndRequiredNumber();
-		else 
-			throw new UnsupportedOperationException("Products are not comparable");
-
-	}
-
+	
 }
 
 //END OF CLASS
