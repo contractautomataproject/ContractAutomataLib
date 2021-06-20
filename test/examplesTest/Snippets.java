@@ -68,7 +68,7 @@ public class Snippets {
 	public void test4() throws Exception
 	{
 		MSCA aut = new MxeConverter().importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
-		MSCA aut2 = new MxeConverter().importMSCA(dir+"(BusinessClientxHotel).mxe");
+		MSCA aut2 = new MxeConverter().importMSCA(dir+"BusinessClientxHotel_open.mxe");
 	
 		FamilyConverter dfc = new ProdFamilyConverter();
 		
