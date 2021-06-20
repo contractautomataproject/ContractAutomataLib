@@ -38,7 +38,6 @@ public class FMCA {
 		if (products==null||aut==null)
 			throw new IllegalArgumentException();
 		
-
 		Set<Feature> actions = aut.getUnsignedActions().stream()
 				.map(Feature::new)
 				.collect(Collectors.toSet());
@@ -81,14 +80,14 @@ public class FMCA {
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
 					e.getKey().getForbidden().stream()
-					.filter(f->act.contains(f.getName()))
-					.collect(Collectors.toSet()),//ignoring forbidden features not present in aut (this is an improvement of Def.32 of JSCP2020).
+					.filter(f->act.contains(f.getName()))//ignoring forbidden features not present in aut (this is an improvement of Def.32 of JSCP2020).
+					.collect(Collectors.toSet()),
 						Collectors.toMap(Entry::getKey, Entry::getValue)));
 
 		return quotientClasses.entrySet().parallelStream()
 		.map(e->e.getValue().entrySet())
 		.filter(s->!s.isEmpty())
-		.map(s->s.iterator().next())//the first element for each equivalence class 
+		.map(s->s.iterator().next())//the first element is the canonical of each equivalence class 
 		.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 	

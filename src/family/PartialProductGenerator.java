@@ -12,10 +12,9 @@ import java.util.stream.Stream;
 
 public class PartialProductGenerator implements UnaryOperator<Set<Product>>{
 
-	//TODO  avoid generation of super-products below, use the orchestration of the paired MSCA as plant, 
-	//	    discard features not present in the aut, as well as products requiring those features. 
-	//		order the remaining products only by considering forbidden actions.
-	/* 
+	/*
+	 * https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm
+	 *  
 	 * given two products p1 p2 identical but for a feature f activated in one 
 	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
 	 * This method generates all possible super products. 

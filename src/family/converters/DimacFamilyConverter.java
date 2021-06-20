@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.sat4j.minisat.SolverFactory;
@@ -26,56 +27,65 @@ import family.Feature;
 import family.Product;
 
 public class DimacFamilyConverter implements FamilyConverter {
+	private Function<IProblem,int[]> gen;
+	
+	public DimacFamilyConverter(boolean allModels) {
+		if (allModels)
+			gen = IProblem::model;
+		else
+			gen = IProblem::primeImplicant; //https://en.wikipedia.org/wiki/Implicant#Prime_implicant
+	}
 
 	@Override
 	public Set<Product> importProducts(String filename) throws Exception {
+		//http://www.sat4j.org/r15/doc/
+		//https://sat4j.gitbooks.io/case-studies/content/using-sat4j-as-a-java-library.html
 		ISolver solver = SolverFactory.newDefault();
-        ModelIterator mi = new ModelIterator(solver);
+		ModelIterator mi = new ModelIterator(solver);
 		solver.setTimeout(3600); // 1 hour timeout
 		Reader reader = new DimacsReader(mi);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintWriter out = new PrintWriter(baos,true);
+
+		IProblem problem =
+				reader.parseInstance(filename);// CNF filename
+		//IProblem sd = new Minimal4CardinalityModel(mi);
 		
-		IProblem problem = reader.parseInstance(filename);// CNF filename
 		boolean unsat=true;
 		while (problem.isSatisfiable()) { // do something with each model
 			unsat = false;
-			reader.decode(problem.model(),out);
+			reader.decode(gen.apply(problem),out);
 			out.println();
 		}
 		if (unsat) // do something for unsat case
-		{
-		//	System.out.println("Unsatisfiable !");
 			return new HashSet<Product>();
-		}
-		
+
 		Map<Integer,String> i2s = readFeatureStrings(filename);
-		
-		//System.out.println(i2s.toString());
-		
+
+
 		return Arrays.stream(baos.toString().split(System.lineSeparator()))
-		.map(s->Arrays.stream(s.split(" "))
-				.mapToInt(Integer::parseInt)
-				.boxed()
-				.filter(i->i!=0)
-				.collect(Collectors.partitioningBy(i->i>=0, 
+				.map(s->Arrays.stream(s.split(" "))
+						.mapToInt(Integer::parseInt)
+						.boxed()
+						.filter(i->i!=0)
+						.collect(Collectors.partitioningBy(i->i>=0, 
 						Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))), 
-							Collectors.toSet()))))
-		.map(e->new Product(e.get(true),e.get(false)))
-		.collect(Collectors.toSet());		
+								Collectors.toSet()))))
+				.map(e->new Product(e.get(true),e.get(false)))
+				.collect(Collectors.toSet());		
 	}
 
 
 	private Map<Integer,String> readFeatureStrings(String filename) throws IOException
 	{
 		return Files.readAllLines(Paths.get(filename), Charset.forName("ISO-8859-1"))
-		.stream()
-		.filter(s->s.startsWith("c")) //comment
-		.map(s->s.split(" "))
-		.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1]),ar[2]))
-		.collect(Collectors.toMap(Entry::getKey, Entry::getValue));		
+				.stream()
+				.filter(s->s.startsWith("c")) //comment
+				.map(s->s.split(" "))
+				.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1]),ar[2]))
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));		
 	}
-	
+
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException {
 		throw new UnsupportedOperationException();
