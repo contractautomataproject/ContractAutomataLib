@@ -68,18 +68,23 @@ public class Snippets {
 	public void test4() throws Exception
 	{
 		MSCA aut = new MxeConverter().importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
+		MSCA aut2 = new MxeConverter().importMSCA(dir+"(BusinessClientxHotel).mxe");
 	
 		FamilyConverter dfc = new ProdFamilyConverter();
 		
 		// import from .prod textual description of products
 		Set<Product> sp = dfc.importProducts(dir+"ValidProducts.prod");
 		
-		//ValidProducts.prod contains also partial products, no need to generate them
-		// the family is generated without being optimised against aut
+		//ValidProducts.prod contains also partial products, no need to generate them.
+		//The family is generated without being optimised against an MSCA.
+		//This is useful when different plant automata (FMCA) are used for the same family.
 		Family fam =  new Family(sp);
+		
+		//two different FMCA may be using the same family
 		FMCA faut = new FMCA(aut,fam);
+		FMCA faut2 = new FMCA(aut2,fam);
 
-		//selecting a product of the family and computing its orchestration
+		//selecting a product of first FMCA and computing its orchestration
 		Product p = faut.getFamily().getProducts().iterator().next(); 
 		MSCA orcfam1 = new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(faut.getAut());
 	}
