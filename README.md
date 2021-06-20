@@ -25,7 +25,7 @@ The  package  of the GUI Application has been moved to https://github.com/davide
 Check that repository for an example of usage of this library for developing a tool for specifying and verifying 
 CA.
 
-The following code snippets are examples taken from the test folder (`MSCATest` and `FMCATest`). 
+The following code snippets are examples taken from the test folder `test/exampleTest`. 
 The first  snippet loads two CA described in `.data` format, computes their composition and synthesises
 an orchestration enforcing agreement (all requests are matched). 
 The composition takes two other arguments. 
