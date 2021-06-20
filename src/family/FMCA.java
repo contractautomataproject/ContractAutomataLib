@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import contractAutomata.MSCA;
 import contractAutomata.MSCATransition;
+import contractAutomata.operators.OrchestrationSynthesisOperator;
 import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
 import contractAutomata.operators.UnionFunction;
 import contractAutomata.requirements.Agreement;
@@ -44,12 +45,26 @@ public class FMCA {
 		
 		//products are polished from features not present in the automaton
 		//(e.g. equivalent features, abstract features)
-		Set<Product> refinedProducts = products.parallelStream()
+		products = products.parallelStream()
 				.map(p->p.retainFeatures(actions))
 				.collect(Collectors.toSet());
 		
+		
+		MSCA orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
+		Set<Feature> availableFeatures = orc.getUnsignedActions().stream()
+				.map(Feature::new)
+				.collect(Collectors.toSet());
+
+		//products requiring features not present in the orchestration are removed
+		products=products.parallelStream()
+				.filter(p->availableFeatures.containsAll(p.getRequired()))
+				.collect(Collectors.toSet());
+
+		
 		this.aut=aut;
-		this.family= new Family(refinedProducts,aut);
+		this.family= new Family(products,(p1,p2) -> p2.getForbidden().containsAll(p1.getForbidden())||
+				p1.getForbidden().containsAll(p2.getForbidden()), 
+				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
 	}
 	
 	public MSCA getAut() {

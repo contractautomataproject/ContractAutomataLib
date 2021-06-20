@@ -1,6 +1,5 @@
 package family;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -9,10 +8,6 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import contractAutomata.MSCA;
-import contractAutomata.operators.OrchestrationSynthesisOperator;
-import contractAutomata.requirements.Agreement;
 
 /**
  * A family contains its products/configurations and subfamilies, organised as a partial order
@@ -27,42 +22,20 @@ public class Family {
 
 	public Family(Set<Product> products)
 	{
-		if (products==null)
-			throw new IllegalArgumentException();
-
-		this.products=new HashSet<>(products);
-
-		po=computePo((p1,p2) -> (p2.getForbidden().containsAll(p1.getForbidden()) && p2.getRequired().containsAll(p1.getRequired()))
+		this(products, (p1,p2) -> (p2.getForbidden().containsAll(p1.getForbidden()) && p2.getRequired().containsAll(p1.getRequired()))
 				|| (p1.getForbidden().containsAll(p2.getForbidden())&&	p1.getRequired().containsAll(p2.getRequired())), 
-				(p1,p2) -> p1.getForbiddenAndRequiredNumber()-p2.getForbiddenAndRequiredNumber());
-		
+				(p1,p2) -> p1.getForbiddenAndRequiredNumber()-p2.getForbiddenAndRequiredNumber());		
 	}
 
 	/**
 	 */
-	public Family(Set<Product> products, MSCA aut)
+	public Family(Set<Product> products, BiPredicate<Product,Product> areComparable, BiFunction<Product, Product, Integer> compare)
 	{
-		if (products==null||aut==null)
+		if (products==null||areComparable==null||compare==null)
 			throw new IllegalArgumentException();
 		
-		MSCA orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
-
-		Set<Feature> availableFeatures = orc.getUnsignedActions().stream()
-				.map(Feature::new)
-				.collect(Collectors.toSet());
-
-		this.products=products.parallelStream()
-				.filter(p->availableFeatures.containsAll(p.getRequired()))
-				.collect(Collectors.toSet());
-
-		po=computePo((p1,p2) -> p2.getForbidden().containsAll(p1.getForbidden())||
-				p1.getForbidden().containsAll(p2.getForbidden()), 
-				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
-	}
-
-	private  Map<Product, Map<Boolean, Set<Product>>>  computePo(BiPredicate<Product,Product> areComparable, BiFunction<Product, Product, Integer> compare)
-	{
-		return products.parallelStream()
+		this.products=products;
+		this.po=products.parallelStream()
 				.collect(Collectors.toMap(Function.identity(), 
 						p1->products.parallelStream()
 						.filter(p2-> areComparable.test(p1,p2))//are comparable
