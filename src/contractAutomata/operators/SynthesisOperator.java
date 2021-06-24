@@ -3,22 +3,24 @@ package contractAutomata.operators;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.Automaton;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.Label;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.Transition;
 
 public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 	private Map<CAState,Boolean> reachable;
 	private Map<CAState,Boolean> successful;
-	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred;
+	private TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred;
 	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred;
+	private	Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop;
 	
 	
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
@@ -26,16 +28,29 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 		super();
 		this.pruningPred = pruningPredicate;
 		this.forbiddenPred = forbiddenPredicate;
+		this.prop=null;
 	}
 
+	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
+			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
+			Automaton<String,BasicState,Transition<String,BasicState,Label>>  aut) {
+		super(); 
+		this.prop=aut;
+		this.pruningPred = pruningPredicate;
+		this.forbiddenPred = forbiddenPredicate;
+	}
 	
 	
 
 	@Override
 	public MSCA apply(MSCA arg1) {
 		{
-			MSCA aut=copy(arg1);
-			
+			MSCA aut= new RelabelingOperator().apply(arg1);//creating an exact copy
+			if (prop!=null) {
+				Set<CAState> badprop = new SynchronousCompositionFunction().apply(aut, prop);
+				pruningPred = (t,st,sc)->pruningPred.test(t,st,sc) || badprop.contains(t.getTarget());
+			}
+				
 			Set<MSCATransition> trbackup = new HashSet<MSCATransition>(aut.getTransition());
 			Set<CAState> statesbackup= aut.getStates(); 
 			CAState init = aut.getInitial();
@@ -71,36 +86,6 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 		}
 	}
 	
-	private MSCA copy(MSCA aut)
-	{	
-		Map<BasicState,BasicState> clonedstate = aut.getStates().stream()
-				.flatMap(x->x.getState().stream())
-				.distinct()
-				.collect(Collectors.toMap(Function.identity(), s->new BasicState(s.getLabel(),s.isInit(),s.isFin())));
-
-		Map<CAState,CAState> clonedcastates  = aut.getStates().stream()
-				.collect(Collectors.toMap(Function.identity(), 
-						x->new CAState(x.getState().stream()
-								.map(s->clonedstate.get(s))
-								.collect(Collectors.toList()),
-								x.getX(),x.getY())));
-
-		return new MSCA(aut.getTransition().stream()
-				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),
-						getClone(t.getLabel()),
-						clonedcastates.get(t.getTarget()),
-						t.getModality()))
-				.collect(Collectors.toSet()));
-	}
-	
-
-	private CALabel getClone(CALabel la) {
-		if (la.isMatch())
-			return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
-		else 
-			return new CALabel(la.getRank(),(la.isOffer())?la.getOfferer():la.getRequester(),la.getAction());
-	}
-
 	/**
 	 * @return	states who do not reach a final state or are unreachable
 	 */

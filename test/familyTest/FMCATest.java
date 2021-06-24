@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import contractAutomata.MSCA;
+import contractAutomata.automaton.MSCA;
 import contractAutomata.converters.MSCAConverter;
 import contractAutomata.converters.MxeConverter;
 import contractAutomataTest.MSCATest;
@@ -83,6 +83,8 @@ public class FMCATest {
 //		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
 //		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
 //		
+		System.out.println(cps);
+		System.out.println(test.getProducts());
 		assertTrue(cps.equals(test.getProducts()));
 	}
 
@@ -103,7 +105,6 @@ public class FMCATest {
 	@Test
 	public void testFamilyOrc() throws Exception
 	{
-		
 		String fileName =dir+"/CAtest/ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA faut = new FMCA(bmc.importMSCA(dir+"/CAtest/(BusinessClientxHotelxEconomyClient).mxe"),fam);

@@ -50,18 +50,18 @@ public class DimacFamilyConverter implements FamilyConverter {
 		IProblem problem =
 				reader.parseInstance(filename);// CNF filename
 		//IProblem sd = new Minimal4CardinalityModel(mi);
-		
+
+		Map<Integer,String> i2s = readFeatureStrings(filename);
+
 		boolean unsat=true;
 		while (problem.isSatisfiable()) { // do something with each model
 			unsat = false;
 			reader.decode(gen.apply(problem),out);
 			out.println();
+//			System.out.println(baos.toString());
 		}
 		if (unsat) // do something for unsat case
 			return new HashSet<Product>();
-
-		Map<Integer,String> i2s = readFeatureStrings(filename);
-
 
 		return Arrays.stream(baos.toString().split(System.lineSeparator()))
 				.map(s->Arrays.stream(s.split(" "))
@@ -82,7 +82,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 				.stream()
 				.filter(s->s.startsWith("c")) //comment
 				.map(s->s.split(" "))
-				.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1]),ar[2]))
+				.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1].replace("$","")),ar[2]))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));		
 	}
 

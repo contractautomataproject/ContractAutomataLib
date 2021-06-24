@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import contractAutomata.MSCA;
+import contractAutomata.automaton.MSCA;
 import contractAutomata.converters.JsonConverter;
 import contractAutomata.converters.MSCAConverter;
 import contractAutomata.converters.MxeConverter;

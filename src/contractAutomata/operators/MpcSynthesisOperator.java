@@ -3,8 +3,8 @@ package contractAutomata.operators;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 		

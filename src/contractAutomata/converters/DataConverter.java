@@ -16,11 +16,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.label.CMLabel;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class DataConverter implements MSCAConverter{
 
@@ -149,7 +150,11 @@ public class DataConverter implements MSCAConverter{
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-		CALabel label = new CALabel(Arrays.asList(tr[1]));
+		CALabel label;
+		if (tr[1].length==1 && tr[1][0].contains("@"))
+			label=new CMLabel(tr[1][0]);
+		else
+			label = new CALabel(Arrays.asList(tr[1]));
 
 		return new MSCATransition(source,label,target,type); 
 	}
@@ -158,14 +163,14 @@ public class DataConverter implements MSCAConverter{
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
-						.allMatch(i->cs.getState().get(i).getLabel().equals(state[i]))) 
+						.allMatch(i->cs.getState().get(i).getState().equals(state[i]))) 
 				.findAny()
 				.orElseGet(()->{
 					CAState temp= new CAState(
 							IntStream.range(0, state.length) //creating the list of basic states using mapBasicStates
 							.mapToObj(i->{
 								Set<BasicState> l = mapBasicStates.get(i);
-								if (l==null || l.stream().allMatch(bs->!bs.getLabel().equals(state[i])))
+								if (l==null || l.stream().allMatch(bs->!bs.getState().equals(state[i])))
 								{
 									BasicState bs=new BasicState(state[i]+"",
 											state[i].equals(initial[i]),
@@ -177,7 +182,7 @@ public class DataConverter implements MSCAConverter{
 									return (BasicState) bs;
 								} else
 									return (BasicState) l.stream()
-											.filter(bs->bs.getLabel().equals(state[i]))
+											.filter(bs->bs.getState().equals(state[i]))
 											.findFirst()
 											.orElseThrow(RuntimeException::new);
 							}).collect(Collectors.toList())

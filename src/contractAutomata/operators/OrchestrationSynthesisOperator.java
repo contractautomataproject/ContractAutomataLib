@@ -4,9 +4,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 

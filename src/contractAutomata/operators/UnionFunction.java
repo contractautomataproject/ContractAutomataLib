@@ -8,11 +8,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class UnionFunction implements Function<List<MSCA>,MSCA>{
 
@@ -42,49 +42,42 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 		.flatMap(Set::stream)
 		.map(CAState::getState)
 		.flatMap(List::stream)
-		.map(BasicState::getLabel)
+		.map(BasicState::getState)
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
 		
 		//relabeling
-		IntStream.range(0, aut.size())
-		.forEach(id ->{
-			aut.get(id).getStates().forEach(x->{
-				x.getState().forEach(s->{
-					if (!s.getLabel().contains("_"))
-						s.setLabel(id+"_"+s.getLabel());
-				});
-			});
-		}); 
+		List<MSCA> relabeled=IntStream.range(0, aut.size())
+		.mapToObj(id ->new RelabelingOperator(s->s.contains("_")?s:(id+"_"+s)).apply(aut.get(id)))
+		.collect(Collectors.toList());
 
 		//new initial state
 		CAState newinitial = new CAState(IntStream.range(0,rank)
 				.mapToObj(i->new BasicState("0",true,false))
 				.collect(Collectors.toList()),0,0);
 
-		Set<MSCATransition> uniontr= new HashSet<>(aut.stream()
+		Set<MSCATransition> uniontr= new HashSet<>(relabeled.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
-				.orElse(0)+aut.size());  //Initialized to the total number of transitions
+				.orElse(0)+relabeled.size());  //Initialized to the total number of transitions
 
-		uniontr.addAll(IntStream.range(0, aut.size())
-				.mapToObj(i->new MSCATransition(newinitial,new CALabel(rank, 0, "!dummy"),aut.get(i).getInitial(),MSCATransition.Modality.PERMITTED))
+		uniontr.addAll(IntStream.range(0, relabeled.size())
+				.mapToObj(i->new MSCATransition(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),MSCATransition.Modality.PERMITTED))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
 		//remove old initial states, I need to do this now
-		aut.parallelStream()
+		relabeled.parallelStream()
 		.flatMap(a->a.getStates().stream())
 		.filter(CAState::isInitial)
 		.forEach(x->x.setInitial(false));
 
-		uniontr.addAll(IntStream.range(0, aut.size())
-				.mapToObj(i->aut.get(i).getTransition())
+		uniontr.addAll(IntStream.range(0, relabeled.size())
+				.mapToObj(i->relabeled.get(i).getTransition())
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 
 		return new MSCA(uniontr);
 	}
-
 
 }

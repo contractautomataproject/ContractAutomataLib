@@ -133,7 +133,7 @@ FamilyConverter dimfc = new DimacFamilyConverter(false);
 //import Dimac CNF formula models. Dimac file has been created using FeatureIDE export
 Set<Product> sp3 = dimfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs"); 
 
-//in case only the orchestration the family is to be computed, it is faster
+//in case only the orchestration of the family is to be computed, it is faster
 //to only import the maximal products using dimac converter, avoiding the 
 //processing of all products and partial products
 FMCA faut = new FMCA(aut,sp3);

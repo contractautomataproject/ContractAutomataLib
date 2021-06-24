@@ -2,7 +2,7 @@ package contractAutomata.requirements;
 
 import java.util.function.Predicate;
 
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class Agreement implements Predicate<MSCATransition> {
 

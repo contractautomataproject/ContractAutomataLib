@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
-import contractAutomata.MSCATransition.Modality;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.MSCATransition.Modality;
 
 public class MSCATest {
 //	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
@@ -154,14 +154,19 @@ public class MSCATest {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
 
-		BasicState bs = new BasicState("0",true,true);
+		BasicState bs1 = new BasicState("0",true,false);
+		BasicState bs2 = new BasicState("0",false,true);
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs1),0,0),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs),0,0),
+				new CAState(Arrays.asList(bs2),0,0),
 				Modality.PERMITTED));
 
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs2),0,0),
+				new CALabel(lab),
+				new CAState(Arrays.asList(bs2),0,0),
+				Modality.PERMITTED));
 		assertThatThrownBy(() -> new MSCA(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");

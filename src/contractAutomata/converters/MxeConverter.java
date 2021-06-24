@@ -29,11 +29,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class MxeConverter implements MSCAConverter {
 
@@ -79,8 +79,8 @@ public class MxeConverter implements MSCAConverter {
 						{
 							Set<BasicState> sbs = princ2bs.get(principal);
 							if (!sbs.isEmpty()&&sbs.stream()
-									.map(BasicState::getLabel)
-									.anyMatch(s->s.equals(bs.getLabel())))
+									.map(BasicState::getState)
+									.anyMatch(s->s.equals(bs.getState())))
 								throw new IOException("Duplicate basic states labels");
 							else
 								sbs.add(bs);
@@ -101,7 +101,7 @@ public class MxeConverter implements MSCAConverter {
 									{
 										Set<BasicState> sbs = princ2bs.get(ind);
 										return sbs.stream()
-												.filter(bs->bs.getLabel().equals(st[ind]))
+												.filter(bs->bs.getState().equals(st[ind]))
 												.findFirst()
 												.orElseGet(()->
 												{BasicState bs = new BasicState(st[ind],st[ind].equals("0"),eElement.getAttribute("style").contains("terminate.png"));
@@ -221,7 +221,7 @@ public class MxeConverter implements MSCAConverter {
 			createElementEdge(doc,root,Integer.toString(id),
 					state2element.get(t.getSource()),
 					state2element.get(t.getTarget()),
-					Arrays.toString(t.getLabelAsList().stream().toArray(String[]::new)),t.getModality());
+					Arrays.toString(t.getLabel().getLabelAsList().stream().toArray(String[]::new)),t.getModality());
 			id+=1;
 		}
 

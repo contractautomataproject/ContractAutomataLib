@@ -9,9 +9,9 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 
 public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
@@ -89,8 +89,8 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 		return ftr.parallelStream()
 				.map(x->x.getSource())
 				.filter(x->x!=tra.getSource()&&
-				tra.getSource().getState().get(tra.getLabel().getOfferer()).getLabel()
-				.equals(x.getState().get(tra.getLabel().getOfferer()).getLabel()))
+				tra.getSource().getState().get(tra.getLabel().getOfferer()).getState()
+				.equals(x.getState().get(tra.getLabel().getOfferer()).getState()))
 				//it's not the same state of tra but sender is in the same state of this
 
 				.allMatch(s -> ftr.parallelStream()

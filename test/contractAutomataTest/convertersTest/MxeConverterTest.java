@@ -13,8 +13,8 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import contractAutomata.BasicState;
-import contractAutomata.MSCA;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.state.BasicState;
 import contractAutomata.converters.MxeConverter;
 import contractAutomataTest.MSCATest;
 
@@ -34,7 +34,7 @@ public class MxeConverterTest {
 		.anyMatch(e1->aut.getStates()
 				.stream()
 				.map(cs->cs.getState().get(e1.getKey()))
-				.filter(bs->bs!=e1.getValue()&&bs.getLabel().equals(e1.getValue().getLabel()))
+				.filter(bs->bs!=e1.getValue()&&bs.getState().equals(e1.getValue().getState()))
 				.count()>0),false);
 	}
 

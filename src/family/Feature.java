@@ -2,7 +2,7 @@ package family;
 
 import java.util.Objects;
 
-import contractAutomata.CALabel;
+import contractAutomata.automaton.label.CALabel;
 
 public class Feature {
 	private final String name;

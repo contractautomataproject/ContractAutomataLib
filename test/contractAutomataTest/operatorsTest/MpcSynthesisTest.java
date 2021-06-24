@@ -9,7 +9,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import contractAutomata.MSCA;
+import contractAutomata.automaton.MSCA;
 import contractAutomata.converters.MxeConverter;
 import contractAutomata.operators.MpcSynthesisOperator;
 import contractAutomata.requirements.Agreement;

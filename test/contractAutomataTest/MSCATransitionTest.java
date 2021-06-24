@@ -12,12 +12,12 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import contractAutomata.BasicState;
-import contractAutomata.CALabel;
-import contractAutomata.CAState;
-import contractAutomata.CATransition;
-import contractAutomata.MSCATransition;
-import contractAutomata.MSCATransition.Modality;
+import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.Transition;
+import contractAutomata.automaton.transition.MSCATransition.Modality;
 
 public class MSCATransitionTest {
 //	private final String dir = System.getProperty("user.dir");
@@ -136,7 +136,7 @@ public class MSCATransitionTest {
 
 	@Test
 	public void testEquals4() {
-		CATransition t2 = new CATransition(source,calab,target);
+		Transition<List<BasicState>,CAState,CALabel> t2 = new Transition<>(source,calab,target);
 		
 		assertEquals(t1.equals(t2),false);
 	}	

@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.operators.OrchestrationSynthesisOperator;
 import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
 import contractAutomata.operators.UnionFunction;

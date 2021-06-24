@@ -7,7 +7,7 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 
-import contractAutomata.MSCA;
+import contractAutomata.automaton.MSCA;
 import contractAutomata.converters.DataConverter;
 import contractAutomata.converters.MxeConverter;
 import contractAutomataTest.MSCATest;

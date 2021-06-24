@@ -12,8 +12,8 @@ import java.util.stream.IntStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import contractAutomata.BasicState;
-import contractAutomata.CAState;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.state.CAState;
 
 
 public class CAStateTest {
@@ -44,7 +44,7 @@ public class CAStateTest {
 	
 	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
 		return IntStream.range(0, cs.getState().size())
-		.allMatch(i->Integer.parseInt(cs.getState().get(i).getLabel())==s[i]);
+		.allMatch(i->Integer.parseInt(cs.getState().get(i).getState())==s[i]);
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class CAStateTest {
 	@Test
 	public void toStringFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState(bs.getLabel(),false,true))
+		.map(bs->new BasicState(bs.getState(),false,true))
 		.collect(Collectors.toList()),0,0);
 		assertEquals(test2.toString()," Final [0, 1, 2, 0, 0, 4, 10]");
 	}
@@ -63,7 +63,7 @@ public class CAStateTest {
 	@Test
 	public void toStringNoInitialNoFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState(bs.getLabel(),false,false))
+		.map(bs->new BasicState(bs.getState(),false,false))
 		.collect(Collectors.toList()),0,0);
 		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
 	}
@@ -94,7 +94,7 @@ public class CAStateTest {
 	@Test
 	public void constructorTest3_Exception_nullArgument() {
 		assertThatThrownBy(() -> new CAState(null))
-	    .isInstanceOf(IllegalArgumentException.class);
+	    .isInstanceOf(NullPointerException.class);
 	}
 	
 //	@Test

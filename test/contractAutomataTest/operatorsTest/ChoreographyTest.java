@@ -14,21 +14,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 
-import contractAutomata.CAState;
-import contractAutomata.MSCA;
-import contractAutomata.MSCATransition;
+import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.state.CAState;
+import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.converters.DataConverter;
 import contractAutomata.converters.MxeConverter;
 import contractAutomata.operators.ChoreographySynthesisOperator;
-import contractAutomata.operators.CompositionFunction;
-import contractAutomata.operators.ProjectionFunction;
 import contractAutomata.requirements.StrongAgreement;
 
 public class ChoreographyTest {
@@ -129,21 +126,7 @@ public class ChoreographyTest {
 						new HashSet<CAState>()));
 		assertEquals(bc,false);	
 	}
-	@Test
-	public void choreoConcur2021projectAndComposeTest() throws Exception {
-		MSCA aut = bmc.importMSCA(dir+"testcor_concur21_Example34.mxe");
-		List<MSCA> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction().apply(aut,i, t->t.getLabel().getOfferer()))
-				.collect(Collectors.toList());
 
-		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
-
-		boolean bc = closed_aut.getTransition().stream()
-				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
-						.satisfiesBranchingCondition(t,aut.getTransition(), 
-								new HashSet<CAState>()));
-		assertEquals(bc,false);	
-	}
 
 	@Test
 	public void branchingCondition() throws NumberFormatException, IOException {
