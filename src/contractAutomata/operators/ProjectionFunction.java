@@ -18,9 +18,9 @@ import contractAutomata.automaton.transition.MSCATransition;
 public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSCATransition, Integer>,MSCA> {
 	BiFunction<MSCATransition,Integer,CALabel> createLabel;
 	
-	public ProjectionFunction(boolean cmlabel)
+	public ProjectionFunction()
 	{
-		this.createLabel=(t,i)->cmlabel?createLabelCM(t,i):createLabelCA(t,i);
+		this.createLabel=(t,i)->(t.getLabel() instanceof CMLabel)?createLabelCM(t,i):createLabelCA(t,i);
 	}
 	
 	/**

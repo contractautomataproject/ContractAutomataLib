@@ -1,8 +1,11 @@
 package contractAutomata.operators;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -20,41 +23,49 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 	private Map<CAState,Boolean> successful;
 	private TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred;
 	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred;
-	private	Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop;
-	
+	private	Function<MSCA,Set<CAState>> getForbiddenStates=a->Collections.emptySet();
 	
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
-			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate) {
+			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate, 
+			Predicate<MSCATransition> req) {
 		super();
-		this.pruningPred = pruningPredicate;
-		this.forbiddenPred = forbiddenPredicate;
-		this.prop=null;
+		this.pruningPred = (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x) || pruningPredicate.test(x, t, bad);
+		this.forbiddenPred = (x,t,bad) -> !t.contains(x)&&forbiddenPredicate.test(x, t, bad);
 	}
 
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
 			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
-			Automaton<String,BasicState,Transition<String,BasicState,Label>>  aut) {
-		super(); 
-		this.prop=aut;
-		this.pruningPred = pruningPredicate;
-		this.forbiddenPred = forbiddenPredicate;
+			Predicate<MSCATransition> req,
+			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop) {
+		this(pruningPredicate,forbiddenPredicate,req);
+		if (prop!=null)
+			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);
+	}
+
+	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate, 
+			Predicate<MSCATransition> req) {
+		this((x,t,bad) -> false, forbiddenPredicate,req);
 	}
 	
-	
+	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
+			Predicate<MSCATransition> req,
+			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop) {
+		this((x,t,bad) -> false, forbiddenPredicate,req);
+		if (prop!=null)
+			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);
 
+	}
+	
 	@Override
 	public MSCA apply(MSCA arg1) {
 		{
 			MSCA aut= new RelabelingOperator().apply(arg1);//creating an exact copy
-			if (prop!=null) {
-				Set<CAState> badprop = new SynchronousCompositionFunction().apply(aut, prop);
-				pruningPred = (t,st,sc)->pruningPred.test(t,st,sc) || badprop.contains(t.getTarget());
-			}
 				
 			Set<MSCATransition> trbackup = new HashSet<MSCATransition>(aut.getTransition());
 			Set<CAState> statesbackup= aut.getStates(); 
 			CAState init = aut.getInitial();
 			Set<CAState> R = new HashSet<CAState>(getDanglingStates(aut, statesbackup,init));//R0
+			R.addAll(getForbiddenStates.apply(aut));
 			boolean update=false;
 			do{
 				final Set<CAState> Rf = new HashSet<CAState>(R); 

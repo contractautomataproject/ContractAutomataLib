@@ -9,22 +9,33 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import contractAutomata.automaton.Automaton;
 import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.Label;
+import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.Transition;
 
 public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
 	private Predicate<MSCATransition> req;
-	private Function<Stream<MSCATransition>,Optional<MSCATransition>> choice;
+	private Function<Stream<MSCATransition>,Optional<MSCATransition>> choice=Stream::findAny;
+	private Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop=null;
 	
 	public ChoreographySynthesisOperator(Predicate<MSCATransition> req){
 		this.req=req;
-		this.choice=Stream::findAny;
 	}
 	
-	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, Function<Stream<MSCATransition>,Optional<MSCATransition>> choice){
-		this.req=req;
+	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, 
+			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop){
+		this(req);
+		this.prop=prop;
+	}
+	
+	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, 
+			Function<Stream<MSCATransition>,Optional<MSCATransition>> choice){
+		this(req);
 		this.choice=choice;
 	}
 
@@ -48,9 +59,8 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 		MSCA chor;
 		do 
 		{ 
-			synth=new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())||
-					!req.test(x)||violatingbc.contains(x.toCSV()),
-						(x,st,bad) -> (!st.contains(x)&&isUncontrollableChoreography(x,st, bad)));
+			synth=new SynthesisOperator((x,t,bad) -> violatingbc.contains(x.toCSV()),
+						(x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,prop);
 
 			chor = synth.apply(aut);
 			if (chor==null)

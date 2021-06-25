@@ -3,8 +3,12 @@ package contractAutomata.operators;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+import contractAutomata.automaton.Automaton;
 import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.Label;
+import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.Transition;
 
 public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 		
@@ -12,13 +16,21 @@ public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 
 	public MpcSynthesisOperator(Predicate<MSCATransition> req) {
 		super();
-		this.synth = new SynthesisOperator((x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x), 
-				(x,t,bad) -> x.isUrgent()&&!t.contains(x));
+		this.synth = new SynthesisOperator((x,t,bad) -> x.isUrgent(), req);
 	}	
 	
+	
+	public MpcSynthesisOperator(Predicate<MSCATransition> req,	 
+			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop)
+	{
+		super();
+		this.synth = new SynthesisOperator((x,t,bad) -> x.isUrgent(), req, prop);
+	}	
+	
+
 	/**
-	 * invokes the synthesis method for synthesising the mpc in agreement
-	 * @return the synthesised most permissive controller in agreement
+	 * invokes the synthesis method for synthesising the mpc
+	 * @return the synthesised most permissive controller
 	 */
 	@Override
 	public MSCA apply(MSCA aut) {

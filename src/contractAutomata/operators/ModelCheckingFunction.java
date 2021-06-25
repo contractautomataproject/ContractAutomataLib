@@ -21,14 +21,14 @@ import contractAutomata.automaton.state.State;
 import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.automaton.transition.Transition;
 
-public class SynchronousCompositionFunction implements BiFunction<MSCA,Automaton<String,BasicState,Transition<String,BasicState,Label>>,Set<CAState>>{
+public class ModelCheckingFunction implements BiFunction<MSCA,Automaton<String,BasicState,Transition<String,BasicState,Label>>,Set<CAState>>{
 	private final int bound;
 
-	public SynchronousCompositionFunction() {
+	public ModelCheckingFunction() {
 		this.bound=Integer.MAX_VALUE;
 	}
 
-	public SynchronousCompositionFunction(Integer bound) {
+	public ModelCheckingFunction(Integer bound) {
 		this.bound=bound;
 	}
 

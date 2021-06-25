@@ -4,9 +4,13 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+import contractAutomata.automaton.Automaton;
 import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.Label;
+import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
+import contractAutomata.automaton.transition.Transition;
 
 public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 
@@ -14,9 +18,13 @@ public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 
 	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req)
 	{
-		this.synth = new SynthesisOperator((x,st,bad) -> bad.contains(x.getTarget())|| !req.test(x), 
-				(x,st,bad) -> //(x.isUrgent()&&!t.contains(x))||(!x.isUrgent()&&
-		!st.contains(x)&&isUncontrollableOrchestration(x,st, bad));
+		this.synth = new SynthesisOperator((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req);
+	}
+	
+	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req, 
+			 Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop)
+	{
+		this.synth = new SynthesisOperator((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, prop);
 	}
 	
 	/**
