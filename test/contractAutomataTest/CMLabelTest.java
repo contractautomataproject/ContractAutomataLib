@@ -87,8 +87,13 @@ public class CMLabelTest {
 	}
 	
 	@Test
-	public void testToString() {
+	public void testToStringOffer() {
 		assertEquals(cm_of.toString(),"[Alice_Bob@!apple]");
+	}
+	
+	@Test
+	public void testToStringRequest() {
+		assertEquals(cm_req.toString(),"[Alice_Bob@?apple]");
 	}
 	
 	@Test
