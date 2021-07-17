@@ -75,7 +75,6 @@ public class FamilyTest {
 		
 		Set<Product> test = dfc.importProducts(dir +"superProductsOfProduct_test.prod"); //)superProductsofProductTest.prod");	
 		
-		//System.out.println(test.toString()+"\n"+products.toString());
 		
 		assertTrue(products.equals(test));
 	}

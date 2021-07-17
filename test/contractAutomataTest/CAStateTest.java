@@ -93,8 +93,8 @@ public class CAStateTest {
 	
 	@Test
 	public void constructorTest3_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CAState(null))
-	    .isInstanceOf(NullPointerException.class);
+		assertThatThrownBy(() -> new CAState(new ArrayList<>(),0,0))
+	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
 //	@Test

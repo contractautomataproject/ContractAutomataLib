@@ -8,14 +8,25 @@ public class CMLabel extends CALabel {
 
 	private final String partner;	
 	
+	public static final String id_separator = "_";
+	public static final String action_separator = "@";
+	
+	
 	public CMLabel(String lab) {
-		super(1,0,lab.split("@")[1]);
-		String[] p = lab.split("@")[0].split("_");
+		super(1,0,lab.split(action_separator)[1]);
+		String[] p = lab.split(action_separator)[0].split(id_separator);
+		if (p.length!=2)
+			throw new IllegalArgumentException();
 		
 		this.id=this.isOffer()?p[0]:p[1];
 		this.partner=this.isOffer()?p[1]:p[0];
 	}
 	
+	public CMLabel(String sender, String receiver, String action)
+	{
+		this(sender+id_separator+receiver+action_separator+action);
+		
+	}
 	@Override
 	public boolean match(Label l2)
 	{
@@ -47,23 +58,20 @@ public class CMLabel extends CALabel {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
+		if (!super.equals(obj) || getClass() != obj.getClass())
 			return false;
 		CMLabel other = (CMLabel) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (partner == null) {
-			if (other.partner != null)
-				return false;
-		} else if (!partner.equals(other.partner))
-			return false;
-		return true;
+		return Objects.equals(id, other.id)&&Objects.equals(partner, other.partner);
 	}
+	
+	@Override
+	public String toString() {
+		if (this.isOffer())
+			return "["+this.id+id_separator+this.partner+action_separator+super.getAction()+"]";
+		else
+			return "["+this.partner+id_separator+this.id+action_separator+this.getAction()+"]";
+	}
+	
 
 
 }
@@ -79,7 +87,7 @@ public class CMLabel extends CALabel {
 //	public String getUnsignedAction()
 //	{
 //		System.out.println(super.getUnsignedAction());
-//		return this.getAction().split("@")[1];
+//		return this.getAction().split(action_separator)[1];
 //	}
 
 //public CMLabel(Integer rank, Integer principal, String action,Integer id, Integer partner) {

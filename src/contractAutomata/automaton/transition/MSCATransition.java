@@ -65,11 +65,11 @@ public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel>
 	public String toString()
 	{
 		if (this.mod==Modality.URGENT)
-			return "!U("+getSource().getState().toString()+","+getLabel().getLabelAsList()+","+getTarget().getState().toString()+")";
+			return "!U("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
 		else if (this.mod==Modality.LAZY)	
-			return "!L("+getSource().getState().toString()+","+getLabel().getLabelAsList()+","+getTarget().getState().toString()+")";
+			return "!L("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
 		else 
-			return "("+getSource().getState().toString()+","+getLabel().getLabelAsList()+","+getTarget().getState().toString()+")";
+			return "("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
 	}
 
 	public String toCSV()

@@ -79,12 +79,7 @@ public class FMCATest {
 		Set<Product> cps = aut.getCanonicalProducts().keySet();
 		
 		Family test = new Family(dfc.importProducts(dir+"/CAtest/canonicalProductsTest.prod"));
-//		int[][] ind=new int[1][];
-//		Product[] cp=fam.getCanonicalProducts(aut.getAut(),null,false,ind);	
-//		Set<Product> cps = new HashSet<>(Arrays.asList(cp));
-//		
-		System.out.println(cps);
-		System.out.println(test.getProducts());
+
 		assertTrue(cps.equals(test.getProducts()));
 	}
 

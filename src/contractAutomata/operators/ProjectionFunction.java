@@ -11,18 +11,24 @@ import java.util.stream.Stream;
 import contractAutomata.automaton.MSCA;
 import contractAutomata.automaton.label.CALabel;
 import contractAutomata.automaton.label.CMLabel;
+import contractAutomata.automaton.label.Label;
 import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
 public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSCATransition, Integer>,MSCA> {
 	BiFunction<MSCATransition,Integer,CALabel> createLabel;
-	
-	public ProjectionFunction()
+
+	public ProjectionFunction(Label lab)
 	{
-		this.createLabel=(t,i)->(t.getLabel() instanceof CMLabel)?createLabelCM(t,i):createLabelCA(t,i);
+		//TODO only principals labels are CM
+		if (lab instanceof CMLabel)
+			this.createLabel = (t,i) -> createLabelCM(t,i);
+		else
+			this.createLabel = (t,i) -> createLabelCA(t,i);
+
 	}
-	
+
 	/**
 	 * compute the projection on the i-th principal
 	 * @param indexprincipal index of the MSCA
@@ -56,32 +62,29 @@ public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSC
 						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
 								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
 				.map(t-> new MSCATransition(map2princst.get(t.getSource()),
-								createLabel.apply(t,indexprincipal),
-								map2princst.get(t.getTarget()),
-								(t.isPermitted()||(t.getLabel().isMatch()&&!getNecessaryPrincipal.apply(t).equals(indexprincipal)))
-								?MSCATransition.Modality.PERMITTED
-										:t.isLazy()?MSCATransition.Modality.LAZY:MSCATransition.Modality.URGENT
-						))
+						createLabel.apply(t,indexprincipal),
+						map2princst.get(t.getTarget()),
+						(t.isPermitted()||(t.getLabel().isMatch()&&!getNecessaryPrincipal.apply(t).equals(indexprincipal)))
+						?MSCATransition.Modality.PERMITTED
+								:t.isLazy()?MSCATransition.Modality.LAZY:MSCATransition.Modality.URGENT))
 				.collect(Collectors.toSet()));
 	}
-	
+
 	private CALabel createLabelCA(MSCATransition t,Integer indexprincipal) {
 		return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
 				new CALabel(1,0,t.getLabel().getAction())
 				:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getAction()
 						:t.getLabel().getCoAction());
-		
+
 	}
-	
+
 	private CALabel createLabelCM(MSCATransition t,Integer indexprincipal) {
 		if (!t.getLabel().isMatch())
 			throw new UnsupportedOperationException();
-		return new CMLabel(t.getLabel().getOfferer()+"_"+t.getLabel().getRequester()+"@"+
-				((t.getLabel().getOfferer().equals(indexprincipal))?
-				t.getLabel().getAction():t.getLabel().getCoAction()));
 		
+		return new CMLabel(t.getLabel().getOfferer()+"",t.getLabel().getRequester()+"",
+				((t.getLabel().getOfferer().equals(indexprincipal))?
+						t.getLabel().getAction():t.getLabel().getCoAction()));
+
 	}
-
-
-
 }

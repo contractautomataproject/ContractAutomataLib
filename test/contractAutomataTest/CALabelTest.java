@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import contractAutomata.automaton.label.CALabel;
+import contractAutomata.automaton.label.Label;
 
 public class CALabelTest {
 
@@ -73,37 +74,40 @@ public class CALabelTest {
 
 	//********************** testing exceptions *********************
 	
-//	@Test
-//	public void constructorTest1_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CALabel(null,null,""))
-//	    .isInstanceOf(IllegalArgumentException.class);
-//	}
-//	@Test
-//	public void constructorTest2_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CALabel(null,null,null,null,null))
-//	    .isInstanceOf(IllegalArgumentException.class)
-//	    .hasMessageContaining("Null argument");
-//	}
+	@Test
+	public void constructorTest1_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null,null,"!a"))
+	    .isInstanceOf(IllegalArgumentException.class);
+	}
+	@Test
+	public void constructorTest2_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(null,null,null,"!a",null))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Null argument");
+	}
 //	
-//	@Test
-//	public void constructorTest3_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CALabel(null,3,2))
-//	    .isInstanceOf(IllegalArgumentException.class);
-//	}
+	@Test
+	public void constructorTest3_Exception() {
+		assertThatThrownBy(() -> new CALabel(new CALabel(1,0,"!a"),0,-2))
+	    .isInstanceOf(IllegalArgumentException.class);
+	}
 //	
-//	@Test
-//	public void constructorTest4_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CALabel(3,1,2,null))
-//	    .isInstanceOf(IllegalArgumentException.class)
-//	    .hasMessageContaining("Null argument");
-//	}
-//	
-//	@Test
-//	public void constructorTest5_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CALabel(null))
-//	    .isInstanceOf(IllegalArgumentException.class)
-//	    .hasMessageContaining("Null argument");
-//	}
+	@Test
+	public void constructorTest4_Exception_nullArgument() {
+		assertThatThrownBy(() -> new CALabel(3,null,null,"!a"))
+	    .isInstanceOf(IllegalArgumentException.class)
+	    .hasMessageContaining("Null argument");
+	}
+	
+	
+	
+	@Test
+	public void constructorTest_Exception_Empty() {
+		List<String> l = new ArrayList<String>();
+		assertThatThrownBy(() -> new CALabel(l))
+	    .isInstanceOf(IllegalArgumentException.class);
+	}
+	
 	
 	@Test
 	public void constructorTest_Exception_noAction() {
@@ -146,7 +150,7 @@ public class CALabelTest {
 	@Test
 	public void constructorTest_Exception_notWellFormedLabel() {
 		List<String> l = new ArrayList<String>();
-		l.add("a");
+		l.add("aaa");
 		assertThatThrownBy(() -> new CALabel(l))
 	    .isInstanceOf(IllegalArgumentException.class);
 	//    .hasMessageContaining("The label is not well-formed");
@@ -201,4 +205,13 @@ public class CALabelTest {
 	    .isInstanceOf(UnsupportedOperationException.class)
 	    .hasMessageContaining("Action is not a request nor an offer");
 	}
+	
+	@Test
+	public void matchException() {
+		Label l  = new Label("ei");
+		assertThatThrownBy(() -> new CALabel(1,0,"!a").match(l))
+	    .isInstanceOf(IllegalArgumentException.class);
+	
+	}
+	
 }

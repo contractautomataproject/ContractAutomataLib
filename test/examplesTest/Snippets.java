@@ -129,4 +129,14 @@ public class Snippets {
 		FMCA faut = new FMCA(aut,sp3);
 		MSCA orcfam2 = faut.getOrchestrationOfFamily();	
 	}
+	
+//	@Test
+//	public void HoeffdingInequality() {
+//		double alpha = 0.05;
+//		double epsilon = 0.05;
+//		
+//		double N = Math.ceil(Math.log(2/alpha)/(2*epsilon*epsilon));
+//		
+//		System.out.println(N);
+//	}
 }

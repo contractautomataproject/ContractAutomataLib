@@ -111,5 +111,7 @@ public class DataConverterTest {
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Final states with different rank");
 	}
+	
+	//TODO add load CM
 
 }

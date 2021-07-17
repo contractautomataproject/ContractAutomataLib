@@ -2,6 +2,7 @@ package contractAutomataTest.operatorsTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.CMLabel;
+import contractAutomata.automaton.label.Label;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.converters.DataConverter;
 import contractAutomata.converters.MxeConverter;
@@ -33,7 +36,7 @@ public class ProjectionTest {
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
 		MSCA aut = bmc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
 		MSCA test= bmc.importMSCA(dir+"BusinessClient.mxe");
-		aut=new ProjectionFunction().apply(aut,0, t->t.getLabel().getRequester());
+		aut=new ProjectionFunction(new Label("dum")).apply(aut,0, t->t.getLabel().getRequester());
 		//		System.out.println(aut);
 		//		System.out.println(test);
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
@@ -44,7 +47,7 @@ public class ProjectionTest {
 	public void choreoConcur2021projectAndComposeTest() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction().apply(aut,i, t->t.getLabel().getOfferer()))
+				.mapToObj(i->new ProjectionFunction(new Label("dumb")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 
 		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
@@ -60,18 +63,33 @@ public class ProjectionTest {
 	@Test
 	public void choreoConcur2021projectAndComposeTestCM() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
+
+		
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction().apply(aut,i, t->t.getLabel().getOfferer()))
+				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"","!dummy")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
-
 		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
-
 		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM.data", closed_aut);
-		boolean bc = closed_aut.getTransition().stream()
-				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
-						.satisfiesBranchingCondition(t,aut.getTransition(), 
-								new HashSet<CAState>()));
-		assertEquals(bc,false);	
+	
+		MSCA test = bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
+
+//		boolean bc = closed_aut.getTransition().stream()
+//				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
+//						.satisfiesBranchingCondition(t,aut.getTransition(), 
+//								new HashSet<CAState>()));
+//		assertEquals(bc,false);	
+		
+		assertTrue(MSCATest.checkTransitions(closed_aut, test));
+	}
+	
+	@Test
+	public void projectOnMachineAndImport() throws IOException {
+		MSCA aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
+		MSCA cm = new ProjectionFunction(new CMLabel("1","2","!dummy")).apply(aut,0, t->t.getLabel().getOfferer());
+		MSCA test = bdc.importMSCA(dir+"cm_concur21.data");
+		
+		assertTrue(MSCATest.checkTransitions(cm, test));
+
 	}
 
 	
@@ -79,23 +97,25 @@ public class ProjectionTest {
 
 	@Test
 	public void projectionException1() throws IOException {
-
 		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
-		assertThatThrownBy(() -> new ProjectionFunction().apply(aut,-1, null))
+		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,-1, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
-
 	}
 
 	@Test
 	public void projectionException2() throws IOException {
-
 		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
-		assertThatThrownBy(() -> new ProjectionFunction().apply(aut,2, null))
+		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,2, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
-
 	}
 
+	@Test
+	public void projectionException3() throws IOException {
+		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
+		assertThatThrownBy(() -> new ProjectionFunction(new CMLabel(1+"",2+"","!dum")).apply(aut,0, t->t.getLabel().getOfferer()))
+		.isInstanceOf(UnsupportedOperationException.class);
+	}
 
 }

@@ -151,7 +151,7 @@ public class DataConverter implements MSCAConverter{
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
 		CALabel label;
-		if (tr[1].length==1 && tr[1][0].contains("@"))
+		if (tr[1].length==1 && tr[1][0].contains(CMLabel.action_separator))
 			label=new CMLabel(tr[1][0]);
 		else
 			label = new CALabel(Arrays.asList(tr[1]));

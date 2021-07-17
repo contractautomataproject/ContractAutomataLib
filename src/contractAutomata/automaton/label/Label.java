@@ -32,17 +32,9 @@ public class Label implements Ranked,Matchable<Label>{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (obj == null ||getClass() != obj.getClass())
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Label other = (Label) obj;
-		if (action == null) {
-			if (other.action != null)
-				return false;
-		} else if (!action.equals(other.action))
-			return false;
-		return true;
+		return Objects.equals(action, ((Label) obj).action);
 	}
 
 	@Override

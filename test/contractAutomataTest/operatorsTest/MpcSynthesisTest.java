@@ -1,18 +1,23 @@
 package contractAutomataTest.operatorsTest;
 
-import static contractAutomataTest.MSCATest.checkTransitions;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Set;
 
 import org.junit.Test;
 
+import contractAutomata.automaton.Automaton;
 import contractAutomata.automaton.MSCA;
+import contractAutomata.automaton.label.Label;
+import contractAutomata.automaton.state.BasicState;
+import contractAutomata.automaton.transition.Transition;
 import contractAutomata.converters.MxeConverter;
 import contractAutomata.operators.MpcSynthesisOperator;
 import contractAutomata.requirements.Agreement;
+import contractAutomataTest.MSCATest;
 
 
 public class MpcSynthesisTest {
@@ -29,15 +34,6 @@ public class MpcSynthesisTest {
 		assertEquals(mpc,null);
 	}
 
-	@Test 
-	public void mpcEmptyTestLMCS20202() throws Exception
-	{
-		MSCA aut = bmc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).mxe");
-		new MpcSynthesisOperator(new Agreement()).apply(aut);
-		assertEquals(new MpcSynthesisOperator(new Agreement()).apply(aut),null);	
-	}
-
-
 	@Test
 	public void mpcEmptyTestNoDangling() throws Exception
 	{
@@ -46,7 +42,23 @@ public class MpcSynthesisTest {
 
 		assertEquals(mpc,null);
 	}
-	
+
+	@Test
+	public void mpcEmptyTestNoDanglingWithProperty() throws Exception
+	{
+		BasicState s0 = new BasicState("0",true,false);
+		BasicState s1 = new BasicState("1",false,false);
+		BasicState s2 = new BasicState("2",false,true);
+		Transition<String, BasicState,Label> t1 = new Transition<>(s0, new Label("blueberry"), s1);
+		Transition<String, BasicState,Label> t2 = new Transition<>(s1, new Label("ananas"), s2);
+		Transition<String, BasicState,Label> t3 = new Transition<>(s0, new Label("cherry"), s2);
+		Automaton<String, BasicState,Transition<String, BasicState,Label>> prop = new Automaton<>(Set.of(t1,t2,t3));
+
+		MSCA aut = bmc.importMSCA(dir+"test_empty_mpc_nodangling.mxe");
+		MSCA mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
+
+		assertEquals(mpc,null);
+	}
 	@Test
 	public void mpcTest_nonempty() throws Exception
 	{
@@ -59,8 +71,11 @@ public class MpcSynthesisTest {
 	public void mpcTest2() throws Exception
 	{
 		MSCA aut = bmc.importMSCA(dir+"test_urgent.mxe");
-		new MpcSynthesisOperator(new Agreement()).apply(aut);
-		assertTrue(checkTransitions(new MpcSynthesisOperator(new Agreement()).apply(aut),new MpcSynthesisOperator(new Agreement()).apply(aut)));	
+		//bmc.exportMSCA(dir+ File.separator + "test_urgent_mpc_agreement", new MpcSynthesisOperator(new Agreement()).apply(aut));
+		
+		MSCA test = bmc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.mxe");
+		assertTrue(MSCATest.checkTransitions(new MpcSynthesisOperator(new Agreement()).apply(aut),
+				test));	
 	}
 	
 	@Test

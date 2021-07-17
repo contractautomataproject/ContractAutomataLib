@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
@@ -40,20 +41,21 @@ public class FeatureIDEconverterTest {
 		UnaryOperator<Set<Product>> spg = new PartialProductGenerator();
 		new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml")));
 				
-//		final RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
-//				"products"+File.separator+"00003.config", "rw");
-//		raFile.getChannel().lock();
-//		assertThatThrownBy(()->new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml"))))
-//		.isInstanceOf(IllegalArgumentException.class);
-//		raFile.close();
+		final RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
+				"products"+File.separator+"00003.config", "rw");
+		raFile.getChannel().lock();
+		assertThatThrownBy(()->new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml"))))
+		.isInstanceOf(IllegalArgumentException.class);
+		raFile.close();
 
 	}
 	
 	@Test
 	public void testImportFamilyException() throws Exception, ParserConfigurationException, SAXException
 	{
-		Family f1= new Family(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
-		System.out.println(f1.getPo().values().iterator().next());
+//		Family f1= 
+				new Family(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
+//		System.out.println(f1.getPo().values().iterator().next());
 	}
 	
 	@Test

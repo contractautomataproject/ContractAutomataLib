@@ -43,7 +43,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021() throws IOException {
 		MSCA aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.mxe.data");
-		Set<CAState> states = new ModelCheckingFunction().apply(aut, prop);
+		Set<CAState> states = new ModelCheckingFunction(100).apply(aut, prop);
 		Set<CAState> test = aut.getStates().stream()
 		.filter(s->s.toString().equals("[1, 1]")||s.toString().equals("[1, 2]"))
 		.collect(Collectors.toSet());
@@ -55,6 +55,7 @@ public class ModelCheckingTest {
 		MSCA aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.mxe.data");
 	
 		MSCA orc = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+			
 		MSCA test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
 		
 		assertTrue(MSCATest.checkTransitions(orc, test));
@@ -73,6 +74,7 @@ public class ModelCheckingTest {
 	
 		MSCA cor = new ChoreographySynthesisOperator(new StrongAgreement(),prop).apply(aut);
 		MSCA test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
+		
 		assertTrue(MSCATest.checkTransitions(cor, test));
 	}
 }

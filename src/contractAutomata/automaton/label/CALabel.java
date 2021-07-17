@@ -10,7 +10,8 @@ import java.util.stream.IntStream;
  * Implementing a label of a transition.
  * 
  * Note: in this class Java Modelling Language contracts have been experimented,  
- * only using Extended Static Checker analysis of OpenJML. 
+ * only using Extended Static Checker analysis of OpenJML.  However, the specs are 
+ * outdated.
  * 
  * @author Davide Basile
  *
@@ -89,7 +90,7 @@ public class CALabel extends Label {
 	
 	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
 		super(CALabel.getUnsignedAction(action1));
-		if (rank==null||principal1==null||action1==null||principal2==null||action2==null||rank<=0||action1.length()<=1||action2.length()<=1)
+		if (rank==null||principal1==null||principal2==null||action2==null||rank<=0||action2.length()<=1)
 			throw new IllegalArgumentException("Null argument");
 
 		if ((action1.startsWith(offer)&&!action2.startsWith(request))||
@@ -142,7 +143,7 @@ public class CALabel extends Label {
  	 */
 	public CALabel(Integer rank, Integer offerer, Integer requester, String offeraction) {
 		super(CALabel.getUnsignedAction(offeraction));
-		if (rank==null||offerer==null||requester==null||offeraction==null||rank<=0||offeraction.length()<=1)
+		if (rank==null||offerer==null||requester==null||rank<=0)
 			throw new IllegalArgumentException("Null argument");
 
 		if (!offeraction.startsWith(CALabel.offer))
@@ -188,23 +189,16 @@ public class CALabel extends Label {
   	*/
 	public CALabel(List<String> label)
 	{		
-		//TODO long function
 		super(CALabel.getUnsignedAction(label.stream()
 				.filter(s->!s.equals(CALabel.idle))
 				.findAny().orElseThrow(IllegalArgumentException::new))
 				);
-//		if (label==null)
-//			throw new IllegalArgumentException("Null argument");
-
-		if (label.isEmpty())
-			throw new IllegalArgumentException("Empty label");
 
 		label.forEach(
 				x -> {if (x==null) throw new IllegalArgumentException("Label contains null references");}
 				);
 
 		int offtemp=-1,requtemp=-1;//offerer and requester are final
-		//				String acttemp=null;//action is final
 		for (int i=0;i<label.size();i++)
 		{
 			if (label.get(i).startsWith(offer)) 
@@ -212,25 +206,20 @@ public class CALabel extends Label {
 				if (offtemp!=-1)
 					throw new IllegalArgumentException("The label is not well-formed");
 				offtemp=i; 
-				//						acttemp=label.get(i);
 			}
 			else if (label.get(i).startsWith(request))
 			{
-
 				if (requtemp!=-1)
 					throw new IllegalArgumentException("The label is not well-formed");
 				requtemp=i; 
-				//								acttemp = (acttemp==null)?label.get(i):acttemp;
 			}
 			else if (!label.get(i).equals(idle)) 
 				throw new IllegalArgumentException("The label is not well-formed");
 		}
 		this.offerer=offtemp;
 		this.requester=requtemp;
-		//			this.action=acttemp;
-		if (offerer==-1 && requester==-1)
-			throw new IllegalArgumentException("The label is not well-formed");
-		else if (offerer!=-1&&requester!=-1)
+		
+		if (offerer!=-1&&requester!=-1)
 			this.actiontype=CALabel.ActionType.MATCH;
 		else if (offerer!=-1)
 			this.actiontype=CALabel.ActionType.OFFER;
@@ -447,13 +436,15 @@ public class CALabel extends Label {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
 		CALabel other = (CALabel) obj;
 		return offerer.equals(other.offerer)
 				&&rank.equals(other.rank)&&requester.equals(other.requester);
 	}
 
+	@Override
+	public String toString() {
+		return this.getLabelAsList().toString();
+	}
 	
 	
 	public String toCSV() {

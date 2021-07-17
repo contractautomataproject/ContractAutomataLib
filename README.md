@@ -212,7 +212,7 @@ Several papers have been published about contract automata and their tool:
 Basile, D., ter Beek, M.H., 2021, June. A Clean and Efficient Implementation of Choreography Synthesis for Behavioural Contracts. 
 In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 2021, pages 225-238, 
 https://doi.org/10.1007/978-3-030-78142-2_14
-
+(pdf at https://openportal.isti.cnr.it/data/2021/454603/2021_454603.postprint.pdf)
 
 Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
 https://doi.org/10.1145/3109729.3109760

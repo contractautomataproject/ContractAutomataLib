@@ -106,22 +106,25 @@ public class Automaton<L, S extends State<L>,T extends Transition<L,S,? extends 
 		StringBuilder pr = new StringBuilder();
 		int rank = this.getRank();
 		Set<? extends State<?>> states = this.getStates();
-		pr.append("Rank: "+rank+"\n");
+		pr.append("Rank: "+rank+System.lineSeparator());
 
-		pr.append("Initial state: " +this.getInitial().toString()+"\n");
+		pr.append("Initial state: " +this.getInitial().toString()+System.lineSeparator());
 		pr.append("Final states: [");
 		for (int i=0;i<rank;i++) {
 			pr.append(Arrays.toString(
 					states.stream()
 					.filter(State::isFinalstate)
 					.map(State::getState)
+					.sorted((x,y)->x.toString().compareTo(y.toString()))
 					//.mapToInt(Integer::parseInt)
 					.toArray()));
 		}
-		pr.append("]\n");
-		pr.append("Transitions: \n");
-		for (T t : this.getTransition())
-			pr.append(t.toString()+"\n");
+		pr.append("]"+System.lineSeparator());
+		pr.append("Transitions: "+System.lineSeparator());
+		this.getTransition().stream()
+		.sorted((t1,t2)->t1.toString().compareTo(t2.toString()))
+		.forEach(t->pr.append(t.toString()+System.lineSeparator()));
+		
 		return pr.toString();
 	}
 

@@ -42,7 +42,6 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 	public MSCA apply(List<MSCA> aut, Predicate<MSCATransition> pruningPred, Integer bound)
 	{
 		//TODO too long function
-
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition
 
@@ -133,7 +132,7 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 						targetlist.set(e.ind, e.tra.getTarget());
 						return 	new AbstractMap.SimpleEntry<MSCATransition,List<CAState>>
 						(new MSCATransition(sourcestate,
-								new CALabel(e.tra.getLabel(),rank,
+								new CALabel(e.tra.getLabel(),rank, //TODO change if you would like to preserve the CM constraints
 										IntStream.range(0, e.ind)
 										.map(i->aut.get(i).getRank())
 										.sum()),//shifting positions of label

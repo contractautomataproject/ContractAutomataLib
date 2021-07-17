@@ -41,9 +41,6 @@ public class CAState extends State<List<BasicState>> {
 		this.y=0;
 	}
 
-//	public List<BasicState> getState(){
-//		return state;
-//	}
 
 	@Override
 	public Integer getRank() {
@@ -103,6 +100,6 @@ public class CAState extends State<List<BasicState>> {
 //		return IntStream.range(0, this.state.size())
 //		.allMatch(i->state.get(i).getLabel().equals(s.getState().get(i).getLabel()));
 //	}
-	
-	// equals could cause errors of duplication of states in transitions to go undetected. 
+// equals could cause errors of duplication of states in transitions to go undetected. 
+
 }
