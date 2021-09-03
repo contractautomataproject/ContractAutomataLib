@@ -52,6 +52,8 @@ public class ProjectionTest {
 
 		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
 
+		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCA.data", closed_aut);
+
 		boolean bc = closed_aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
 						.satisfiesBranchingCondition(t,aut.getTransition(), 
@@ -69,7 +71,7 @@ public class ProjectionTest {
 				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"","!dummy")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
-		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM.data", closed_aut);
+//		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM.data", closed_aut);
 	
 		MSCA test = bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 

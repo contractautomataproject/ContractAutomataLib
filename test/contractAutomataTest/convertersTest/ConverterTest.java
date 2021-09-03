@@ -34,8 +34,7 @@ public class ConverterTest {
 	@Test
 	public void parsePrintLoadTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by parsing and printing the automaton does not change
-
-		
+	
 		MSCA aut = bmc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe");
 		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe",aut);
 		MSCA test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe.data");

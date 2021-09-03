@@ -12,11 +12,6 @@ import java.util.stream.Collectors;
  */
 public class CAState extends State<List<BasicState>> {
 	
-	/**
-	 * The list of states of principal
-	 */
-	//private final List<BasicState> state;
-	
 	private final float x;
 	private final float y;
 
@@ -26,7 +21,6 @@ public class CAState extends State<List<BasicState>> {
 		super(lstate);
 		if (lstate==null||lstate.isEmpty())
 			throw new IllegalArgumentException();
-		//this.state = lstate;
 		this.x=x;
 		this.y=y;
 	}

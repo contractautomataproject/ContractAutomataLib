@@ -16,6 +16,7 @@ import contractAutomata.automaton.label.CMLabel;
 public class CMLabelTest {
 	CMLabel cm_of;
 	CMLabel cm_req;
+	
 	@Before
 	public void setup() {
 		cm_of = new CMLabel("Alice","Bob","!apple");

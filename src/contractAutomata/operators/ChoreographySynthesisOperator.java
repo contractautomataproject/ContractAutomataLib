@@ -109,3 +109,21 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 						);
 	}
 }
+
+
+
+
+
+
+
+
+///**
+// * @return the synthesised choreography in strong agreement, 
+// * removing at each iteration all transitions violating branching condition.
+// */
+//public FMCA choreographySmaller()
+//{
+//	return synthesis(x-> {return (t,bad) -> 
+//				!x.isMatch()||bad.contains(x.getTarget())||!x.satisfiesBranchingCondition(t, bad);},
+//			x -> {return (t,bad) -> bad.contains(x.getTarget())&&x.isUncontrollableChoreography(t, bad);});
+//}

@@ -143,3 +143,54 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 		});
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///**
+// * 
+// * @param state
+// * @return true if the successful value of state has changed
+// */
+//private boolean forwardNeighbourVisit(CAState state)
+//{	
+//	boolean b = state.isSuccessful();
+//	state.setSuccessful(Arrays.stream(this.getTransitionsWithSource(state))
+//			.map(FMCATransition::getTarget)
+//			.anyMatch(CAState::isSuccessful));
+//
+//	return b!=state.isSuccessful();
+//	
+//}
+//
+///**
+// * 
+// * @param state
+// * @return true if the reachable value of state has changed
+// */
+//private boolean backwardNeighbourVisit(CAState state)
+//{	
+//	boolean b = state.isReachable();
+//	
+//	state.setReachable(Arrays.stream(this.getTransitionsWithTarget(state))
+//			.map(FMCATransition::getSource)
+//			.anyMatch(CAState::isReachable));
+//	return b!=state.isReachable();
+//	
+//}	
+
+

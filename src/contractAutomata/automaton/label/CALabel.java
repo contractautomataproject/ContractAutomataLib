@@ -441,6 +441,14 @@ public class CALabel extends Label {
 				&&rank.equals(other.rank)&&requester.equals(other.requester);
 	}
 
+
+/*
+@ public normal_behaviour
+@     requires this.rank >=0;
+@     requires this.action != null; 
+@		requires this.action.length()>=2;
+@		requires this.action.startsWith(offer) || this.action.startsWith(request);
+*/
 	@Override
 	public String toString() {
 		return this.getLabelAsList().toString();
@@ -453,20 +461,3 @@ public class CALabel extends Label {
 	}
 	
 }
-
-
-
-
-
-
-/*
-@ public normal_behaviour
-@     requires this.rank >=0;
-@     requires this.action != null; 
-@		requires this.action.length()>=2;
-@		requires this.action.startsWith(offer) || this.action.startsWith(request);
-*/
-//@Override
-//public String toString() {
-//	return this.getLabelAsList().toString();		
-//}
