@@ -8,7 +8,7 @@ before_install:
 # https://docs.travis-ci.com/user/languages/java/
 language: java
 jdk:
-  - oraclejdk9
+  - openjdk11
 #
 #https://dzone.com/articles/travis-ci-tutorial-java-projects
 #cache:
