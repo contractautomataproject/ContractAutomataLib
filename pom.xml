@@ -2,10 +2,39 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>FMCAT</groupId>
-	<artifactId>FMCAT</artifactId>
+	
+	<!-- https://central.sonatype.org/publish/requirements/ -->
+	<groupId>io.github.davidebasile</groupId>
+	<artifactId>ContractAutomataLib</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>FMCAT</name>
+	<packaging>jar</packaging>
+	
+	<name>ContractAutomataLib</name>
+	<description>Library for specifying and verifying contract automata.</description>
+	<url>https://github.com/davidebasile/ContractAutomataLib</url>
+	
+	<licenses>
+    <license>
+      <name>>GNU General Public License v3.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.rdf</url>
+    </license>
+  </licenses>
+	
+	  <developers>
+    <developer>
+      <name>Davide Basile</name>
+      <email>davide.basile@isti.cnr.it</email>
+      <organization>ISTI CNR</organization>
+      <organizationUrl>https://www.isti.cnr.it/</organizationUrl>
+    </developer>
+  </developers>
+  
+  <scm>
+  <connection>scm:git:git://github.com/davidebasile/ContractAutomataLib.git</connection>
+  <developerConnection>scm:git:ssh://github.com:davidebasile/ContractAutomataLib.git</developerConnection>
+  <url>http://github.com/davidebasile/ContractAutomataLib/tree/code-cleaning</url>
+</scm>
+
 	<properties>
 		<maven.compiler.source>1.9</maven.compiler.source>
 		<maven.compiler.target>1.9</maven.compiler.target>
