@@ -27,10 +27,6 @@ The Contract Automata Library is released in the Maven Central Repository, simpl
 
 <h2>Usage</h2>
 
-The  package  of the GUI Application has been moved to https://github.com/davidebasile/ContractAutomataApp.
-Check that repository for an example of usage of this library for developing a tool for specifying and verifying 
-CA.
-
 The following code snippets are examples taken from the test folder `test/exampleTest`. 
 The first  snippet loads two CA described in `.data` format, computes their composition and synthesises
 an orchestration enforcing agreement (all requests are matched). 
