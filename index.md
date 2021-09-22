@@ -11,11 +11,10 @@ They are used for specifying services' interface, called behavioral contracts,
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA).
 
-The source code has been redesigned and refactored  in Java 8.
-
 <h2>Install</h2>
 
-The Contract Automata Library is released in the Maven Central Repository, simply add this dependency to the `pom.xml` of your Maven project.
+The Contract Automata Library is released in the Maven Central Repository, simply add this dependency to the `pom.xml` 
+of your Maven project.
 
 ```xml
 <dependency>
@@ -27,7 +26,7 @@ The Contract Automata Library is released in the Maven Central Repository, simpl
 
 <h2>Usage</h2>
 
-The following code snippets are examples taken from the test folder `test/exampleTest`. 
+The following code snippets are examples taken from the test folder `test/exampleTest` of the github repository.
 The first  snippet loads two CA described in `.data` format, computes their composition and synthesises
 an orchestration enforcing agreement (all requests are matched). 
 The composition takes two other arguments. 
