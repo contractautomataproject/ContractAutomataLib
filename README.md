@@ -4,9 +4,10 @@
 [![Code Grade](https://www.code-inspector.com/project/29139/status/svg)](https://frontend.code-inspector.com/public/project/29139/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.davidebasile/ContractAutomataLib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/davidebasile/ContractAutomataLib/0.0.1/)
-<h1>Contract Automata Tool (Lib) </h1>
 [![Maven Central Repository](https://img.shields.io/maven-central/v/io.github.davidebasile/ContractAutomataLib)](https://repo1.maven.org/maven2/io/github/davidebasile/ContractAutomataLib/0.0.1/)
 [![javadoc](https://javadoc.io/badge2/io.github.davidebasile/ContractAutomataLib/javadoc.svg)](https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib)
+
+<h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
 and experimenting with new developments in the theoretical framework of Contract Automata (CA).
