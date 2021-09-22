@@ -156,9 +156,16 @@ The tool is available under Creative Common License 4.0,
  https://github.com/davidebasile/ContractAutomataLib/blob/code-cleaning/license.html.
 
 
+<h2> API Documentation</h2>
+
+The documentation of the API is available at 
+
+https://davidebasile.github.io/ContractAutomataLib/doc/javadoc/index.html
+
+
 <h2>Package Structure</h2>
 
-The structure of the Contract Automata Tool is composed of two  packages:
+The structure of the Contract Automata Tool Library is composed of two  packages:
 
 **contractAutomata** This package and the others contained are the core of the tool. 
 A CA is defined by the class `MSCA`. 
@@ -211,9 +218,7 @@ The wiki contains an excerpt from a published paper regarding the product lines 
 If you have any question or want to help contact me on davide.basile@isti.cnr.it.
 
 
-<h2>Documentation</h2>
-
-Several papers have been published about contract automata and their tool:
+<h2>References</h2>
 
 Basile, D., ter Beek, M.H., 2021, June. A Clean and Efficient Implementation of Choreography Synthesis for Behavioural Contracts. 
 In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 2021, pages 225-238, 
