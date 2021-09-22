@@ -1,7 +1,7 @@
 [![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
-[![Code Quality Score](https://www.code-inspector.com/project/23757/score/svg)](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)
-[![Code Grade](https://www.code-inspector.com/project/23757/status/svg)](https://frontend.code-inspector.com/public/project/23757/ContractAutomataLib/dashboard)
+[![Code Quality Score](https://www.code-inspector.com/project/29139/score/svg)](https://frontend.code-inspector.com/public/project/29139/ContractAutomataLib/dashboard)
+[![Code Grade](https://www.code-inspector.com/project/29139/status/svg)](https://frontend.code-inspector.com/public/project/29139/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
