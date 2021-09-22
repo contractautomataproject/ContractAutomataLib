@@ -1,4 +1,4 @@
-## Welcome to the Contract Automata Library GitHub Pages
+## Welcome
 
 
 
