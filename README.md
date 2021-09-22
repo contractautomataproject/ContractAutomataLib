@@ -19,7 +19,8 @@ The source code has been redesigned and refactored  in Java 8.
 
 <h2>Install</h2>
 
-The Contract Automata Library is released in the Maven Central Repository, simply add this dependency to the `pom.xml` of your Maven project.
+The Contract Automata Library v0.0.1 (current release) is available in the Nexus Sonatype Release used by Maven. 
+Add this dependency to the `pom.xml` of your Maven project to use the library.
 
 ```xml
 <dependency>
