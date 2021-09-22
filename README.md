@@ -3,10 +3,7 @@
 [![Code Quality Score](https://www.code-inspector.com/project/29139/score/svg)](https://frontend.code-inspector.com/public/project/29139/ContractAutomataLib/dashboard)
 [![Code Grade](https://www.code-inspector.com/project/29139/status/svg)](https://frontend.code-inspector.com/public/project/29139/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
-
-
-
+[![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.davidebasile/ContractAutomataLib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/davidebasile/ContractAutomataLib/0.0.1/)
 <h1>Contract Automata Tool (Lib) </h1>
 
 The Contract Automata Tool is an ongoing basic research activity about implementing 
