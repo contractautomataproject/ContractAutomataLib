@@ -153,9 +153,7 @@ The tool is available under Creative Common License 4.0,
 
 <h2> API Documentation</h2>
 
-The documentation of the API is available at 
-
-https://davidebasile.github.io/ContractAutomataLib/doc/javadoc/index.html
+The documentation of the API is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
 
 
 <h2>Package Structure</h2>
