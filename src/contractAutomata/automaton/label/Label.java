@@ -4,7 +4,17 @@ import java.util.Objects;
 
 import contractAutomata.automaton.Ranked;
 
+/**
+ * Class representing a Label of a transition
+ * 
+ * @author Davide Basile
+ *
+ */
 public class Label implements Ranked,Matchable<Label>{
+	
+	/**
+	 * the action performed by the label
+	 */
 	private final String action;
 
 	public Label(String action) {

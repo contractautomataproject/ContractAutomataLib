@@ -15,7 +15,6 @@ import contractAutomata.automaton.transition.MSCATransition;
 /** 
  * Class representing a Modal Service Contract Automaton
  * 
- * 
  * @author Davide Basile
  *
  */
@@ -37,7 +36,7 @@ public class MSCA extends Automaton<List<BasicState>, CAState, MSCATransition>
 
 	/**
 	 * 
-	 * @return a map where key is the index of principal, and value is its set of basic states
+	 * @return a map where for each entry the key is the index of principal, and the value is its set of basic states
 	 */
 	public Map<Integer,Set<BasicState>> getBasicStates()
 	{
@@ -63,6 +62,9 @@ public class MSCA extends Automaton<List<BasicState>, CAState, MSCATransition>
 		
 	}
 	
+	/**
+	 * @return set of string of actions appearing in the transitions of the MSCA without their request/offer sign
+	 */
 	public Set<String> getUnsignedActions(){
 		return this.getTransition().parallelStream()
 		.map(t->t.getLabel().getUnsignedAction())

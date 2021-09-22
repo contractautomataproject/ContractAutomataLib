@@ -16,9 +16,19 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Class implementing the projection function
+ * 
+ * @author Davide Basile
+ *
+ */
 public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSCATransition, Integer>,MSCA> {
 	BiFunction<MSCATransition,Integer,CALabel> createLabel;
 
+	/**
+	 * 
+	 * @param lab the label indicates whether CMs or CAs are to be projected
+	 */
 	public ProjectionFunction(Label lab)
 	{
 		//TODO only principals labels are CM
@@ -31,9 +41,11 @@ public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSC
 
 	/**
 	 * compute the projection on the i-th principal
-	 * @param indexprincipal index of the MSCA
-	 * @param function returning the index of the necessary principal in a match transition (either the offerer or the requester), if any
-	 * @return	the ith principal
+	 * @param aut the composed automaton
+	 * @param indexprincipal index of the principal to project in the composition
+	 * @param getNecessaryPrincipal function returning the index of the necessary principal in a match transition (it could be 
+	 * 		  either the offerer or the requester), if any
+	 * @return the projected i-th principal
 	 * 
 	 */
 	@Override

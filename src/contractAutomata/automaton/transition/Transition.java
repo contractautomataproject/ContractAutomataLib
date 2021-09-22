@@ -7,10 +7,13 @@ import contractAutomata.automaton.label.Matchable;
 import contractAutomata.automaton.state.State;
 
 /**
- * Transition of a contract automaton
+ * Transition of a Contract Automaton
  * 
  * @author Davide Basile
  *
+ * @param <U> generic type of the instance variable of S
+ * @param <S> generic type of the state
+ * @param <L> generic type of the label 
  */
 public class Transition<U, S extends State<U>,L extends Ranked & Matchable<? super L>> { 
 	final private S source;

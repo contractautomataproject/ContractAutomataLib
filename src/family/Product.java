@@ -33,6 +33,11 @@ public class Product {
 		this.forbidden=forbidden;
 	}
 
+	/**
+	 * 
+	 * @param r  array of  required features expressed as strings
+	 * @param f array of  forbidden features expressed as strings
+	 */
 	public Product(String[] r, String[] f)
 	{
 		this(Arrays.stream(r).map(s->new Feature(s)).collect(Collectors.toSet()),
@@ -87,6 +92,11 @@ public class Product {
 //		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
 //	}
 
+	/**
+	 * 
+	 * @param sf set of features to remove
+	 * @return a new product where the features in sf have been removed (from both required and forbidden features)
+	 */
 	public Product removeFeatures(Set<Feature> sf)
 	{
 		return new Product(this.required.stream()
@@ -97,6 +107,11 @@ public class Product {
 				.collect(Collectors.toSet()));
 	}
 	
+	/**
+	 * 
+	 * @param sf the features to retain
+	 * @return a new product containing only the intersection of its features with those in sf
+	 */
 	public Product retainFeatures(Set<Feature> sf)
 	{
 		return new Product(this.required.stream()
@@ -109,7 +124,7 @@ public class Product {
 	
 	/**
 	 * 
-	 * @param tr
+	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
 	public boolean checkRequired(Set<? extends MSCATransition> tr)
@@ -123,8 +138,7 @@ public class Product {
 	}
 
 	/**
-	 * 
-	 * @param t
+	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
 	public boolean checkForbidden(Set<? extends MSCATransition> tr)
@@ -161,6 +175,11 @@ public class Product {
 		return "R:"+required.toString()+";"+ln+"F:"+forbidden.toString()+";"+ln;
 	}
 
+	/**
+	 * 
+	 * @param id the id of the product
+	 * @return a string representation of the product to be stored in a file .prod
+	 */
 	public String toStringFile(int id)
 	{
 		String req=required.stream()

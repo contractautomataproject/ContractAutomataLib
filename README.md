@@ -20,6 +20,18 @@ They are used for specifying services' interface, called behavioral contracts,
 
 The source code has been redesigned and refactored  in Java 8.
 
+<h2>Install</h2>
+
+The Contract Automata Library is released in the Maven Central Repository, simply add this dependency to the `pom.xml` of your Maven project.
+
+```xml
+<dependency>
+  <groupId>io.github.davidebasile</groupId>
+  <artifactId>ContractAutomataLib</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
 <h2>Usage</h2>
 
 The  package  of the GUI Application has been moved to https://github.com/davidebasile/ContractAutomataApp.
@@ -207,6 +219,8 @@ If you have any question or want to help contact me on davide.basile@isti.cnr.it
 
 
 <h2>Documentation</h2>
+
+Check the Github Page at https://davidebasile.github.io/ContractAutomataLib/.
 
 Several papers have been published about contract automata and their tool:
 

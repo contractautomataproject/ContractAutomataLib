@@ -17,6 +17,13 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Import JSon format (used by VoxLogica tool).
+ * The export operation is currently not supported.
+ * 
+ * @author Davide Basile
+ *
+ */
 public class JsonConverter implements MSCAConverter {
 
 	@Override

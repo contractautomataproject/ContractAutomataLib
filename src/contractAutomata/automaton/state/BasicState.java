@@ -1,7 +1,8 @@
 package contractAutomata.automaton.state;
 
 /**
- * Class representing a basic state, used by CAState
+ * Class representing a BasicState
+ * 
  * @author Davide
  *
  */
@@ -37,6 +38,10 @@ public class BasicState extends State<String> {
 		return this.getState().toString();//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
 	}
 	
+	/**
+	 * 
+	 * @return a string encoding the object as comma separated values
+	 */
 	public String toCSV() {
 
 		String fin= (this.isFinalstate())?",final=true":"";
@@ -45,6 +50,11 @@ public class BasicState extends State<String> {
 		return "label="+this.getState()+fin+init;
 	}
 	
+	/**
+	 * 
+	 * @param s the encoding of the object as comma separated values
+	 * @return a new basicstate object constructed from the parameter s
+	 */
 	public static BasicState readCSV(String s) {
 		boolean init=false, fin=false;
 		String label="";

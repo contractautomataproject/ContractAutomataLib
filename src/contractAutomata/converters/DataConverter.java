@@ -23,12 +23,18 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Import/Export textual DATA format
+ * 
+ * @author Davide Basile
+ *
+ */
 public class DataConverter implements MSCAConverter{
 
 	/**
-	 * print the description of the CA to a file
+	 * Export the textual description of the automaton in a .data file
 	 * 
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException in case filename is not found
 	 */
 	@Override
 	public void exportMSCA(String filename, MSCA aut) throws FileNotFoundException {
@@ -43,12 +49,11 @@ public class DataConverter implements MSCAConverter{
 	}
 
 	/**
-	 * load a MSCA described in a text file,  
-	 * it also loads the must transitions but it does not load the states
+	 * Import an MSCA described in a text file .data, 
 	 * 
 	 * @param  filename the name of the file
-	 * @return	the MSCA described in the textfile
-	 * @throws IOException 
+	 * @return the object MSCA described in the textfile
+	 * @throws IOException problems in reading the file
 	 */
 	@Override
 	public MSCA importMSCA(String filename) throws IOException {

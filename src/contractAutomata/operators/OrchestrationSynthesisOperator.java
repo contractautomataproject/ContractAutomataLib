@@ -12,15 +12,30 @@ import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.automaton.transition.Transition;
 
+/**
+ * Class implementing the orchestration synthesis operator
+ * 
+ * @author Davide Basile
+ *
+ */
 public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 
 	private final SynthesisOperator synth;
 
+	/**
+	 * 
+	 * @param req the invariant requirement (e.g. agreement)
+	 */
 	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req)
 	{
 		this.synth = new SynthesisOperator((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req);
 	}
 	
+	/**
+	 * 
+	 * @param req the invariant requirement (e.g. agreement)
+	 * @param prop the property to enforce expressed as an automaton
+	 */
 	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req, 
 			 Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop)
 	{
@@ -29,6 +44,7 @@ public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 	
 	/**
 	 * invokes the synthesis method for synthesising the orchestration
+	 * @param aut the plant automaton
 	 * @return the synthesised orchestration 
 	 */
 	@Override

@@ -10,12 +10,14 @@ import contractAutomata.automaton.state.State;
 import contractAutomata.automaton.transition.Transition;
 
 
-/** 
- * Class representing a Modal Service Contract Automaton
- * 
+/**
+ * Class representing an Automaton
  * 
  * @author Davide Basile
  *
+ * @param <L> the generic type of labels of transitions
+ * @param <S> the generic type of states
+ * @param <T> the generic type of transitions
  */
 public class Automaton<L, S extends State<L>,T extends Transition<L,S,? extends Label>>
 { 
@@ -89,6 +91,11 @@ public class Automaton<L, S extends State<L>,T extends Transition<L,S,? extends 
 		return this.getStates().size();
 	}
 
+	/**
+	 * 
+	 * @param source source state of the forward star
+	 * @return set of transitions outgoing state source
+	 */
 	public Set<T> getForwardStar(State<?> source) {
 		return this.getTransition().parallelStream()
 				.filter(x->x.getSource().equals(source))

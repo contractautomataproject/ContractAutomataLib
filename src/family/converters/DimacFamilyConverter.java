@@ -26,6 +26,11 @@ import family.Family;
 import family.Feature;
 import family.Product;
 
+/**
+ * Class for importing and exporting DIMAC models as families of products 
+ * @author Davide Basile
+ *
+ */
 public class DimacFamilyConverter implements FamilyConverter {
 	private Function<IProblem,int[]> gen;
 	

@@ -2,6 +2,13 @@ package contractAutomata.automaton.state;
 
 import contractAutomata.automaton.Ranked;
 
+/**
+ * Abstract class encoding a state
+ * 
+ * @author Davide Basile
+ *
+ * @param <T> generic type of the instance variable of the state
+ */
 public abstract class State<T> implements Ranked {
 	final private T state;
 	

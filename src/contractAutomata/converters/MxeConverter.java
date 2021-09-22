@@ -35,16 +35,23 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Import/export in xml (mxe) format. This is the format 
+ * used by mxGraph library.
+ * 
+ * @author Davide Basile
+ *
+ */
 public class MxeConverter implements MSCAConverter {
 
 	/**
-	 * parse the mxGraphModel XML description (used by the mxGraph) into an MSCA object
+	 * Import the mxGraphModel XML description (used by the mxGraph) into an MSCA object
 	 * 
 	 * @param filename  the XML file name
 	 * @return the MSCA parsed from the XML
-	 * @throws ParserConfigurationException 
-	 * @throws SAXException 
-	 * @throws IOException 
+	 * @throws ParserConfigurationException exception in parsing
+	 * @throws SAXException  exception 
+	 * @throws IOException  exception problems when reading the file
 	 */
 	@Override
 	public MSCA importMSCA(String filename) throws ParserConfigurationException, SAXException, IOException {
@@ -163,12 +170,11 @@ public class MxeConverter implements MSCAConverter {
 
 
 	/**
-	 * save the MSCA aut as a mxGraphModel  (used by mxGraph) File with XML extension
+	 * Export the MSCA aut as a mxGraphModel  (used by mxGraph)  with XML extension (.mxe)
 	 * @param fileName the name of the xml file where to write the automaton
 	 * @param aut the automaton to be saved
-	 * @return the File containing the xml for the automaton aut
-	 * @throws ParserConfigurationException 
-	 * @throws TransformerException 
+	 * @throws ParserConfigurationException exception in parsing
+	 * @throws TransformerException  exception with transformer
 	 */
 
 	@Override

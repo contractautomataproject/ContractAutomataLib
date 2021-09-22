@@ -16,7 +16,7 @@ import contractAutomata.operators.UnionFunction;
 import contractAutomata.requirements.Agreement;
 
 /**
- * Featured Modal Contract Automata
+ * Class implementing a Featured Modal Contract Automata
  * 
  * @author Davide Basile
  *
@@ -34,6 +34,16 @@ public class FMCA {
 		this.family=family;
 	}
 
+	/**
+	 * this constructor instatiates the family of products starting by refining products to 
+	 * remove redundant products (that are already known to have empty orchestrations).
+	 * Only features of the products that are labels of the automaton aut are retained 
+	 * Those products requiring features not present in the orchestration of aut in agreement 
+	 * are discarded.
+	 * 
+	 * @param aut the automaton
+	 * @param products the set of products
+	 */
 	public FMCA(MSCA aut, Set<Product> products)
 	{
 		if (products==null||aut==null)
@@ -106,6 +116,10 @@ public class FMCA {
 		.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 	
+	/**
+	 * 
+	 * @return computes the orchestration of the family as the union of orchestrations of total products
+	 */
 	public MSCA getOrchestrationOfFamilyEnumerative()
 	{
 		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().entrySet()
@@ -114,6 +128,10 @@ public class FMCA {
 					.collect(Collectors.toList()));	
 	}
 	
+	/**
+	 * 
+	 * @return computes the orchestration of the family by only considering canonical products
+	 */
 	public MSCA getOrchestrationOfFamily()
 	{
 		return new UnionFunction().apply(this.getCanonicalProducts()
@@ -135,11 +153,10 @@ public class FMCA {
 	}
 	
 	/**
-	 * respectingValidity see Theorem 3 of JSCP2020
+	 * respectingValidity see Theorem 3 of JSCP2020 (author Basile),
 	 * this method exploits the partial order so it starts from maximal products
 	 * 
-	 * @param aut
-	 * @return
+	 * @return the set of products respecting validity
 	 */
 	public Set<Product> productsRespectingValidity()
 	{

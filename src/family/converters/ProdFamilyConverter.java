@@ -18,6 +18,12 @@ import family.Family;
 import family.Feature;
 import family.Product;
 
+/**
+ * Class implementing import/export from the .prod textual format
+ * 
+ * @author Davide Basile
+ *
+ */
 public class ProdFamilyConverter implements FamilyConverter {
 
 	@Override

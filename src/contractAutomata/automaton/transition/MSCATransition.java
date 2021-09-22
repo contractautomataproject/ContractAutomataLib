@@ -20,6 +20,9 @@ import contractAutomata.automaton.state.CAState;
  */
 public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel> {
 
+	/**
+	 * the modality of the transition
+	 */
 	public enum Modality{
 		PERMITTED,URGENT,LAZY
 	}
@@ -72,6 +75,10 @@ public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel>
 			return "("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
 	}
 
+	/**
+	 * 
+	 * @return encoding of the object into comma separated values
+	 */
 	public String toCSV()
 	{
 		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
@@ -79,7 +86,13 @@ public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel>
 				+",target="+this.getTarget().toCSV()+"]";
 	}
 
-
+	/**
+	 * 
+	 * @param tr the set of transitions to check
+	 * @param badStates the set of badstates to check
+	 * @param controllabilityPred the controllability predicate
+	 * @return true if the transition is uncontrollable against the parameters
+	 */
 	public boolean isUncontrollable(Set<? extends MSCATransition> tr, Set<CAState> badStates, BiPredicate<MSCATransition,MSCATransition> controllabilityPred)
 	{
 		if (this.isUrgent())

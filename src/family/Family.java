@@ -10,7 +10,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * A family contains its products/configurations and subfamilies, organised as a partial order
+ * Class representing a family of products. 
+ * A family contains its products/configurations and may contain also its subfamilies, organised as a partial order
  * 
  * @author Davide Basile
  *
@@ -28,6 +29,11 @@ public class Family {
 	}
 
 	/**
+	 * This constructor also instantiate the partial order
+	 * 
+	 * @param products the products of the family
+	 * @param areComparable  a predicate to compare to check if two products can be compared
+	 * @param compare the function to compare two products
 	 */
 	public Family(Set<Product> products, BiPredicate<Product,Product> areComparable, BiFunction<Product, Product, Integer> compare)
 	{
@@ -73,7 +79,7 @@ public class Family {
 	}
 
 	/**
-	 * @return all maximal products p s.t. there is no p'>p
+	 * @return all maximal products p s.t. there is no p'greater than p
 	 */
 	public Set<Product> getMaximalProducts()
 	{

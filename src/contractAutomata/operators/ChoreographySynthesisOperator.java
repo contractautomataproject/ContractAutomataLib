@@ -17,6 +17,12 @@ import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.automaton.transition.Transition;
 
+/**
+ * Class implementing the Choreography Synthesis
+ * 
+ * @author Davide Basile
+ *
+ */
 public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
 	private Predicate<MSCATransition> req;
@@ -41,8 +47,9 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
 	/** 
 	 * invokes the synthesis method for synthesising the choreography
+	 * @param aut the plant automaton to which the synthesis is performed
 	 * @return the synthesised choreography, removing only one transition violating the branching condition 
-	 * each time no further updates are possible. The transition to remove is chosen nondeterministically with findAny().
+	 * each time no further updates are possible. The transition to remove is chosen nondeterministically.
 	 * 
 	 */
 	@Override
@@ -82,9 +89,9 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 	}
 
 	/**
-	 * 
-	 * @param trans the set of transitions to check
-	 * @param bad  the set of bad (dangling) states
+	 * @param tra the transition to check
+	 * @param trans the set of transitions to check against tra
+	 * @param bad  the set of bad (dangling) states to check
 	 * @return true if the set of transitions and bad states violate the branching condition
 	 */
 	public boolean satisfiesBranchingCondition(MSCATransition tra, Set<MSCATransition> trans, Set<CAState> bad) 

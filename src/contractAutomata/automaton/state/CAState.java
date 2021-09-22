@@ -25,6 +25,11 @@ public class CAState extends State<List<BasicState>> {
 		this.y=y;
 	}
 
+	/**
+	 * Construct a new CAState from a list of CAStates by flattening them into 
+	 * a list of basic states
+	 * @param states the list of castates
+	 */
 	public CAState(List<CAState> states)
 	{
 		super(states.stream()
@@ -63,7 +68,11 @@ public class CAState extends State<List<BasicState>> {
 	public boolean isFinalstate() {
 		return this.getState().stream().allMatch(BasicState::isFinalstate);
 	}
-	
+
+	/**
+	 * 
+	 * @return an encoding of the object as comma separated values
+	 */
 	public String toCSV()
 	{
 		return "[state=["+this.getState().stream()
@@ -86,6 +95,7 @@ public class CAState extends State<List<BasicState>> {
 		return sb.toString();
 	}
 
+}
 
 	
 //	public boolean hasSameBasicStateLabelsOf(CAState s) {
@@ -96,4 +106,3 @@ public class CAState extends State<List<BasicState>> {
 //	}
 // equals could cause errors of duplication of states in transitions to go undetected. 
 
-}

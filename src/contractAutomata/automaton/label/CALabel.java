@@ -7,11 +7,11 @@ import java.util.stream.IntStream;
 
 /**
  * 
- * Implementing a label of a transition.
+ * Class implementing a label of a contract automaton transition.
  * 
  * Note: in this class Java Modelling Language contracts have been experimented,  
  * only using Extended Static Checker analysis of OpenJML.  However, the specs are 
- * outdated.
+ * outdated w.r.t. the current implementation.
  * 
  * @author Davide Basile
  *
@@ -32,16 +32,16 @@ public class CALabel extends Label {
 	 */
 	private final /*@ spec_public @*/ Integer requester;
 	
-	/**
-	 * the action performed by the label
-	 */
 //	private final /*@ spec_public @*/  String action; //in case of match, the action is always the offer
 
 	final public static String idle="-";
 	final public static String offer="!";
 	final public static String request="?";
 	
-	//the actiontype is used for redundant checks
+	/**
+	 * the actiontype is used for redundant checks
+	 *
+	 */
 	enum ActionType{
 		REQUEST,OFFER,MATCH
 	}
@@ -63,6 +63,12 @@ public class CALabel extends Label {
 	 * 			action.startsWith(request)==>(this.requester==principal && this.offerer==-1);
 	 * @	ensures (offerer!=-1 && requester !=-1) ==> action.startsWith(offer);
 	 * @ 	ensures this.rank>0 && principal>=0 && principal < this.rank;
+	 */
+	/**
+	 * Constructor only used for requests or offer actions, i.e., only one principal is moving
+	 * @param rank	rank of the label
+	 * @param principal index of the principal
+	 * @param action action of the label
 	 */
 	public CALabel(Integer rank, Integer principal, String action) {
 		super(CALabel.getUnsignedAction(action));
@@ -88,6 +94,16 @@ public class CALabel extends Label {
 	//	this.action = action;
 	}
 	
+	
+	/**
+	 * Constructor for a match transition
+	 * 
+	 * @param rank rank of the label
+	 * @param principal1 index of first principal moving in the label
+	 * @param principal2 index of second principal moving in the label
+	 * @param action1 action of the first principal
+	 * @param action2 action of the second principal
+	 */
 	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
 		super(CALabel.getUnsignedAction(action1));
 		if (rank==null||principal1==null||principal2==null||action2==null||rank<=0||action2.length()<=1)
@@ -113,7 +129,12 @@ public class CALabel extends Label {
 		this.actiontype=CALabel.ActionType.MATCH;
 	}
 
-	
+	/**
+	 * Construct a CALabel by shifting of some positions the index of principals moving in the label
+	 * @param lab the object label to shift
+	 * @param rank the rank of the label to be created
+	 * @param shift the position to shift
+	 */
 	public CALabel(CALabel lab, Integer rank, Integer shift) {
 		super(lab.getUnsignedAction());
 		if (rank==null||rank<=0||lab==null||shift==null||shift<0 || 
@@ -141,6 +162,14 @@ public class CALabel extends Label {
      * @ 	ensures this.rank>0 && this.offerer>=0 && this.offerer < this.rank && this.requester>=0 && this.requester< this.rank;
      * @ 	ensures this.offerer!=this.requester;
  	 */
+	/**
+	 * Constructor used for match transitions
+	 * 
+	 * @param rank  the rank of the label
+	 * @param offerer  index of the principal offering
+	 * @param requester index of the principal requesting
+	 * @param offeraction  offer action
+	 */
 	public CALabel(Integer rank, Integer offerer, Integer requester, String offeraction) {
 		super(CALabel.getUnsignedAction(offeraction));
 		if (rank==null||offerer==null||requester==null||rank<=0)
@@ -187,6 +216,11 @@ public class CALabel extends Label {
     	@ 	ensures (offerer!=-1 && requester !=-1) ==> action.startsWith(offer);  
     	@ 	ensures this.rank>0;		
   	*/
+	/**
+	 * Constructor using a list of strings. Each position in the list is an index  
+	 * in the CALabel and each string is the action of the principal at that position.
+	 * @param label the list of strings
+	 */
 	public CALabel(List<String> label)
 	{		
 		super(CALabel.getUnsignedAction(label.stream()
@@ -269,6 +303,10 @@ public class CALabel extends Label {
 	 * @ 	ensures this.isOffer() ==> \result == this.getOfferer()
 	 * @ 	ensures this.isRequest() ==> \result == this.getRequester()
 	 */
+	/**
+	 * 
+	 * @return the index of the offerer or requester, does not support match transitions
+	 */
 	public Integer getOffererOrRequester() {
 		if (this.isOffer()) 
 			return this.getOfferer();
@@ -283,6 +321,9 @@ public class CALabel extends Label {
 	  @     requires this.action != null; 
 	  @     ensures \result == this.action; 
 	  @*/
+	/**
+	 * @return in case the calabel is a request it return the requests action, in case of offer or match returns the offer action
+	 */
 	@Override
 	public String getAction() {
 		if (this.actiontype==ActionType.REQUEST)
@@ -301,6 +342,9 @@ public class CALabel extends Label {
 	  @	  	ensures (\result.startsWith(offer) && this.action.startsWith(request))
 	  @				|| (\result.startsWith(request) && this.action.startsWith(offer));
 	  @*/
+	/**
+	 * @return in case the calabel is a request it return the offer action, in case of offer or match returns the request action
+	 */
 	public  /*@ pure @*/ String getCoAction()
 	{	
 		String action = this.getAction();
@@ -324,6 +368,10 @@ public class CALabel extends Label {
 	  @		ensures this.isRequest() ==> (\result.get(offerer)==idle && \result.get(requester)==action)
 	  @		ensures this.isMatch() ==> (\result.get(offerer)==action && \result.get(requester)==this.getCoAction())
 	  */
+	/**
+	 * 
+	 * @return the calabel encoded in a list of strings, at each position there is the action performed by that principal in that position
+	 */
 	public List<String> getLabelAsList(){
 		String action = this.getAction();
 		if (this.isMatch())
@@ -413,6 +461,10 @@ public class CALabel extends Label {
 	 * @	requires (this.getAction().startsWith(offer)||this.getAction().startsWith(request));
 	 * @	ensures \result == this.getAction().substring(1);
 	 */
+	/**
+	 * 
+	 * @return a string containing the action with request/offer sign
+	 */
 	public String getUnsignedAction()
 	{
 		String action = this.getAction();
@@ -454,7 +506,10 @@ public class CALabel extends Label {
 		return this.getLabelAsList().toString();
 	}
 	
-	
+	/**
+	 * 
+	 * @return a string description of the calabel in comma separated values
+	 */
 	public String toCSV() {
 		return "[rank=" + rank + ", offerer=" + offerer + ", requester=" + requester
 				+ ", actiontype=" + actiontype + "]";

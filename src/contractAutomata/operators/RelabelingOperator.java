@@ -11,12 +11,22 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Class implementing the relabeling operator
+ * @author Davide Basile
+ *
+ */
 public class RelabelingOperator implements UnaryOperator<MSCA> {
 	UnaryOperator<String> relabel;
 	
 	public RelabelingOperator() {
 		relabel = s->s;
 	}
+	
+	/**
+	 * 
+	 * @param relabel the relabeling operator to apply to each action in a label
+	 */
 	public RelabelingOperator(UnaryOperator<String> relabel) {
 		this.relabel=relabel;
 	}

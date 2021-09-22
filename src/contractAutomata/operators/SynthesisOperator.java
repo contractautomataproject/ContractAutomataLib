@@ -17,6 +17,12 @@ import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.automaton.transition.Transition;
 
+/**
+ * Class implementing the abstract synthesis operator
+ * 
+ * @author Davide Basile
+ *
+ */
 public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 	private Map<CAState,Boolean> reachable;
@@ -24,7 +30,13 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 	private TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPred;
 	private final TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPred;
 	private	Function<MSCA,Set<CAState>> getForbiddenStates=a->Collections.emptySet();
-	
+
+	/**
+	 * 
+	 * @param pruningPredicate  the pruning predicate 
+	 * @param forbiddenPredicate the forbidden predicate
+	 * @param req the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 */
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
 			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate, 
 			Predicate<MSCATransition> req) {
@@ -33,6 +45,13 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 		this.forbiddenPred = (x,t,bad) -> !t.contains(x)&&forbiddenPredicate.test(x, t, bad);
 	}
 
+	/**
+	 * 
+	 * @param pruningPredicate the pruning predicate
+	 * @param forbiddenPredicate the forbidden predicate
+	 * @param req the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 * @param prop another property to enforce expressed by an automaton
+	 */
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
 			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
 			Predicate<MSCATransition> req,
@@ -42,11 +61,24 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);
 	}
 
+	/**
+	 * This constructor does not use any pruning predicate
+	 * 
+	 * @param forbiddenPredicate the forbidden predicate
+	 * @param req  the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 */
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate, 
 			Predicate<MSCATransition> req) {
 		this((x,t,bad) -> false, forbiddenPredicate,req);
 	}
-	
+
+	/**
+	 * This constructor does not use any pruning predicate
+	 *   
+	 * @param forbiddenPredicate the forbidden predicate
+	 * @param req  the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 * @param prop another property to enforce expressed by an automaton
+	 */
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
 			Predicate<MSCATransition> req,
 			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop) {
@@ -55,12 +87,18 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);
 
 	}
-	
+
+	/** 
+	 * invokes the synthesis
+	 * @param arg1 the plant automaton to which the synthesis is performed
+	 * @return the synthesised automaton
+	 * 
+	 */
 	@Override
 	public MSCA apply(MSCA arg1) {
 		{
 			MSCA aut= new RelabelingOperator().apply(arg1);//creating an exact copy
-				
+
 			Set<MSCATransition> trbackup = new HashSet<MSCATransition>(aut.getTransition());
 			Set<CAState> statesbackup= aut.getStates(); 
 			CAState init = aut.getInitial();
@@ -96,7 +134,7 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 			return aut;
 		}
 	}
-	
+
 	/**
 	 * @return	states who do not reach a final state or are unreachable
 	 */
@@ -134,7 +172,7 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 	private void backwardVisit(MSCA aut, CAState currentstate)
 	{ 
 		this.successful.put(currentstate, true); //currentstate.setSuccessful(true);
-		
+
 		aut.getTransition().stream()
 		.filter(x->x.getTarget().equals(currentstate))
 		.forEach(x->{

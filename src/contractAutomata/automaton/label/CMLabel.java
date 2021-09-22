@@ -2,6 +2,12 @@ package contractAutomata.automaton.label;
 
 import java.util.Objects;
 
+/**
+ * Class representing the label of a Communicating Machine
+ * 
+ * @author Davide Basile
+ *
+ */
 public class CMLabel extends CALabel {
 
 	private final String id;
@@ -12,6 +18,12 @@ public class CMLabel extends CALabel {
 	public static final String action_separator = "@";
 	
 	
+	/**
+	 * Construct a CMLabel enconded in a string lab
+	 * 
+	 * @param lab the string must be in the format sender + id_separator + receiver + action_separator + action, 
+	 * 		  where either sender==this.id and action is an offer or receiver==this.id and action is a request. 
+	 */
 	public CMLabel(String lab) {
 		super(1,0,lab.split(action_separator)[1]);
 		String[] p = lab.split(action_separator)[0].split(id_separator);
@@ -22,11 +34,18 @@ public class CMLabel extends CALabel {
 		this.partner=this.isOffer()?p[1]:p[0];
 	}
 	
+	/**
+	 * 
+	 * @param sender  the sender in the label
+	 * @param receiver the receiver in the label
+	 * @param action the action in the label
+	 */
 	public CMLabel(String sender, String receiver, String action)
 	{
 		this(sender+id_separator+receiver+action_separator+action);
 		
 	}
+	
 	@Override
 	public boolean match(Label l2)
 	{

@@ -29,6 +29,12 @@ import contractAutomata.automaton.label.CALabel;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Class implementing the composition
+ * 
+ * @author Davide Basile
+ *
+ */
 public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSCATransition>,Integer,MSCA>{
 
 	/**
@@ -39,6 +45,7 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 	 * @param bound  the bound on the depth of the visit
 	 * @return  the composed automaton
 	 */
+	@Override
 	public MSCA apply(List<MSCA> aut, Predicate<MSCATransition> pruningPred, Integer bound)
 	{
 		//TODO too long function
@@ -187,7 +194,7 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 }
 
 
-
+//END OF CLASS
 
 
 //

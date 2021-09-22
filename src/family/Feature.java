@@ -4,6 +4,11 @@ import java.util.Objects;
 
 import contractAutomata.automaton.label.CALabel;
 
+/**
+ * Class implementing a feature
+ * @author Davide Basile
+ *
+ */
 public class Feature {
 	private final String name;
 	

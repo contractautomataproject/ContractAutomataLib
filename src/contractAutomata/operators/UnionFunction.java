@@ -14,11 +14,17 @@ import contractAutomata.automaton.state.BasicState;
 import contractAutomata.automaton.state.CAState;
 import contractAutomata.automaton.transition.MSCATransition;
 
+/**
+ * Class implementing the union function
+ * 
+ * @author Davide Basile
+ *
+ */
 public class UnionFunction implements Function<List<MSCA>,MSCA>{
 
 	/**
 	 * 
-	 * @param aut	list of operands automata
+	 * @param aut list of operands automata
 	 * @return compute the union of the FMCA in aut
 	 */
 	@Override

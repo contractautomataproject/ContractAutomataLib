@@ -21,6 +21,12 @@ import contractAutomata.automaton.state.State;
 import contractAutomata.automaton.transition.MSCATransition;
 import contractAutomata.automaton.transition.Transition;
 
+/**
+ * Class implementing the model checking function
+ * 
+ * @author Davide Basile
+ *
+ */
 public class ModelCheckingFunction implements BiFunction<MSCA,Automaton<String,BasicState,Transition<String,BasicState,Label>>,Set<CAState>>{
 	private final int bound;
 
@@ -28,11 +34,19 @@ public class ModelCheckingFunction implements BiFunction<MSCA,Automaton<String,B
 		this.bound=Integer.MAX_VALUE;
 	}
 
+	/**
+	 * 
+	 * @param bound the  bound of bounded model checking
+	 */
 	public ModelCheckingFunction(Integer bound) {
 		this.bound=bound;
 	}
 
-
+	/**
+	 * @param aut the plant automaton to verify
+	 * @param prop the automaton expressing the property to verify
+	 * @return the set of states violating prop
+	 */
 	@Override
 	public Set<CAState> apply(MSCA aut, Automaton<String,BasicState,Transition<String,BasicState,Label>> prop)
 	{
