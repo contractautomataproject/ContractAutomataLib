@@ -7,24 +7,24 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import contractAutomata.automaton.MSCA;
-import contractAutomata.converters.DataConverter;
-import contractAutomata.converters.MSCAConverter;
-import contractAutomata.converters.MxeConverter;
-import contractAutomata.operators.ChoreographySynthesisOperator;
-import contractAutomata.operators.CompositionFunction;
-import contractAutomata.operators.OrchestrationSynthesisOperator;
-import contractAutomata.operators.ProductOrchestrationSynthesisOperator;
-import contractAutomata.requirements.Agreement;
-import contractAutomata.requirements.StrongAgreement;
-import family.FMCA;
-import family.Family;
-import family.PartialProductGenerator;
-import family.Product;
-import family.converters.DimacFamilyConverter;
-import family.converters.FamilyConverter;
-import family.converters.FeatureIDEfamilyConverter;
-import family.converters.ProdFamilyConverter;
+import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.converters.DataConverter;
+import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MxeConverter;
+import io.github.davidebasile.contractautomata.family.FMCA;
+import io.github.davidebasile.contractautomata.family.Family;
+import io.github.davidebasile.contractautomata.family.PartialProductGenerator;
+import io.github.davidebasile.contractautomata.family.Product;
+import io.github.davidebasile.contractautomata.family.converters.DimacFamilyConverter;
+import io.github.davidebasile.contractautomata.family.converters.FamilyConverter;
+import io.github.davidebasile.contractautomata.family.converters.FeatureIDEfamilyConverter;
+import io.github.davidebasile.contractautomata.family.converters.ProdFamilyConverter;
+import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
+import io.github.davidebasile.contractautomata.operators.CompositionFunction;
+import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
+import io.github.davidebasile.contractautomata.operators.ProductOrchestrationSynthesisOperator;
+import io.github.davidebasile.contractautomata.requirements.Agreement;
+import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
 
 public class Snippets {
 	final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
