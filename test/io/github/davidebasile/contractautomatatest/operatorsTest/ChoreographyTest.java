@@ -1,4 +1,4 @@
-package io.github.davidebasile.contractautomata.contractautomatatest.operatorsTest;
+package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 import static io.github.davidebasile.contractautomatatest.MSCATest.checkTransitions;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

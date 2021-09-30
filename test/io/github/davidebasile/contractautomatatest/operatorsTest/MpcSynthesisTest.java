@@ -1,4 +1,4 @@
-package io.github.davidebasile.contractautomata.contractautomatatest.operatorsTest;
+package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;

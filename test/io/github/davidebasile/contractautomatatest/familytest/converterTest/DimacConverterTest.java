@@ -1,4 +1,4 @@
-package io.github.davidebasile.contractautomata.familytest.converterTest;
+package io.github.davidebasile.contractautomatatest.familytest.converterTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
