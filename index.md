@@ -233,7 +233,7 @@ Transitions:
 
 This is an example of the choreography automatically computed by the library, the example is taken from [LMCS20].
 
-```
+```c
 Rank: 5
 Initial state: [0, 0, 0, 0, 0]
 Final states: [[0][0, 4, 3][8, 0, 14][4, 0, 3][4, 0]]
