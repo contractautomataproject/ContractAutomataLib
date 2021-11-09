@@ -211,7 +211,7 @@ The Contract Automata Library is a back-end and new front-ends can be developed 
 editing or automatically generating contracts (e.g., from static analysis tools), using this library.
 
 The <a href="https://github.com/davidebasile/ContractAutomataApp">Contract Automata App</a> is 
-a GUI front-end allowing to graphically editing and exporting contract automata in a `.mxe` format.
+a GUI front-end allowing to graphically edit and export contract automata in a `.mxe` format.
 
 A textual `.data` format is also supported, as well as a `.json` format (still under development).
 This is an example of the `PriviledgedClient.data` principal contract automaton taken from [LMCS20]. 
