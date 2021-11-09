@@ -35,6 +35,7 @@ Add this dependency to the `pom.xml` of your Maven project to use the library.
 </dependency>
 ```
 
+<!--
 <h2>Usage</h2>
 
 The  package  of the GUI Application has been moved to https://github.com/davidebasile/ContractAutomataApp.
@@ -214,16 +215,18 @@ The wiki contains an excerpt from a published paper regarding the product lines 
 ![The class diagram of family package](./doc/family_classdiagram.png)
 
 ![The class diagram of family.converters package](./doc/family.converters_classdiagram.png)
+-->
+
+<h2>Documentation</h2>
+
+Full documentation available at the Github Page https://davidebasile.github.io/ContractAutomataLib/.
 
 
 <h2>Contacts</h2>
 
-If you have any question or want to help contact me on davide.basile@isti.cnr.it.
+If you have any question contact me on davide.basile@isti.cnr.it.
 
-
-<h2>Documentation</h2>
-
-Check the Github Page at https://davidebasile.github.io/ContractAutomataLib/.
+<!--
 
 Several papers have been published about contract automata and their tool:
 
@@ -258,3 +261,4 @@ Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models 
 https://doi.org/10.5220/0006291106790686
 (pdf at http://openportal.isti.cnr.it/data/2017/386223/2017_386223.preprint.pdf)
 
+-->
