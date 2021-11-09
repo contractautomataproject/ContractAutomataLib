@@ -205,6 +205,58 @@ The wiki contains an excerpt from a published paper regarding the product lines 
 
 ![The class diagram of family.converters package](./doc/family.converters_classdiagram.png)
 
+<h2>Editing</h2>
+
+The Contract Automata Library is a back-end and new front-ends can be developed for 
+editing or automatically generating contracts (e.g., from static analysis tools), using this library.
+
+The <a href="https://github.com/davidebasile/ContractAutomataApp">Contract Automata App</a> is 
+a GUI front-end allowing to graphically editing and exporting contract automata in a `.mxe` format.
+
+A textual `.data` format is also supported, as well as a `.json` format (still under development).
+This is an example of the `PriviledgedClient.data` principal contract automaton taken from [LMCS20]. 
+This contract has rank 1, initial state is `[0]`, final states are `[4]`,`[0]` and `[3]`. 
+This contract has been created using the GUI app and has been exported in the `.data` format.
+It has four transitions, descripted by indicating the source state, label and target state.
+A necessary lazy transition is prefixed by `!L` whilst a necessary urgent transition is prefixed by `!U`. 
+
+```c
+Rank: 1
+Initial state: [0]
+Final states: [[4, 0, 3]]
+Transitions: 
+([1],[?bestoffer],[2])
+!L([0],[!contact],[1])
+([2],[!reject],[4])
+([2],[!accept],[3])
+```
+
+This is an example of the choreography automatically computed by the library, the example is taken from [LMCS20].
+
+```
+Rank: 5
+Initial state: [0, 0, 0, 0, 0]
+Final states: [[0][0, 4, 3][8, 0, 14][4, 0, 3][4, 0]]
+Transitions: 
+([0, 1, 3, 1, 0],[-, -, ?ans, !ans, -],[0, 1, 5, 2, 0])
+([0, 2, 6, 2, 2],[-, !accept, ?accept, -, -],[0, 3, 7, 2, 2])
+!L([0, 0, 0, 0, 0],[-, !contact, ?contact, -, -],[0, 1, 1, 0, 0])
+([0, 3, 9, 3, 2],[-, -, !nobook, -, ?nobook],[0, 3, 8, 3, 4])
+([0, 1, 11, 2, 2],[-, ?bestoffer, !bestoffer, -, -],[0, 2, 6, 2, 2])
+([0, 1, 5, 2, 0],[-, -, !check, -, ?check],[0, 1, 10, 2, 1])
+([0, 3, 7, 2, 2],[-, -, !book, ?book, -],[0, 3, 9, 3, 2])
+([0, 1, 10, 2, 1],[-, -, ?ans, -, !ans],[0, 1, 11, 2, 2])
+([0, 4, 13, 2, 4],[-, -, !nobook, ?nobook, -],[0, 4, 14, 4, 4])
+([0, 1, 1, 0, 0],[-, -, !check, ?check, -],[0, 1, 3, 1, 0])
+([0, 4, 12, 2, 2],[-, -, !nobook, -, ?nobook],[0, 4, 13, 2, 4])
+([0, 2, 6, 2, 2],[-, !reject, ?reject, -, -],[0, 4, 12, 2, 2])
+```
+
+In this case, the contract automaton is of rank 5. 
+Note that the final states of each principal are separately reported. 
+In a final state of the composed automaton it is required that all principals are in a final state (e.g., `[0, 4, 14, 4, 4]` is a final state).
+
+See the references below for more informations on the contract automata formalism.
 
 <h2>Contacts</h2>
 
@@ -213,33 +265,33 @@ If you have any question or want to help contact me on davide.basile@isti.cnr.it
 
 <h2>References</h2>
 
-Basile, D., ter Beek, M.H., 2021, June. A Clean and Efficient Implementation of Choreography Synthesis for Behavioural Contracts. 
+[COORD21] Basile, D., ter Beek, M.H., 2021, June. A Clean and Efficient Implementation of Choreography Synthesis for Behavioural Contracts. 
 In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 2021, pages 225-238, 
 https://doi.org/10.1007/978-3-030-78142-2_14
 (pdf at https://openportal.isti.cnr.it/data/2021/454603/2021_454603.postprint.pdf)
 
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
+[SPLC17] Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
 https://doi.org/10.1145/3109729.3109760
 (pdf at http://openportal.isti.cnr.it/data/2017/386222/2017_386222.postprint.pdf)
 
-Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
+[SPLC18] Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
 https://doi.org/10.1145/3236405.3236408
 (pdf at http://openportal.isti.cnr.it/data/2018/391612/2018_391612.postprint.pdf)
 
 Further documentation:
 
-Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
+[SCICO20] Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
 https://doi.org/10.1016/j.scico.2019.102344
 (pdf at https://openportal.isti.cnr.it/data/2019/409807/2019_409807.published.pdf)
 
-Basile, D., ter Beek, M.H. and Pugliese, R., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
+[LMCS20] Basile, D., ter Beek, M.H. and Pugliese, R., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
 https://doi.org/10.23638/LMCS-16(2:9)2020
 (pdf at http://openportal.isti.cnr.it/data/2020/423262/2020_%20423262.published.pdf)
 
-Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of Dynamic Service Product Lines with Featured Modal Contract Automata. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 117-122.
+[DSPL17] Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of Dynamic Service Product Lines with Featured Modal Contract Automata. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 117-122.
 https://doi.org/10.1145/3109729.3109741
 (pdf at http://openportal.isti.cnr.it/data/2017/376406/2017_376406.postprint.pdf)
 
-Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In Proceedings of the 5th International Conference on Model-Driven Engineering and Software Development (MODELSWARD'17), Volume 1. SciTePress, pp. 679-686.
+[MOD17] Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In Proceedings of the 5th International Conference on Model-Driven Engineering and Software Development (MODELSWARD'17), Volume 1. SciTePress, pp. 679-686.
 https://doi.org/10.5220/0006291106790686
 (pdf at http://openportal.isti.cnr.it/data/2017/386223/2017_386223.preprint.pdf)
