@@ -142,13 +142,11 @@ MSCA orcfam2 = faut.getOrchestrationOfFamily();
 ```
 
 <h2>Videos</h2>
-The playlist of video tutorials and presentations about CAT is available at
+Check the <a href="https://www.youtube.com/playlist?list=PLory_2tIDsJvZB2eVlpji-baIz0320TwM">playlist of video tutorials and presentations</a> about CAT.
 
-https://www.youtube.com/playlist?list=PLory_2tIDsJvZB2eVlpji-baIz0320TwM
 
 <h2>License</h2>
-The tool is available under Creative Common License 4.0,
- https://github.com/davidebasile/ContractAutomataLib/blob/code-cleaning/license.html.
+The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
 
 <h2> API Documentation</h2>
