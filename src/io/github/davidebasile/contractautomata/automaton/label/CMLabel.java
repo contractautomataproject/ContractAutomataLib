@@ -13,11 +13,11 @@ public class CMLabel extends CALabel {
 	private final String id;
 
 	private final String partner;	
-	
+
 	public static final String id_separator = "_";
 	public static final String action_separator = "@";
-	
-	
+
+
 	/**
 	 * Construct a CMLabel enconded in a string lab
 	 * 
@@ -29,11 +29,11 @@ public class CMLabel extends CALabel {
 		String[] p = lab.split(action_separator)[0].split(id_separator);
 		if (p.length!=2)
 			throw new IllegalArgumentException();
-		
+
 		this.id=this.isOffer()?p[0]:p[1];
 		this.partner=this.isOffer()?p[1]:p[0];
 	}
-	
+
 	/**
 	 * 
 	 * @param sender  the sender in the label
@@ -43,9 +43,20 @@ public class CMLabel extends CALabel {
 	public CMLabel(String sender, String receiver, String action)
 	{
 		this(sender+id_separator+receiver+action_separator+action);
-		
+
 	}
-	
+
+//	public CMLabel(CMLabel lab, Integer rank, Integer shift)
+//	{	
+//		super(lab,rank,shift);
+//
+//		this.id = (Integer.parseInt(lab.id)+shift)+"";
+//		this.partner = (Integer.parseInt(lab.partner)+shift)+"";
+//	}
+
+
+
+
 	@Override
 	public boolean match(Label l2)
 	{
@@ -82,7 +93,7 @@ public class CMLabel extends CALabel {
 		CMLabel other = (CMLabel) obj;
 		return Objects.equals(id, other.id)&&Objects.equals(partner, other.partner);
 	}
-	
+
 	@Override
 	public String toString() {
 		if (this.isOffer())
@@ -90,7 +101,7 @@ public class CMLabel extends CALabel {
 		else
 			return "["+this.partner+id_separator+this.id+action_separator+this.getAction()+"]";
 	}
-	
+
 
 
 }
