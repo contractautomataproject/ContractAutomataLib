@@ -96,6 +96,11 @@ public class CompositionTest {
 						:(bsti<shift(aut,j))?t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti))
 								:(bsti<shift(aut,j+1))?t.getTarget().getState().get(bsti).equals(tj.getTarget().getState().get(bsti-shift(aut,j)))
 										:t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti)))
+		&&
+		((t.getModality().equals(MSCATransition.Modality.PERMITTED) && ti.getModality().equals(MSCATransition.Modality.PERMITTED) &&
+		tj.getModality().equals(MSCATransition.Modality.PERMITTED))||
+		(!t.getModality().equals(MSCATransition.Modality.PERMITTED) && (!ti.getModality().equals(MSCATransition.Modality.PERMITTED)||
+		!tj.getModality().equals(MSCATransition.Modality.PERMITTED))))
 		)))));
 		
 		Predicate<MSCATransition> pred_intrleav = t->
@@ -111,7 +116,9 @@ public class CompositionTest {
 		IntStream.range(0,t.getTarget().getState().size()).allMatch(bsti->
 		(bsti<shift(aut,i))?t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti))
 				:(bsti<shift(aut,i+1))?t.getTarget().getState().get(bsti).equals(ti.getTarget().getState().get(bsti-shift(aut,i)))
-								:t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti)))
+								:t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti))) 
+		&&
+		t.getModality().equals(ti.getModality())
 		)))));		
 		
 		return comp.getTransition().stream().allMatch(t-> pred_match.test(t) || pred_intrleav.test(t));
