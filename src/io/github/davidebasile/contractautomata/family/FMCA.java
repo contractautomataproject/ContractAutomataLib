@@ -53,26 +53,20 @@ public class FMCA {
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 		
-		//products are polished from features not present in the automaton
-		//(e.g. equivalent features, abstract features)
-		products = products.parallelStream()
-				.map(p->p.retainFeatures(actions))
-				.collect(Collectors.toSet());
-		
-		
 		MSCA orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
 		Set<Feature> availableFeatures = orc.getUnsignedActions().stream()
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 
-		//products requiring features not present in the orchestration are removed
-		products=products.parallelStream()
-				.filter(p->availableFeatures.containsAll(p.getRequired()))
-				.collect(Collectors.toSet());
-
-		
+		//products are polished from features not present in the automaton
+		//(e.g. equivalent features, abstract features)
+		//products requiring features not present in the orchestration are removed		
 		this.aut=aut;
-		this.family= new Family(products,(p1,p2) -> p2.getForbidden().containsAll(p1.getForbidden())||
+		this.family= new Family(products.parallelStream()
+				.map(p->p.retainFeatures(actions))
+				.filter(p->availableFeatures.containsAll(p.getRequired()))
+				.collect(Collectors.toSet()),
+				(p1,p2) -> p2.getForbidden().containsAll(p1.getForbidden())||
 				p1.getForbidden().containsAll(p2.getForbidden()), 
 				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
 	}

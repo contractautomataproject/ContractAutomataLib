@@ -63,7 +63,7 @@ public class CompositionTest {
 		aut.add(bmc.importMSCA(dir+"HotelLMCS.mxe"));
 		assertTrue(new CompositionSpec().test(aut));
 	}
-
+	
 	//**********************************SCICO2020 case study*******************************************************************
 
 

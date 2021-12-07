@@ -15,7 +15,7 @@ import io.github.davidebasile.contractautomata.family.Product;
  */
 public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<MSCA> {
 	private final OrchestrationSynthesisOperator synth;
-	private Product p;
+	private final Product p;
 	
 	/**
 	 * 

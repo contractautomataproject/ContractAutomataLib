@@ -12,7 +12,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class JsonConverterTest {
 	private final MxeConverter bmc = new MxeConverter();
-	private String dir = System.getProperty("user.dir");
+	private final String dir = System.getProperty("user.dir");
 	
 	@Test
 	public void importTest() throws Exception {

@@ -1,6 +1,5 @@
 package io.github.davidebasile.contractautomata.operators;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -19,31 +18,25 @@ public class CompositionSpec implements Predicate<List<MSCA>>{
 	
 	@Override
 	public boolean test(List<MSCA> aut) {
+		//check if the composition function satisfies the spec
 		MSCA comp=new CompositionFunction().apply(aut, null,100);
-		try {
-			return rank(aut,comp)&&initialState(aut,comp)&&states(aut,comp)&&finalStates(aut,comp)&&transitions(aut,comp);
-		} catch (Exception e) {
-			RuntimeException re = new RuntimeException();
-			e.addSuppressed(e);
-			throw re;
-		}
+		return rank(aut,comp)&&initialState(aut,comp)&&states(aut,comp)&&finalStates(aut,comp)&&transitions(aut,comp);
 	}
-
 	
-	private boolean rank(List<MSCA> aut, MSCA comp) throws IOException 
+	private boolean rank(List<MSCA> aut, MSCA comp) 
 	{
 		return comp.getRank()==aut.stream()
 				.mapToInt(a->a.getRank())
 				.sum();
 	}
 
-	private boolean states(List<MSCA> aut, MSCA comp) throws Exception
+	private boolean states(List<MSCA> aut, MSCA comp) 
 	{
 		return compareStatesPred(x->true,comp,aut);
 	}
 
 
-	private boolean finalStates(List<MSCA> aut, MSCA comp) throws Exception
+	private boolean finalStates(List<MSCA> aut, MSCA comp) 
 	{
 		return compareStatesPred(CAState::isFinalstate,comp,aut);
 	}
@@ -58,7 +51,7 @@ public class CompositionSpec implements Predicate<List<MSCA>>{
 						)))));
 	}
 	
-	private boolean initialState(List<MSCA> aut, MSCA comp) throws Exception
+	private boolean initialState(List<MSCA> aut, MSCA comp) 
 	{
 
 		return 
@@ -69,7 +62,7 @@ public class CompositionSpec implements Predicate<List<MSCA>>{
 						)); 
 	}
 
-	private boolean transitions(List<MSCA> aut, MSCA comp) throws Exception {
+	private boolean transitions(List<MSCA> aut, MSCA comp) {
 
 		//true if the source of transition t (of the operand at index ind)  is a component of composite state s
 		TriPredicate<MSCATransition,Integer,CAState> sourcestatepred= (t,ind,s)-> 

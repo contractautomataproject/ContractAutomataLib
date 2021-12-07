@@ -67,7 +67,7 @@ public class Automaton<L, S extends State<L>,T extends Transition<L,S,? extends 
 	/**
 	 * @return all  states that appear in at least one transition
 	 */
-	public Set<S> getStates()
+	public final Set<S> getStates()
 	{
 		return this.getTransition().parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
