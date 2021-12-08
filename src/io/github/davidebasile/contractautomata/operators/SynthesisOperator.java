@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
 import io.github.davidebasile.contractautomata.automaton.MSCA;
