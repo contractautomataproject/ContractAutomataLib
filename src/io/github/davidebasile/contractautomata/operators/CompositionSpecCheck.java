@@ -1,6 +1,7 @@
 package io.github.davidebasile.contractautomata.operators;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -10,16 +11,16 @@ import io.github.davidebasile.contractautomata.automaton.state.CAState;
 import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
 
 /**
- * The specification of the composition in first-order logic (expressed with Java Streams)
+ * The specification of the composition in first-order logic (expressed through Java Streams)
+ * 
  * @author Davide Basile
  *
  */
-public class CompositionSpec implements Predicate<List<MSCA>>{
+public class CompositionSpecCheck implements BiPredicate<List<MSCA>,MSCA>{
 	
 	@Override
-	public boolean test(List<MSCA> aut) {
+	public boolean test(List<MSCA> aut, MSCA comp) {
 		//check if the composition function satisfies the spec
-		MSCA comp=new CompositionFunction().apply(aut, null,100);
 		return rank(aut,comp)&&initialState(aut,comp)&&states(aut,comp)&&finalStates(aut,comp)&&transitions(aut,comp);
 	}
 	

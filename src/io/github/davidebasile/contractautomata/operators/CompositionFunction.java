@@ -181,6 +181,9 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 			}
 		} while (!toVisit.isEmpty());
 
+		
+		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
+		
 		return new MSCA(tr);
 	}
 

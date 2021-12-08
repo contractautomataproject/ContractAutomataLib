@@ -14,7 +14,7 @@ import io.github.davidebasile.contractautomata.automaton.MSCA;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MxeConverter;
 import io.github.davidebasile.contractautomata.operators.CompositionFunction;
-import io.github.davidebasile.contractautomata.operators.CompositionSpec;
+import io.github.davidebasile.contractautomata.operators.CompositionSpecCheck;
 import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
@@ -35,7 +35,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.mxe.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.mxe.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.mxe.data"));
-		assertTrue(new CompositionSpec().test(aut));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class CompositionTest {
 		aut.add(bmc.importMSCA(dir+"Broker.mxe"));
 		aut.add(bmc.importMSCA(dir+"HotelLMCS.mxe"));
 		aut.add(bmc.importMSCA(dir+"PriviledgedHotel.mxe"));
-		assertTrue(new CompositionSpec().test(aut));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
 	}
 
 
@@ -61,7 +61,7 @@ public class CompositionTest {
 		aut.add(bmc.importMSCA(dir+"Broker.mxe"));
 		aut.add(bmc.importMSCA(dir+"HotelLMCS.mxe"));
 		aut.add(bmc.importMSCA(dir+"HotelLMCS.mxe"));
-		assertTrue(new CompositionSpec().test(aut));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
 	}
 	
 	//**********************************SCICO2020 case study*******************************************************************

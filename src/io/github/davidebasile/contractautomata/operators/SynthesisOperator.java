@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
 import io.github.davidebasile.contractautomata.automaton.MSCA;
@@ -103,7 +105,7 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 			Set<CAState> statesbackup= aut.getStates(); 
 			CAState init = aut.getInitial();
 			Set<CAState> R = new HashSet<CAState>(getDanglingStates(aut, statesbackup,init));//R0
-			R.addAll(getForbiddenStates.apply(aut));
+			R.addAll(getForbiddenStates.apply(aut));		
 			boolean update=false;
 			do{
 				final Set<CAState> Rf = new HashSet<CAState>(R); 
@@ -184,11 +186,35 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 
 
+//Pair<Set<CAState>, Set<MSCATransition>> seed=
+//new Pair<Set<CAState>, Set<MSCATransition>>(R, aut.getTransition());
+//
+//Pair<Set<CAState>, Set<MSCATransition>> result = new Fixpoint<Pair<Set<CAState>, Set<MSCATransition>>>().apply(seed,p->
+//{
+//final Set<CAState> Rf = new HashSet<CAState>(p.getFirst()); 
+//final Set<MSCATransition> trf= new HashSet<MSCATransition>(p.getSecond());
+//
+//if (aut.getTransition().removeAll(aut.getTransition().parallelStream()
+//	.filter(x->pruningPred.test(x,trf, Rf))
+//	.collect(Collectors.toSet()))) //Ki
+//R.addAll(getDanglingStates(aut, statesbackup,init));
+//
+//R.addAll(trbackup.parallelStream() 
+//	.filter(x->forbiddenPred.test(x,trf, Rf))
+//	.map(MSCATransition::getSource)
+//	.collect(Collectors.toSet())); //Ri
+//return new Pair<Set<CAState>, Set<MSCATransition>>(R,aut.getTransition());});
 
-
-
-
-
+//class Fixpoint<T> implements BiFunction<T,UnaryOperator<T>,T> {
+//
+//	@Override
+//	public T apply(T t, UnaryOperator<T> u) {
+//		return Stream.iterate(t,e->u.apply(e))
+//				.distinct()
+//				.reduce((x,y)->y).orElseThrow(IllegalArgumentException::new);
+//		
+//	}
+//}
 
 
 
