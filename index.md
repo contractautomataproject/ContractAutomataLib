@@ -151,12 +151,12 @@ The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3
 
 <h2> API Documentation</h2>
 
-The documentation of the API is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
-
 This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
  <a href="https://davidebasile.github.io/ContractAutomataLib/site/index.htm">The generated documentation is available by clicking here</a>.
 The <a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">diagram report pdf</a>  and the   <a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">full documentation pdf</a> are generated using this tool. 
 This documentation has been generated for the commit d92c4b6 of 8 December 2021. 
+
+The documentation of the API is available as javadoc at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
 
 
 <!--
