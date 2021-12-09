@@ -156,6 +156,7 @@ The documentation of the API is available at <a href="https://javadoc.io/doc/io.
 This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
 The 
 <a href="https://github.com/davidebasile/ContractAutomataLib/blob/gh-pages/doc/CAT_Lib_diagrams.pdf">diagram report</a>  and the   <a href="https://github.com/davidebasile/ContractAutomataLib/blob/gh-pages/doc/CAT_Lib_doc.pdf">full documentation</a> are generated using this tool. 
+The generated site is  <a href="https://htmlpreview.github.io/?https://github.com/davidebasile/ContractAutomataLib/blob/gh-pages/site/index.htm">here</a> (Javascript must be enabled).
 This documentation has been generated for the commit d92c4b6 of 8 December 2021. 
 
 
