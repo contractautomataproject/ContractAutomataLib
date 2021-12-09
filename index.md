@@ -153,12 +153,18 @@ The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3
 
 The documentation of the API is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
 
+This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
+The 
+<a href="https://github.com/davidebasile/ContractAutomataLib/blob/gh-pages/doc/CAT_Lib_diagrams.pdf">diagram report</a>  and the   <a href="https://github.com/davidebasile/ContractAutomataLib/blob/gh-pages/doc/CAT_Lib_doc.pdf">full documentation</a> are generated using this tool. 
+This documentation has been generated for the commit d92c4b6 of 8 December 2021. 
 
+
+<!--
 <h2>Package Structure</h2>
 
 The structure of the Contract Automata Tool Library is composed of two  packages:
 
-**contractAutomata** This package and the others contained are the core of the tool. 
+**automaton** This package and the others contained are the core of the tool. 
 A CA is defined by the class `MSCA`. 
 Several operations are available: composition, projection, union, 
 synthesis of  orchestration, choreography, or most permissive controller.
@@ -202,6 +208,7 @@ The wiki contains an excerpt from a published paper regarding the product lines 
 ![The class diagram of family package](./doc/family_classdiagram.png)
 
 ![The class diagram of family.converters package](./doc/family.converters_classdiagram.png)
+-->
 
 <h2>Editing</h2>
 
