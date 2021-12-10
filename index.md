@@ -256,6 +256,11 @@ https://doi.org/10.5220/0006291106790686
 [FORTE16] Basile, D., Degano, P., Ferrari, G.L. and Tuosto, E., 2016, June. Playing with our CAT and communication-centric applications. In International Conference on Formal Techniques for Distributed Objects, Components, and Systems (pp. 62-73).
 https://doi.org/10.1007/978-3-319-39570-8_5
 
+[JLAMP16] Basile, D., Degano, P., Ferrari, G.L. and Tuosto, E., 2016. Relating two automata-based models of orchestration and choreography. Journal of logical and algebraic methods in programming, 85(3), pp.425-446. 
+https://doi.org/10.1016/j.jlamp.2015.09.011
+
+[LMCS16] Ferrari, G.L., Degano, P. and Basile, D., 2016. Automata for specifying and orchestrating service contracts. Logical methods in computer science, 12. 
+https://doi.org/10.2168/LMCS-12(4:6)2016
 
 
 
