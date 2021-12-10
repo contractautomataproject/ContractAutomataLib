@@ -228,15 +228,6 @@ In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 20
 https://doi.org/10.1007/978-3-030-78142-2_14
 (pdf at https://openportal.isti.cnr.it/data/2021/454603/2021_454603.postprint.pdf)
 
-[SPLC17] Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
-https://doi.org/10.1145/3109729.3109760
-(pdf at http://openportal.isti.cnr.it/data/2017/386222/2017_386222.postprint.pdf)
-
-[SPLC18] Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
-https://doi.org/10.1145/3236405.3236408
-(pdf at http://openportal.isti.cnr.it/data/2018/391612/2018_391612.postprint.pdf)
-
-Further documentation:
 
 [SCICO20] Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
 https://doi.org/10.1016/j.scico.2019.102344
@@ -246,6 +237,14 @@ https://doi.org/10.1016/j.scico.2019.102344
 https://doi.org/10.23638/LMCS-16(2:9)2020
 (pdf at http://openportal.isti.cnr.it/data/2020/423262/2020_%20423262.published.pdf)
 
+[SPLC18] Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
+https://doi.org/10.1145/3236405.3236408
+(pdf at http://openportal.isti.cnr.it/data/2018/391612/2018_391612.postprint.pdf)
+
+[SPLC17] Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, September. FMCAT: Supporting Dynamic Service-based Product Lines. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 3-8.
+https://doi.org/10.1145/3109729.3109760
+(pdf at http://openportal.isti.cnr.it/data/2017/386222/2017_386222.postprint.pdf)
+
 [DSPL17] Basile, D., ter Beek, M.H., Di Giandomenico, F. and Gnesi, S., 2017, September. Orchestration of Dynamic Service Product Lines with Featured Modal Contract Automata. In Proceedings of the 21st International Systems and Software Product Line Conference (SPLC'17), Volume B. ACM, pp. 117-122.
 https://doi.org/10.1145/3109729.3109741
 (pdf at http://openportal.isti.cnr.it/data/2017/376406/2017_376406.postprint.pdf)
@@ -253,6 +252,10 @@ https://doi.org/10.1145/3109729.3109741
 [MOD17] Basile, D., Di Giandomenico, F. and Gnesi, S., 2017, February. Enhancing Models Correctness through Formal Verification: A Case Study from the Railway Domain. In Proceedings of the 5th International Conference on Model-Driven Engineering and Software Development (MODELSWARD'17), Volume 1. SciTePress, pp. 679-686.
 https://doi.org/10.5220/0006291106790686
 (pdf at http://openportal.isti.cnr.it/data/2017/386223/2017_386223.preprint.pdf)
+
+[FORTE16] Basile, D., Degano, P., Ferrari, G.L. and Tuosto, E., 2016, June. Playing with our CAT and communication-centric applications. In International Conference on Formal Techniques for Distributed Objects, Components, and Systems (pp. 62-73).
+https://doi.org/10.1007/978-3-319-39570-8_5
+
 
 
 
