@@ -10,6 +10,10 @@ They are used for specifying services' interface, called behavioral contracts,
  as finite-state automata, with functionalities for composing contracts and generating the 
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA).
+ 
+ 
+<h2>License</h2>
+The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
 <h2>Install</h2>
 
@@ -145,24 +149,6 @@ MSCA orcfam2 = faut.getOrchestrationOfFamily();
 Check the <a href="https://www.youtube.com/playlist?list=PLory_2tIDsJvZB2eVlpji-baIz0320TwM">playlist of video tutorials and presentations</a> about CAT.
 
 
-<h2>License</h2>
-The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
-
-
-<h2> API Documentation</h2>
-
-This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
-The following documentation has been generated for the commit d92c4b6 of 8 December 2021. 
-<ul>
-  <li> <a href="https://davidebasile.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
-</li>
-  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
-  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
-</ul> 
-
-The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
-
-
 <h2>Editing</h2>
 
 The Contract Automata Library is a back-end and new front-ends can be developed for 
@@ -216,9 +202,14 @@ In a final state of the composed automaton it is required that all principals ar
 
 See the references below for more informations on the contract automata formalism.
 
+
+<h2> Developers Documentation </h2>
+
+The info for developers is available at the README and Wiki of the github repository (link above).
+
 <h2>Contacts</h2>
 
-If you have any question or want to help contact me on davide.basile@isti.cnr.it.
+Contact me on davide.basile@isti.cnr.it for questions on this software.
 
 
 <h2>References</h2>
