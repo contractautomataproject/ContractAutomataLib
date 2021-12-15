@@ -10,8 +10,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCAConverter;
-import io.github.davidebasile.contractautomata.converters.MxeConverter;
 import io.github.davidebasile.contractautomata.family.FMCA;
 import io.github.davidebasile.contractautomata.family.Family;
 import io.github.davidebasile.contractautomata.family.PartialProductGenerator;
@@ -26,7 +26,7 @@ public class DimacConverterTest {
 	private final FamilyConverter dfc = new DimacFamilyConverter(true);
 	private final FamilyConverter dfc_pi = new DimacFamilyConverter(false);
 	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();
-	private final MSCAConverter bmc = new MxeConverter();
+	private final MSCAConverter bdc = new DataConverter();
 	
 	@Test
 	public void testImport() throws Exception
@@ -35,7 +35,7 @@ public class DimacConverterTest {
 
 //		System.out.println(prod);
 		
-		MSCA aut = bmc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
+		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 //		Set<Feature> actions = aut.getUnsignedActions().stream()
 //				.map(Feature::new)

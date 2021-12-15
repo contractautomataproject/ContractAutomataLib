@@ -20,7 +20,7 @@ public class CompositionSpecCheck implements BiPredicate<List<MSCA>,MSCA>{
 	
 	@Override
 	public boolean test(List<MSCA> aut, MSCA comp) {
-		//check if the composition function satisfies the spec
+		//check if the composed automaton comp satisfies the spec
 		return rank(aut,comp)&&initialState(aut,comp)&&states(aut,comp)&&finalStates(aut,comp)&&transitions(aut,comp);
 	}
 	
@@ -62,6 +62,19 @@ public class CompositionSpecCheck implements BiPredicate<List<MSCA>,MSCA>{
 		aut.get(j).getInitial().getState().get(i_bs).equals(comp.getInitial().getState().get(i_bs+shift(aut,j))) //the basic state of the initial state of operand j at index bs_i is equal to the basic state of the initial state of comp at index i_bs+shift
 						)); 
 	}
+	
+//	public CAState getInitialState(List<MSCA> aut) {
+//		List<BasicState> ic = new ArrayList<>(aut.stream()
+//				.mapToInt(a->a.getRank())
+//				.sum());
+//		
+//		IntStream.range(0,aut.size())
+//		.forEach(j->{IntStream.range(0, aut.get(j).getInitial().getState().size())
+//				.forEach(i_bs->ic.set(i_bs+shift(aut,j), aut.get(j).getInitial().getState().get(i_bs)));}
+//				);
+//		
+//		return new CAState(ic,0,0);
+//	}
 
 	private boolean transitions(List<MSCA> aut, MSCA comp) {
 

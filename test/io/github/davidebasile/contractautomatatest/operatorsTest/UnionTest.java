@@ -12,23 +12,23 @@ import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.MSCA;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MxeConverter;
+import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.operators.UnionFunction;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
-	private final MxeConverter bmc = new MxeConverter();
-	private final DataConverter bdc = new DataConverter();
+//	private final MSCAConverter bmc = new MxeConverter();
+	private final MSCAConverter bdc = new DataConverter();
 	
 	@Test
 	public void unionTest() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 
-		aut.add(bdc.importMSCA(dir+"BusinessClient.mxe.data"));
-		aut.add(bdc.importMSCA(dir+"EconomyClient.mxe.data"));
-		aut.add(bdc.importMSCA(dir+"Hotel.mxe.data"));
+		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
+		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
+		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		MSCA union = new UnionFunction().apply(aut);
-		MSCA test = bmc.importMSCA(dir+"union_BusinessClient_EconomyClient_Hotel.mxe");
+		MSCA test = bdc.importMSCA(dir+"union_BusinessClient_EconomyClient_Hotel.data");
 		assertEquals(checkTransitions(union,test),true);
 	}
 	
@@ -36,13 +36,13 @@ public class UnionTest {
 	public void union_statelabelsnotnumbers() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 
-		aut.add(bdc.importMSCA(dir+"testgraph.data"));
-		aut.add(bdc.importMSCA(dir+"testgraph.data"));
+		aut.add(bdc.importMSCA(dir+"testgraph_testunion.data"));
+		aut.add(bdc.importMSCA(dir+"testgraph_testunion.data"));
 
 		MSCA union = new UnionFunction().apply(aut);
 		//		MSCAIO.convertMSCAintoXML(dir+"union_testgraph_testgraph.mxe", union);
 
-		MSCA test = bmc.importMSCA(dir+"union_testgraph_testgraph.mxe");
+		MSCA test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");
 		assertEquals(checkTransitions(union,test),true);
 	}
 
@@ -59,8 +59,8 @@ public class UnionTest {
 	public void union_differentrank_exception() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 
-		aut.add(bdc.importMSCA(dir+"BusinessClient.mxe.data"));
-		aut.add(bmc.importMSCA(dir+"BusinessClientxHotel_open.mxe"));
+		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
+		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
 		assertThatThrownBy(() -> new UnionFunction().apply(aut))
 		.isInstanceOf(IllegalArgumentException.class);
@@ -70,7 +70,7 @@ public class UnionTest {
 	public void union_illegalcharacter() throws Exception {
 		List<MSCA> aut = new ArrayList<>(2);
 
-		MSCA test = bmc.importMSCA(dir+"union_testgraph_testgraph.mxe");
+		MSCA test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");
 		
 		aut.add(test);
 		aut.add(test);

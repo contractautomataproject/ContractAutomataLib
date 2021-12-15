@@ -1,0 +1,20 @@
+Rank: 1
+Initial state: [0]
+Final states: [[1_1white, 1_2red, 0_2red, 1_3red, 1_0whitered, 1_4blue, 0_1white, 0_3red, 0_4blue, 0_0whitered, 1_5green, 0_5green]]
+Transitions: 
+([1_2red],[!dummy],[1_3red])
+([0_1white],[!dummy],[0_2red])
+([0_0whitered],[!dummy],[0_1white])
+([1_4blue],[!dummy],[1_5green])
+([0],[!dummy],[0_0whitered])
+([0_3red],[!dummy],[0_4blue])
+([0_5green],[!dummy],[0_2red])
+([1_1white],[!dummy],[1_2red])
+([0_4blue],[!dummy],[0_5green])
+([0_0whitered],[!dummy],[0_5green])
+([1_3red],[!dummy],[1_4blue])
+([0_2red],[!dummy],[0_3red])
+([1_5green],[!dummy],[1_2red])
+([0],[!dummy],[1_0whitered])
+([1_0whitered],[!dummy],[1_1white])
+([1_0whitered],[!dummy],[1_5green])

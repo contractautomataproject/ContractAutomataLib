@@ -1,0 +1,5 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[2][0, 1]]
+Transitions: 
+([0, 0],[?privateRoom, !privateRoom],[2, 1])

@@ -9,7 +9,7 @@ package io.github.davidebasile.contractautomata.automaton.state;
 public class BasicState extends State<String> {
 
 	private boolean init;
-	private final boolean fin;
+	private boolean fin;
 	
 	public BasicState(String label, boolean init, boolean fin) {
 		super(label);
@@ -32,6 +32,10 @@ public class BasicState extends State<String> {
 		this.init = init;
 	}
 		
+	public void setFinalstate(boolean fin) {
+		this.fin=fin;
+	}
+	
 	
 	@Override
 	public String toString() {

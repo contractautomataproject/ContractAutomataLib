@@ -94,7 +94,6 @@ public class CAState extends State<List<BasicState>> {
 
 		return sb.toString();
 	}
-
 }
 
 	

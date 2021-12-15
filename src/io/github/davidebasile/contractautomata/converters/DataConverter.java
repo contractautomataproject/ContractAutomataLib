@@ -135,8 +135,6 @@ public class DataConverter implements MSCAConverter{
 		return new MSCA(tr);
 	}
 
-
-
 	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.*)"+"\\],\\["+"(.*)"+"\\],\\["+"(.*)"+"\\]\\)";

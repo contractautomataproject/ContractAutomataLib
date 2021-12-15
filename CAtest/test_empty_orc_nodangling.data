@@ -1,0 +1,7 @@
+Rank: 1
+Initial state: [0]
+Final states: [[2, 3, 0]]
+Transitions: 
+!L([0],[?a],[3])
+([0],[!b],[2])
+([2],[!b],[3])

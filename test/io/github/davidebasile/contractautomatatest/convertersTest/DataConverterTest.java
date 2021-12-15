@@ -25,9 +25,9 @@ public class DataConverterTest {
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
 		
-		MSCA aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe.data");
-		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe.data",aut);
-		MSCA test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe.data");
+		MSCA aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.data",aut);
+		MSCA test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
 	}
 	
@@ -35,7 +35,7 @@ public class DataConverterTest {
 	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
 		
-		MSCA aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.mxe.data");
+		MSCA aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 
 		assertEquals(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()

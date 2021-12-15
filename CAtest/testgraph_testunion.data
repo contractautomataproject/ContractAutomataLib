@@ -1,0 +1,11 @@
+Rank: 1
+Initial state: [0whitered]
+Final states: [[4blue, 0whitered, 2red, 3red, 5green, 1white]]
+Transitions: 
+([3red],[!dummy],[4blue])
+([0whitered],[!dummy],[1white])
+([1white],[!dummy],[2red])
+([2red],[!dummy],[3red])
+([0whitered],[!dummy],[5green])
+([4blue],[!dummy],[5green])
+([5green],[!dummy],[2red])

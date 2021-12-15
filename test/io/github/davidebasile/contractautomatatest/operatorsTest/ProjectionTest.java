@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ import io.github.davidebasile.contractautomata.automaton.label.CMLabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MxeConverter;
+import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
 import io.github.davidebasile.contractautomata.operators.CompositionFunction;
 import io.github.davidebasile.contractautomata.operators.ProjectionFunction;
@@ -26,16 +25,14 @@ import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ProjectionTest {
-	
-
 	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
-	private final MxeConverter bmc = new MxeConverter();
-	private final DataConverter bdc = new DataConverter();
+	//private final MSCAConverter bmc = new MxeConverter();
+	private final MSCAConverter bdc = new DataConverter();
 	
 	@Test
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
-		MSCA aut = bmc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).mxe");
-		MSCA test= bmc.importMSCA(dir+"BusinessClient.mxe");
+		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		MSCA test= bdc.importMSCA(dir+"BusinessClient.data");
 		aut=new ProjectionFunction(new Label("dum")).apply(aut,0, t->t.getLabel().getRequester());
 		//		System.out.println(aut);
 		//		System.out.println(test);
@@ -85,7 +82,7 @@ public class ProjectionTest {
 	}
 	
 	@Test
-	public void projectOnMachineAndImport() throws IOException {
+	public void projectOnMachineAndImport() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		MSCA cm = new ProjectionFunction(new CMLabel("1","2","!dummy")).apply(aut,0, t->t.getLabel().getOfferer());
 		MSCA test = bdc.importMSCA(dir+"cm_concur21.data");
@@ -98,24 +95,24 @@ public class ProjectionTest {
 	//************************************exceptions*********************************************
 
 	@Test
-	public void projectionException1() throws IOException {
-		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
+	public void projectionException1() throws Exception {
+		MSCA aut = bdc.importMSCA(dir+"BusinessClient.data");
 		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,-1, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 	}
 
 	@Test
-	public void projectionException2() throws IOException {
-		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
+	public void projectionException2() throws Exception {
+		MSCA aut = bdc.importMSCA(dir+"BusinessClient.data");
 		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,2, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 	}
 
 	@Test
-	public void projectionException3() throws IOException {
-		MSCA aut = bdc.importMSCA(dir+"BusinessClient.mxe.data");
+	public void projectionException3() throws Exception {
+		MSCA aut = bdc.importMSCA(dir+"BusinessClient.data");
 		assertThatThrownBy(() -> new ProjectionFunction(new CMLabel(1+"",2+"","!dum")).apply(aut,0, t->t.getLabel().getOfferer()))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}

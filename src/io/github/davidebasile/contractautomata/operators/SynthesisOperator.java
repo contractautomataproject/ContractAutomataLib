@@ -184,44 +184,10 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 
 
 
-//Pair<Set<CAState>, Set<MSCATransition>> seed=
-//new Pair<Set<CAState>, Set<MSCATransition>>(R, aut.getTransition());
 //
-//Pair<Set<CAState>, Set<MSCATransition>> result = new Fixpoint<Pair<Set<CAState>, Set<MSCATransition>>>().apply(seed,p->
-//{
-//final Set<CAState> Rf = new HashSet<CAState>(p.getFirst()); 
-//final Set<MSCATransition> trf= new HashSet<MSCATransition>(p.getSecond());
+// an attempt to perform a fixpoint computation with Stream.iterate failed because the synthesis is mutating 
+// the automaton and because it does not simplify the code
 //
-//if (aut.getTransition().removeAll(aut.getTransition().parallelStream()
-//	.filter(x->pruningPred.test(x,trf, Rf))
-//	.collect(Collectors.toSet()))) //Ki
-//R.addAll(getDanglingStates(aut, statesbackup,init));
-//
-//R.addAll(trbackup.parallelStream() 
-//	.filter(x->forbiddenPred.test(x,trf, Rf))
-//	.map(MSCATransition::getSource)
-//	.collect(Collectors.toSet())); //Ri
-//return new Pair<Set<CAState>, Set<MSCATransition>>(R,aut.getTransition());});
-
-//class Fixpoint<T> implements BiFunction<T,UnaryOperator<T>,T> {
-//
-//	@Override
-//	public T apply(T t, UnaryOperator<T> u) {
-//		return Stream.iterate(t,e->u.apply(e))
-//				.distinct()
-//				.reduce((x,y)->y).orElseThrow(IllegalArgumentException::new);
-//		
-//	}
-//}
-
-
-
-
-
-
-
-
-
 
 ///**
 // * 
