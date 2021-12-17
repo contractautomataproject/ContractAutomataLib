@@ -68,6 +68,11 @@ public class CAState extends State<List<BasicState>> {
 	public boolean isFinalstate() {
 		return this.getState().stream().allMatch(BasicState::isFinalstate);
 	}
+	
+	@Override
+	public void setFinalstate(boolean fin) {
+		this.getState().forEach(s->s.setFinalstate(fin));
+	}
 
 	/**
 	 * 

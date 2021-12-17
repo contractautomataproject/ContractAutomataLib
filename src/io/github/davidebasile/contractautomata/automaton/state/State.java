@@ -25,7 +25,7 @@ public abstract class State<T> implements Ranked {
 	
 	public abstract void setInitial(boolean init);
 	
-//	public abstract void setFinalstate(boolean fin);
+	public abstract void setFinalstate(boolean fin);
 	
 	public T getState() {
 		return state;
