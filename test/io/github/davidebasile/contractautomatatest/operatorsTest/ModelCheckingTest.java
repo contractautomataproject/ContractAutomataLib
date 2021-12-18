@@ -25,7 +25,7 @@ import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ModelCheckingTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final DataConverter bdc = new DataConverter();
 	private Automaton<String, BasicState,Transition<String, BasicState,Label>> prop ;
 	

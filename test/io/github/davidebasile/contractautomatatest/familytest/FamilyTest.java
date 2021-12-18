@@ -24,7 +24,7 @@ import io.github.davidebasile.contractautomata.family.converters.FamilyConverter
 import io.github.davidebasile.contractautomata.family.converters.ProdFamilyConverter;
 
 public class FamilyTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final FamilyConverter dfc = new ProdFamilyConverter();
 	
 	@Test

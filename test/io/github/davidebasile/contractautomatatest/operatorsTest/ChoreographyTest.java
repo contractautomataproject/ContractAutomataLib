@@ -29,7 +29,7 @@ import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
 
 public class ChoreographyTest {
 
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	//private final MSCAConverter bmc = new MxeConverter();
 	private final DataConverter bdc = new DataConverter();
 

@@ -16,7 +16,7 @@ import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ProductOrchestrationTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 //	private final MSCAConverter bmc = new MxeConverter();
 	private final MSCAConverter bdc = new DataConverter();
 

@@ -20,7 +20,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class CompositionTest {
 
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final DataConverter bdc = new DataConverter();
 
 	//***********************************testing impl against spec on scenarios **********************************************

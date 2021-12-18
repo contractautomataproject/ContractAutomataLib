@@ -1,4 +1,4 @@
-package examplesTest;
+package io.github.davidebasile.examplesTest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
 
 public class Snippets {
-	final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	
 	@SuppressWarnings("unused")
 	@Test

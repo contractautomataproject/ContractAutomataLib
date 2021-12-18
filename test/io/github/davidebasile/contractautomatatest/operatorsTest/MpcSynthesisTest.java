@@ -22,7 +22,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 
 public class MpcSynthesisTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final MSCAConverter bdc = new DataConverter();
 
 	@Test

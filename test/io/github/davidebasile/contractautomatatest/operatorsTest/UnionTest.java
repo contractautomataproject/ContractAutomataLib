@@ -16,7 +16,7 @@ import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.operators.UnionFunction;
 
 public class UnionTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 //	private final MSCAConverter bmc = new MxeConverter();
 	private final MSCAConverter bdc = new DataConverter();
 	

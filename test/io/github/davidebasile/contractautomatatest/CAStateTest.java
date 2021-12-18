@@ -2,6 +2,7 @@ package io.github.davidebasile.contractautomatatest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +68,22 @@ public class CAStateTest {
 		.collect(Collectors.toList()),0,0);
 		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
 	}
+	
+	@Test
+	public void setFinalStatesTest() {
+		test.setFinalstate(true);
+		
+		assertTrue(test.getState().stream().allMatch(s->s.isFinalstate()));
+	}
+	
+	@Test
+	public void readCSVtest() {
+		BasicState b =test.getState().get(0);
+		b.setFinalstate(true);
+		assertEquals(BasicState.readCSV(b.toCSV()).toString(), b.toString());
+	}
+	
+	
 	
 //	@Test
 //	public void hasSameLabels() {

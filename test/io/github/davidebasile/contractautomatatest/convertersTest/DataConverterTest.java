@@ -19,7 +19,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class DataConverterTest {
 	private final DataConverter bdc = new DataConverter();
-	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 
 	@Test
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
