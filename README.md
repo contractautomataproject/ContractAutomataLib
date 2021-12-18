@@ -1,4 +1,4 @@
-[![Build Status](https://app.travis-ci.com/ContractAutomataProject/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/ContractAutomataProject/ContractAutomataLib)
+[![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
 [![Code Quality Score](https://api.codiga.io/project/29139/score/svg)](https://app.codiga.io/public/project/29139/ContractAutomataLib/dashboard)
 [![Code Grade](https://api.codiga.io/project/29139/status/svg)](https://app.codiga.io/public/project/29139/ContractAutomataLib/dashboard)
@@ -31,10 +31,10 @@ This software has been developed also using the Model-based Software Engineering
 The following documentation is up-to date to the commit <a href="https://github.com/davidebasile/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
 
 <ul>
-  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
+  <li> <a href="https://contractautomataproject.github.io/davidebasile/site/index.htm">Online documentation</a>
 </li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
+  <li><a href="https://contractautomataproject.github.io/davidebasile/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
+  <li><a href="https://contractautomataproject.github.io/davidebasile/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
@@ -42,7 +42,7 @@ The javadoc documentation for the release to the Maven Central Repository is ava
 
 <h2>User Documentation</h2>
 
-The user documentation, containing information on the usage and installation of the library, is available at the Github Page https://contractautomataproject.github.io/ContractAutomataLib/.
+The user documentation, containing information on the usage and installation of the library, is available at the Github Page https://davidebasile.github.io/ContractAutomataLib/.
 
 
 <h2>Contacts</h2>
