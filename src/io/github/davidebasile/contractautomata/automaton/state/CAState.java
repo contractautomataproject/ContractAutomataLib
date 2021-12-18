@@ -12,33 +12,47 @@ import java.util.stream.Collectors;
  */
 public class CAState extends State<List<BasicState>> {
 	
-	private final float x;
-	private final float y;
-
-
-	public CAState(List<BasicState> lstate, float x, float y)
-	{
-		super(lstate);
-		if (lstate==null||lstate.isEmpty())
-			throw new IllegalArgumentException();
-		this.x=x;
-		this.y=y;
-	}
+//	private final float x;
+//	private final float y;
 
 	/**
-	 * Construct a new CAState from a list of CAStates by flattening them into 
-	 * a list of basic states
-	 * @param states the list of castates
+	 * Construct a new CAState from
+	 * - a list of BasicStates
+	 * - a list of CAStates by flattening them into  a list of basic states
+	 * @param lstate states the list of castates or basicstates
 	 */
-	public CAState(List<CAState> states)
+	public <T extends State<?>> CAState(List<T> lstate)//, float x, float y)
 	{
-		super(states.stream()
-		.map(CAState::getState)
-		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;}));
-		
-		this.x=0;
-		this.y=0;
+		super((lstate.get(0) instanceof CAState)?
+				lstate.stream()
+				.map(s->(CAState) s)
+				.map(CAState::getState)
+				.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;})
+				:(lstate.get(0) instanceof BasicState)?
+					lstate.stream()
+					.map(s->(BasicState)s)
+					.collect(Collectors.toList())
+					:null);
+		if (lstate==null||lstate.isEmpty())
+			throw new IllegalArgumentException();
+//		this.x=x;
+//		this.y=y;
 	}
+
+//	/**
+//	 * Construct a new CAState from a list of CAStates by flattening them into 
+//	 * a list of basic states
+//	 * @param states the list of castates
+//	 */
+//	public CAState(List<CAState> states)
+//	{
+//		super(states.stream()
+//		.map(CAState::getState)
+//		.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;}));
+//		
+////		this.x=0;
+////		this.y=0;
+//	}
 
 
 	@Override
@@ -46,13 +60,13 @@ public class CAState extends State<List<BasicState>> {
 		return this.getState().size();
 	}
 
-	public float getX() {
-		return x;
-	}
-
-	public float getY() {
-		return y;
-	}
+//	public float getX() {
+//		return x;
+//	}
+//
+//	public float getY() {
+//		return y;
+//	}
 
 	@Override
 	public boolean isInitial() {

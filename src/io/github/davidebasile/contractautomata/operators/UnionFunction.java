@@ -61,7 +61,8 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 		//new initial state
 		CAState newinitial = new CAState(IntStream.range(0,rank)
 				.mapToObj(i->new BasicState("0",true,false))
-				.collect(Collectors.toList()),0,0);
+				.collect(Collectors.toList())//,0,0
+				);
 
 		Set<MSCATransition> uniontr= new HashSet<>(relabeled.stream()
 				.map(x->x.getTransition().size())

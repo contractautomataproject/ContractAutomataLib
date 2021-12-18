@@ -59,7 +59,8 @@ public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSC
 				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
 				.map(s->s.getState().get(indexprincipal))
 				.distinct()
-				.collect(Collectors.toMap(Function.identity(), bs->new CAState(new ArrayList<BasicState>(Arrays.asList(bs)),0,0)));
+				.collect(Collectors.toMap(Function.identity(), bs->new CAState(new ArrayList<BasicState>(Arrays.asList(bs))//,0,0
+						)));
 
 		//associating each castate of the composition with the castate of the principal
 		Map<CAState,CAState> map2princst = 

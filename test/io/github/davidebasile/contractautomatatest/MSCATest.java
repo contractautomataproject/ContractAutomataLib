@@ -88,11 +88,14 @@ public class MSCATest {
 		BasicState bs3 = new BasicState("3",true,false);
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0,bs1,bs2),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs0,bs1,bs3),0,0),
+				new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
+						),
 				Modality.PERMITTED));
-		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3),0,0);
+		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
+				);
 		tr.add(new MSCATransition(cs,
 				new CALabel(lab2),
 				cs,
@@ -115,9 +118,11 @@ public class MSCATest {
 
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0)//,0,0
+				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1),0,0),
+				new CAState(Arrays.asList(bs1)//,0,0
+						),
 				Modality.PERMITTED));
 
 		assertThatThrownBy(() -> new MSCA(tr))
@@ -136,9 +141,11 @@ public class MSCATest {
 
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0)//,0,0
+				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1),0,0),
+				new CAState(Arrays.asList(bs1)//,0,0
+						),
 				Modality.PERMITTED));
 
 		assertThatThrownBy(() -> new MSCA(tr))
@@ -158,14 +165,18 @@ public class MSCATest {
 		BasicState bs2 = new BasicState("0",false,true);
 
 		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs1),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs1)//,0,0
+				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2),0,0),
+				new CAState(Arrays.asList(bs2)//,0,0
+						),
 				Modality.PERMITTED));
 
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs2),0,0),
+		tr.add(new MSCATransition(new CAState(Arrays.asList(bs2)//,0,0
+				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2),0,0),
+				new CAState(Arrays.asList(bs2)//,0,0
+						),
 				Modality.PERMITTED));
 		assertThatThrownBy(() -> new MSCA(tr))
 		.isInstanceOf(IllegalArgumentException.class)

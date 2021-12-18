@@ -45,8 +45,9 @@ public class RelabelingOperator implements UnaryOperator<MSCA> {
 				.collect(Collectors.toMap(Function.identity(), 
 						x->new CAState(x.getState().stream()
 								.map(s->clonedstate.get(s))
-								.collect(Collectors.toList()),
-								x.getX(),x.getY())));
+								.collect(Collectors.toList())
+								//,x.getX(),x.getY()
+								)));
 
 		return new MSCA(aut.getTransition().stream()
 				.map(t->new MSCATransition(clonedcastates.get(t.getSource()),

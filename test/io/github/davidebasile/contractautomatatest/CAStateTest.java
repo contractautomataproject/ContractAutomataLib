@@ -29,9 +29,12 @@ public class CAStateTest {
 		BasicState bs10 = new BasicState("10",true,false);
 		
 		List<CAState> l = new ArrayList<>();
-		l.add(new CAState(Arrays.asList(bs0,bs1,bs2),0,0)); //new int[] {0,1,2},true,false));
-		l.add(new CAState(Arrays.asList(bs0,bs0),0,0));//(new int[] {0,0},true,false));
-		l.add(new CAState(Arrays.asList(bs4,bs10),0,0));//(new int[] {4,10},true,false));
+		l.add(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+				)); //new int[] {0,1,2},true,false));
+		l.add(new CAState(Arrays.asList(bs0,bs0)//,0,0
+				));//(new int[] {0,0},true,false));
+		l.add(new CAState(Arrays.asList(bs4,bs10)//,0,0
+				));//(new int[] {4,10},true,false));
 		
 		test = new CAState(l);
 	}
@@ -57,7 +60,8 @@ public class CAStateTest {
 	public void toStringFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
 		.map(bs->new BasicState(bs.getState(),false,true))
-		.collect(Collectors.toList()),0,0);
+		.collect(Collectors.toList())//,0,0
+		);
 		assertEquals(test2.toString()," Final [0, 1, 2, 0, 0, 4, 10]");
 	}
 	
@@ -65,7 +69,8 @@ public class CAStateTest {
 	public void toStringNoInitialNoFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
 		.map(bs->new BasicState(bs.getState(),false,false))
-		.collect(Collectors.toList()),0,0);
+		.collect(Collectors.toList())//,0,0
+		);
 		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
 	}
 	
@@ -101,18 +106,22 @@ public class CAStateTest {
 
 	//********************** testing exceptions *********************
 	
+
+//	@Test
+//	public void constructorTest3_Exception_nullArgument() {
+//		assertThatThrownBy(() -> new CAState(new ArrayList<>()//,0,0
+//				))
+//	    .isInstanceOf(IllegalArgumentException.class);
+//	}
+	
 	@Test
 	public void constructorTest1_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CAState(null,0,0))
-	    .isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> new CAState(null//,0,0
+				))
+	    .isInstanceOf(NullPointerException.class);
 	}
 
 	
-	@Test
-	public void constructorTest3_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CAState(new ArrayList<>(),0,0))
-	    .isInstanceOf(IllegalArgumentException.class);
-	}
 	
 //	@Test
 //	public void setState_Exception_nullArgument() {

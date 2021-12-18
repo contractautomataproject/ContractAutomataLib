@@ -36,16 +36,20 @@ public class MSCATransitionTest {
 	@Before
 	public void setup()
 	{
-		l.add(new CAState(Arrays.asList(bs0,bs1,bs2),0,0)); 
-		l.add(new CAState(Arrays.asList(bs0,bs1,bs3),0,0));
+		l.add(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+				)); 
+		l.add(new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
+				));
 		
 		lab.add(CALabel.idle);
 		lab.add(CALabel.offer+"a");
 		lab.add(CALabel.request+"a");
 		calab= new CALabel(lab);
 
-		source = new CAState(Arrays.asList(bs0,bs1,bs2),0,0);
-		target = new CAState(Arrays.asList(bs0,bs1,bs3),0,0);
+		source = new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+				);
+		target = new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
+				);
 		t1 = new MSCATransition(source,calab,target,Modality.PERMITTED);
 
 	}
