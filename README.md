@@ -31,10 +31,10 @@ This software has been developed also using the Model-based Software Engineering
 The following documentation is up-to date to the commit <a href="https://github.com/davidebasile/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
 
 <ul>
-  <li> <a href="https://contractautomataproject.github.io/davidebasile/site/index.htm">Online documentation</a>
+  <li> <a href="https://davidebasile.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
 </li>
-  <li><a href="https://contractautomataproject.github.io/davidebasile/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
-  <li><a href="https://contractautomataproject.github.io/davidebasile/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
+  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
+  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
