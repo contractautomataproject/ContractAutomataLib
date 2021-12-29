@@ -36,7 +36,7 @@ public class Snippets {
 		List<MSCA> aut = new ArrayList<>(2);	
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));//loading textual .data description of a CA
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
-		MSCA comp = new CompositionFunction().apply(aut, new Agreement().negate(),100);
+		MSCA comp = new CompositionFunction(aut).apply(new Agreement().negate(),100);
 		MSCA orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
 	}
 	

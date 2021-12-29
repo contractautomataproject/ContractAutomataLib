@@ -47,7 +47,7 @@ public class ProjectionTest {
 				.mapToObj(i->new ProjectionFunction(new Label("dumb")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 
-		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
+		MSCA closed_aut = new CompositionFunction(principals).apply(new StrongAgreement().negate(), 100);
 
 		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCA.data", closed_aut);
 
@@ -67,7 +67,7 @@ public class ProjectionTest {
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
 				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"","!dummy")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
-		MSCA closed_aut = new CompositionFunction().apply(principals, new StrongAgreement().negate(), 100);
+		MSCA closed_aut = new CompositionFunction(principals).apply(new StrongAgreement().negate(), 100);
 //		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM.data", closed_aut);
 	
 		MSCA test = bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");

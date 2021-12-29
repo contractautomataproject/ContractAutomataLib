@@ -33,7 +33,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction(aut).apply(null,100)));
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"Broker.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"PriviledgedHotel.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction(aut).apply(null,100)));
 	}
 
 
@@ -59,7 +59,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"Broker.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction().apply(aut, null,100)));
+		assertTrue(new CompositionSpecCheck().test(aut,new CompositionFunction(aut).apply(null,100)));
 	}
 	
 	//**********************************SCICO2020 case study*******************************************************************
@@ -72,7 +72,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 
-		MSCA comp=new CompositionFunction().apply(aut, null,100);
+		MSCA comp=new CompositionFunction(aut).apply(null,100);
 		MSCA test = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
 	}
@@ -84,7 +84,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
-		MSCA comp=new CompositionFunction().apply(aut, null,100);
+		MSCA comp=new CompositionFunction(aut).apply(null,100);
 		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),null);
 	}
 
@@ -95,7 +95,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 
-		MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction(aut).apply(t->t.getLabel().isRequest(),100);
 		MSCA test = bdc.importMSCA(dir+"BusinessClientxHotel_closed.data");
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
 	}
@@ -109,7 +109,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		MSCA comp = new CompositionFunction().apply(aut, null,100);
+		MSCA comp = new CompositionFunction(aut).apply(null,100);
 		MSCA test= bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		assertEquals(MSCATest.checkTransitions(comp,test),true);	
 	}
@@ -122,7 +122,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		MSCA comp=new CompositionFunction().apply(aut, t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction(aut).apply(t->t.getLabel().isRequest(),100);
 
 		MSCA test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),test),true);
@@ -140,7 +140,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"A.data"));
 		aut.add(bdc.importMSCA(dir+"B.data"));
 
-		MSCA comp=new CompositionFunction().apply(aut,null,100);
+		MSCA comp=new CompositionFunction(aut).apply(null,100);
 		MSCA test = bdc.importMSCA(dir+"(AxB).data");
 
 		assertEquals(MSCATest.checkTransitions(comp,test),true);
@@ -155,7 +155,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
-		MSCA comp=new CompositionFunction().apply(aut,t->t.getLabel().isRequest(),100);
+		MSCA comp=new CompositionFunction(aut).apply(t->t.getLabel().isRequest(),100);
 
 		assertEquals(comp,null);
 	}
@@ -168,7 +168,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
-		assertThatThrownBy(() -> new CompositionFunction().apply(aut,null,0))
+		assertThatThrownBy(() -> new CompositionFunction(aut).apply(null,0))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 	}

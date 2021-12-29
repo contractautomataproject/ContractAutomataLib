@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,57 +36,83 @@ import io.github.davidebasile.contractautomata.automaton.transition.MSCATransiti
  * @author Davide Basile
  *
  */
-public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSCATransition>,Integer,MSCA>{
+public class CompositionFunction implements BiFunction<Predicate<MSCATransition>,Integer,MSCA>{
+
+	//each transition of each MSCA in aut is associated with the corresponding index in aut
+	static final class MSCATransitionIndex {//more readable than Entry
+		MSCATransition tra;
+		Integer ind;
+		public MSCATransitionIndex(MSCATransition tr, Integer i) {
+			this.tra=tr; //different principals may have equal transitions
+			this.ind=i;
+		}
+	}
+	
+	private List<MSCA> aut;
+	private int rank;
+	private List<CAState> initial;
+	private CAState initialstate;
+	private Queue<Entry<List<CAState>,Integer>> toVisit;
+	private Queue<Entry<List<CAState>,Integer>> frontier;
+	private ConcurrentMap<List<CAState>, CAState> operandstat2compstat;
+	private Set<MSCATransition> tr;
+	private Set<List<CAState>> visited;
+	private Queue<CAState> dontvisit;
+	
+	/**
+	 * 
+	 * @param aut the list of the automata to compose
+	 */
+	public CompositionFunction(List<MSCA> aut)
+	{
+		this.aut=aut;
+		this.rank=aut.stream()
+				.map(MSCA::getRank)
+				.collect(Collectors.summingInt(Integer::intValue));
+		this.initial = aut.stream()  
+				.flatMap(a -> a.getStates().stream())
+				.filter(CAState::isInitial)
+				.collect(Collectors.toList());
+
+		this.initialstate = new CAState(initial);
+		this.toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));//List.of(Map.entry(initial,0)));
+		this.frontier = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>();
+		this.operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>();//);Map.of(initial, initialstate));
+		this.operandstat2compstat.put(initial, initialstate);//used to avoid duplicate target states 
+		this.tr = new HashSet<MSCATransition>();//transitions of the composed automaton to build
+		this.visited = new HashSet<List<CAState>>();
+		this.dontvisit = new ConcurrentLinkedQueue<CAState>();
+	}
 
 	/**
 	 * This is the most important method of the tool, it computes the non-associative composition of contract automata.
 	 * 
-	 * @param aut  the list of automata to compose
 	 * @param pruningPred  the invariant that all transitions must satisfy
 	 * @param bound  the bound on the depth of the visit
 	 * @return  the composed automaton
 	 */
 	@Override
-	public MSCA apply(List<MSCA> aut, Predicate<MSCATransition> pruningPred, Integer bound)
+	public MSCA apply(Predicate<MSCATransition> pruningPred, Integer bound)
 	{
 		//TODO too long function
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition
-
-		//each transition of each MSCA in aut is associated with the corresponding index in aut
-		final class MSCATransitionIndex {//more readable than Entry
-			MSCATransition tra;
-			Integer ind;
-			public MSCATransitionIndex(MSCATransition tr, Integer i) {
-				this.tra=tr; //different principals may have equal transitions
-				this.ind=i;
-			}
+		
+		if (!frontier.isEmpty())//in case this method is called more than once, a potential frontier can be restored
+		{
+			toVisit.addAll(frontier);
+			frontier.clear();
 		}
-
-		int rank=aut.stream()
-				.map(MSCA::getRank)
-				.collect(Collectors.summingInt(Integer::intValue));
-
-		List<CAState> initial = aut.stream()  
-				.flatMap(a -> a.getStates().stream())
-				.filter(CAState::isInitial)
-				.collect(Collectors.toList());
-
-		CAState initialstate = new CAState(initial);
-
-		Queue<Entry<List<CAState>,Integer>> toVisit = new ConcurrentLinkedQueue<Entry<List<CAState>,Integer>>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));//List.of(Map.entry(initial,0)));
-		ConcurrentMap<List<CAState>, CAState> operandstat2compstat = new ConcurrentHashMap<List<CAState>, CAState>();//);Map.of(initial, initialstate));
-		operandstat2compstat.put(initial, initialstate);//used to avoid duplicate target states 
-		Set<MSCATransition> tr = new HashSet<MSCATransition>();//transitions of the composed automaton to build
-		Set<List<CAState>> visited = new HashSet<List<CAState>>();
-		Queue<CAState> dontvisit = new ConcurrentLinkedQueue<CAState>();
 
 		do {
 			Entry<List<CAState>,Integer> sourceEntry=toVisit.remove(); //pop state to visit
-			if (visited.add(sourceEntry.getKey())&&sourceEntry.getValue()<bound) //if states has not been visited so far
+			if (sourceEntry.getValue()>=bound)  //if bound is reached store the frontier for a next call
+				frontier.add(sourceEntry);
+			else if (visited.add(sourceEntry.getKey())) //if the state has not been visited so far and it is within bound
 			{
 				List<CAState> source =sourceEntry.getKey();
 				CAState sourcestate= operandstat2compstat.get(source);
+							
 				if (dontvisit.remove(sourcestate))
 					continue;//was target of a semicontrollable bad transition
 
@@ -152,14 +179,15 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 						.filter(e->(!e.getValue().isEmpty())) //no duplicates
 						.collect(toSet()));
 
-				if (trmap.parallelStream()//don't visit target states if they are bad
+				if (trmap.parallelStream()
 						.anyMatch(x->pruningPred!=null&&pruningPred.test(x.getKey())&&x.getKey().isUrgent()))
 				{
 					if (sourcestate.equals(initialstate))
 						return null;
-					continue;
+					continue;//source state is bad in this case don't visit target states
 				}
-				else {//adding transitions, updating states
+				else 
+				{//adding transitions, updating states
 					Set<MSCATransition> trans=trmap.parallelStream()
 							.filter(x->pruningPred==null||x.getKey().isNecessary()||pruningPred.negate().test(x.getKey()))//semicontrollable are not pruned
 							.collect(mapping((Entry<MSCATransition, List<CAState>> e)-> e.getKey(),toSet()));
@@ -180,11 +208,15 @@ public class CompositionFunction implements TriFunction<List<MSCA>,Predicate<MSC
 				}
 			}
 		} while (!toVisit.isEmpty());
-
 		
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
 		
+		initialstate.getState().get(0).setFinalstate(true);
 		return new MSCA(tr);
+	}
+	
+	public boolean isFrontierEmpty() {
+		return this.frontier.isEmpty();
 	}
 
 	private static Integer computeSumPrincipal(MSCATransition etra, Integer eind, List<MSCA> aut)
