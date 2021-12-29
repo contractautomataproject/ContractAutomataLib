@@ -211,7 +211,7 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 		
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
 		
-		initialstate.getState().get(0).setFinalstate(true);
+		//initialstate.getState().get(0).setFinalstate(true);
 		return new MSCA(tr);
 	}
 	
