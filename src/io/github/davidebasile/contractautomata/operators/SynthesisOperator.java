@@ -55,7 +55,8 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> pruningPredicate,
 			TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
 			Predicate<MSCATransition> req,
-			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop) {
+		//  Automaton<L,V, S extends State<L>,T extends Transition<L,V,S,? extends Label<V>>>
+			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop) {
 		this(pruningPredicate,forbiddenPredicate,req);
 		if (prop!=null)
 			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);
@@ -81,7 +82,7 @@ public class SynthesisOperator implements UnaryOperator<MSCA>{
 	 */
 	public SynthesisOperator(TriPredicate<MSCATransition, Set<MSCATransition>, Set<CAState>> forbiddenPredicate,
 			Predicate<MSCATransition> req,
-			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop) {
+			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop) {
 		this((x,t,bad) -> false, forbiddenPredicate,req);
 		if (prop!=null)
 			getForbiddenStates = a -> new ModelCheckingFunction().apply(a, prop);

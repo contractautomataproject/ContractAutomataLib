@@ -29,7 +29,7 @@ public class ProjectionFunction implements TriFunction<MSCA,Integer,Function<MSC
 	 * 
 	 * @param lab the label indicates whether CMs or CAs are to be projected
 	 */
-	public ProjectionFunction(Label lab)
+	public ProjectionFunction(Label<String> lab)
 	{
 		//TODO only principals labels are CM
 		if (lab instanceof CMLabel)

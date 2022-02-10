@@ -35,8 +35,6 @@ public class CAState extends State<List<BasicState>> {
 					:null);
 		if (lstate==null||lstate.isEmpty())
 			throw new IllegalArgumentException();
-//		this.x=x;
-//		this.y=y;
 	}
 
 //	/**
@@ -92,6 +90,7 @@ public class CAState extends State<List<BasicState>> {
 	 * 
 	 * @return an encoding of the object as comma separated values
 	 */
+	@Override
 	public String toCSV()
 	{
 		return "[state=["+this.getState().stream()

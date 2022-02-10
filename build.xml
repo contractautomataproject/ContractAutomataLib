@@ -5,6 +5,11 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="CAT_Lib">
     <property environment="env"/>
+    <property name="CARE.location" value="../OrchestrationEngine"/>
+    <property name="CARE2.location" value="../../eclipse-workspace2/CARE2"/>
+    <property name="CARE_Example.location" value="../OrchestrationExample"/>
+    <property name="CATLib_GraphLogicA.location" value="../CATLib_PngConverter"/>
+    <property name="CAT_App.location" value="../CAT_App"/>
     <property name="ECLIPSE_HOME" value="../../eclipse/java-2018-09/eclipse/"/>
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
@@ -13,7 +18,6 @@
     <path id="Maven Dependencies.libraryclasspath">
         <pathelement location="../../.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar"/>
         <pathelement location="../../.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
-        <pathelement location="../../.m2/repository/org/json/json/20210307/json-20210307.jar"/>
         <pathelement location="../../.m2/repository/org/assertj/assertj-core/3.10.0/assertj-core-3.10.0.jar"/>
         <pathelement location="../../.m2/repository/org/ow2/sat4j/org.ow2.sat4j.core/2.3.4/org.ow2.sat4j.core-2.3.4.jar"/>
         <pathelement location="../../.m2/repository/org/apache/maven/plugins/maven-gpg-plugin/3.0.1/maven-gpg-plugin-3.0.1.jar"/>
@@ -77,11 +81,23 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.CAStateTest.constructorTest1_Exception_nullArgument.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.CAStateTest.constructorTest3_Exception_nullArgument.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
     <path id="run.CAStateTest.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CAStateTest.readCSVtest.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CAStateTest.setFinalStatesTest.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
@@ -105,6 +121,18 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.ChoreographyTest.choreoConcur2021ex25.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ChoreographyTest.chorTestControllableLazyOfferTransitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ChoreographyTest.chorTestLMCS2020Transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.ChoreographyTest.chorTestLMCS2020TransitionsConstructorTwoArguments.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
@@ -122,6 +150,38 @@
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
     <path id="run.CMLabelTest.testConstructorException.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotel_closed.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotel_open.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compositionTestSCP2020_nonassociative.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compTestBound_noTransitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compTestEmptySimple.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.CompositionTest.compTestSimple.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
@@ -465,6 +525,10 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.FMCATest.testProductsWithNonEmptyOrchestration.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.FMCATest.testSelectProductSatisfyingPredicateException.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
@@ -473,31 +537,15 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.FMCATest.testValidProductsOrc.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.FMCATest.validProductsOrcFam.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
     <path id="run.FMCAUtilTest.classpath">
-        <path refid="CAT_Lib.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.JsonConverterTest.importTest.classpath">
-        <path refid="CAT_Lib.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.JsonConverterTest.classpath">
-        <path refid="CAT_Lib.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.JsonConverterTest.loadConvert.classpath">
-        <path refid="CAT_Lib.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.JsonConverterTest.test.classpath">
-        <path refid="CAT_Lib.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.JsonConverterTest.testTr.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
@@ -513,6 +561,10 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.ModelCheckingTest.testForte2021.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.ModelCheckingTest.testOrcSynthesis2021.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
@@ -521,11 +573,27 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.MpcSynthesisTest.mpcEmptyTestLMCS2020.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.MpcSynthesisTest.mpcEmptyTestNoDangling.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.MpcSynthesisTest.mpcEmptyTestNoDanglingWithProperty.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.MpcSynthesisTest.mpcTest2.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
     <path id="run.MpcSynthesisTest.mpcTest_nonempty.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.MpcSynthesisTest.mpc_lazy_exception.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
@@ -769,6 +837,46 @@
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
     </path>
+    <path id="run.OrchestrationTest.orcEmptyTestNoDangling.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.OrchestrationTest.orcTestLMCS2020Transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.OrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.OrchestrationTest.orcTest_empty.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.OrchestrationTest.orcTest_nonempty.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.OrchestrationTest.orc_necessaryoffer_exception.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ProductOrchestrationTest.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ProductOrchestrationTest.testForte2021.classpath">
+        <path refid="CAT_Lib.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
     <path id="run.ProductTest.classpath">
         <path refid="CAT_Lib.classpath"/>
         <path refid="Maven Dependencies.libraryclasspath"/>
@@ -857,7 +965,38 @@
             <classpath refid="CAT_Lib.classpath"/>
         </javac>
     </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${CARE.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${CARE.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${CARE2.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${CARE2.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${CARE_Example.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${CARE_Example.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${CATLib_GraphLogicA.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${CATLib_GraphLogicA.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${CAT_App.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${CAT_App.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">
             <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
@@ -925,6 +1064,15 @@
             <classpath refid="run.CAStateTest.constructorTest.classpath"/>
         </junit>
     </target>
+    <target name="CAStateTest.constructorTest1_Exception_nullArgument">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CAStateTest.constructorTest1_Exception_nullArgument.classpath"/>
+        </junit>
+    </target>
     <target name="CAStateTest.constructorTest3_Exception_nullArgument">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -941,6 +1089,24 @@
             <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.CAStateTest.classpath"/>
+        </junit>
+    </target>
+    <target name="CAStateTest.readCSVtest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CAStateTest.readCSVtest.classpath"/>
+        </junit>
+    </target>
+    <target name="CAStateTest.setFinalStatesTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CAStateTest.setFinalStatesTest.classpath"/>
         </junit>
     </target>
     <target name="CAStateTest.toStringFinalTest">
@@ -974,7 +1140,6 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.AutomataTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.CALabelTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
@@ -982,10 +1147,7 @@
             <test name="io.github.davidebasile.contractautomatatest.LabelTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.MSCATest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.MSCATransitionTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.ConverterTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.convertersTest.DataConverterTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.MxeConverterTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FMCATest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FamilyTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FeatureTest" todir="${junit.output.dir}"/>
@@ -1001,6 +1163,7 @@
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProjectionTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.UnionTest" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.CAT_Lib.classpath"/>
         </junit>
@@ -1012,6 +1175,33 @@
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ChoreographyTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.ChoreographyTest.branchingCondition.classpath"/>
+        </junit>
+    </target>
+    <target name="ChoreographyTest.choreoConcur2021ex25">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ChoreographyTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ChoreographyTest.choreoConcur2021ex25.classpath"/>
+        </junit>
+    </target>
+    <target name="ChoreographyTest.chorTestControllableLazyOfferTransitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ChoreographyTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ChoreographyTest.chorTestControllableLazyOfferTransitions.classpath"/>
+        </junit>
+    </target>
+    <target name="ChoreographyTest.chorTestLMCS2020Transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ChoreographyTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ChoreographyTest.chorTestLMCS2020Transitions.classpath"/>
         </junit>
     </target>
     <target name="ChoreographyTest.chorTestLMCS2020TransitionsConstructorTwoArguments">
@@ -1057,6 +1247,78 @@
             <test name="io.github.davidebasile.contractautomatatest.CMLabelTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.CMLabelTest.testConstructorException.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compAndOrcTestSCP2020_BusinessClientxHotelxEconomyClient.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotelxEconomyClient_open_transitions.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compositionTestSCP2020_BusinessClientxHotel_closed">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotel_closed.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compositionTestSCP2020_BusinessClientxHotel_open">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compositionTestSCP2020_BusinessClientxHotel_open.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compositionTestSCP2020_nonassociative">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compositionTestSCP2020_nonassociative.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compTestBound_noTransitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compTestBound_noTransitions.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compTestEmptySimple">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compTestEmptySimple.classpath"/>
+        </junit>
+    </target>
+    <target name="CompositionTest.compTestSimple">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.CompositionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.CompositionTest.compTestSimple.classpath"/>
         </junit>
     </target>
     <target name="CompositionTest.finalStates">
@@ -1818,6 +2080,15 @@
             <classpath refid="run.FMCATest.testOrchestrationOfFamilyEnumerative.classpath"/>
         </junit>
     </target>
+    <target name="FMCATest.testProductsWithNonEmptyOrchestration">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.familytest.FMCATest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.FMCATest.testProductsWithNonEmptyOrchestration.classpath"/>
+        </junit>
+    </target>
     <target name="FMCATest.testSelectProductSatisfyingPredicateException">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -1836,6 +2107,15 @@
             <classpath refid="run.FMCATest.testToString.classpath"/>
         </junit>
     </target>
+    <target name="FMCATest.testValidProductsOrc">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.familytest.FMCATest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.FMCATest.testValidProductsOrc.classpath"/>
+        </junit>
+    </target>
     <target name="FMCATest.validProductsOrcFam">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -1852,51 +2132,6 @@
             <test name="io.github.davidebasile.contractautomata.family.FMCAUtilTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.FMCAUtilTest.classpath"/>
-        </junit>
-    </target>
-    <target name="JsonConverterTest.importTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.JsonConverterTest.importTest.classpath"/>
-        </junit>
-    </target>
-    <target name="JsonConverterTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.JsonConverterTest.classpath"/>
-        </junit>
-    </target>
-    <target name="JsonConverterTest.loadConvert">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.JsonConverterTest.loadConvert.classpath"/>
-        </junit>
-    </target>
-    <target name="JsonConverterTest.test">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.JsonConverterTest.test.classpath"/>
-        </junit>
-    </target>
-    <target name="JsonConverterTest.testTr">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
-            <classpath refid="run.JsonConverterTest.testTr.classpath"/>
         </junit>
     </target>
     <target name="ModelCheckingTest">
@@ -1926,6 +2161,15 @@
             <classpath refid="run.ModelCheckingTest.testCorSynthesis2021.classpath"/>
         </junit>
     </target>
+    <target name="ModelCheckingTest.testForte2021">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ModelCheckingTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ModelCheckingTest.testForte2021.classpath"/>
+        </junit>
+    </target>
     <target name="ModelCheckingTest.testOrcSynthesis2021">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -1944,6 +2188,33 @@
             <classpath refid="run.MpcSynthesisTest.classpath"/>
         </junit>
     </target>
+    <target name="MpcSynthesisTest.mpcEmptyTestLMCS2020">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.MpcSynthesisTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.MpcSynthesisTest.mpcEmptyTestLMCS2020.classpath"/>
+        </junit>
+    </target>
+    <target name="MpcSynthesisTest.mpcEmptyTestNoDangling">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.MpcSynthesisTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.MpcSynthesisTest.mpcEmptyTestNoDangling.classpath"/>
+        </junit>
+    </target>
+    <target name="MpcSynthesisTest.mpcEmptyTestNoDanglingWithProperty">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.MpcSynthesisTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.MpcSynthesisTest.mpcEmptyTestNoDanglingWithProperty.classpath"/>
+        </junit>
+    </target>
     <target name="MpcSynthesisTest.mpcTest2">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -1960,6 +2231,15 @@
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.MpcSynthesisTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.MpcSynthesisTest.mpcTest_nonempty.classpath"/>
+        </junit>
+    </target>
+    <target name="MpcSynthesisTest.mpc_lazy_exception">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.MpcSynthesisTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.MpcSynthesisTest.mpc_lazy_exception.classpath"/>
         </junit>
     </target>
     <target name="MSCATest.ambiguousStates_exception">
@@ -2502,6 +2782,96 @@
             <classpath refid="run.OrchestrationTest.classpath"/>
         </junit>
     </target>
+    <target name="OrchestrationTest.orcEmptyTestNoDangling">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orcEmptyTestNoDangling.classpath"/>
+        </junit>
+    </target>
+    <target name="OrchestrationTest.orcTestLMCS2020Transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orcTestLMCS2020Transitions.classpath"/>
+        </junit>
+    </target>
+    <target name="OrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions.classpath"/>
+        </junit>
+    </target>
+    <target name="OrchestrationTest.orcTest_empty">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orcTest_empty.classpath"/>
+        </junit>
+    </target>
+    <target name="OrchestrationTest.orcTest_nonempty">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orcTest_nonempty.classpath"/>
+        </junit>
+    </target>
+    <target name="OrchestrationTest.orc_necessaryoffer_exception">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.OrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.OrchestrationTest.orc_necessaryoffer_exception.classpath"/>
+        </junit>
+    </target>
+    <target name="ProductOrchestrationTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ProductOrchestrationTest.classpath"/>
+        </junit>
+    </target>
+    <target name="ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions.classpath"/>
+        </junit>
+    </target>
+    <target name="ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ProductOrchestrationTest.orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions.classpath"/>
+        </junit>
+    </target>
+    <target name="ProductOrchestrationTest.testForte2021">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ProductOrchestrationTest.testForte2021.classpath"/>
+        </junit>
+    </target>
     <target name="ProductTest">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
@@ -2569,7 +2939,7 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.Snippets.HoeffdingInequality.classpath"/>
         </junit>
@@ -2578,7 +2948,7 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.Snippets.classpath"/>
         </junit>
@@ -2587,7 +2957,7 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.Snippets.test1.classpath"/>
         </junit>
@@ -2596,7 +2966,7 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.Snippets.test4.classpath"/>
         </junit>
@@ -2613,7 +2983,6 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="examplesTest.Snippets" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.AutomataTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.CALabelTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.CAStateTest" todir="${junit.output.dir}"/>
@@ -2621,10 +2990,7 @@
             <test name="io.github.davidebasile.contractautomatatest.LabelTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.MSCATest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.MSCATransitionTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.ConverterTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.convertersTest.DataConverterTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.JsonConverterTest" todir="${junit.output.dir}"/>
-            <test name="io.github.davidebasile.contractautomatatest.convertersTest.MxeConverterTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FMCATest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FamilyTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.familytest.FeatureTest" todir="${junit.output.dir}"/>
@@ -2640,6 +3006,7 @@
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProductOrchestrationTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.ProjectionTest" todir="${junit.output.dir}"/>
             <test name="io.github.davidebasile.contractautomatatest.operatorsTest.UnionTest" todir="${junit.output.dir}"/>
+            <test name="io.github.davidebasile.examplesTest.Snippets" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
             <classpath refid="run.test.classpath"/>
         </junit>

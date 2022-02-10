@@ -30,4 +30,14 @@ public abstract class State<T> implements Ranked {
 	public T getState() {
 		return state;
 	}
+	
+
+	/**
+	 * 
+	 * @return an encoding of the object as comma separated values
+	 */
+	public String toCSV()
+	{
+		return "[state="+state+"]";
+	}
 }

@@ -49,15 +49,20 @@ public class MpcSynthesisTest {
 		BasicState s0 = new BasicState("0",true,false);
 		BasicState s1 = new BasicState("1",false,false);
 		BasicState s2 = new BasicState("2",false,true);
-		Transition<String, BasicState,Label> t1 = new Transition<>(s0, new Label("blueberry"), s1);
-		Transition<String, BasicState,Label> t2 = new Transition<>(s1, new Label("ananas"), s2);
-		Transition<String, BasicState,Label> t3 = new Transition<>(s0, new Label("cherry"), s2);
-		Automaton<String, BasicState,Transition<String, BasicState,Label>> prop = new Automaton<>(Set.of(t1,t2,t3));
+		Transition<String,String,BasicState,Label<String>> t1 = new Transition<>(s0, new Label<String>("blueberry"), s1);
+		Transition<String,String,BasicState,Label<String>> t2 = new Transition<>(s1, new Label<String>("ananas"), s2);
+		Transition<String,String,BasicState,Label<String>> t3 = new Transition<>(s0, new Label<String>("cherry"), s2);
+		Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));
 
 		MSCA aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
-		MSCA mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
+		
+		//MSCA mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
+		//assertEquals(mpc,null);
+		
+		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement(),prop).apply(aut))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessage("No transitions");
 
-		assertEquals(mpc,null);
 	}
 	@Test
 	public void mpcTest_nonempty() throws Exception

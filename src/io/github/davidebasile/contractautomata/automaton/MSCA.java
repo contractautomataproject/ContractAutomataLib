@@ -18,7 +18,7 @@ import io.github.davidebasile.contractautomata.automaton.transition.MSCATransiti
  * @author Davide Basile
  *
  */
-public class MSCA extends Automaton<List<BasicState>, CAState, MSCATransition>
+public class MSCA extends Automaton<List<BasicState>,String, CAState, MSCATransition>
 { 
 	public MSCA(Set<MSCATransition> tr) 
 	{

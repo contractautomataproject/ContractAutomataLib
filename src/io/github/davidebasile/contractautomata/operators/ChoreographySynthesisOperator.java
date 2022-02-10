@@ -27,14 +27,14 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 
 	private Predicate<MSCATransition> req;
 	private Function<Stream<MSCATransition>,Optional<MSCATransition>> choice=Stream::findAny;
-	private Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop=null;
+	private Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop=null;
 	
 	public ChoreographySynthesisOperator(Predicate<MSCATransition> req){
 		this.req=req;
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, 
-			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop){
+			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop){
 		this(req);
 		this.prop=prop;
 	}

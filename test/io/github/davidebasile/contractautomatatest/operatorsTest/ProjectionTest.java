@@ -33,7 +33,7 @@ public class ProjectionTest {
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
 		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		MSCA test= bdc.importMSCA(dir+"BusinessClient.data");
-		aut=new ProjectionFunction(new Label("dum")).apply(aut,0, t->t.getLabel().getRequester());
+		aut=new ProjectionFunction(new Label<String>("dum")).apply(aut,0, t->t.getLabel().getRequester());
 		//		System.out.println(aut);
 		//		System.out.println(test);
 		assertEquals(MSCATest.checkTransitions(aut,test),true);
@@ -44,7 +44,7 @@ public class ProjectionTest {
 	public void choreoConcur2021projectAndComposeTest() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		List<MSCA> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction(new Label("dumb")).apply(aut,i, t->t.getLabel().getOfferer()))
+				.mapToObj(i->new ProjectionFunction(new Label<String>("dumb")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 
 		MSCA closed_aut = new CompositionFunction(principals).apply(new StrongAgreement().negate(), 100);
@@ -97,7 +97,7 @@ public class ProjectionTest {
 	@Test
 	public void projectionException1() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"BusinessClient.data");
-		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,-1, null))
+		assertThatThrownBy(() -> new ProjectionFunction(new Label<String>("dum")).apply(aut,-1, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 	}
@@ -105,7 +105,7 @@ public class ProjectionTest {
 	@Test
 	public void projectionException2() throws Exception {
 		MSCA aut = bdc.importMSCA(dir+"BusinessClient.data");
-		assertThatThrownBy(() -> new ProjectionFunction(new Label("dum")).apply(aut,2, null))
+		assertThatThrownBy(() -> new ProjectionFunction(new Label<String>("dum")).apply(aut,2, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
 	}

@@ -27,26 +27,31 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class ModelCheckingTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final DataConverter bdc = new DataConverter();
-	private Automaton<String, BasicState,Transition<String, BasicState,Label>> prop ;
+	private Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop ;
 	
 	@Before
 	public void setup() {
 		BasicState s0 = new BasicState("0",true,false);
 		BasicState s1 = new BasicState("1",false,false);
 		BasicState s2 = new BasicState("2",false,true);
-		Transition<String, BasicState,Label> t1 = new Transition<>(s0, new Label("blueberry"), s1);
-		Transition<String, BasicState,Label> t2 = new Transition<>(s1, new Label("ananas"), s2);
-		Transition<String, BasicState,Label> t3 = new Transition<>(s0, new Label("cherry"), s2);
+		Transition<String,String,BasicState,Label<String>> t1 = new Transition<>(s0, new Label<String>("blueberry"), s1);
+		Transition<String,String,BasicState,Label<String>> t2 = new Transition<>(s1, new Label<String>("ananas"), s2);
+		Transition<String,String,BasicState,Label<String>> t3 = new Transition<>(s0, new Label<String>("cherry"), s2);
 		prop = new Automaton<>(Set.of(t1,t2,t3));
 	}
 	
 	@Test
 	public void testForte2021() throws IOException {
 		MSCA aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
+//		System.out.println(aut);
+//		System.out.println(prop);
 		Set<CAState> states = new ModelCheckingFunction(100).apply(aut, prop);
+		
 		Set<CAState> test = aut.getStates().stream()
 		.filter(s->s.toString().equals("[1, 1]")||s.toString().equals("[1, 2]"))
 		.collect(Collectors.toSet());
+		
+//		System.out.println(states);
 		assertTrue(states.equals(test));
 	}
 	
@@ -66,9 +71,9 @@ public class ModelCheckingTest {
 		BasicState s0 = new BasicState("0",true,false);
 		BasicState s1 = new BasicState("1",false,true);
 		BasicState s2 = new BasicState("2",false,true);
-		Transition<String, BasicState,Label> t1 = new Transition<>(s0, new Label("m"), s1);
-		Transition<String, BasicState,Label> t2 = new Transition<>(s0, new Label("m"), s2);
-		Automaton<String, BasicState,Transition<String, BasicState,Label>> prop  = new Automaton<>(Set.of(t1,t2));
+		Transition<String,String,BasicState,Label<String>> t1 = new Transition<>(s0, new Label<String>("m"), s1);
+		Transition<String,String,BasicState,Label<String>> t2 = new Transition<>(s0, new Label<String>("m"), s2);
+		Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop  = new Automaton<>(Set.of(t1,t2));
 		
 		MSCA aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
 	

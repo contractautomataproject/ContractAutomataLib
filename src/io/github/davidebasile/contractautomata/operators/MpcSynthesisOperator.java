@@ -35,7 +35,7 @@ public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public MpcSynthesisOperator(Predicate<MSCATransition> req,	 
-			Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop)
+			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop)
 	{
 		super();
 		this.synth = new SynthesisOperator((x,t,bad) -> x.isUrgent(), req, prop);

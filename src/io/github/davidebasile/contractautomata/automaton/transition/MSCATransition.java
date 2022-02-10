@@ -2,7 +2,6 @@ package io.github.davidebasile.contractautomata.automaton.transition;
 
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
@@ -18,72 +17,11 @@ import io.github.davidebasile.contractautomata.automaton.state.CAState;
  * @author Davide Basile
  *
  */
-public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel> {
+public class MSCATransition extends ModalTransition<List<BasicState>,String,CAState,CALabel> {
 
-	/**
-	 * the modality of the transition
-	 */
-	public enum Modality{
-		PERMITTED,URGENT,LAZY
-	}
 
-	private final Modality mod;
-
-	public MSCATransition(CAState source, CALabel label, CAState target, Modality type)
-	{
-		super(source,label,target);
-		if (type==null)
-			throw new RuntimeException("Ill-formed transition");
-		else		
-			this.mod=type;
-
-	}
-
-	public boolean isUrgent()
-	{
-		return (this.mod==Modality.URGENT);
-	}
-
-	public boolean isLazy()
-	{
-		return (this.mod==Modality.LAZY);
-	}
-
-	public boolean isNecessary()
-	{
-		return (this.mod!=Modality.PERMITTED);
-	}
-
-	public boolean isPermitted()
-	{
-		return (this.mod==Modality.PERMITTED);
-	}
-
-	public Modality getModality()
-	{
-		return this.mod;
-	}
-
-	@Override
-	public String toString()
-	{
-		if (this.mod==Modality.URGENT)
-			return "!U("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
-		else if (this.mod==Modality.LAZY)	
-			return "!L("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
-		else 
-			return "("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
-	}
-
-	/**
-	 * 
-	 * @return encoding of the object into comma separated values
-	 */
-	public String toCSV()
-	{
-		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
-				+",label="+this.getLabel().toCSV()
-				+",target="+this.getTarget().toCSV()+"]";
+	public MSCATransition(CAState source, CALabel label, CAState target, Modality type) {
+		super(source, label, target, type);
 	}
 
 	/**
@@ -120,16 +58,4 @@ public class MSCATransition extends Transition<List<BasicState>,CAState,CALabel>
 				.collect(Collectors.toSet());
 	}*/
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(),mod.hashCode());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!super.equals(obj))
-			return false;
-		MSCATransition other = (MSCATransition) obj;
-		return mod==other.mod;
-	}
 }

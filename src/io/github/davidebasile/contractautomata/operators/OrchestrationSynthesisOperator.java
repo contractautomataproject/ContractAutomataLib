@@ -37,7 +37,7 @@ public class OrchestrationSynthesisOperator implements UnaryOperator<MSCA> {
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public OrchestrationSynthesisOperator(Predicate<MSCATransition> req, 
-			 Automaton<String,BasicState,Transition<String,BasicState,Label>>  prop)
+			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop)
 	{
 		this.synth = new SynthesisOperator((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, prop);
 	}

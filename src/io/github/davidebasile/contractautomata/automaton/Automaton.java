@@ -15,11 +15,11 @@ import io.github.davidebasile.contractautomata.automaton.transition.Transition;
  * 
  * @author Davide Basile
  *
- * @param <L> the generic type of labels of transitions
+ * @param <L> the generic type of the instance variable of S
  * @param <S> the generic type of states
  * @param <T> the generic type of transitions
  */
-public class Automaton<L, S extends State<L>,T extends Transition<L,S,? extends Label>>
+public class Automaton<L,V,S extends State<L>,T extends Transition<L,V,S,? extends Label<V>>>
 { 
 
 	/**

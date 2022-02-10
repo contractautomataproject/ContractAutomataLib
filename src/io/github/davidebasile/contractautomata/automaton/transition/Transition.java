@@ -3,7 +3,7 @@ package io.github.davidebasile.contractautomata.automaton.transition;
 import java.util.Objects;
 
 import io.github.davidebasile.contractautomata.automaton.Ranked;
-import io.github.davidebasile.contractautomata.automaton.label.Matchable;
+import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.State;
 
 /**
@@ -15,7 +15,7 @@ import io.github.davidebasile.contractautomata.automaton.state.State;
  * @param <S> generic type of the state
  * @param <L> generic type of the label 
  */
-public class Transition<U, S extends State<U>,L extends Ranked & Matchable<? super L>> { 
+public class Transition<U,V, S extends State<U>,L extends Label<V>> { 
 	final private S source;
 	final private S target;
 	final private L label;
@@ -64,7 +64,7 @@ public class Transition<U, S extends State<U>,L extends Ranked & Matchable<? sup
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Transition<?,? extends Ranked, ? extends Ranked> other = (Transition<?,?, ?>) obj;
+		Transition<?,?,? extends Ranked, ? extends Ranked> other = (Transition<?,?,?, ?>) obj;
 		return label.equals(other.getLabel())&&source.equals(other.getSource())&&target.equals(other.getTarget());
 	}
 

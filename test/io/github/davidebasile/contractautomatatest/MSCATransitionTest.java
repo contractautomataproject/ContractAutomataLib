@@ -17,7 +17,7 @@ import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
 import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
 import io.github.davidebasile.contractautomata.automaton.transition.Transition;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition.Modality;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition.Modality;
 
 public class MSCATransitionTest {
 //	private final String dir = System.getProperty("user.dir");
@@ -140,7 +140,7 @@ public class MSCATransitionTest {
 
 	@Test
 	public void testEquals4() {
-		Transition<List<BasicState>,CAState,CALabel> t2 = new Transition<>(source,calab,target);
+		Transition<List<BasicState>,String,CAState,CALabel> t2 = new Transition<>(source,calab,target);
 		
 		assertEquals(t1.equals(t2),false);
 	}	

@@ -10,26 +10,26 @@ import io.github.davidebasile.contractautomata.automaton.Ranked;
  * @author Davide Basile
  *
  */
-public class Label implements Ranked,Matchable<Label>{
+public class Label<T> implements Ranked,Matchable<Label<T>>{
 	
 	/**
 	 * the action performed by the label
 	 */
-	private final String action;
+	private final T action;
 
-	public Label(String action) {
+	public Label(T action) {
 		super();
-		if (action==null || action.length()==0)
+		if (action==null)// || action.length()==0)
 			throw new IllegalArgumentException();
 		this.action = action;
 	}
 
-	public String getAction() {
+	public T getAction() {
 		return action;
 	}
 	
 	@Override
-	public boolean match(Label arg) {
+	public boolean match(Label<T> arg) {
 		return this.action.equals(arg.action);
 	}
 
@@ -44,11 +44,15 @@ public class Label implements Ranked,Matchable<Label>{
 			return true;
 		if (obj == null ||getClass() != obj.getClass())
 			return false;
-		return Objects.equals(action, ((Label) obj).action);
+		return Objects.equals(action, ((Label<?>) obj).action);
 	}
 
 	@Override
 	public String toString() {
-		return action;
+		return action.toString();
 	}	
+	
+	public String toCSV() {
+		return "[action=" +action+"]";
+	}
 }

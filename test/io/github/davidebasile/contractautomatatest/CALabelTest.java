@@ -208,7 +208,7 @@ public class CALabelTest {
 	
 	@Test
 	public void matchException() {
-		Label l  = new Label("ei");
+		Label<String> l  = new Label<>("ei");
 		assertThatThrownBy(() -> new CALabel(1,0,"!a").match(l))
 	    .isInstanceOf(IllegalArgumentException.class);
 	

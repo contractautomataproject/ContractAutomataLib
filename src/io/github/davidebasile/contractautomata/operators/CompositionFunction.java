@@ -34,7 +34,6 @@ import io.github.davidebasile.contractautomata.automaton.transition.MSCATransiti
  * Class implementing the composition
  * 
  * @author Davide Basile
- *
  */
 public class CompositionFunction implements BiFunction<Predicate<MSCATransition>,Integer,MSCA>{
 
@@ -47,7 +46,7 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 			this.ind=i;
 		}
 	}
-	
+
 	private List<MSCA> aut;
 	private int rank;
 	private List<CAState> initial;
@@ -58,7 +57,9 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 	private Set<MSCATransition> tr;
 	private Set<List<CAState>> visited;
 	private Queue<CAState> dontvisit;
-	
+	private BiFunction<CALabel,CALabel,Boolean> match;
+	private BiFunction<MSCATransitionIndex,MSCATransitionIndex,CALabel> createLabel;
+
 	/**
 	 * 
 	 * @param aut the list of the automata to compose
@@ -82,7 +83,19 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 		this.tr = new HashSet<MSCATransition>();//transitions of the composed automaton to build
 		this.visited = new HashSet<List<CAState>>();
 		this.dontvisit = new ConcurrentLinkedQueue<CAState>();
+		this.match= (t1,t2) -> t1.match(t2);
+		this.createLabel = (e, ee) -> new CALabel(rank,computeSumPrincipal(e.tra,e.ind,aut),//index of principal in e
+				computeSumPrincipal(ee.tra,ee.ind,aut),	//index of principal in ee										
+				e.tra.getLabel().getAction(),ee.tra.getLabel().getAction());
 	}
+
+	//	creating new labels may break the well-formedness of ca labels
+	//	public CompositionFunction(List<MSCA> aut, BiFunction<CALabel,CALabel,Boolean> match, BiFunction<MSCATransitionIndex,MSCATransitionIndex,CALabel> createLabel)
+	//	{
+	//		this(aut);
+	//		this.match=match;
+	//		this.createLabel=createLabel;
+	//	}
 
 	/**
 	 * This is the most important method of the tool, it computes the non-associative composition of contract automata.
@@ -94,10 +107,9 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 	@Override
 	public MSCA apply(Predicate<MSCATransition> pruningPred, Integer bound)
 	{
-		//TODO too long function
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition
-		
+
 		if (!frontier.isEmpty())//in case this method is called more than once, a potential frontier can be restored
 		{
 			toVisit.addAll(frontier);
@@ -112,7 +124,7 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 			{
 				List<CAState> source =sourceEntry.getKey();
 				CAState sourcestate= operandstat2compstat.get(source);
-							
+
 				if (dontvisit.remove(sourcestate))
 					continue;//was target of a semicontrollable bad transition
 
@@ -132,18 +144,15 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 				Map<MSCATransition, List<SimpleEntry<MSCATransition,List<CAState>>>> matchtransitions=
 						trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
-								.filter(ee->(e.ind<ee.ind) && e.tra.getLabel().match(ee.tra.getLabel()))
+								.filter(ee->(e.ind<ee.ind) && match.apply(e.tra.getLabel(), ee.tra.getLabel()))
 								.flatMap(ee->{ 
 									List<CAState> targetlist =  new ArrayList<CAState>(source);
 									targetlist.set(e.ind, e.tra.getTarget());
 									targetlist.set(ee.ind, ee.tra.getTarget());
 
 									MSCATransition tradd=new MSCATransition(sourcestate,
-											new CALabel(rank,computeSumPrincipal(e.tra,e.ind,aut),//index of principal in e
-													computeSumPrincipal(ee.tra,ee.ind,aut),	//index of principal in ee										
-													e.tra.getLabel().getAction(),ee.tra.getLabel().getAction()),
-											operandstat2compstat.computeIfAbsent(targetlist, v->
-											new CAState(v)), 
+											this.createLabel.apply(e, ee),
+											operandstat2compstat.computeIfAbsent(targetlist, v->new CAState(v)), 
 											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
 									return Stream.of((SimpleEntry<MSCATransition, SimpleEntry<MSCATransition,List<CAState>>>) 
@@ -208,13 +217,18 @@ public class CompositionFunction implements BiFunction<Predicate<MSCATransition>
 				}
 			}
 		} while (!toVisit.isEmpty());
-		
+
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
-		
-		//initialstate.getState().get(0).setFinalstate(true);
-		return new MSCA(tr);
+
+		//in case of pruning if no final states are reachable return null
+		if (pruningPred!=null&& !tr.parallelStream()
+				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
+				.distinct().anyMatch(s->s.isFinalstate()))
+			return null;
+		else
+			return new MSCA(tr);
 	}
-	
+
 	public boolean isFrontierEmpty() {
 		return this.frontier.isEmpty();
 	}

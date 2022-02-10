@@ -58,7 +58,7 @@ public class CMLabel extends CALabel {
 
 
 	@Override
-	public boolean match(Label l2)
+	public boolean match(Label<String> l2)
 	{
 		if (l2 instanceof CMLabel)
 		{

@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  * @author Davide Basile
  *
  */
-public class CALabel extends Label {
+public class CALabel extends Label<String> {
 	/**
 	 * the rank of the label (i.e. number of principals)
 	 */
@@ -437,7 +437,7 @@ public class CALabel extends Label {
 
 
 	@Override
-	public boolean match(Label label)
+	public boolean match(Label<String> label)
 	{
 		if (label instanceof CALabel)
 		{
@@ -463,7 +463,7 @@ public class CALabel extends Label {
 	 */
 	/**
 	 * 
-	 * @return a string containing the action with request/offer sign
+	 * @return a string containing the action without request/offer sign
 	 */
 	public String getUnsignedAction()
 	{
@@ -510,6 +510,7 @@ public class CALabel extends Label {
 	 * 
 	 * @return a string description of the calabel in comma separated values
 	 */
+	@Override
 	public String toCSV() {
 		return "[rank=" + rank + ", offerer=" + offerer + ", requester=" + requester
 				+ ", actiontype=" + actiontype + "]";

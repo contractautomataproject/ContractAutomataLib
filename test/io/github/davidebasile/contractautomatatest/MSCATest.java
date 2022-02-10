@@ -17,7 +17,7 @@ import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
 import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition.Modality;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition.Modality;
 
 public class MSCATest {
 //	private final String dir = System.getProperty("user.dir")+File.separator+"CAtest"+File.separator;
