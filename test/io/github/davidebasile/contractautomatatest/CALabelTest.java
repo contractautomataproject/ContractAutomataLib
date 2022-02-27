@@ -21,7 +21,7 @@ public class CALabelTest {
 		lab.add(CALabel.request+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assertEquals(calab.getAction().startsWith(CALabel.offer),true);
+		assertEquals(calab.getTheAction().startsWith(CALabel.offer),true);
 	}
 
 	@Test
@@ -32,7 +32,7 @@ public class CALabelTest {
 		lab.add(CALabel.request+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assertEquals(calab.getAction().startsWith(CALabel.offer),true);
+		assertEquals(calab.getTheAction().startsWith(CALabel.offer),true);
 	}
 
 	@Test
@@ -91,13 +91,13 @@ public class CALabelTest {
 		assertThatThrownBy(() -> new CALabel(new CALabel(1,0,"!a"),0,-2))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
-//	
-	@Test
-	public void constructorTest4_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CALabel(3,null,null,"!a"))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Null argument");
-	}
+	
+//	@Test
+//	public void constructorTest4_Exception_nullArgument() {
+//		assertThatThrownBy(() -> new CALabel(3,null,null,"!a"))
+//	    .isInstanceOf(IllegalArgumentException.class)
+//	    .hasMessageContaining("Null argument");
+//	}
 	
 	
 	
@@ -123,12 +123,12 @@ public class CALabelTest {
 	    .hasMessageContaining("The actions must be an offer and a request");
 	}
 	
-	@Test
-	public void constructorTest_Exception_noOffer() {
-		assertThatThrownBy(() -> new CALabel(3,1,2,"?a"))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("This constructor is only for matches and by convention action is the offer");
-	}
+//	@Test
+//	public void constructorTest_Exception_noOffer() {
+//		assertThatThrownBy(() -> new CALabel(3,1,2,"?a"))
+//	    .isInstanceOf(IllegalArgumentException.class)
+//	    .hasMessageContaining("This constructor is only for matches and by convention action is the offer");
+//	}
 	
 
 	@Test
@@ -199,16 +199,16 @@ public class CALabelTest {
 	    .hasMessageContaining("No requester in an offer action");
 	}
 	
-	@Test
-	public void getOffererOrRequesterTest_Exception() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,"!a").getOffererOrRequester())
-	    .isInstanceOf(UnsupportedOperationException.class)
-	    .hasMessageContaining("Action is not a request nor an offer");
-	}
+//	@Test
+//	public void getOffererOrRequesterTest_Exception() {
+//		assertThatThrownBy(() -> new CALabel(2,0,1,"!a").getOffererOrRequester())
+//	    .isInstanceOf(UnsupportedOperationException.class)
+//	    .hasMessageContaining("Action is not a request nor an offer");
+//	}
 	
 	@Test
 	public void matchException() {
-		Label<String> l  = new Label<>("ei");
+		Label<List<String>> l  = new Label<>(List.of("ei"));
 		assertThatThrownBy(() -> new CALabel(1,0,"!a").match(l))
 	    .isInstanceOf(IllegalArgumentException.class);
 	

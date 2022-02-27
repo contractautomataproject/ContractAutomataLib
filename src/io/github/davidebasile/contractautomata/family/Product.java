@@ -1,13 +1,16 @@
 package io.github.davidebasile.contractautomata.family;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
-
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
+import io.github.davidebasile.contractautomata.automaton.state.BasicState;
+import io.github.davidebasile.contractautomata.automaton.state.CAState;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 /**
  * A configuration/product of a product line/family, identified as set of required and forbidden features
  * 
@@ -127,7 +130,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends MSCATransition> tr)
+	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -141,7 +144,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<? extends MSCATransition> tr)
+	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -151,18 +154,18 @@ public class Product {
 				.allMatch(s->!act.contains(s));
 	}
 
-	public boolean isForbidden(MSCATransition t)
+	public boolean isForbidden(CALabel l)
 	{
-		Feature f = new Feature(t.getLabel().getUnsignedAction());
+		Feature f = new Feature(l.getUnsignedAction());
 		return this.getForbidden().contains(f);
 	}
 
-	//	private boolean isRequired(MSCATransition t)
+	//	private boolean isRequired(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t)
 	//	{
 	//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
 	//	}
 
-	public boolean isValid(MSCA aut)
+	public boolean isValid(ModalAutomaton<CALabel> aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
 	}

@@ -1,5 +1,6 @@
 package io.github.davidebasile.contractautomata.automaton.label;
 
+import java.util.List;
 import java.util.Objects;
 
 import io.github.davidebasile.contractautomata.automaton.Ranked;
@@ -23,6 +24,7 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 			throw new IllegalArgumentException();
 		this.action = action;
 	}
+	
 
 	public T getAction() {
 		return action;
@@ -55,4 +57,22 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	public String toCSV() {
 		return "[action=" +action+"]";
 	}
+
+	
+	public List<T> getLabelAsList(){
+		return List.of(action);
+	}
+	
+	@Override
+	public Integer getRank() {
+		if (action instanceof List<?>) {
+			return ((List<?>)action).size();
+		}
+		return 1;
+	}
+
+	
+//	public Label<T> getCopy(){
+//		return new Label<T>(action);
+//	}
 }

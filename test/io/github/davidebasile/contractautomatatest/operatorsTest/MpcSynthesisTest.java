@@ -10,10 +10,11 @@ import java.util.Set;
 import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.automaton.transition.Transition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.operators.MpcSynthesisOperator;
@@ -28,8 +29,8 @@ public class MpcSynthesisTest {
 	@Test
 	public void mpcEmptyTestLMCS2020() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
-		MSCA mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
+		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
 
 		assertEquals(mpc,null);
 	}
@@ -37,8 +38,8 @@ public class MpcSynthesisTest {
 	@Test
 	public void mpcEmptyTestNoDangling() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
-		MSCA mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
+		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
 
 		assertEquals(mpc,null);
 	}
@@ -49,12 +50,13 @@ public class MpcSynthesisTest {
 		BasicState s0 = new BasicState("0",true,false);
 		BasicState s1 = new BasicState("1",false,false);
 		BasicState s2 = new BasicState("2",false,true);
-		Transition<String,String,BasicState,Label<String>> t1 = new Transition<>(s0, new Label<String>("blueberry"), s1);
-		Transition<String,String,BasicState,Label<String>> t2 = new Transition<>(s1, new Label<String>("ananas"), s2);
-		Transition<String,String,BasicState,Label<String>> t3 = new Transition<>(s0, new Label<String>("cherry"), s2);
-		Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));
+		ModalTransition<String,String,BasicState,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT);
+		ModalTransition<String,String,BasicState,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
+		
+		Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));;
 
-		MSCA aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
 		//MSCA mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
 		//assertEquals(mpc,null);
@@ -67,15 +69,15 @@ public class MpcSynthesisTest {
 	@Test
 	public void mpcTest_nonempty() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"test_urgent.data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_urgent.data");
 		assertEquals(new MpcSynthesisOperator(new Agreement()).apply(aut).getNumStates(),2);
 	}
 
 	@Test 
 	public void mpcTest2() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"test_urgent.data");		
-		MSCA test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_urgent.data");		
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
 		assertTrue(MSCATest.checkTransitions(new MpcSynthesisOperator(new Agreement()).apply(aut),
 				test));	
 	}
@@ -84,7 +86,7 @@ public class MpcSynthesisTest {
 	public void mpc_lazy_exception() throws Exception
 	{
 
-		MSCA orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
+		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement()).apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}

@@ -1,5 +1,6 @@
 package io.github.davidebasile.contractautomata.automaton.label;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -58,7 +59,7 @@ public class CMLabel extends CALabel {
 
 
 	@Override
-	public boolean match(Label<String> l2)
+	public boolean match(Label<List<String>> l2)
 	{
 		if (l2 instanceof CMLabel)
 		{
@@ -97,11 +98,16 @@ public class CMLabel extends CALabel {
 	@Override
 	public String toString() {
 		if (this.isOffer())
-			return "["+this.id+id_separator+this.partner+action_separator+super.getAction()+"]";
+			return "["+this.id+id_separator+this.partner+action_separator+super.getTheAction()+"]";
 		else
-			return "["+this.partner+id_separator+this.id+action_separator+this.getAction()+"]";
+			return "["+this.partner+id_separator+this.id+action_separator+this.getTheAction()+"]";
 	}
 
+//	//currently not supported
+//	@Override
+//	public CMLabel getCopy() {
+//		throw new IllegalArgumentException();
+//	}
 
 
 }

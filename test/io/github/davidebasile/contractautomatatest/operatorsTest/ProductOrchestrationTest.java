@@ -7,7 +7,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.family.Product;
@@ -23,8 +24,8 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws Exception
 	{		
-		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
-		MSCA test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
 		assertEquals(MSCATest.checkTransitions(
 				new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)
@@ -35,7 +36,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"dummy"}, new String[] {""});
 		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
 	}
@@ -43,7 +44,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
 	{
-		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
 		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
 	}	
@@ -51,7 +52,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void testForte2021() throws Exception {
 		
-		MSCA aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
+		ModalAutomaton<CALabel> aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
 		assertEquals(null,new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 		

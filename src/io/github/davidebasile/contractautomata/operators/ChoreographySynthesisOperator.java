@@ -1,6 +1,7 @@
 package io.github.davidebasile.contractautomata.operators;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -10,12 +11,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
-import io.github.davidebasile.contractautomata.automaton.transition.Transition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the Choreography Synthesis
@@ -23,24 +24,24 @@ import io.github.davidebasile.contractautomata.automaton.transition.Transition;
  * @author Davide Basile
  *
  */
-public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
+public class ChoreographySynthesisOperator implements UnaryOperator<ModalAutomaton<CALabel>> {
 
-	private Predicate<MSCATransition> req;
-	private Function<Stream<MSCATransition>,Optional<MSCATransition>> choice=Stream::findAny;
-	private Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop=null;
+	private Predicate<CALabel> req;
+	private Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice=Stream::findAny;
+	private Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop=null;
 	
-	public ChoreographySynthesisOperator(Predicate<MSCATransition> req){
+	public ChoreographySynthesisOperator(Predicate<CALabel> req){
 		this.req=req;
 	}
 	
-	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, 
-			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop){
+	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop){
 		this(req);
 		this.prop=prop;
 	}
 	
-	public ChoreographySynthesisOperator(Predicate<MSCATransition> req, 
-			Function<Stream<MSCATransition>,Optional<MSCATransition>> choice){
+	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
+			Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice){
 		this(req);
 		this.choice=choice;
 	}
@@ -53,26 +54,25 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 	 * 
 	 */
 	@Override
-	public MSCA apply(MSCA aut)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
 
-		MSCATransition toRemove=null; 
+		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> toRemove=null; 
 		Set<String> violatingbc = new HashSet<>();
 
-		SynthesisOperator synth;
-		MSCA chor;
+		ModelCheckingSynthesisOperator synth;
+		ModalAutomaton<CALabel> chor;
 		do 
 		{ 
-			synth=new SynthesisOperator((x,t,bad) -> violatingbc.contains(x.toCSV()),
+			synth=new ModelCheckingSynthesisOperator((x,t,bad) -> violatingbc.contains(x.toCSV()),
 						(x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,prop);
-
 			chor = synth.apply(aut);
 			if (chor==null)
 				break;
-			final Set<MSCATransition> trf = chor.getTransition();
+			final Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> trf = chor.getTransition();
 			toRemove=choice.apply(chor.getTransition().parallelStream()
 					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<CAState>())))
 					.orElse(null);
@@ -80,11 +80,11 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 		return chor;
 	}
 
-	private boolean  isUncontrollableChoreography(MSCATransition tra, Set<? extends MSCATransition> str, Set<CAState> badStates)
+	private static boolean  isUncontrollableChoreography(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> tra, Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> str, Set<CAState> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
-				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer 
+				&&t.getLabel().getTheAction().equals(tt.getLabel().getTheAction()) //the same offer 
 				&&t.getSource().equals(tt.getSource()));//the same global source state
 	}
 
@@ -94,13 +94,13 @@ public class ChoreographySynthesisOperator implements UnaryOperator<MSCA> {
 	 * @param bad  the set of bad (dangling) states to check
 	 * @return true if the set of transitions and bad states violate the branching condition
 	 */
-	public boolean satisfiesBranchingCondition(MSCATransition tra, Set<MSCATransition> trans, Set<CAState> bad) 
+	public boolean satisfiesBranchingCondition(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> tra, Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> trans, Set<CAState> bad) 
 	{
 //		if (!req.test(tra)||bad.contains(tra.getSource()) || bad.contains(tra.getTarget()))
 //			return false;		//ignore tra transition because it is going to be pruned in the synthesis
 
-		final Set<MSCATransition> ftr = trans.parallelStream()
-				.filter(x->req.test(x)&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
+		final Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> ftr = trans.parallelStream()
+				.filter(x->req.test(x.getLabel())&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 
 		return ftr.parallelStream()

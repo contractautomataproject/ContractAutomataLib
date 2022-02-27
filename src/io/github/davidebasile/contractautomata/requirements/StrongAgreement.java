@@ -2,7 +2,7 @@ package io.github.davidebasile.contractautomata.requirements;
 
 import java.util.function.Predicate;
 
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 
 /**
  * The strong agreement predicate over MSCATransitions
@@ -10,11 +10,11 @@ import io.github.davidebasile.contractautomata.automaton.transition.MSCATransiti
  * @author Davide Basile
  *
  */
-public class StrongAgreement implements Predicate<MSCATransition> {
+public class StrongAgreement implements Predicate<CALabel> {
 
 	@Override
-	public boolean test(MSCATransition t) {
-		return t.getLabel().isMatch();
+	public boolean test(CALabel l) {
+		return l.isMatch();
 	}
 
 }

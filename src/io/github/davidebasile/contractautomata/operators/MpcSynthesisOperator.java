@@ -1,31 +1,30 @@
 package io.github.davidebasile.contractautomata.operators;
 
+import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
-import io.github.davidebasile.contractautomata.automaton.transition.Transition;
+import io.github.davidebasile.contractautomata.automaton.state.CAState;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the mpc operator
  * @author Davide Basile
  *
  */
-public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
-		
-	private final SynthesisOperator synth;
+public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
+{
 
 	/**
 	 * 
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
-	public MpcSynthesisOperator(Predicate<MSCATransition> req) {
-		super();
-		this.synth = new SynthesisOperator((x,t,bad) -> x.isUrgent(), req);
+	public MpcSynthesisOperator(Predicate<CALabel> req) {
+		super((x,t,bad) -> x.isUrgent(), req, null);
 	}	
 	
 	
@@ -34,11 +33,10 @@ public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 	 * @param req the invariant requirement (e.g. agreement)
 	 * @param prop the property to enforce expressed as an automaton
 	 */
-	public MpcSynthesisOperator(Predicate<MSCATransition> req,	 
-			Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>  prop)
+	public MpcSynthesisOperator(Predicate<CALabel> req,	 
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop)
 	{
-		super();
-		this.synth = new SynthesisOperator((x,t,bad) -> x.isUrgent(), req, prop);
+		super((x,t,bad) -> x.isUrgent(), req, prop);
 	}	
 	
 
@@ -48,13 +46,14 @@ public class MpcSynthesisOperator implements UnaryOperator<MSCA> {
 	 * @return the synthesised most permissive controller
 	 */
 	@Override
-	public MSCA apply(MSCA aut) {
+	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
+			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut) {
+
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> t.isLazy()))
 			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
-
-		return synth.apply(aut);
-
+		
+		return super.apply(aut);
 	}
 
 }

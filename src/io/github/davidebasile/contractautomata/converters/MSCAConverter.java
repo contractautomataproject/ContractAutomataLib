@@ -1,6 +1,7 @@
 package io.github.davidebasile.contractautomata.converters;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 
 /**
  * The interface used to import/export MSCA
@@ -8,6 +9,6 @@ import io.github.davidebasile.contractautomata.automaton.MSCA;
  *
  */
 public interface MSCAConverter {
-	public MSCA importMSCA(String filename) throws Exception;
-	public void exportMSCA(String filename, MSCA aut) throws Exception;
+	public ModalAutomaton<CALabel> importMSCA(String filename) throws Exception;
+	public void exportMSCA(String filename, ModalAutomaton<CALabel> aut) throws Exception;
 }

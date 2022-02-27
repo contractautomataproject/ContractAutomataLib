@@ -79,4 +79,8 @@ public class BasicState extends State<String> {
 		
 	//equals creates problems
 	
+//	@Override
+//	public BasicState getCopy() {
+//		return new BasicState(this.getState(),this.isInitial(),this.isFinalstate());
+//	}
 }

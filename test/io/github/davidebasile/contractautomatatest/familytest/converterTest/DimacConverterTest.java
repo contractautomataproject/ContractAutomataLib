@@ -9,7 +9,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.family.FMCA;
@@ -35,7 +36,7 @@ public class DimacConverterTest {
 
 //		System.out.println(prod);
 		
-		MSCA aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 //		Set<Feature> actions = aut.getUnsignedActions().stream()
 //				.map(Feature::new)

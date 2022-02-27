@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
  * 
  */
 public class CAState extends State<List<BasicState>> {
-	
-//	private final float x;
-//	private final float y;
 
 	/**
 	 * Construct a new CAState from
@@ -57,14 +54,6 @@ public class CAState extends State<List<BasicState>> {
 	public Integer getRank() {
 		return this.getState().size();
 	}
-
-//	public float getX() {
-//		return x;
-//	}
-//
-//	public float getY() {
-//		return y;
-//	}
 
 	@Override
 	public boolean isInitial() {
@@ -112,6 +101,15 @@ public class CAState extends State<List<BasicState>> {
 
 		return sb.toString();
 	}
+	
+//	/**
+//	 * this method shall not be invoked, because BasicStates are usually shared 
+//	 * with other CAStates
+//	 */
+//	@Override
+//	public CAState getCopy() {
+//		throw new UnsupportedOperationException();
+//	}
 }
 
 	

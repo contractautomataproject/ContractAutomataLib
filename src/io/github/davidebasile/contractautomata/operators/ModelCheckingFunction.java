@@ -1,30 +1,32 @@
 package io.github.davidebasile.contractautomata.operators;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
-import io.github.davidebasile.contractautomata.automaton.transition.Transition;
-import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
-import io.github.davidebasile.contractautomata.operators.CompositionFunction;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 
 /**
- * Class implementing the model checking function
+ * Class implementing the model checking function. 
+ * This is implemented by instantiating and applying the composition function.
  * 
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction implements BiFunction<MSCA,Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>>,Set<CAState>>{
+public class ModelCheckingFunction implements 
+	BiFunction<ModalAutomaton<Label<List<String>>>,ModalAutomaton<Label<List<String>>>,ModalAutomaton<Label<List<String>>>>{
 	private final int bound;
 
 	public ModelCheckingFunction() {
@@ -44,56 +46,167 @@ public class ModelCheckingFunction implements BiFunction<MSCA,Automaton<String,S
 	 * @param prop the automaton expressing the property to verify
 	 * @return the set of states violating prop
 	 */
-	@Override
-	public Set<CAState> apply(MSCA aut, Automaton<String,String,BasicState,Transition<String,String,BasicState,Label<String>>> prop)
+	@Override					
+	public ModalAutomaton<Label<List<String>>> apply(ModalAutomaton<Label<List<String>>> aut, ModalAutomaton<Label<List<String>>> prop)
 	{
-		//build from aut an auxiliary msca ignoring modalities with all offers
-		MSCA aut_all_permitted = new MSCA(aut.getTransition()
-				.parallelStream()
-				.map(t->new MSCATransition(t.getSource(),
-						//t.getLabel(),
-						new CALabel(t.getRank(),0,CALabel.offer+t.getLabel().getUnsignedAction()),
-						t.getTarget(),MSCATransition.Modality.PERMITTED))
-				.collect(Collectors.toSet()));
+		//instantiating the composition function
+		CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> cf = 
+				new CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> (
+						Arrays.asList(aut,prop), 
+						MSCACompositionFunction::computeRank,
+						(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
+						CAState::new, 
+						ModalTransition::new, 
+						(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), ee.tra.getLabel().getAction().stream()).collect(Collectors.toList())), 
+						(lab, rank, shift) ->{ 
+							List<String> l = new ArrayList<String>(rank);
+							l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
+							l.addAll(lab.getAction());
+							if (rank-l.size()>0)
+								l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
+							return new Label<List<String>>(l);
+						}, 
+						ModalAutomaton::new);
 
-		//build from prop an auxiliary msca with all requests
-		Map<BasicState,CAState> bs2cs = prop.getStates().stream()
+		//apply the instantiation
+		ModalAutomaton<Label<List<String>>> comp = 
+				(ModalAutomaton<Label<List<String>>>) cf.apply(l->{
+			List<String> li=l.getAction();
+			return li.stream().filter(s->!s.equals(CALabel.idle)).count()==1;
+		},bound);
+
+		//		comp.getStates().parallelStream()
+		//		.collect(Collectors.groupingByConcurrent(s->s.getState().subList(0, s.getState().size()-1)));
+
+		return comp;
+
+	}
+
+
+	public static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
+	A extends ModalAutomaton<L>>	A convert(
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  aut,
+			Function<List<String>,L> createLabel, 
+			TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
+			Function<Set<T>,A> createAut)
+	{
+		Map<BasicState,CAState> bs2cs = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), s->new CAState(Arrays.asList(s))));
 
-		MSCA prop_all_reqs = new MSCA(prop.getTransition().parallelStream()
-				.map(t->new MSCATransition(bs2cs.get(t.getSource()),
-						new CALabel(1,0,CALabel.request+t.getLabel().getAction()),
+		A conv = createAut.apply(aut.getTransition().parallelStream()
+				.map(t->createTransition.apply(bs2cs.get(t.getSource()),
+						createLabel.apply(List.of(t.getLabel().getAction())),
 						bs2cs.get(t.getTarget()), 
-						MSCATransition.Modality.PERMITTED))
+						t.getModality()))
 				.collect(Collectors.toSet()));
 
-		//compute synchronous composition 
-		CompositionFunction cf = new CompositionFunction(Arrays.asList(aut_all_permitted,prop_all_reqs)); 
-		//				(l1,l2)->l1.getUnsignedAction().equals(l2.getUnsignedAction()), 
-		//				(e,ee)-> { 
-		//				return new CALabel(e.tra.getRank()+1,0,e.tra.getRank(),CALabel.offer+e.tra.getLabel().getUnsignedAction(),
-		//						CALabel.request+ee.tra.getLabel().getUnsignedAction());});
-		MSCA comp = cf.apply(new StrongAgreement().negate(),
-				//t->t.getLabel().getLabelAsList().get(t.getRank()-1).equals(CALabel.idle), 
-				this.bound);
-
-
-		//return state of aut not in the synchronous composition
-		if (comp==null)
-			return aut.getStates();
-		else
-			return aut.getStates().parallelStream()
-					.filter(s->!comp.getStates().parallelStream()
-							.map(CAState::getState)
-							.map(l->l.subList(0, l.size()-1))
-							.anyMatch(l->s.getState().equals(l)))
-					.collect(Collectors.toSet());
-
+		return conv;
 	}
 }
 
 
+	
+//this method does both the convertions  but requires to do casts
+//	public static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
+//	A extends Automaton<List<BasicState>,List<String>,CAState,T>> 	A convertAll(
+//					Automaton<?,?,?,ModalTransition<?,?,?,Label<?>>>  aut,
+//					Function<List<String>,L> createLabel, 
+//					TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
+//					Function<Set<T>,A> createAut)
+//	{
+//		if (aut.getStates().isEmpty() || aut.getTransition().isEmpty())
+//			throw new IllegalArgumentException();
+//
+//		if (aut.getStates().iterator().next() instanceof CAState && 
+//				aut.getTransition().iterator().next().getLabel().getAction() instanceof String){ 
+//
+//			Map<BasicState,CAState> bs2cs = aut.getStates().stream()
+//					.map(s->(BasicState) s)
+//					.collect(Collectors.toMap(Function.identity(), s->new CAState(Arrays.asList(s))));
+//
+//			A conv = createAut.apply(aut.getTransition().parallelStream()
+//					.map(t->createTransition.apply(bs2cs.get((BasicState)t.getSource()),
+//								createLabel.apply(List.of((String)t.getLabel().getAction())),
+//								bs2cs.get((BasicState)t.getTarget()), 
+//								t.getModality()))
+//					.collect(Collectors.toSet()));
+//
+//			return conv;
+//		}
+//		else if (aut.getStates().iterator().next() instanceof BasicState && 
+//				aut.getTransition().iterator().next().getLabel() instanceof CALabel) {
+//			A conv = createAut.apply(aut.getTransition().parallelStream()
+//					.map(t->createTransition.apply((CAState)t.getSource(),
+//							createLabel.apply(((CALabel) t.getLabel()).getAction()),
+//							(CAState)t.getTarget(), 
+//							t.getModality()))
+//					.collect(Collectors.toSet()));
+//
+//			return conv;
+//		}
+//		else throw new IllegalArgumentException();
+//	}
 
+
+
+
+
+// previous conversion without generics
+//	public Automaton<List<BasicState>,List<String>,CAState,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> apply(
+//			Automaton<List<BasicState>,List<String>,CAState,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> aut, 
+//			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop)
+//	{
+//		//converting prop 
+//		Map<BasicState,CAState> bs2cs = prop.getStates().stream()
+//				.collect(Collectors.toMap(Function.identity(), s->new CAState(Arrays.asList(s))));
+//
+//		Automaton<List<BasicState>,List<String>,CAState,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> prop_aut = 
+//				new Automaton<>(prop.getTransition().parallelStream()
+//						.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(bs2cs.get(t.getSource()),
+//								new Label<List<String>>(t.getLabel().getLabelAsList()),
+//								bs2cs.get(t.getTarget()), 
+//								t.getModality()))
+//						.collect(Collectors.toSet()));
+//	}
+
+
+
+// previous modelchecking was reusing the composition of MSCA
+//		//build from aut an auxiliary msca with all 
+//		MSCA aut_all_permitted = new MSCA(aut.getTransition()
+//				.parallelStream()
+//				.map(t->new MSCATransition(t.getSource(),
+//						//t.getLabel(),
+//						new CALabel(t.getRank(),0,CALabel.offer+t.getLabel().getUnsignedAction()),
+//						t.getTarget(),t.getModality()))
+//				.collect(Collectors.toSet()));
+//
+//		//build from prop an auxiliary msca with all requests
+//		Map<BasicState,CAState> bs2cs = prop.getStates().stream()
+//				.collect(Collectors.toMap(Function.identity(), s->new CAState(Arrays.asList(s))));
+//
+//		MSCA prop_all_reqs = new MSCA(prop.getTransition().parallelStream()
+//				.map(t->new MSCATransition(bs2cs.get(t.getSource()),
+//						new CALabel(1,0,CALabel.request+t.getLabel().getAction()),
+//						bs2cs.get(t.getTarget()), 
+//						MSCATransition.Modality.PERMITTED))
+//				.collect(Collectors.toSet()));
+//
+//		//compute synchronous composition 
+//		MSCACompositionFunction mcf = new MSCACompositionFunction(Arrays.asList(aut_all_permitted,prop_all_reqs)); 
+//		MSCA comp = mcf.apply(new StrongAgreement().negate(),this.bound);
+//
+//		return new MSCA(comp.getTransition()
+//				.parallelStream()
+//				.map(t->new MSCATransition(t.getSource(),
+//						t.getLabel(),
+//						t.getTarget(),
+//						t.getModality()))
+//				.collect(Collectors.toSet()));
+
+
+
+// previous model checking was reimplementing the composition
 //public Set<CAState> applyOld(MSCA aut, Automaton<String,BasicState,Transition<String,BasicState,Label>> prop)
 //{
 //

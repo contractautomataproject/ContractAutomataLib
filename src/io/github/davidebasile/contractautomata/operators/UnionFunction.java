@@ -8,11 +8,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the union function
@@ -20,7 +20,7 @@ import io.github.davidebasile.contractautomata.automaton.transition.MSCATransiti
  * @author Davide Basile
  *
  */
-public class UnionFunction implements Function<List<MSCA>,MSCA>{
+public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,ModalAutomaton<CALabel>>{
 
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 	 * @return compute the union of the FMCA in aut
 	 */
 	@Override
-	public MSCA apply(List<MSCA> aut)
+	public ModalAutomaton<CALabel> apply(List<ModalAutomaton<CALabel>> aut)
 	{
 		if (aut==null||aut.isEmpty())
 			throw new IllegalArgumentException();
@@ -39,12 +39,12 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 
 		int rank=aut.get(0).getRank(); 
 		if (aut.stream()
-				.map(MSCA::getRank)
+				.map(ModalAutomaton<CALabel>::getRank)
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
 		if (aut.parallelStream()
-		.map(MSCA::getStates)
+		.map(ModalAutomaton<CALabel>::getStates)
 		.flatMap(Set::stream)
 		.map(CAState::getState)
 		.flatMap(List::stream)
@@ -54,8 +54,9 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 	
 		
 		//relabeling
-		List<MSCA> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator(s->s.contains("_")?s:(id+"_"+s)).apply(aut.get(id)))
+		List<ModalAutomaton<CALabel>> relabeled=IntStream.range(0, aut.size())
+		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s))
+				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
 		//new initial state
@@ -64,13 +65,13 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 				.collect(Collectors.toList())//,0,0
 				);
 
-		Set<MSCATransition> uniontr= new HashSet<>(relabeled.stream()
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(relabeled.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+relabeled.size());  //Initialized to the total number of transitions
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new MSCATransition(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),MSCATransition.Modality.PERMITTED))
+				.mapToObj(i->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),ModalTransition.Modality.PERMITTED))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
 		//remove old initial states, I need to do this now
@@ -84,7 +85,7 @@ public class UnionFunction implements Function<List<MSCA>,MSCA>{
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 
-		return new MSCA(uniontr);
+		return new ModalAutomaton<CALabel>(uniontr);
 	}
 
 }

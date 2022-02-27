@@ -15,11 +15,12 @@ import io.github.davidebasile.contractautomata.automaton.transition.Transition;
  * 
  * @author Davide Basile
  *
- * @param <L> the generic type of the instance variable of S
+ * @param <CS> the generic type in State<CS>
+ * @param <CL> the generic type in Label<CL>
  * @param <S> the generic type of states
  * @param <T> the generic type of transitions
  */
-public class Automaton<L,V,S extends State<L>,T extends Transition<L,V,S,? extends Label<V>>>
+public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? extends Label<CL>>> implements Ranked
 { 
 
 	/**
@@ -81,7 +82,8 @@ public class Automaton<L,V,S extends State<L>,T extends Transition<L,V,S,? exten
 				.findFirst().orElseThrow(NullPointerException::new);
 	}
 
-	public int getRank()
+	@Override
+	public Integer getRank()
 	{
 		return this.getTransition().iterator().next().getRank();
 	}

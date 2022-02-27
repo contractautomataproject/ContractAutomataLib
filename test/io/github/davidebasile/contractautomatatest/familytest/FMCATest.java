@@ -17,7 +17,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCAConverter;
 import io.github.davidebasile.contractautomata.family.FMCA;
@@ -47,7 +48,7 @@ public class FMCATest {
 	public void getAut_test() throws Exception 
 	{
 		
-		MSCA a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		ModalAutomaton<CALabel> a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		FMCA aut = new FMCA(a,new Family(new HashSet<Product>()));	
 		
 		assertEquals(aut.getAut(),a);
@@ -104,9 +105,9 @@ public class FMCATest {
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA faut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
-		MSCA test = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 
-		MSCA controller = faut.getOrchestrationOfFamily();		
+		ModalAutomaton<CALabel> controller = faut.getOrchestrationOfFamily();		
 
 		assertEquals(MSCATest.checkTransitions(controller, test),true);
 	}
@@ -118,12 +119,12 @@ public class FMCATest {
 		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
 		
-		MSCA ofe =  aut.getOrchestrationOfFamilyEnumerative();
-		MSCA test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
+		ModalAutomaton<CALabel> ofe =  aut.getOrchestrationOfFamilyEnumerative();
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
 					
 		
 //		int[][] vpdummy = new int[1][];
-//		MSCA test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
+//		ModalAutomaton<CALabel> test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
 		
 		
 		assertEquals(MSCATest.checkTransitions(ofe, test),true);
@@ -137,7 +138,7 @@ public class FMCATest {
 	{
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		MSCA aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 
 		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
 		.isInstanceOf(UnsupportedOperationException.class);	
@@ -173,7 +174,7 @@ public class FMCATest {
 //	
 //	String fileName =dir+"ValidProducts.prod";
 //	Family fam=new Family(dfc.importFamily(fileName));
-//	FMCA aut = new FMCA(MSCAIO.parseXMLintoMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
+//	FMCA aut = new FMCA(ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
 //
 //	Set<Product> rv = aut.respectingValidityFamily();
 //

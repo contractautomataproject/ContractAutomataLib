@@ -3,8 +3,8 @@ package io.github.davidebasile.contractautomata.operators;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
+import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.family.Product;
 
 /**
@@ -13,7 +13,7 @@ import io.github.davidebasile.contractautomata.family.Product;
  * @author Davide Basile
  *
  */
-public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<MSCA> {
+public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<ModalAutomaton<CALabel>> {
 	private final OrchestrationSynthesisOperator synth;
 	private final Product p;
 	
@@ -22,7 +22,7 @@ public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<MSC
 	 * @param req the invariant to enforce (e.g. agreement or strong agreement)
 	 * @param p  the product to synthesise
 	 */
-	public ProductOrchestrationSynthesisOperator(Predicate<MSCATransition> req, Product p) {
+	public ProductOrchestrationSynthesisOperator(Predicate<CALabel> req, Product p) {
 		this.p=p;
 		this.synth=new OrchestrationSynthesisOperator(x->req.test(x)&&!p.isForbidden(x));
 	}
@@ -31,9 +31,9 @@ public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<MSC
 	 * @param aut the plant automaton
 	 * @return the synthesised orchestration of product p
 	 */
-	public MSCA apply(MSCA aut)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
 	{
-		MSCA a= synth.apply(aut);
+		ModalAutomaton<CALabel> a= synth.apply(aut);
 
 		if (a!=null&&!p.checkRequired(a.getTransition()))
 			return null;

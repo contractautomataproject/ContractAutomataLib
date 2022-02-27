@@ -40,4 +40,6 @@ public abstract class State<T> implements Ranked {
 	{
 		return "[state="+state+"]";
 	}
+	
+//	public abstract State<T> getCopy();
 }

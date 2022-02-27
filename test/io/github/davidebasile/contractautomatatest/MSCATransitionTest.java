@@ -15,7 +15,7 @@ import org.junit.Test;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 import io.github.davidebasile.contractautomata.automaton.transition.Transition;
 import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition.Modality;
 
@@ -31,7 +31,7 @@ public class MSCATransitionTest {
 	private CALabel calab;
 	private CAState source;
 	private CAState target;
-	private MSCATransition t1;
+	private ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t1;
 	
 	@Before
 	public void setup()
@@ -50,27 +50,27 @@ public class MSCATransitionTest {
 				);
 		target = new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
 				);
-		t1 = new MSCATransition(source,calab,target,Modality.PERMITTED);
+		t1 = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab,target,Modality.PERMITTED);
 
 	}
 	
 	@Test
 	public void coverbranchingConditionException() {
 		//check if it is brcond involved	
-		assertThatThrownBy(() -> new MSCATransition(l.get(0),calab,l.get(1),null))
+		assertThatThrownBy(() -> new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(l.get(0),calab,l.get(1),null))
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Ill-formed transition");
 	}
 	
 	@Test
 	public void coverConstructorException() {
-		assertThatThrownBy(() -> new MSCATransition(null,null,null,null))
+		assertThatThrownBy(() -> new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(null,null,null,null))
         .isInstanceOf(IllegalArgumentException.class);
 	}
 	
 	@Test
 	public void coverModNullException() {	
-		assertThatThrownBy(() -> new MSCATransition(source,calab,target,null))
+		assertThatThrownBy(() -> new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab,target,null))
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Ill-formed transition");
 	}
@@ -84,7 +84,7 @@ public class MSCATransitionTest {
 		lab2.add(CALabel.request+"a");
 		CALabel calab2= new CALabel(lab2);
 
-		assertThatThrownBy(() -> new MSCATransition(source,calab2,target,Modality.PERMITTED))
+		assertThatThrownBy(() -> new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab2,target,Modality.PERMITTED))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("source, label or target with different ranks");
 	}
@@ -100,7 +100,7 @@ public class MSCATransitionTest {
 //		lab.add(CALabel.offer+"a");
 //		lab.add(CALabel.idle);
 //		CALabel calab= new CALabel(lab);
-//		MSCATransition t = new MSCATransition(source,calab,target,Modality.PERMITTED);
+//		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab,target,Modality.PERMITTED);
 //		assertThatThrownBy(() -> t.)
 //        .isInstanceOf(RuntimeException.class)
 //        .hasMessageContaining("this transition is not a match");
@@ -114,7 +114,7 @@ public class MSCATransitionTest {
 		lab2.add(CALabel.request+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		MSCATransition t2 = new MSCATransition(source,calab2,target,Modality.PERMITTED);
+		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t2 = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab2,target,Modality.PERMITTED);
 
 		assertEquals(t1.equals(t2),true);
 	}
@@ -133,14 +133,14 @@ public class MSCATransitionTest {
 		lab2.add(CALabel.request+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		MSCATransition t2 = new MSCATransition(target,calab2,target,Modality.PERMITTED);
+		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t2 = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(target,calab2,target,Modality.PERMITTED);
 
 		assertEquals(t1.equals(t2),false);
 	}
 
 	@Test
 	public void testEquals4() {
-		Transition<List<BasicState>,String,CAState,CALabel> t2 = new Transition<>(source,calab,target);
+		Transition<List<BasicState>,List<String>,CAState,CALabel> t2 = new Transition<>(source,calab,target);
 		
 		assertEquals(t1.equals(t2),false);
 	}	
@@ -148,7 +148,7 @@ public class MSCATransitionTest {
 	
 	@Test
 	public void testEquals5() {
-		MSCATransition t2 = new MSCATransition(source,calab,target,Modality.URGENT);
+		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t2 = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab,target,Modality.URGENT);
 		
 		assertEquals(t1.equals(t2),false);
 	}
@@ -166,7 +166,7 @@ public class MSCATransitionTest {
 		lab2.add(CALabel.request+"b");
 		CALabel calab2= new CALabel(lab2);
 		
-		MSCATransition t2 = new MSCATransition(source,calab2,target,Modality.PERMITTED);
+		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t2 = new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,calab2,target,Modality.PERMITTED);
 
 		assertEquals(t1.equals(t2),false);
 	}

@@ -23,8 +23,11 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	public Transition(S source, L label, S target){
 		if (source==null || label==null || target==null)
 			throw new IllegalArgumentException("source, label or target null");
-		if (!(source.getRank()==target.getRank()&&label.getRank()==source.getRank()))
+		if (!(source.getRank()==target.getRank()&&label.getRank()==source.getRank())) {
+			System.out.println("error in "+source.toString()+label.toString()+target.toString()+
+					source.getRank()+" "+label.getRank());
 			throw new IllegalArgumentException("source, label or target with different ranks");
+		}
 		this.source=source;
 		this.target=target;
 		this.label=label;

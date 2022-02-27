@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -16,12 +17,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.CMLabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 
 /**
  * Import/Export textual DATA format
@@ -37,7 +38,7 @@ public class DataConverter implements MSCAConverter{
 	 * @throws FileNotFoundException in case filename is not found
 	 */
 	@Override
-	public void exportMSCA(String filename, MSCA aut) throws FileNotFoundException {
+	public void exportMSCA(String filename, ModalAutomaton<CALabel> aut) throws FileNotFoundException {
 		if (filename=="")
 			throw new IllegalArgumentException("Empty file name");
 
@@ -49,26 +50,26 @@ public class DataConverter implements MSCAConverter{
 	}
 
 	/**
-	 * Import an MSCA described in a text file .data, 
+	 * Import an ModalAutomaton<CALabel> described in a text file .data, 
 	 * 
 	 * @param  filename the name of the file
-	 * @return the object MSCA described in the textfile
+	 * @return the object ModalAutomaton<CALabel> described in the textfile
 	 * @throws IOException problems in reading the file
 	 */
 	@Override
-	public MSCA importMSCA(String filename) throws IOException {
+	public ModalAutomaton<CALabel> importMSCA(String filename) throws IOException {
 		//TODO long method
 		// Open the file
 		if (!filename.endsWith(".data"))
 			throw new IllegalArgumentException("Not a .data format");
 
-		Set<MSCATransition> tr;
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr;
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename))))
 		{
 			int rank=0;
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
-			tr = new HashSet<MSCATransition>();
+			tr = new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>();
 			Set<CAState> states = new HashSet<CAState>();
 			Map<Integer,Set<BasicState>> mapBasicStates = new HashMap<>();
 
@@ -111,17 +112,17 @@ public class DataConverter implements MSCAConverter{
 					}
 					case "(": //a may transition
 					{
-						tr.add(loadTransition(strLine,rank, MSCATransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
+						tr.add(loadTransition(strLine,rank, ModalTransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
 						break;
 					}
 					case "!": //a must transition
 					{
 						String stype= strLine.substring(1,2);
-						MSCATransition.Modality type=null;
+						ModalTransition.Modality type=null;
 						if ("U".equals(stype))
-							type=MSCATransition.Modality.URGENT;
+							type=ModalTransition.Modality.URGENT;
 						else if ("L".equals(stype))
-							type=MSCATransition.Modality.LAZY;
+							type=ModalTransition.Modality.LAZY;
 						
 						tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
 						break;
@@ -132,10 +133,10 @@ public class DataConverter implements MSCAConverter{
 
 		}
 		
-		return new MSCA(tr);
+		return new ModalAutomaton<CALabel>(tr);
 	}
 
-	private static MSCATransition loadTransition(String str, int rank, MSCATransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private static ModalTransition<List<BasicState>,List<String>,CAState,CALabel> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.*)"+"\\],\\["+"(.*)"+"\\],\\["+"(.*)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -159,7 +160,7 @@ public class DataConverter implements MSCAConverter{
 		else
 			label = new CALabel(Arrays.asList(tr[1]));
 
-		return new MSCATransition(source,label,target,type); 
+		return new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,label,target,type); 
 	}
 
 	private static CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates, String[] state,String[] initial, String[][] fin) throws IOException {

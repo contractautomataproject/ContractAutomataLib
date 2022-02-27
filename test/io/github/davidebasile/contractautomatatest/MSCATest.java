@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.MSCA;
+import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.MSCATransition;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition.Modality;
 
 public class MSCATest {
@@ -25,7 +25,7 @@ public class MSCATest {
 //	private final DataConverter bdc = new DataConverter();
 
 
-	public static boolean checkTransitions(MSCA aut, MSCA test) {
+	public static boolean checkTransitions(ModalAutomaton<CALabel> aut, ModalAutomaton<CALabel> test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
 				.map(t->t.toCSV())
 				.collect(Collectors.toSet());
@@ -45,14 +45,14 @@ public class MSCATest {
 
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new MSCA(null))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Null argument");
 	}
 
 	@Test
 	public void constructorTest_Exception_emptyTransitions() {
-		assertThatThrownBy(() -> new MSCA(new HashSet<MSCATransition>()))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>()))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 
@@ -60,10 +60,10 @@ public class MSCATest {
 
 	@Test
 	public void constructor_Exception_nullArgument() throws Exception {
-		Set<MSCATransition> tr = new HashSet<>();
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
 		tr.add(null);
-		//	MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"test_chor_controllablelazyoffer.mxe");
-		assertThatThrownBy(() -> new MSCA(tr))
+		//	ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Null element");
 	}
@@ -87,8 +87,8 @@ public class MSCATest {
 		BasicState bs2 = new BasicState("2",true,false);
 		BasicState bs3 = new BasicState("3",true,false);
 
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
 				),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
@@ -96,12 +96,12 @@ public class MSCATest {
 				Modality.PERMITTED));
 		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
 				);
-		tr.add(new MSCATransition(cs,
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(cs,
 				new CALabel(lab2),
 				cs,
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(tr))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Transitions with different rank");
 	}
@@ -117,15 +117,15 @@ public class MSCATest {
 		BasicState bs1 = new BasicState("1",false,true);
 
 
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs1)//,0,0
 						),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(tr))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Not Exactly one Initial State found!");
 	}
@@ -140,15 +140,15 @@ public class MSCATest {
 		BasicState bs1 = new BasicState("1",false,false);
 
 
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs1)//,0,0
 						),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new MSCA(tr))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No Final States!");
 	}
@@ -164,21 +164,21 @@ public class MSCATest {
 		BasicState bs1 = new BasicState("0",true,false);
 		BasicState bs2 = new BasicState("0",false,true);
 
-		Set<MSCATransition> tr = new HashSet<>();
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs1)//,0,0
+		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs1)//,0,0
 				),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs2)//,0,0
 						),
 				Modality.PERMITTED));
 
-		tr.add(new MSCATransition(new CAState(Arrays.asList(bs2)//,0,0
+		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs2)//,0,0
 				),
 				new CALabel(lab),
 				new CAState(Arrays.asList(bs2)//,0,0
 						),
 				Modality.PERMITTED));
-		assertThatThrownBy(() -> new MSCA(tr))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
 	}
@@ -186,7 +186,7 @@ public class MSCATest {
 	//	@Test
 	//	public void setFinalStatesOfPrinc_Exception_nullArgument() throws Exception {
 	//		
-	//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"test_chor_controllablelazyoffer.mxe");
+	//		ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
 	//		assertThatThrownBy(() -> aut.setFinalStatesofPrincipals(new int[][] { {1,2},null}))
 	//	    .isInstanceOf(IllegalArgumentException.class)
 	//	    .hasMessageContaining("Final states contain a null array element or are empty");
@@ -195,7 +195,7 @@ public class MSCATest {
 	//	@Test
 	//	public void setInitialCATest() throws Exception {
 	//		
-	//		MSCA aut = MSCAIO.load(dir+"BusinessClient.mxe.data");
+	//		ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.load(dir+"BusinessClient.mxe.data");
 	//
 	//		CAState newInitial = aut.getStates().parallelStream()
 	//				.filter(s->s!=aut.getInitial())
@@ -212,8 +212,8 @@ public class MSCATest {
 	//	@Test
 	//	public void getRankZero() throws Exception {
 	//		
-	//		MSCA aut = MSCAIO.parseXMLintoMSCA(dir+"test_chor_controllablelazyoffer.mxe");
-	//		aut.setTransition(new HashSet<MSCATransition>());
+	//		ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
+	//		aut.setTransition(new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>());
 	//		assertEquals(aut.getRank(),0);
 	//	}
 
