@@ -58,11 +58,11 @@ public class MpcSynthesisTest {
 
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
-		//MSCA mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
-		//assertEquals(mpc,null);
+		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement(),prop).apply(aut);
+		assertTrue(mpc==null);
 		
-		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement(),prop).apply(aut))
-		.isInstanceOf(IllegalArgumentException.class);
+//		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement(),prop).apply(aut))
+//		.isInstanceOf(IllegalArgumentException.class);
 //		.hasMessage("No transitions");
 
 	}

@@ -42,7 +42,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(100).apply(aut, prop);
+		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(aut, prop).apply(100).revertToMSCA();
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
 		assertTrue(MSCATest.checkTransitions(synth, test));
 	}
@@ -50,7 +50,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testModelCheckingLoop() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(100).apply(aut, prop);
+		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE).revertToMSCA();
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
 		assertTrue(MSCATest.checkTransitions(synth, test));
 	}

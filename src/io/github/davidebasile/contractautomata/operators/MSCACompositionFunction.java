@@ -20,12 +20,12 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
 
 public class MSCACompositionFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,CALabel,ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> {
 
-	public MSCACompositionFunction(List<ModalAutomaton<CALabel>> aut)
+	public MSCACompositionFunction(List<ModalAutomaton<CALabel>> aut,Predicate<CALabel> pruningPred)
 	{
 		super(aut, MSCACompositionFunction::computeRank,(l1,l2)->l1.match(l2),
 				CAState::new, ModalTransition<List<BasicState>,List<String>,CAState,CALabel>::new, 
 				(e, ee,rank) -> MSCACompositionFunction.createLabel(e, ee, rank, aut), 
-				CALabel::new, ModalAutomaton<CALabel>::new);
+				CALabel::new, ModalAutomaton<CALabel>::new, pruningPred);
 	}
 
 	private static Integer computeSumPrincipal(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> etra, Integer eind, List<ModalAutomaton<CALabel>> aut)
@@ -49,9 +49,9 @@ public class MSCACompositionFunction extends CompositionFunction<List<BasicState
 	}
 	
 	@Override
-	public ModalAutomaton<CALabel> apply(Predicate<CALabel> pruningPred, Integer bound)
+	public ModalAutomaton<CALabel> apply(Integer bound)
 	{
-		return (ModalAutomaton<CALabel>) super.apply(pruningPred, bound);
+		return (ModalAutomaton<CALabel>) super.apply(bound);
 	}
 
 

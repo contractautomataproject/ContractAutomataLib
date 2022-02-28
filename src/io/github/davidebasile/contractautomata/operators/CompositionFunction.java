@@ -38,7 +38,7 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
  */
 
 
-public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>>  implements BiFunction<Predicate<L>,Integer,Automaton<CS,CL,S,T>>{
+public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>>  implements Function<Integer,Automaton<CS,CL,S,T>>{
 
 	private final BiFunction<L,L,Boolean> match;
 	private final Function<List<S>,S> createState;
@@ -68,6 +68,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	private Set<T> tr;
 	private Set<List<S>> visited;
 	private Queue<S> dontvisit;
+	private Predicate<L> pruningPred;
 
 	/**
 	 * 
@@ -88,7 +89,8 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
 			TriFunction<TIndex,TIndex,Integer,L> createLabel,
 			TriFunction<L,Integer,Integer, L> shiftLabel, 
-			Function<Set<T>,? extends Automaton<CS,CL,S,T>> createAutomaton)
+			Function<Set<T>,? extends Automaton<CS,CL,S,T>> createAutomaton,
+			Predicate<L> pruningPred)
 	{
 		this.aut=aut;
 		this.rank=computeRank.apply(aut.stream()
@@ -114,6 +116,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 		this.createTransition=createTransition;
 		this.shiftLabel=shiftLabel;
 		this.createAutomaton=createAutomaton;
+		this.pruningPred=pruningPred;
 	}
 
 	/**
@@ -124,7 +127,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	 * @return  the composed automaton
 	 */
 	@Override
-	public Automaton<CS,CL,S,T> apply(Predicate<L> pruningPred, Integer bound)
+	public Automaton<CS,CL,S,T> apply(Integer bound)
 	{
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition

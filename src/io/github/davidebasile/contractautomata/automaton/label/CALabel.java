@@ -272,7 +272,7 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public /*@ pure @*/ Integer getOfferer() {
 		if (this.isRequest())
-			throw new UnsupportedOperationException("No offerer in a request action");
+			throw new UnsupportedOperationException("No offerer in a request action ");
 		else 
 			return offerer;
 	}

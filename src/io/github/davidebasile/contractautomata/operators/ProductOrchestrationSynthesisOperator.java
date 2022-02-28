@@ -1,10 +1,14 @@
 package io.github.davidebasile.contractautomata.operators;
 
+import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
+import io.github.davidebasile.contractautomata.automaton.Automaton;
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
+import io.github.davidebasile.contractautomata.automaton.state.BasicState;
+import io.github.davidebasile.contractautomata.automaton.state.CAState;
+import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 import io.github.davidebasile.contractautomata.family.Product;
 
 /**
@@ -13,8 +17,7 @@ import io.github.davidebasile.contractautomata.family.Product;
  * @author Davide Basile
  *
  */
-public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<ModalAutomaton<CALabel>> {
-	private final OrchestrationSynthesisOperator synth;
+public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthesisOperator {
 	private final Product p;
 	
 	/**
@@ -23,17 +26,19 @@ public class ProductOrchestrationSynthesisOperator  implements UnaryOperator<Mod
 	 * @param p  the product to synthesise
 	 */
 	public ProductOrchestrationSynthesisOperator(Predicate<CALabel> req, Product p) {
+		super(x->req.test(x)&&!p.isForbidden(x));
 		this.p=p;
-		this.synth=new OrchestrationSynthesisOperator(x->req.test(x)&&!p.isForbidden(x));
 	}
 	
 	/**
 	 * @param aut the plant automaton
 	 * @return the synthesised orchestration of product p
 	 */
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
+	@Override
+	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
+			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut)
 	{
-		ModalAutomaton<CALabel> a= synth.apply(aut);
+		ModalAutomaton<CALabel> a= super.apply(aut);
 
 		if (a!=null&&!p.checkRequired(a.getTransition()))
 			return null;

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,20 +23,21 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
  * @author Davide Basile
  *
  */
-public class ChoreographySynthesisOperator implements UnaryOperator<ModalAutomaton<CALabel>> {
+public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperator {
 
 	private Predicate<CALabel> req;
 	private Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice=Stream::findAny;
-	private Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop=null;
-	
-	public ChoreographySynthesisOperator(Predicate<CALabel> req){
-		this.req=req;
-	}
+
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop){
-		this(req);
-		this.prop=prop;
+		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,prop);
+		this.req=req;
+	}
+	
+
+	public ChoreographySynthesisOperator(Predicate<CALabel> req){
+		this(req,(Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>)null);
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
@@ -46,6 +46,8 @@ public class ChoreographySynthesisOperator implements UnaryOperator<ModalAutomat
 		this(req);
 		this.choice=choice;
 	}
+	
+
 
 	/** 
 	 * invokes the synthesis method for synthesising the choreography
@@ -55,22 +57,21 @@ public class ChoreographySynthesisOperator implements UnaryOperator<ModalAutomat
 	 * 
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
+	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
+			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
-
+		
+		final Set<String> violatingbc = new HashSet<>();
+		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toCSV()),req);
+		
 		ModalTransition<List<BasicState>,List<String>,CAState,CALabel> toRemove=null; 
-		Set<String> violatingbc = new HashSet<>();
-
-		ModelCheckingSynthesisOperator synth;
 		ModalAutomaton<CALabel> chor;
 		do 
 		{ 
-			synth=new ModelCheckingSynthesisOperator((x,t,bad) -> violatingbc.contains(x.toCSV()),
-						(x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,prop);
-			chor = synth.apply(aut);
+			chor = super.apply(aut);
 			if (chor==null)
 				break;
 			final Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> trf = chor.getTransition();

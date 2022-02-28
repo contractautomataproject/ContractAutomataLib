@@ -37,7 +37,7 @@ public class Snippets {
 		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);	
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));//loading textual .data description of a CA
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
-		ModalAutomaton<CALabel> comp = new MSCACompositionFunction(aut).apply(new Agreement().negate(),100);
+		ModalAutomaton<CALabel> comp = new MSCACompositionFunction(aut,new Agreement().negate()).apply(100);
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
 	}
 	

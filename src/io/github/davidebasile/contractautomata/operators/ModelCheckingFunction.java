@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,41 +25,12 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction implements 
-BiFunction<ModalAutomaton<CALabel>,
-Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>,
-ModalAutomaton<CALabel>>{
-	private final int bound;
+public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> 
+{
 
-	public ModelCheckingFunction() {
-		this.bound=Integer.MAX_VALUE;
-	}
-
-	/**
-	 * 
-	 * @param bound the  bound of bounded model checking
-	 */
-	public ModelCheckingFunction(Integer bound) {
-		this.bound=bound;
-	}
-
-	/**
-	 * @param aut the plant automaton to verify
-	 * @param prop the automaton expressing the property to verify
-	 * @return the set of states violating prop
-	 */
-	@Override					
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut, 
-			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop)
-	{
-		//converting
-		ModalAutomaton<Label<List<String>>> convaut = aut.revertToModalAutomaton();
-		ModalAutomaton<Label<List<String>>> convprop = ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new);
-
-		//instantiating the composition function
-		CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> cf = 
-				new CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> (
-						Arrays.asList(convaut,convprop), 
+	public ModelCheckingFunction(ModalAutomaton<CALabel> aut, 
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop) {
+		super(Arrays.asList(aut.revertToModalAutomaton(),ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new)), 
 						MSCACompositionFunction::computeRank,
 						(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
 						CAState::new, 
@@ -75,16 +45,26 @@ ModalAutomaton<CALabel>>{
 							if (rank-l.size()>0)
 								l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
 							return new Label<List<String>>(l);
-						}, ModalAutomaton::new);
+						}, ModalAutomaton::new,
+						//only transitions where both aut and prop moves together are allowed
+						l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
+						IntStream.range(0, l.getRank()-1)
+						.allMatch(i->l.getAction().get(i).equals(CALabel.idle)));
+						
+	}
+
+	/**
+	 * @param aut the plant automaton to verify
+	 * @param prop the automaton expressing the property to verify
+	 * @return the set of states violating prop
+	 */
+	@Override
+	public  ModalAutomaton<Label<List<String>>> apply(Integer bound)
+	{
 
 		//apply the instantiation
 		ModalAutomaton<Label<List<String>>> comp = 
-				(ModalAutomaton<Label<List<String>>>) cf.apply(
-						l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
-						IntStream.range(0, l.getRank()-1)
-						.allMatch(i->l.getAction().get(i).equals(CALabel.idle))
-						//only transitions where both aut and prop moves together are allowed
-				,bound);
+				(ModalAutomaton<Label<List<String>>>) super.apply(bound);
 
 		if (comp==null)
 			return null;
@@ -111,10 +91,10 @@ ModalAutomaton<CALabel>>{
 		.distinct()
 		.collect(Collectors.toMap(Function.identity(), CAState::new));
 		
-		return new ModalAutomaton<CALabel>(comp.getTransition().parallelStream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(
+		return new ModalAutomaton<Label<List<String>>>(comp.getTransition().parallelStream()
+				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(
 							cs2cs.get(t.getSource().getState().subList(0, t.getSource().getRank()-1)), 
-							new CALabel(t.getLabel().getAction().subList(0, t.getLabel().getRank()-1)),
+							new Label<List<String>>(t.getLabel().getAction().subList(0, t.getLabel().getRank()-1)),
 							cs2cs.get(t.getTarget().getState().subList(0, t.getTarget().getRank()-1)),
 							t.getModality()))
 				.collect(Collectors.toSet()));
