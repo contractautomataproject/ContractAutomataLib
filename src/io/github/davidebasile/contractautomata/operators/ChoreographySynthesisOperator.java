@@ -41,7 +41,8 @@ public class ChoreographySynthesisOperator implements UnaryOperator<ModalAutomat
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
-			Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice){
+			Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,
+				Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice){
 		this(req);
 		this.choice=choice;
 	}

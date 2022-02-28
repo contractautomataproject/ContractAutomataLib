@@ -67,6 +67,8 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	@Override
 	public Automaton<CS,CL,S,T> apply(Automaton<CS,CL,S,T> arg1) {
 		{
+			if (arg1==null)
+				throw new IllegalArgumentException();
 			//creating an exact copy
 			Automaton<CS,CL,S,T> aut= duplicateAut.apply(arg1);
 						

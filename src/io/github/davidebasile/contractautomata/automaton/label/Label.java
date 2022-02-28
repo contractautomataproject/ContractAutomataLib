@@ -1,6 +1,6 @@
 package io.github.davidebasile.contractautomata.automaton.label;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 import io.github.davidebasile.contractautomata.automaton.Ranked;
@@ -58,15 +58,15 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 		return "[action=" +action+"]";
 	}
 
-	
-	public List<T> getLabelAsList(){
-		return List.of(action);
-	}
+//	
+//	public List<T> getLabelAsList(){
+//		return List.of(action);
+//	}
 	
 	@Override
 	public Integer getRank() {
-		if (action instanceof List<?>) {
-			return ((List<?>)action).size();
+		if (action instanceof Collection<?>) {
+			return ((Collection<?>)action).size();
 		}
 		return 1;
 	}

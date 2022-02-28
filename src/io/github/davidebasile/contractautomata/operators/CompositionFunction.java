@@ -205,8 +205,8 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 						.filter(e->(!e.getValue().isEmpty())) //no duplicates
 						.collect(toSet()));
 
-				if (trmap.parallelStream()
-						.anyMatch(x->pruningPred!=null&&pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent()))
+				if (pruningPred!=null && trmap.parallelStream()
+						.anyMatch(x->pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent()))
 				{
 					if (sourcestate.equals(initialstate))
 						return null;

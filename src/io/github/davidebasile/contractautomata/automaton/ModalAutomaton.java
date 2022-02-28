@@ -31,6 +31,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 		if(states.stream()
 				.anyMatch(x-> states.stream()
 						.filter(y->x!=y && x.getState().equals(y.getState()))
+						.peek(y->System.out.println(x+" "+y))
 						.count()!=0))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 	}
@@ -100,7 +101,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 		return new ModalAutomaton<CALabel>(this.getTransition()
 				.parallelStream()
 				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(t.getSource(), 
-						(CALabel)t.getLabel(),
+						new CALabel(t.getLabel().getAction()),
 						t.getTarget(),
 						t.getModality()))
 				.collect(Collectors.toSet()));

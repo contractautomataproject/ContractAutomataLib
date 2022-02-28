@@ -157,8 +157,9 @@ public class DataConverter implements MSCAConverter{
 		CALabel label;
 		if (tr[1].length==1 && tr[1][0].contains(CMLabel.action_separator))
 			label=new CMLabel(tr[1][0]);
-		else
+		else 
 			label = new CALabel(Arrays.asList(tr[1]));
+		
 
 		return new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(source,label,target,type); 
 	}

@@ -58,7 +58,12 @@ public class ModalAutomatonSynthesisOperator<L extends Label<List<String>>> exte
 	@Override
 	public ModalAutomaton<L> apply(Automaton<List<BasicState>,List<String>,CAState,
 			ModalTransition<List<BasicState>,List<String>,CAState,L>> arg1) {
-		return new ModalAutomaton<L>(super.apply(arg1).getTransition());
+		Automaton<List<BasicState>,List<String>,CAState,
+		ModalTransition<List<BasicState>,List<String>,CAState,L>> a = super.apply(arg1);
+		if (a!=null)
+			return new ModalAutomaton<L>(super.apply(arg1).getTransition());
+		else 
+			return null;
 	}
 
 }

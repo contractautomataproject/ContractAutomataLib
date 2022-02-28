@@ -77,13 +77,13 @@ public class CALabelTest {
 	@Test
 	public void constructorTest1_Exception_nullArgument() {
 		assertThatThrownBy(() -> new CALabel(null,null,"!a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+	    .isInstanceOf(NullPointerException.class);
 	}
 	@Test
 	public void constructorTest2_Exception_nullArgument() {
 		assertThatThrownBy(() -> new CALabel(null,null,null,"!a",null))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Null argument");
+	    .isInstanceOf(NullPointerException.class);
+	 //   .hasMessageContaining("Null argument");
 	}
 //	
 	@Test

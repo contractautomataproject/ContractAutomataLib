@@ -1,9 +1,11 @@
-package io.github.davidebasile.contractautomata.automaton.label;
+package deprecated;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import io.github.davidebasile.contractautomata.automaton.label.Label;
 
 /**
  * 
@@ -372,7 +374,6 @@ public class CALabel_Old extends Label<String> {
 	 * 
 	 * @return the calabel encoded in a list of strings, at each position there is the action performed by that principal in that position
 	 */
-	@Override
 	public List<String> getLabelAsList(){
 		String action = this.getTheAction();
 		if (this.isMatch())

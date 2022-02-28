@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
@@ -26,7 +27,9 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
  *
  */
 public class ModelCheckingFunction implements 
-	BiFunction<ModalAutomaton<Label<List<String>>>,ModalAutomaton<Label<List<String>>>,ModalAutomaton<Label<List<String>>>>{
+BiFunction<ModalAutomaton<CALabel>,
+Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>,
+ModalAutomaton<CALabel>>{
 	private final int bound;
 
 	public ModelCheckingFunction() {
@@ -47,17 +50,24 @@ public class ModelCheckingFunction implements
 	 * @return the set of states violating prop
 	 */
 	@Override					
-	public ModalAutomaton<Label<List<String>>> apply(ModalAutomaton<Label<List<String>>> aut, ModalAutomaton<Label<List<String>>> prop)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut, 
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop)
 	{
+		//converting
+		ModalAutomaton<Label<List<String>>> convaut = aut.revertToModalAutomaton();
+		ModalAutomaton<Label<List<String>>> convprop = ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new);
+
 		//instantiating the composition function
 		CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> cf = 
 				new CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> (
-						Arrays.asList(aut,prop), 
+						Arrays.asList(convaut,convprop), 
 						MSCACompositionFunction::computeRank,
 						(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
 						CAState::new, 
 						ModalTransition::new, 
-						(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), ee.tra.getLabel().getAction().stream()).collect(Collectors.toList())), 
+						(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), 
+								ee.tra.getLabel().getAction().stream())
+								.collect(Collectors.toList())), 
 						(lab, rank, shift) ->{ 
 							List<String> l = new ArrayList<String>(rank);
 							l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
@@ -65,25 +75,54 @@ public class ModelCheckingFunction implements
 							if (rank-l.size()>0)
 								l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
 							return new Label<List<String>>(l);
-						}, 
-						ModalAutomaton::new);
+						}, ModalAutomaton::new);
 
 		//apply the instantiation
 		ModalAutomaton<Label<List<String>>> comp = 
-				(ModalAutomaton<Label<List<String>>>) cf.apply(l->{
-			List<String> li=l.getAction();
-			return li.stream().filter(s->!s.equals(CALabel.idle)).count()==1;
-		},bound);
+				(ModalAutomaton<Label<List<String>>>) cf.apply(
+						l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
+						IntStream.range(0, l.getRank()-1)
+						.allMatch(i->l.getAction().get(i).equals(CALabel.idle))
+						//only transitions where both aut and prop moves together are allowed
+				,bound);
 
-		//		comp.getStates().parallelStream()
-		//		.collect(Collectors.groupingByConcurrent(s->s.getState().subList(0, s.getState().size()-1)));
-
-		return comp;
+		if (comp==null)
+			return null;
+		
+		//removing the prop automaton from the composition before reverting to an MSCA
+		
+		//first renaming states of aut that are unfolded by prop
+		comp.getTransition().parallelStream()
+				.filter(t->t.getSource().getState().subList(0, t.getSource().getState().size()-1).equals(
+						t.getTarget().getState().subList(0, t.getTarget().getState().size()-1))&&
+						!t.getSource().getState().get(t.getSource().getState().size()-1).equals(
+								t.getTarget().getState().get(t.getTarget().getState().size()-1)))//only prop has moved
+				.forEach(t->{
+					List<BasicState> state = t.getTarget().getState();
+					IntStream.range(0,t.getLabel().getRank()-1)
+					.filter(i->!t.getLabel().getAction().get(i).equals(CALabel.idle))
+					.forEach(i->state.set(i, new BasicState(state.get(i).getState()+"_"+state.get(state.size()-1).getState()						
+							,false,state.get(i).isFinalstate())));//cannot duplicate initial states!
+				});
+		
+		//transitions may share a castate
+		Map<List<BasicState>,CAState> cs2cs = comp.getStates().parallelStream()
+		.map(s->s.getState().subList(0, s.getState().size()-1))
+		.distinct()
+		.collect(Collectors.toMap(Function.identity(), CAState::new));
+		
+		return new ModalAutomaton<CALabel>(comp.getTransition().parallelStream()
+				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(
+							cs2cs.get(t.getSource().getState().subList(0, t.getSource().getRank()-1)), 
+							new CALabel(t.getLabel().getAction().subList(0, t.getLabel().getRank()-1)),
+							cs2cs.get(t.getTarget().getState().subList(0, t.getTarget().getRank()-1)),
+							t.getModality()))
+				.collect(Collectors.toSet()));
 
 	}
 
 
-	public static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
+	private static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
 	A extends ModalAutomaton<L>>	A convert(
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  aut,
 			Function<List<String>,L> createLabel, 
@@ -105,7 +144,7 @@ public class ModelCheckingFunction implements
 }
 
 
-	
+
 //this method does both the convertions  but requires to do casts
 //	public static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
 //	A extends Automaton<List<BasicState>,List<String>,CAState,T>> 	A convertAll(

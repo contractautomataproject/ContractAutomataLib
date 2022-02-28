@@ -17,6 +17,7 @@ import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
 import io.github.davidebasile.contractautomata.converters.DataConverter;
 import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
+import io.github.davidebasile.contractautomata.operators.ModelCheckingFunction;
 import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
@@ -41,15 +42,17 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-
-	//	System.out.println(new ModelCheckingFunction(100).apply(aut, prop) + System.lineSeparator());
-		
-//		Set<CAState> test = aut.getStates().stream()
-//		.filter(s->s.toString().equals("[1, 1]")||s.toString().equals("[1, 2]"))
-//		.collect(Collectors.toSet());
-//		
-//		System.out.println(states);
-//		assertTrue(states.equals(test));
+		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(100).apply(aut, prop);
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
+		assertTrue(MSCATest.checkTransitions(synth, test));
+	}
+	
+	@Test
+	public void testModelCheckingLoop() throws IOException {
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
+		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(100).apply(aut, prop);
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
+		assertTrue(MSCATest.checkTransitions(synth, test));
 	}
 	
 	@Test
@@ -76,7 +79,7 @@ public class ModelCheckingTest {
 	
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
-		
+
 		assertTrue(MSCATest.checkTransitions(cor, test));
 	}
 }

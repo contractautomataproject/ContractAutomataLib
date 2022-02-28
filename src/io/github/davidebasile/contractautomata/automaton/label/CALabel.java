@@ -76,7 +76,7 @@ public class CALabel extends Label<List<String>> {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal)?action:idle)
 				.collect(Collectors.toList()));
-		if (rank==null||principal==null||action==null||rank<=0)
+		if (principal==null||action==null||rank<=0)
 			throw new IllegalArgumentException(rank + " " + principal);
 
 		if (action.startsWith(offer))
@@ -112,7 +112,7 @@ public class CALabel extends Label<List<String>> {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:idle)
 				.collect(Collectors.toList()));
-		if (rank==null||principal1==null||principal2==null||action2==null||rank<=0||action2.length()<=1)
+		if (principal1==null||principal2==null||action2==null||rank<=0||action2.length()<=1)
 			throw new IllegalArgumentException("Null argument");
 
 		if ((action1.startsWith(offer)&&!action2.startsWith(request))||
@@ -179,6 +179,9 @@ public class CALabel extends Label<List<String>> {
 				x -> {if (x==null) throw new IllegalArgumentException("Label contains null references");}
 				);
 
+		if (label.isEmpty())
+			throw new IllegalArgumentException();
+		
 		int offtemp=-1,requtemp=-1;//offerer and requester are final
 		for (int i=0;i<label.size();i++)
 		{
@@ -195,7 +198,7 @@ public class CALabel extends Label<List<String>> {
 				requtemp=i; 
 			}
 			else if (!label.get(i).equals(idle)) 
-				throw new IllegalArgumentException("The label is not well-formed");
+				throw new IllegalArgumentException("The label is not well-formed "+label.get(i));
 		}
 		this.offerer=offtemp;
 		this.requester=requtemp;
@@ -204,8 +207,10 @@ public class CALabel extends Label<List<String>> {
 			this.actiontype=CALabel.ActionType.MATCH;
 		else if (offerer!=-1)
 			this.actiontype=CALabel.ActionType.OFFER;
-		else
+		else if (requester!=-1)
 			this.actiontype=CALabel.ActionType.REQUEST;
+		else
+			throw new IllegalArgumentException("The action is not a request nor an offer "+label);
 
 		this.rank = label.size();
 	}
@@ -486,7 +491,7 @@ public class CALabel extends Label<List<String>> {
 */
 	@Override
 	public String toString() {
-		return this.getLabelAsList().toString();
+		return this.getAction().toString();
 	}
 	
 	/**

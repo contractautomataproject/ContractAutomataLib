@@ -56,7 +56,6 @@ public class RelabelingOperator<L extends Label<List<String>>> implements UnaryO
 								.collect(Collectors.toList())
 								)));
 
-
 		return new ModalAutomaton<L>(aut.getTransition().stream()
 				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,L>(clonedcastates.get(t.getSource()),
 						createLabel.apply(t.getLabel().getAction()),
