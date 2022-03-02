@@ -67,11 +67,10 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			return super.apply(arg1);
 		else
 		{
-			ModalAutomaton<Label<List<String>>> a=new ModelCheckingFunction(new ModalAutomaton<CALabel>(arg1.getTransition()),prop).apply(Integer.MAX_VALUE);
-			if (a!=null)
-				return super.apply(a.revertToMSCA());
-			else
-				return null;
+			ModalAutomaton<Label<List<String>>> comp=new ModelCheckingFunction(new ModalAutomaton<CALabel>(arg1.getTransition()),prop).apply(Integer.MAX_VALUE);			
+			if (comp==null)
+					return null;
+			return super.apply(ModelCheckingFunction.revertToMSCA(comp));
 		}
 	}
 

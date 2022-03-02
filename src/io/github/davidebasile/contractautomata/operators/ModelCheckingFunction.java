@@ -31,26 +31,26 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 	public ModelCheckingFunction(ModalAutomaton<CALabel> aut, 
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop) {
 		super(Arrays.asList(aut.revertToModalAutomaton(),ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new)), 
-						MSCACompositionFunction::computeRank,
-						(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
-						CAState::new, 
-						ModalTransition::new, 
-						(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), 
-								ee.tra.getLabel().getAction().stream())
-								.collect(Collectors.toList())), 
-						(lab, rank, shift) ->{ 
-							List<String> l = new ArrayList<String>(rank);
-							l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
-							l.addAll(lab.getAction());
-							if (rank-l.size()>0)
-								l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
-							return new Label<List<String>>(l);
-						}, ModalAutomaton::new,
-						//only transitions where both aut and prop moves together are allowed
-						l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
-						IntStream.range(0, l.getRank()-1)
-						.allMatch(i->l.getAction().get(i).equals(CALabel.idle)));
-						
+				MSCACompositionFunction::computeRank,
+				(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
+				CAState::new, 
+				ModalTransition::new, 
+				(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), 
+						ee.tra.getLabel().getAction().stream())
+						.collect(Collectors.toList())), 
+				(lab, rank, shift) ->{ 
+					List<String> l = new ArrayList<String>(rank);
+					l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
+					l.addAll(lab.getAction());
+					if (rank-l.size()>0)
+						l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
+					return new Label<List<String>>(l);
+				}, ModalAutomaton::new,
+				//only transitions where both aut and prop moves together are allowed
+				l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
+				IntStream.range(0, l.getRank()-1)
+				.allMatch(i->l.getAction().get(i).equals(CALabel.idle)));
+
 	}
 
 	/**
@@ -66,38 +66,7 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 		ModalAutomaton<Label<List<String>>> comp = 
 				(ModalAutomaton<Label<List<String>>>) super.apply(bound);
 
-		if (comp==null)
-			return null;
-		
-		//removing the prop automaton from the composition before reverting to an MSCA
-		
-		//first renaming states of aut that are unfolded by prop
-		comp.getTransition().parallelStream()
-				.filter(t->t.getSource().getState().subList(0, t.getSource().getState().size()-1).equals(
-						t.getTarget().getState().subList(0, t.getTarget().getState().size()-1))&&
-						!t.getSource().getState().get(t.getSource().getState().size()-1).equals(
-								t.getTarget().getState().get(t.getTarget().getState().size()-1)))//only prop has moved
-				.forEach(t->{
-					List<BasicState> state = t.getTarget().getState();
-					IntStream.range(0,t.getLabel().getRank()-1)
-					.filter(i->!t.getLabel().getAction().get(i).equals(CALabel.idle))
-					.forEach(i->state.set(i, new BasicState(state.get(i).getState()+"_"+state.get(state.size()-1).getState()						
-							,false,state.get(i).isFinalstate())));//cannot duplicate initial states!
-				});
-		
-		//transitions may share a castate
-		Map<List<BasicState>,CAState> cs2cs = comp.getStates().parallelStream()
-		.map(s->s.getState().subList(0, s.getState().size()-1))
-		.distinct()
-		.collect(Collectors.toMap(Function.identity(), CAState::new));
-		
-		return new ModalAutomaton<Label<List<String>>>(comp.getTransition().parallelStream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(
-							cs2cs.get(t.getSource().getState().subList(0, t.getSource().getRank()-1)), 
-							new Label<List<String>>(t.getLabel().getAction().subList(0, t.getLabel().getRank()-1)),
-							cs2cs.get(t.getTarget().getState().subList(0, t.getTarget().getRank()-1)),
-							t.getModality()))
-				.collect(Collectors.toSet()));
+		return comp;
 
 	}
 
@@ -120,6 +89,49 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 				.collect(Collectors.toSet()));
 
 		return conv;
+	}
+
+
+	/**
+	 * removing the prop automaton from the composition before reverting to an MSCA
+	 * @param aut
+	 * @return
+	 */
+	public static ModalAutomaton<CALabel> revertToMSCA(ModalAutomaton<Label<List<String>>> aut){
+		if (aut.getTransition().parallelStream()
+				.anyMatch(t->t.getModality().equals(ModalTransition.Modality.LAZY)))
+			throw new UnsupportedOperationException("Lazy transitions currently not supported");
+
+		//first renaming states of aut that are unfolded by prop
+		aut.getTransition().parallelStream()
+		.filter(t->t.getSource().getState().subList(0, t.getSource().getState().size()-1).equals(
+				t.getTarget().getState().subList(0, t.getTarget().getState().size()-1))&&
+				!t.getSource().getState().get(t.getSource().getState().size()-1).equals(
+						t.getTarget().getState().get(t.getTarget().getState().size()-1)))//only prop has moved
+		.forEach(t->{
+			List<BasicState> state = t.getTarget().getState();
+			IntStream.range(0,t.getLabel().getRank()-1)
+			.filter(i->!t.getLabel().getAction().get(i).equals(CALabel.idle))
+			.forEach(i->state.set(i, new BasicState(state.get(i).getState()+"_"+state.get(state.size()-1).getState()						
+					,false,state.get(i).isFinalstate())));//cannot duplicate initial states!
+		});
+
+		//transitions may share a castate
+		Map<List<BasicState>,CAState> cs2cs = aut.getStates().parallelStream()
+				.map(s->s.getState().subList(0, s.getState().size()-1))
+				.distinct()
+				.collect(Collectors.toMap(Function.identity(), CAState::new));
+
+		aut=new ModalAutomaton<Label<List<String>>>(aut.getTransition().parallelStream()
+				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(
+						cs2cs.get(t.getSource().getState().subList(0, t.getSource().getRank()-1)), 
+						new Label<List<String>>(t.getLabel().getAction().subList(0, t.getLabel().getRank()-1)),
+						cs2cs.get(t.getTarget().getState().subList(0, t.getTarget().getRank()-1)),
+						t.getModality()))
+				.collect(Collectors.toSet()));
+
+		return aut.revertToMSCA();
+
 	}
 }
 

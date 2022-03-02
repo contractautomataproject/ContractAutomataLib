@@ -1,9 +1,11 @@
 package io.github.davidebasile.contractautomatatest.operatorsTest;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -42,28 +44,40 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(aut, prop).apply(100).revertToMSCA();
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
-		assertTrue(MSCATest.checkTransitions(synth, test));
+
+		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE);
+		assertThatThrownBy(() -> ModelCheckingFunction.revertToMSCA(comp))
+		.isInstanceOf(UnsupportedOperationException.class);
+		
+//		ModalAutomaton<CALabel> synth = ModelCheckingFunction.revertToMSCA(comp);
+//		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
+//		assertTrue(MSCATest.checkTransitions(synth, test));
 	}
 	
 	@Test
 	public void testModelCheckingLoop() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		ModalAutomaton<CALabel> synth = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE).revertToMSCA();
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
-		assertTrue(MSCATest.checkTransitions(synth, test));
+		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE);
+		assertThatThrownBy(() -> ModelCheckingFunction.revertToMSCA(comp))
+		.isInstanceOf(UnsupportedOperationException.class);
+
+//		ModalAutomaton<CALabel> synth = ModelCheckingFunction.revertToMSCA(comp);
+//		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
+//		assertTrue(MSCATest.checkTransitions(synth, test));
 	}
 	
 	@Test
 	public void testOrcSynthesis2021() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
 	
-		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
-			
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
+		assertThatThrownBy(() -> new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut))
+		.isInstanceOf(UnsupportedOperationException.class);
 		
-		assertTrue(MSCATest.checkTransitions(orc, test));
+//		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+			
+//		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
+//		
+//		assertTrue(MSCATest.checkTransitions(orc, test));
 	}
 	
 	@Test
@@ -78,8 +92,9 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
 	
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),prop).apply(aut);
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
-
+		
+		
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");		
 		assertTrue(MSCATest.checkTransitions(cor, test));
 	}
 }
