@@ -28,6 +28,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	private TriPredicate<T, Set<T>, Set<S>> pruningPred;
 	private final TriPredicate<T, Set<T>, Set<S>> forbiddenPred;
 	private final Function<Automaton<CS,CL,S,T>,Automaton<CS,CL,S,T>> duplicateAut;
+	private final Predicate<L> req;
 
 	/**
 	 * 
@@ -43,6 +44,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 		this.pruningPred = (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
 		this.forbiddenPred = (x,t,bad) -> !t.contains(x)&&forbiddenPredicate.test(x, t, bad);
 		this.duplicateAut=duplicateAut;
+		this.req=req;
 	}
 
 
@@ -62,6 +64,13 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	public void setPruningPred(TriPredicate<T, Set<T>, Set<S>> pruningPredicate, Predicate<L> req) {
 		this.pruningPred =  (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
 	}
+
+	
+	
+	public Predicate<L> getReq() {
+		return req;
+	}
+
 
 	/** 
 	 * invokes the synthesis

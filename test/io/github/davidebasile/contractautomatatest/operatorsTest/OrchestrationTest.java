@@ -2,6 +2,7 @@ package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -9,8 +10,7 @@ import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
@@ -18,7 +18,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class OrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 //	private final MSCAConverter bmc = new MxeConverter();
-	private final MSCAConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws Exception
@@ -65,6 +65,14 @@ public class OrchestrationTest {
 
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(orc),null);
+	}
+	
+	@Test
+	public void orcTest_lazyloop() throws Exception 
+	{
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"test_lazy_loop.data");
+		ModalAutomaton<CALabel> orc =  new OrchestrationSynthesisOperator(new Agreement()).apply(test);
+		assertTrue(MSCATest.checkTransitions(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
 	}
 
 //	@Test

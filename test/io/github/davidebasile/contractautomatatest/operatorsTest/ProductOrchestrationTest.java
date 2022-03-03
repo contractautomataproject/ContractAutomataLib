@@ -9,8 +9,7 @@ import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.family.Product;
 import io.github.davidebasile.contractautomata.operators.ProductOrchestrationSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
@@ -19,7 +18,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class ProductOrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 //	private final MSCAConverter bmc = new MxeConverter();
-	private final MSCAConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws Exception

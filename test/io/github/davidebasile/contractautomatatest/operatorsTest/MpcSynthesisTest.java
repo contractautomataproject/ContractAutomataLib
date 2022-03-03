@@ -15,8 +15,7 @@ import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
 import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.operators.MpcSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
@@ -24,7 +23,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class MpcSynthesisTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	private final MSCAConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 
 	@Test
 	public void mpcEmptyTestLMCS2020() throws Exception

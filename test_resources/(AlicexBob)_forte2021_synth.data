@@ -5,4 +5,3 @@ Transitions:
 ([0, 0],[-, !blueberry],[0, 1])
 ([0, 0],[!cherry, ?cherry],[1, 3])
 !L([0, 1],[?ananas, !ananas],[1, 3])
-!L([0, 0],[?ananas, !ananas],[1, 2])

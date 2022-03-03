@@ -15,11 +15,11 @@ import org.xml.sax.SAXException;
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class DataConverterTest {
-	private final DataConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 
 	@Test

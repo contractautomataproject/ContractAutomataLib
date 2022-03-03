@@ -19,8 +19,7 @@ import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.family.FMCA;
 import io.github.davidebasile.contractautomata.family.Family;
 import io.github.davidebasile.contractautomata.family.Product;
@@ -34,7 +33,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
  *
  */
 public class FMCATest {
-	private final MSCAConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;;
 	private final FamilyConverter dfc = new ProdFamilyConverter();
 	

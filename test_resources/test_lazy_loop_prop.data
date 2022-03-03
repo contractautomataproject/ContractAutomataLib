@@ -1,0 +1,6 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[1][1]]
+Transitions: 
+!L([0, 0],[?blueberry,!blueberry],[0, 0])
+([0, 0],[!ananas,?ananas],[1, 1])

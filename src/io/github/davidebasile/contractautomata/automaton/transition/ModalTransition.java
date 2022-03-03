@@ -71,6 +71,7 @@ public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> ext
 	 * 
 	 * @return encoding of the object into comma separated values
 	 */
+	@Override
 	public String toCSV()
 	{
 		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()

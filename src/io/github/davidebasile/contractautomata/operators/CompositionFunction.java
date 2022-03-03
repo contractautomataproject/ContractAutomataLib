@@ -253,6 +253,10 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 		return this.frontier.isEmpty();
 	}
 
+	public Predicate<L> getPruningPred() {
+		return pruningPred;
+	}
+
 
 
 }

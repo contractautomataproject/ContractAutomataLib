@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import io.github.davidebasile.contractautomata.automaton.Automaton;
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.state.BasicState;
@@ -25,13 +26,14 @@ public class MSCATest {
 //	private final DataConverter bdc = new DataConverter();
 
 
-	public static boolean checkTransitions(ModalAutomaton<CALabel> aut, ModalAutomaton<CALabel> test) {
+	public static boolean checkTransitions(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
 				.map(t->t.toCSV())
 				.collect(Collectors.toSet());
 		Set<String> testTr=test.getTransition().parallelStream()
 				.map(t->t.toCSV())
 				.collect(Collectors.toSet());
+		
 		return autTr.parallelStream()
 				.allMatch(t->testTr.contains(t))
 				&&

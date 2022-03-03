@@ -1,0 +1,7 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[1][2]]
+Transitions: 
+!L([0, 0],[?coffee, !coffee],[0, 1])
+!L([0, 1],[?coffee, -],[0, 1])
+([0, 1],[!euro, ?euro],[1, 2])

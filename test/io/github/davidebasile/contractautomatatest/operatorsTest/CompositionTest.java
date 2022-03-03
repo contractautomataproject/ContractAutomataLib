@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.operators.CompositionSpecCheck;
 import io.github.davidebasile.contractautomata.operators.MSCACompositionFunction;
 import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
@@ -22,7 +22,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class CompositionTest {
 
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	private final DataConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 
 	//***********************************testing impl against spec on scenarios **********************************************
 	

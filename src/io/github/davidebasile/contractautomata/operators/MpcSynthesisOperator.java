@@ -24,7 +24,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public MpcSynthesisOperator(Predicate<CALabel> req) {
-		super((x,t,bad) -> x.isUrgent(), req, null);
+		super((x,t,bad) -> x.isUrgent(), req, null, null);
 	}	
 	
 	
@@ -36,7 +36,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	public MpcSynthesisOperator(Predicate<CALabel> req,	 
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop)
 	{
-		super((x,t,bad) -> x.isUrgent(), req, prop);
+		super((x,t,bad) -> x.isUrgent(), req, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}	
 	
 

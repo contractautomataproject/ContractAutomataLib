@@ -17,8 +17,7 @@ import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 import io.github.davidebasile.contractautomata.automaton.label.CMLabel;
 import io.github.davidebasile.contractautomata.automaton.label.Label;
 import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.converters.DataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCAConverter;
+import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
 import io.github.davidebasile.contractautomata.operators.MSCACompositionFunction;
 import io.github.davidebasile.contractautomata.operators.ProjectionFunction;
@@ -28,7 +27,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class ProjectionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	//private final MSCAConverter bmc = new MxeConverter();
-	private final MSCAConverter bdc = new DataConverter();
+	private final MSCADataConverter bdc = new MSCADataConverter();
 	
 	@Test
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
