@@ -28,13 +28,13 @@ The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3
 <h2> API Documentation</h2>
 
 This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
-The following documentation is up-to date to the commit <a href="https://github.com/davidebasile/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
+The following documentation is up-to date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
 
 <ul>
-  <li> <a href="https://davidebasile.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
+  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
 </li>
-  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
-  <li><a href="https://davidebasile.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
@@ -42,7 +42,7 @@ The javadoc documentation for the release to the Maven Central Repository is ava
 
 <h2>User Documentation</h2>
 
-The user documentation, containing information on the usage and installation of the library, is available at the Github Page https://davidebasile.github.io/ContractAutomataLib/.
+The user documentation, containing information on the usage and installation of the library, is available at the Github Page https://contractautomataproject.github.io/ContractAutomataLib/.
 
 
 <h2>Contacts</h2>
