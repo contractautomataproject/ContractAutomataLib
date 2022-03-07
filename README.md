@@ -9,10 +9,11 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 
-<h1>Contract Automata Tool (Lib) </h1>
+<h1>Contract Automata Lib </h1>
 
-The Contract Automata Tool is an ongoing basic research activity about implementing 
-and experimenting with new developments in the theoretical framework of Contract Automata (CA).
+The Contract Automata Toolkit is an ongoing basic research activity about implementing 
+and experimenting with new developments in the theoretical framework of Contract Automata (CA). 
+This repository contains the Contract Automata Library, which is the main repository of the Contract Automata Toolkit.
 Contract automata are a formalism developed in the research area of foundations for services and distributed 
 computing.
 They are used for specifying services' interface, called behavioral contracts, 
@@ -20,7 +21,7 @@ They are used for specifying services' interface, called behavioral contracts,
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA).
 
-The source code has been redesigned and refactored  in Java 8.
+The source code has been redesigned and refactored using the new functionalities introduced with Java 8 (streams, lambda).
 
 <h2>License</h2>
 The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
