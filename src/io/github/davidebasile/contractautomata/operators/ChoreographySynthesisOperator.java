@@ -29,23 +29,23 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	private Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice=Stream::findAny;
 
 	
-	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
+	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<List<String>>> reqmc, 
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,prop, 
+		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,reqmc, prop, 
 				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getTheAction()));//offers are necessary
 		this.req=req;
 	}
 	
 
 	public ChoreographySynthesisOperator(Predicate<CALabel> req){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null,null);
+		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null, null,null);
 		this.req=req;
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
 			Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,
 				Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null,null);
+		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null, null,null);
 		this.req=req;
 		this.choice=choice;
 	}

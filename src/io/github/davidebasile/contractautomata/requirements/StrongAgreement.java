@@ -1,7 +1,5 @@
 package io.github.davidebasile.contractautomata.requirements;
 
-import java.util.function.Predicate;
-
 import io.github.davidebasile.contractautomata.automaton.label.CALabel;
 
 /**
@@ -10,7 +8,7 @@ import io.github.davidebasile.contractautomata.automaton.label.CALabel;
  * @author Davide Basile
  *
  */
-public class StrongAgreement implements Predicate<CALabel> {
+public class StrongAgreement extends StrongAgreementModelChecking<CALabel> {
 
 	@Override
 	public boolean test(CALabel l) {

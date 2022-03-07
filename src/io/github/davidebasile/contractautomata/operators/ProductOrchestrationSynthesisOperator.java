@@ -25,7 +25,7 @@ public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthes
 	 * @param req the invariant to enforce (e.g. agreement or strong agreement)
 	 * @param p  the product to synthesise
 	 */
-	public ProductOrchestrationSynthesisOperator(Predicate<CALabel> req, Product p) {
+	public ProductOrchestrationSynthesisOperator(Predicate<CALabel> req,  Product p) {
 		super(x->req.test(x)&&!p.isForbidden(x));
 		this.p=p;
 	}

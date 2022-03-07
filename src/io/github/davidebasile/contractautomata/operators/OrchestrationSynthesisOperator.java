@@ -25,7 +25,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req){
-		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, null,null);
+		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, null, null,null);
 	}
 
 	/**
@@ -34,8 +34,9 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
+			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop){
-		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, prop, 
+		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, reqmc, prop, 
 				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}
 

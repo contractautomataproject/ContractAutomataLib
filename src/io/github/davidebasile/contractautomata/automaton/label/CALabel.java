@@ -34,7 +34,7 @@ public class CALabel extends Label<List<String>> {
 	 */
 	private final /*@ spec_public @*/ Integer requester;
 	
-//	private final /*@ spec_public @*/  String action; //in case of match, the action is always the offer
+	//in case of match, the action is always the offer
 
 	final public static String idle="-";
 	final public static String offer="!";
@@ -95,7 +95,6 @@ public class CALabel extends Label<List<String>> {
 			throw new IllegalArgumentException("The action is not a request nor an offer");
 
 		this.rank = rank;
-	//	this.action = action;
 	}
 	
 	
@@ -123,13 +122,11 @@ public class CALabel extends Label<List<String>> {
 		{
 			this.offerer=principal1;
 			this.requester=principal2;
-			//		this.action = action1;
 		}
 		else 
 		{
 			this.offerer=principal2;
 			this.requester=principal1;
-			//		this.action = action2;
 		}
 		this.rank = rank;
 		this.actiontype=CALabel.ActionType.MATCH;
@@ -231,21 +228,9 @@ public class CALabel extends Label<List<String>> {
 		this.rank = rank;
 		this.offerer=(lab.offerer==-1)?-1:lab.offerer+shift;
 		this.requester=(lab.requester==-1)?-1:lab.requester+shift;
-		//	this.action=lab.action;
 		this.actiontype=lab.actiontype;
 	}
 	
-//	public List<String> getLabelAsList(Integer rank, Integer principal1, Integer principal2, String action1, String action2){
-//		return IntStream.range(0, rank)
-//				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:idle)
-//				.collect(Collectors.toList());
-//	}
-//	
-//	public List<String> getLabelAsList(Integer rank, Integer principal, String action){
-//			return IntStream.range(0, rank)
-//					.mapToObj(i->(i==principal)?action:idle)
-//					.collect(Collectors.toList());
-//	}
 	
 	private static List<String> shift(CALabel lab, Integer rank, Integer shift){
 		List<String> l = new ArrayList<String>(rank);
@@ -351,27 +336,6 @@ public class CALabel extends Label<List<String>> {
 //		else
 //			throw new IllegalArgumentException("The label is not an action");
 	}
-	
-	/*
-	  @ public normal_behavior
-	  @     requires this.rank!=null && this.rank >=0;
-  	  @     requires this.action != null; 
-	  @		requires this.action.length()>=2;
-	  @		requires this.action.startsWith(offer) || this.action.startsWith(request);
-	  @		ensures \result.size()==this.rank;
-	  @		ensures \forall int i; 0<=i && i<this.rank && i!=offerer && i!=requester; \result.get(i)==idle;
-	  @		ensures this.isOffer() ==> (\result.get(offerer)==action && \result.get(requester)==idle)
-	  @		ensures this.isRequest() ==> (\result.get(offerer)==idle && \result.get(requester)==action)
-	  @		ensures this.isMatch() ==> (\result.get(offerer)==action && \result.get(requester)==this.getCoAction())
-	  */
-	/**
-	 * 
-	 * @return the calabel encoded in a list of strings, at each position there is the action performed by that principal in that position
-	 */
-//	@Override
-//	public List<String> getLabelAsList(){
-//		return this.getAction();	
-//	}
 	
 	
 

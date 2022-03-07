@@ -96,7 +96,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 	 * @param aut  the relaxed automaton
 	 * @return the MSCA
 	 */
-	public  ModalAutomaton<CALabel> revertToMSCA()
+	public  ModalAutomaton<CALabel> convertLabelsToCALabels()
 	{
 		return new ModalAutomaton<CALabel>(this.getTransition()
 				.parallelStream()
@@ -107,7 +107,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 				.collect(Collectors.toSet()));
 	}
 	
-	public  ModalAutomaton<Label<List<String>>> revertToModalAutomaton()
+	public  ModalAutomaton<Label<List<String>>> convertLabelsToLabelsListString()
 	{
 		return new ModalAutomaton<Label<List<String>>>(this.getTransition()
 				.parallelStream()
@@ -117,8 +117,10 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 						t.getModality()))
 				.collect(Collectors.toSet()));
 	}
+	
+	
 
-
+}
 	
 	
 //	private static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
@@ -137,7 +139,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 //
 //		return conv;
 //	}
-}
+
 
 interface TetraFunction<T,U,V,W,Z> {
 	public Z apply(T arg1, U arg2, V arg3,W arg4);

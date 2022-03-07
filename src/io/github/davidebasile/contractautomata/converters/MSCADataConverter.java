@@ -25,7 +25,7 @@ public class MSCADataConverter extends AutDataConverter{
 	 */
 	@Override
 	public ModalAutomaton<CALabel> importMSCA(String filename) throws IOException {
-		return super.importMSCA(filename).revertToMSCA();
+		return super.importMSCA(filename).convertLabelsToCALabels();
 	}
 
 	@Override

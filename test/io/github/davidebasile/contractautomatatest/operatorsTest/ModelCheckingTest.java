@@ -20,9 +20,11 @@ import io.github.davidebasile.contractautomata.converters.AutDataConverter;
 import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
 import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
 import io.github.davidebasile.contractautomata.operators.ModelCheckingFunction;
+import io.github.davidebasile.contractautomata.operators.MpcSynthesisOperator;
 import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
 import io.github.davidebasile.contractautomata.requirements.Agreement;
 import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
+import io.github.davidebasile.contractautomata.requirements.StrongAgreementModelChecking;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ModelCheckingTest {
@@ -45,7 +47,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021mc() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		ModelCheckingFunction mcf = new ModelCheckingFunction(aut, prop);
+		ModelCheckingFunction mcf = new ModelCheckingFunction(aut, prop,new StrongAgreementModelChecking<Label<List<String>>>());
 		ModalAutomaton<Label<List<String>>> comp = mcf.apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir+"(AlicexBob)_forte2021_mc.data");
 
@@ -55,7 +57,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testForte2021synth() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
 
 		assertTrue(MSCATest.checkTransitions(synth, test));
@@ -64,7 +66,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testLazyLoopMc() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE);
+		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop, new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "test_lazy_loop_prop_mc.data");
 
 		assertTrue(MSCATest.checkTransitions(comp, test));
@@ -74,7 +76,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testLazyLoopSynth() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		
 		adc.exportMSCA(dir + "test_lazy_loop_prop_synth.data", synth);
 		
@@ -87,7 +89,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testModelCheckingLoopMc() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop).apply(Integer.MAX_VALUE);
+		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop,new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "modelchecking_loop_mc.data");
 		assertTrue(MSCATest.checkTransitions(comp, test));
 
@@ -97,8 +99,10 @@ public class ModelCheckingTest {
 	@Test
 	public void testModelCheckingLoopSynt() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
+		
+		System.out.println(orc);
 		assertTrue(MSCATest.checkTransitions(orc, test));
 
 	}
@@ -106,7 +110,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testOrcSynthesis2021() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");	
-		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),prop).apply(aut);
+		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
 		assertTrue(MSCATest.checkTransitions(orc, test));
 	}
@@ -122,9 +126,31 @@ public class ModelCheckingTest {
 		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
 	
-		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),prop).apply(aut);
+		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");		
 		assertTrue(MSCATest.checkTransitions(cor, test));
+	}
+	
+	@Test
+	public void mpcEmptyTestNoDanglingWithProperty() throws Exception
+	{
+		BasicState s0 = new BasicState("0",true,false);
+		BasicState s1 = new BasicState("1",false,false);
+		BasicState s2 = new BasicState("2",false,true);
+		ModalTransition<String,String,BasicState,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT);
+		ModalTransition<String,String,BasicState,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
+		
+		Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));;
+
+		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
+		
+		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
+		assertTrue(mpc==null);
+		
+//		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement(),prop).apply(aut))
+//		.isInstanceOf(IllegalArgumentException.class);
+//		.hasMessage("No transitions");
 	}
 }

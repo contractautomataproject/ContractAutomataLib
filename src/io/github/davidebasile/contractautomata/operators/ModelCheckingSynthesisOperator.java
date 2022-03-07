@@ -26,6 +26,7 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 
 	private final Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop;
 	private final Function<CALabel,CALabel> changeLabel;
+	private final Predicate<Label<List<String>>> reqmc;
 
 	/**
 	 * 
@@ -42,12 +43,14 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>, 
 			Set<CAState>> forbiddenPredicate,
 			Predicate<CALabel> req,
+			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop,
 			Function<CALabel,CALabel> changeLabel) 
 	{
 		super(pruningPredicate,forbiddenPredicate,req,CALabel::new);
 		this.prop=prop;
 		this.changeLabel=changeLabel;
+		this.reqmc=reqmc;
 	}
 
 	/**
@@ -62,10 +65,11 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>, 
 			Set<CAState>> forbiddenPredicate,
 			Predicate<CALabel> req,
+			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop,
 			Function<CALabel,CALabel> changeLabel) 
 	{
-		this((x,t,bad) -> false, forbiddenPredicate,req,prop,changeLabel);
+		this((x,t,bad) -> false, forbiddenPredicate,req,reqmc,prop,changeLabel);
 	}
 
 	@Override
@@ -75,7 +79,7 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			return super.apply(arg1);
 		else
 		{
-			ModelCheckingFunction mcf = new ModelCheckingFunction(new ModalAutomaton<CALabel>(arg1.getTransition()),prop);
+			ModelCheckingFunction mcf = new ModelCheckingFunction(new ModalAutomaton<CALabel>(arg1.getTransition()),prop, reqmc);
 			ModalAutomaton<Label<List<String>>> comp=mcf.apply(Integer.MAX_VALUE);	
 			
 			if (comp==null)

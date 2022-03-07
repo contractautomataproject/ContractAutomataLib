@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import io.github.davidebasile.contractautomata.automaton.Automaton;
@@ -20,7 +20,8 @@ import io.github.davidebasile.contractautomata.automaton.transition.ModalTransit
 
 /**
  * Class implementing the model checking function. 
- * This is implemented by instantiating and applying the composition function.
+ * This is implemented by instantiating and applying the composition function, 
+ * composing the model with the property.
  * 
  * @author Davide Basile
  *
@@ -29,10 +30,12 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 {
 
 	public ModelCheckingFunction(ModalAutomaton<CALabel> aut, 
-			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop) {
-		super(Arrays.asList(aut.revertToModalAutomaton(),ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new)), 
+			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop, 
+			Predicate<Label<List<String>>> pruningPred) {
+		super(Arrays.asList(aut.convertLabelsToLabelsListString(),
+				ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new)), 
 				MSCACompositionFunction::computeRank,
-				(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), 
+				(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), //match
 				CAState::new, 
 				ModalTransition::new, 
 				(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), 
@@ -45,12 +48,9 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 					if (rank-l.size()>0)
 						l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
 					return new Label<List<String>>(l);
-				}, ModalAutomaton::new,
-
-				//only transitions where both aut and prop moves together are allowed
-				l->l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
-				IntStream.range(0, l.getRank()-1)
-				.allMatch(i->l.getAction().get(i).equals(CALabel.idle)));
+				}, 
+				ModalAutomaton::new,
+				pruningPred);
 
 	}
 
@@ -71,9 +71,16 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 
 	}
 
-
+	/**
+	 *
+	 * @param aut the automaton to convert
+	 * @param createLabel	the constructor of a label
+	 * @param createTransition	the constructor of a transition
+	 * @param createAut	the constructor of the automaton
+	 * @return	aut converted into an extension of ModalAutomaton
+	 */
 	private static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
-	A extends ModalAutomaton<L>>	A convert(
+	A extends ModalAutomaton<L>> A convert(
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  aut,
 			Function<List<String>,L> createLabel, 
 			TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
