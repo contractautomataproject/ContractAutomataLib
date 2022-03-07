@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.operators.UnionFunction;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.operators.UnionFunction;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;

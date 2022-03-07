@@ -20,14 +20,14 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
-import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.operators.ChoreographySynthesisOperator;
+import io.github.contractautomataproject.catlib.requirements.StrongAgreement;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class ChoreographyTest {
 

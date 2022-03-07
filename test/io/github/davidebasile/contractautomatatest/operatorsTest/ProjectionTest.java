@@ -12,16 +12,16 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.automaton.label.CMLabel;
-import io.github.davidebasile.contractautomata.automaton.label.Label;
-import io.github.davidebasile.contractautomata.automaton.state.CAState;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
-import io.github.davidebasile.contractautomata.operators.MSCACompositionFunction;
-import io.github.davidebasile.contractautomata.operators.ProjectionFunction;
-import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.operators.ChoreographySynthesisOperator;
+import io.github.contractautomataproject.catlib.operators.MSCACompositionFunction;
+import io.github.contractautomataproject.catlib.operators.ProjectionFunction;
+import io.github.contractautomataproject.catlib.requirements.StrongAgreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ProjectionTest {

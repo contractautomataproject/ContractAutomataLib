@@ -10,21 +10,21 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.Automaton;
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.automaton.label.Label;
-import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.automaton.transition.ModalTransition;
-import io.github.davidebasile.contractautomata.converters.AutDataConverter;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.operators.ChoreographySynthesisOperator;
-import io.github.davidebasile.contractautomata.operators.ModelCheckingFunction;
-import io.github.davidebasile.contractautomata.operators.MpcSynthesisOperator;
-import io.github.davidebasile.contractautomata.operators.OrchestrationSynthesisOperator;
-import io.github.davidebasile.contractautomata.requirements.Agreement;
-import io.github.davidebasile.contractautomata.requirements.StrongAgreement;
-import io.github.davidebasile.contractautomata.requirements.StrongAgreementModelChecking;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.operators.ChoreographySynthesisOperator;
+import io.github.contractautomataproject.catlib.operators.ModelCheckingFunction;
+import io.github.contractautomataproject.catlib.operators.MpcSynthesisOperator;
+import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesisOperator;
+import io.github.contractautomataproject.catlib.requirements.Agreement;
+import io.github.contractautomataproject.catlib.requirements.StrongAgreement;
+import io.github.contractautomataproject.catlib.requirements.StrongAgreementModelChecking;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ModelCheckingTest {

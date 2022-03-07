@@ -7,12 +7,12 @@ import java.io.File;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.family.Product;
-import io.github.davidebasile.contractautomata.operators.ProductOrchestrationSynthesisOperator;
-import io.github.davidebasile.contractautomata.requirements.Agreement;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.family.Product;
+import io.github.contractautomataproject.catlib.operators.ProductOrchestrationSynthesisOperator;
+import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ProductOrchestrationTest {

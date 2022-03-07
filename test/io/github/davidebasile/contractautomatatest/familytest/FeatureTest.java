@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.family.Feature;
+import io.github.contractautomataproject.catlib.family.Feature;
 
 public class FeatureTest {
 

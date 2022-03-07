@@ -14,8 +14,8 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.family.Feature;
-import io.github.davidebasile.contractautomata.family.Product;
+import io.github.contractautomataproject.catlib.family.Feature;
+import io.github.contractautomataproject.catlib.family.Product;
 
 public class ProductTest {
 

@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.family.Family;
-import io.github.davidebasile.contractautomata.family.Product;
-import io.github.davidebasile.contractautomata.family.converters.FamilyConverter;
-import io.github.davidebasile.contractautomata.family.converters.ProdFamilyConverter;
+import io.github.contractautomataproject.catlib.family.Family;
+import io.github.contractautomataproject.catlib.family.Product;
+import io.github.contractautomataproject.catlib.family.converters.FamilyConverter;
+import io.github.contractautomataproject.catlib.family.converters.ProdFamilyConverter;
 
 public class ProdFamilyConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;

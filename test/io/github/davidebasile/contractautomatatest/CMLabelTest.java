@@ -10,8 +10,8 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.automaton.label.CMLabel;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 
 public class CMLabelTest {
 	CMLabel cm_of;

@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.state.BasicState;
-import io.github.davidebasile.contractautomata.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.CAState;
 
 
 public class CAStateTest {

@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
 
 public class CALabelTest {
 

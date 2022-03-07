@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
 
 public class LabelTest {
 	

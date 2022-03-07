@@ -17,14 +17,14 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.family.FMCA;
-import io.github.davidebasile.contractautomata.family.Family;
-import io.github.davidebasile.contractautomata.family.Product;
-import io.github.davidebasile.contractautomata.family.converters.FamilyConverter;
-import io.github.davidebasile.contractautomata.family.converters.ProdFamilyConverter;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.family.FMCA;
+import io.github.contractautomataproject.catlib.family.Family;
+import io.github.contractautomataproject.catlib.family.Product;
+import io.github.contractautomataproject.catlib.family.converters.FamilyConverter;
+import io.github.contractautomataproject.catlib.family.converters.ProdFamilyConverter;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 /**

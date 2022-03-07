@@ -9,16 +9,16 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.davidebasile.contractautomata.automaton.ModalAutomaton;
-import io.github.davidebasile.contractautomata.automaton.label.CALabel;
-import io.github.davidebasile.contractautomata.converters.MSCADataConverter;
-import io.github.davidebasile.contractautomata.family.FMCA;
-import io.github.davidebasile.contractautomata.family.Family;
-import io.github.davidebasile.contractautomata.family.PartialProductGenerator;
-import io.github.davidebasile.contractautomata.family.Product;
-import io.github.davidebasile.contractautomata.family.converters.DimacFamilyConverter;
-import io.github.davidebasile.contractautomata.family.converters.FamilyConverter;
-import io.github.davidebasile.contractautomata.family.converters.FeatureIDEfamilyConverter;
+import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.family.FMCA;
+import io.github.contractautomataproject.catlib.family.Family;
+import io.github.contractautomataproject.catlib.family.PartialProductGenerator;
+import io.github.contractautomataproject.catlib.family.Product;
+import io.github.contractautomataproject.catlib.family.converters.DimacFamilyConverter;
+import io.github.contractautomataproject.catlib.family.converters.FamilyConverter;
+import io.github.contractautomataproject.catlib.family.converters.FeatureIDEfamilyConverter;
 
 public class DimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
