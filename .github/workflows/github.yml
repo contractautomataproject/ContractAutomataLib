@@ -19,7 +19,5 @@ jobs:
           cache: maven
       - name: 📦 Build with Maven
         run: mvn jacoco:prepare-agent clean test jacoco:report
-      - name: Coveralls report
-        run: mvn coveralls:report
       - name: 🚀 Coveralls Coverage Report Submission
-        run: mvn coveralls:report --define repo_token=${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
