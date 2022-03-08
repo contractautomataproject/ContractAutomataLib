@@ -1,4 +1,4 @@
-[![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)
+<!--[![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)-->
 [![Coverage Status](https://coveralls.io/repos/github/davidebasile/ContractAutomataLib/badge.svg?branch=code-cleaning)](https://coveralls.io/github/davidebasile/ContractAutomataLib?branch=code-cleaning)
 [![Code Quality Score](https://api.codiga.io/project/30471/score/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
 [![Code Grade](https://api.codiga.io/project/30471/status/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
