@@ -1,5 +1,4 @@
 #https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-runs-on: 
 name: Java CI
 
 on: [push]
