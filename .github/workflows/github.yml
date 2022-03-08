@@ -15,7 +15,9 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Build and Test with Maven
+      - name: 📦 Build with Maven
         run: mvn jacoco:prepare-agent clean test jacoco:report
       - name: Coveralls report
         run: mvn coveralls:report
+      - name: 🚀 Coveralls Coverage Report Submission
+        run: mvn coveralls:report --define repoToken=${{ secrets.COVERALL_REPO_SECRET }}
