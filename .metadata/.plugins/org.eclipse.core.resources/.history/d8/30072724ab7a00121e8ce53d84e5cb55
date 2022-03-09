@@ -1,0 +1,79 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Vector;
+
+
+@SuppressWarnings({"serial","rawtypes"})
+public class PFSA  extends Automata implements java.io.Serializable{
+	private Vector[] streg;
+	private int[] finalstates;
+	private PFSATransition[] tra;
+	private int initial;
+	private int states;
+	
+	public PFSA()
+	{
+		try{
+			System.out.println("*** PFSA simulator ***\n" +
+					"The infinite alphabet is represented by the set of natural numbers\n" +
+					"The symbol T is denoted with -1  \n" +
+					"The square symbol is denoted with -2  \n" +
+					"The symbol ? is denoted with -3  \n" +
+					"Pay attention: all the indexes start from zero, the id of the first state is always zero."); 
+			
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+			System.out.println("Insert the number of registers");
+			int length = Integer.parseInt(myInput.readLine());
+			streg = new Vector[length+1];
+			
+			System.out.println("Insert the number of states:");
+	        states = Integer.parseInt(myInput.readLine());
+	        
+	        System.out.println("Insert Id of initial State");
+			initial = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert the number of final states");
+			int finalstate = Integer.parseInt(myInput.readLine());
+			finalstates = new int[finalstate];
+			for(int i=0;i<finalstate;i++){
+	        	System.out.println("Insert the Id of the final states number " + i);
+	        	finalstates[i]=Integer.parseInt(myInput.readLine());
+	        }
+			System.out.println("Insert the number of transitions:");
+			int num_trans= Integer.parseInt(myInput.readLine());
+			tra = new PFSATransition[num_trans];
+			int s; int sigma; int z; int delta; int zeta; int f;
+			for (int i=0;i<num_trans;i++){
+				System.out.println("Insert start state of the transition "+i);
+				s = Integer.parseInt(myInput.readLine());;
+				
+				System.out.println("Insert arrival state of the transition "+i);
+				f = Integer.parseInt(myInput.readLine());
+				tra[i]= new PFSATransition(s,sigma, z, delta, zeta, f);
+			}
+			super.write(this);
+		}
+		catch (Exception e){System.out.println("Errore inserimento");}
+	}
+	
+	public void print()
+	{
+		System.out.println("This is the automaton:");
+		System.out.println("Number of states: " + states);
+		System.out.println("Stack and Registers: "+ Arrays.toString(streg));
+		System.out.println("Initial state: " +initial);
+		System.out.println("Final states: "+Arrays.toString(finalstates));
+		System.out.println("Transition: "+Arrays.toString(tra));
+	}
+	
+	public Vector[] getStreg()
+	{
+		return this.streg;
+	}
+	
+	public void updateStreg( Vector[] streg)
+	{
+		this.streg = streg;
+	}
+}

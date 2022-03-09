@@ -1,0 +1,65 @@
+
+import java.io.*;
+import java.util.Arrays;
+
+import CA.CA;
+import CA.CATransition;
+import CA.CAUtil;
+import FMA.FMA;
+import FSA.FSA;
+import PFSA.PFSA;
+
+/**
+ * 
+ * Main Class, contains the method main
+ * @author Davide	Basile
+ *
+ */
+public class Main {
+	/**
+	 * Select the kind of automaton and choose to create a new automaton or loading a stored automaton, then run 
+	 * the simulator
+	 * @param args
+	 */
+	public static void main (String [] args){
+		FSA automa = null;
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        System.out.println("  ****	JA	****");
+	        System.out.println("Press 1 for FMA and 2 for PFSA  3 for FSA and 4 for CA ");
+	        int type = Integer.parseInt(myInput.readLine());
+	        if (type== 4)
+	        {
+	        	CAUtil.CATest();
+	        	return;
+	        }
+	        System.out.println("Insert the name of the automaton (without file extension) to load or leave empty for creating a new one");
+	        String s = myInput.readLine(); 
+	        //String s ="CA1";
+	        if (!s.isEmpty())
+	        {
+	        	if (type == 1)
+	        		automa =  (FMA) FSA.load(s);
+	        	else if (type == 2)
+	        		automa = (PFSA) FSA.load(s);
+	        	else if (type == 3)
+	        		automa = FSA.load(s);
+	        }
+	        else
+	        	{
+		        	if (type == 1)
+		        		automa =  new FMA();
+		        	else if (type == 2)
+		        		automa = new PFSA();
+		        	else if (type == 3)
+		        		automa = new FSA();
+	        	}
+	        automa.print();
+	        automa.run();
+		}
+		catch (Exception e){e.printStackTrace();}
+	}
+	
+	
+}

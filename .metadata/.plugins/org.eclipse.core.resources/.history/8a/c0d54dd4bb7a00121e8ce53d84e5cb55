@@ -1,0 +1,60 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+
+@SuppressWarnings("serial")
+public class PFSATransition extends Transition{ 
+	private int sigma;
+	private int delta;
+	private int Z;
+	private int zeta;
+	public PFSATransition(int initial, int fina, int sigma,  int Z, int delta, int zeta)
+	{
+		super(initial, -1, fina);
+		this.sigma = sigma;
+		this.delta = delta;
+		this.Z= Z;
+		this.zeta = zeta;
+	}
+	
+	public PFSATransition(int i)
+	{
+		super(i,false);
+		InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader myInput = new BufferedReader (reader);
+		try {
+			System.out.println("Insert value of sigma for the transition "+i);
+			this.sigma = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert value of Z for the transition "+i);
+			this.Z = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert value of delta for the transition "+i);
+			this.delta = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert value of Zeta for the transition "+i);
+			this.zeta = Integer.parseInt(myInput.readLine());
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		};
+	}
+	public int getSigma()
+	{
+		return sigma;
+	}
+	
+	public int getDelta()
+	{
+		return delta;
+	}
+	
+	public int getZ()
+	{
+		return Z;
+	}
+	
+	public int getZeta()
+	{
+		return zeta;
+	}
+	
+	
+}

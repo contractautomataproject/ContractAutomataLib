@@ -1,0 +1,101 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+@SuppressWarnings("serial")
+/**
+ * class for creating, storing, loading and printing an FMA
+ * @author Davide Basile
+ *
+ */
+public class FMA  extends Automata implements java.io.Serializable
+{
+	private int[] rho;
+	private int[] register;
+	private static String message = "*** FMA simulator ***\n" +
+			"The infinite alphabet is represented by the set of natural numbers\n" +
+			"-1 is used as a special character for the empty register\n" +
+			"Pay attention: all the indexes start from zero, the id of the first state is always zero.";
+	
+	/**
+	 * Take in input the parameter of the automata
+	 */
+	public FMA()
+	{
+		super();
+		try{
+			System.out.println(); 
+			
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+	        
+			System.out.println("Insert the length of register");
+			int length = Integer.parseInt(myInput.readLine());
+			register = new int[length];
+			for (int i=0;i<length;i++){
+				System.out.println("Insert the value of the register at position "+i+" (use -1 for empty register)");	
+				register[i]=Integer.parseInt(myInput.readLine());
+			}
+			if (this.checkRegister())
+			{
+				System.out.println("The automaton is not an FMA");
+				register=null;
+				return;
+			}
+	        rho= new int[this.getStates()];
+	        for(int i=0;i<this.getStates();i++){
+	        	System.out.println("Insert the value for Rho("+i+"), use -1 for non-defined");
+	        	rho[i]=Integer.parseInt(myInput.readLine());
+	        }
+			super.write(this);
+		}
+		catch (Exception e){e.printStackTrace();}
+	}
+	
+	
+	public int[] getRegister()
+	{
+		return register;
+	}
+	
+	public int[] getRho()
+	{
+		return rho;
+	}
+	
+	public void updateRegister(int[] r)
+	{
+		this.register=r;
+	}
+	
+	
+	public void print()
+	{
+		System.out.println("This is the automaton:");
+		System.out.println("Number of states: " + rho.length);
+		System.out.println("Rho: "+ Arrays.toString(rho));
+		System.out.println("Register: "+ Arrays.toString(register));
+		System.out.println("Initial state: " +this.getInitial());
+		System.out.println("Final states: "+Arrays.toString(this.getFinalStates()));
+		System.out.println("Transition: "+Arrays.toString(this.getTransition()));
+	}
+	
+	/**
+	 * 
+	 * @return true if the automaton is not an FMA
+	 */
+	private boolean checkRegister()
+	{
+	  for(int i=0;i<register.length;i++)
+	  {
+		  for (int j=i+1;j<register.length;j++)
+		  {
+			  if ((register[i]==register[j])&&(register[i]!=-1))
+			  {
+				  return true;
+			  }
+		  }
+	  }
+	  return false;
+	}
+}

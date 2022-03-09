@@ -1,0 +1,77 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+
+@SuppressWarnings("serial")
+public class PFSATransition extends Transition implements java.io.Serializable{ 
+	private int sigma;
+	private int delta;
+	private int Z;
+	private int zeta;
+	public PFSATransition(int initial, int fina, int sigma,  int Z, int delta, int zeta)
+	{
+		super(initial, -1, fina);
+		this.sigma = sigma;
+		this.delta = delta;
+		this.Z= Z;
+		this.zeta = zeta;
+	}
+	
+	public PFSATransition(int i)
+	{
+		super(i,false);
+		InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader myInput = new BufferedReader (reader);
+		try {
+			String s;
+			System.out.println("Insert value of sigma for the transition "+i);
+			s=myInput.readLine();
+			if (s.equals("T"))
+				this.sigma=-1;
+			else if (s.equals("square"))
+				this.sigma=-2;
+			else
+				this.sigma = Integer.parseInt(s);
+			System.out.println("Insert value of Z for the transition "+i);
+			s=myInput.readLine();
+			if (s.equals("?"))
+				this.Z=-3;
+			else if (s.equals("square"))
+				this.Z=-2;
+			else
+				this.Z = Integer.parseInt(s);
+			System.out.println("Insert value of delta for the transition "+i);
+			this.delta = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert value of Zeta for the transition "+i);
+			this.zeta = Integer.parseInt(myInput.readLine());
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		};
+	}
+	public int getSigma()
+	{
+		return sigma;
+	}
+	
+	public int getDelta()
+	{
+		return delta;
+	}
+	
+	public int getZ()
+	{
+		return Z;
+	}
+	
+	public int getZeta()
+	{
+		return zeta;
+	}
+	
+	public String toString()
+	{
+		return "("+super.getInitial()+","+this.getSigma()+","+this.getZ()+","+this.getDelta()+","+this.getZeta()+","+super.getFinal()+")";
+	}
+	
+}

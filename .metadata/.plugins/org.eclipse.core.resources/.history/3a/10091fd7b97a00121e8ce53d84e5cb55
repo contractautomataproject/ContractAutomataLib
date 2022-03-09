@@ -1,0 +1,165 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+
+
+@SuppressWarnings("serial")
+public abstract class Automata {
+	
+	private int states;
+	private int initial;
+	private int[] finalstates;
+	private Transition[] tra;
+	
+	public Automata() 
+	{
+		System.out.println("");
+		try{
+			InputStreamReader reader = new InputStreamReader (System.in);
+	        BufferedReader myInput = new BufferedReader (reader);
+			System.out.println("Insert the number of states:");
+	        this.states = Integer.parseInt(myInput.readLine());
+	        System.out.println("Insert Id of initial State");
+			initial = Integer.parseInt(myInput.readLine());
+			System.out.println("Insert the number of final states");
+			int finalstate = Integer.parseInt(myInput.readLine());
+			finalstates = new int[finalstate];
+			for(int i=0;i<finalstate;i++){
+	        	System.out.println("Insert the Id of the final states number " + i);
+	        	finalstates[i]=Integer.parseInt(myInput.readLine());
+	        }
+			System.out.println("Insert the number of transitions:");
+			int num_trans= Integer.parseInt(myInput.readLine());
+			tra = new Transition[num_trans];
+			for (int i=0;i<num_trans;i++)
+				tra[i] = createTransition(i);
+		}
+		catch (Exception e){System.out.println("Errore inserimento");}
+	}
+	
+	public void print()
+	{
+		System.out.println("This is the automaton:");
+		System.out.println("Initial state: " +this.getInitial());
+		System.out.println("Final states: "+Arrays.toString(this.getFinalStates()));
+		System.out.println("Transition: "+Arrays.toString(this.getTransition()));
+	}
+	
+	public static void write(Automata a)
+	{
+		String name=null;
+		FileOutputStream f_out;
+		InputStreamReader reader = new InputStreamReader(System.in);
+        BufferedReader myInput = new BufferedReader(reader);
+		try {
+			System.out.println("Do you want to save this automaton? (write yes or not)");
+			if (myInput.readLine().equals("yes"))
+			{	
+				System.out.println("Write the name of this automaton");
+				name= myInput.readLine();
+			}
+			else return;
+			f_out = new FileOutputStream(name+".data");
+			ObjectOutputStream obj_out = new ObjectOutputStream(f_out);
+			obj_out.writeObject(a);
+			obj_out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Automata load(String name)
+	{
+		FileInputStream f_in;
+		try {
+			f_in = new FileInputStream(name+".data");
+			ObjectInputStream obj_in =  new ObjectInputStream(f_in);
+			Object obj = obj_in.readObject();
+			obj_in.close();
+			if (obj instanceof Automata)
+			{
+				Automata a = (Automata) obj;
+				return a;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void run()
+	{
+		InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader myInput = new BufferedReader (reader);
+		System.out.println("Insert length of the string to be recognized: ");
+		int sleng;int[] srec=null;
+		try {
+			sleng = Integer.parseInt(myInput.readLine());
+			srec = new int[sleng];
+			for (int i=0; i<sleng; i++){
+				System.out.println("Insert the character "+i+" of the string to be recognized");
+				srec[i]= Integer.parseInt(myInput.readLine());
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Simulator sim = createSim();
+		if (sim.run(srec))
+			System.out.println("The string "+Arrays.toString(srec)+" is accepted by the automaton");
+		else
+			System.out.println("The string "+Arrays.toString(srec)+" is not accepted by the automaton");
+	}
+	
+	public int getInitial()
+	{
+		return initial;
+	}
+	
+	public int[] getFinalStates()
+	{
+		return finalstates;
+	}
+	
+	public Transition[] getTransition()
+	{
+		return tra;
+	}
+	
+	public int getStates()
+	{
+		return states;
+	}
+	
+	private Simulator createSim()
+	{
+		if (this instanceof FMA)
+			return new FMASimulator(this);
+		else if (this instanceof PFSA)
+			return new PFSASimulator(this);
+		return null;
+	}
+	
+	private Transition createTransition(int i)
+	{
+		if (this instanceof PFSA)
+			 return new PFSATransition(i);
+		else if (this instanceof FMA)
+			return new Transition(i,true);
+		return null;
+	}
+}

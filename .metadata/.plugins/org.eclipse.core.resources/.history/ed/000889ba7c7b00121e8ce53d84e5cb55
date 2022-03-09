@@ -1,0 +1,187 @@
+import java.util.Vector;
+
+/**
+ * The class take in input an FMA and decide if a string is recognized by the automaton
+ * @author Davide Basile
+ *
+ */
+public class FMASimulator extends Simulator {
+	
+	public FMASimulator(Automata automa)
+	{
+		this.automa= (FMA) automa;
+	}
+	
+	/**
+	 * At every iteration
+	 * 		first check if the string is consumed, then if we are in a final state then the string is accepted, 
+	 * 				else backtracking if possible, otherwise return false
+	 * 		if the string is not consumed yet:
+	 * 					if there is a continuation then performs the step stored
+	 * 					else if there are possible steps then performs one and store the others in the continuation
+	 * 					if no possible step are allowed, then performs backtracking or if the continuation is empty return false
+	 * 					when performing a step if the symbol is contained in the register then update the register
+	 * @param s the string to be recognized
+	 * @return true if s is recognized by the automata, false otherwise
+	 */
+	public boolean run(int[] s)
+	{
+		Vector<? extends Continuation> continuation= new Vector<FMAContinuation>();
+		Transition temp = null;
+		this.pointer_state=automa.getInitial();
+		this.pointer_string=0;
+		while (true)
+		{
+			if (pointer_string == s.length) //if the string is consumed
+			{
+				if (contains(pointer_state, automa.getFinalStates())!=-1) //if we reach a final state OK
+					return true;
+				else
+				{
+					temp = backtracking(continuation);	// else check if there are other possible pending paths to follow
+					if (temp==null) return false; //if it is not the case then the string is not accepted
+				}
+			}
+			else
+			{		
+				int index = contains(s[pointer_string],((FMA) automa).getRegister());  //check if the symbol in input is contained in the register
+				if (index!=-1) //if the symbol is contained in the register
+				{
+					if (!checkContinuation(temp,-1))  //if there is a continuation then move on
+					{
+						if (!step(-1,continuation,index))
+						{
+							temp = backtracking(continuation); //if a step is not possible then backtracking
+							if (temp==null) return false; //if backtracking is not possible the string is not accepted
+						}
+					}
+					else
+						temp=null;
+				}
+				else
+				{	//if the symbol is not contained in the register
+					if (!checkContinuation(temp,s[pointer_string])) //if there is a continuation move on and update register
+					{
+						if (!step(s[pointer_string],continuation,-1))
+							{
+								temp = backtracking(continuation); //if a step is not possible then backtracking
+								if (temp==null) return false; //if backtracking is not possible the string is not accepted
+							}
+					}
+					else	
+						temp=null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Update the state of the simulator by performing the transition and eventually update the register
+	 * @param tr transition to perform
+	 * @param value  value to be inserted in the register or -1
+	 * @return true if the Transition is not null, otherwise else
+	 */
+	private boolean checkContinuation(Transition tr, int value)
+	{
+		if (tr!=null)
+		{
+			if (value!=-1)
+				updateRegister(value);
+			pointer_state=tr.getFinal(); //if there is a continuation move on and update register
+			pointer_string++;
+			return true;
+			
+		}
+		else return false;
+	}
+	
+	/**
+	 * Perform a step in the automaton
+	 * if the symbol is contained in the register select a transition where the label is equal to the index of the register that contains the symbol in input
+	 * otherwise select a transition where the label is equal to the function rho(state) and update the register at location rho(state) with value
+	 * if several transitions are allowed store the others in the continuation
+	 * @param value the value to be stored in the register or -1
+	 * @param continuation the continuation
+	 * @param index index of the register that contains the symbol in input or -1
+	 * @return true if the transition is performed, false otherwise
+	 */
+	private boolean step(int value, Vector<FMAContinuation> continuation, int index)
+	{
+		int[] rho=((FMA) automa).getRho();
+		Transition[] t=Transition.getTransitionFrom(pointer_state,automa.getTransition()); //all the transition from this state
+		if (value==-1)
+			t= Transition.getTransitionByLabel(index,t); //where the label is equal to the index of the register that contains the symbol in input
+		else
+		{	
+			if (rho[pointer_state]!=-1)
+				t= Transition.getTransitionByLabel(rho[pointer_state],t);  //where the label is equal to the function rho in the actual state
+			else
+				return false;
+		}
+		if (t!=null) 
+		{ 
+			//if exists transitions then move 
+			updateContinuation(continuation, t);  //move with the first transition and store all the others in the continuation
+			if (value!=-1)
+				updateRegister(value); //update register if it is the case
+			pointer_state=t[0].getFinal();
+			pointer_string++;
+			return true;
+		}
+		else 
+			return false;
+	}
+	
+	/**
+	 * Change the value of a register pointed by the function rho with s
+	 * @param s the value to be stored
+	 */
+	private void updateRegister(int s)
+	{
+		int[] register= ((FMA) automa).getRegister();
+		int[] rho=((FMA) automa).getRho();
+		register[rho[pointer_state]]=s;
+		((FMA) automa).updateRegister(register);
+	}
+	
+	/**
+	 * select the top continuation and update the state, if all the transition for that continuation are consumed then remove it
+	 * @param continuation the vector of continuation
+	 * @return the transition to be performed
+	 */
+	private Transition backtracking(Vector<? extends Continuation> continuation)
+	{
+		Transition tr = null;
+		if (continuation.isEmpty())
+			return null;
+		FMAContinuation c = continuation.elementAt(continuation.size()-1);
+		Vector<Transition> v = c.getTransition();
+		tr=v.remove(v.size()-1);
+		if (v.isEmpty())
+			continuation.remove(continuation.size()-1);
+		((FMA) automa).updateRegister(c.getRegister());
+		pointer_state=c.getPointerState();
+		pointer_string=c.getPointerString();
+		return tr;
+	}
+	
+	/**
+	 * Store all the transition of index > 0 (the first will be selected for the move)
+	 * @param v vector of continuation
+	 * @param t array of transitions to be stored in the continuation
+	 */
+	private void updateContinuation(Vector<FMAContinuation> v,Transition[] t)
+	{
+		if (t.length>1)
+		{
+			Vector<Transition> tr = new Vector<Transition>(t.length-1);
+			for (int i=1;i<t.length;i++)
+				tr.insertElementAt(t[i], i-1);
+			int[] ar = ((FMA) automa).getRegister();
+			int[] r=new int[ar.length];
+			System.arraycopy(ar, 0, r, 0, ar.length);
+			v.add(new FMAContinuation(pointer_state,pointer_string, r,tr));
+		}
+	}
+	
+}

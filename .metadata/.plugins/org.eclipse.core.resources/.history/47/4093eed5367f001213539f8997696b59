@@ -1,0 +1,164 @@
+package PFSA;
+import java.util.Vector;
+
+import FSA.FSA;
+import FSA.Continuation;
+import FSA.Simulator;
+import FSA.Transition;
+
+
+@SuppressWarnings({"rawtypes","unchecked"})
+public class PFSASimulator extends Simulator{
+	int freshcounter;
+	public PFSASimulator(FSA automa)
+	{
+		super((PFSA) automa);
+	}
+	
+	public void changeAutoma(FSA automa)
+	{
+		super.changeAutoma((PFSA) automa);
+	}
+	
+
+	public boolean run(int[] s)
+	{
+		this.freshcounter = -2;
+		return super.run(s);
+	}
+	
+	protected boolean sideConditions()
+	{
+		return ((PFSA)automa).getStreg()[0].isEmpty();
+	}
+	
+	protected boolean isValid(Transition tr,int symbol)
+	{
+		Vector[] streg= ((PFSA) automa).getStreg(); 
+		int sigma = ((PFSATransition)tr).getSigma();
+		int delta = ((PFSATransition)tr).getDelta();
+		int Z = ((PFSATransition)tr).getZ();
+		int zeta = ((PFSATransition)tr).getZeta();
+		// this boolean is true if the transition is allowed
+		boolean valid= 	( 
+				          (
+				        	(sigma==-1)&&(!streg[0].isEmpty())&&
+								( 
+										( (int)streg[0].lastElement()<=-2 && !checkFreshness(symbol) ) || // top stack fresh
+										( (int)streg[0].lastElement()>=0 &&(int)streg[0].lastElement()== symbol ) // top stack equals to symbol
+							    )
+						  ) 
+						  || 
+						  (
+						     (sigma>=0)	&&(!streg[sigma+1].isEmpty())&&((int)streg[sigma+1].lastElement()!=-1)&& //top register not unavailable
+									(
+											(int)streg[sigma+1].lastElement()<=-2 && !checkFreshness(symbol)  || //top register fresh symbol
+											((int)streg[sigma+1].lastElement()>=0 && (int)streg[sigma+1].lastElement() == symbol)//top register equals to symbol
+								    )
+		                  ) 
+		                  || sigma == -2 //nothing
+						) 
+						&& 
+						(
+							(
+								(delta<0)	&& 
+									( (streg[Math.abs(delta)].size()==1) && ((int) streg[Math.abs(delta)].lastElement() != -1) //pop register
+									  || (streg[Math.abs(delta)].size()>1)
+									 )
+							)
+						 || delta>=0 //push or nothing
+						) 
+						&& 
+						(
+							(
+								(Z>=0) 	&&(!streg[Z+1].isEmpty())&&(!streg[0].isEmpty()) && ((int)streg[Z+1].lastElement()== (int)streg[0].lastElement()) //check available register
+							) 
+						  || Z==-2 //nothing
+						  || (Z==-3 && !streg[0].isEmpty()) //pop
+						) 
+						&& 
+						(
+							((zeta>=0) 	&&(!streg[zeta+1].isEmpty()) && ((int)streg[zeta+1].lastElement()!= -1))//check available register 
+							|| zeta<0  //nothing
+					    );
+		return valid;
+	}
+
+	protected void updateState(Transition t, int symbol)
+	{
+		Vector[] streg= ((PFSA) automa).getStreg(); 
+		int sigma =  ((PFSATransition)t).getSigma();
+		int delta = ((PFSATransition)t).getDelta();
+		int Z = ((PFSATransition)t).getZ();
+		int zeta = ((PFSATransition)t).getZeta();
+		if (sigma != -2)
+		{
+			 //substitute fresh symbol with symbol in input
+			if ((sigma == -1)&&((int)streg[0].elementAt(streg[0].size()-1)<=-2)) //top stack fresh symbol
+				substitute(symbol,(int)streg[0].elementAt(streg[0].size()-1));
+			if ((sigma >= 0)&&((int)streg[sigma+1].elementAt(streg[sigma+1].size()-1)<=-2))
+				substitute(symbol,(int)streg[sigma+1].elementAt(streg[sigma+1].size()-1));
+			pointer_string++; // read input
+		}
+		if ((Z!=-2)&& ((Z==-3)||(streg[Z+1].lastElement().equals(streg[0].lastElement()))))
+				streg[0].removeElementAt(streg[0].size()-1); //pop stack
+		if (zeta!=-2)
+			streg[0].add(streg[zeta+1].lastElement()); //push stack
+		if (delta < 0)
+		{
+			 if ((int) streg[Math.abs(delta)].lastElement() == -1)
+				 streg[Math.abs(delta)].removeElementAt(streg[Math.abs(delta)].size()-1); //pop -1
+			 streg[Math.abs(delta)].removeElementAt(streg[Math.abs(delta)].size()-1); //pop 
+			 streg[Math.abs(delta)].add(-1);  //add unavailable
+		}
+		else if (delta > 0)
+		{
+			streg[delta].add(freshcounter); //fresh name
+			freshcounter--;
+		}
+		pointer_state=t.getFinal();
+	
+	}
+	
+	private void substitute(int symbol, int fresh)
+	{
+		Vector[] streg= ((PFSA) automa).getStreg(); 
+		for (int i=0;i<streg.length;i++)
+		{
+			for (int j=0; j<streg[i].size();j++)
+			{
+				if ( (int)streg[i].elementAt(j)==fresh)
+					{
+						streg[i].set(j, symbol);
+					}
+			}
+		}
+	}
+	/**
+	 * 
+	 * @param symbol
+	 * @return true if the symbol is NOT fresh
+	 */
+	private boolean checkFreshness(int symbol)
+	{
+		Vector[] streg= ((PFSA) automa).getStreg(); 
+		for (int i=0;i<streg.length;i++)
+		{
+			if (Simulator.contains(symbol, streg[i])>=0)
+				return true;
+		}
+		return false;
+	}
+	
+	protected void updateStateContinuation(Continuation c)
+	{
+		super.restoreStateContinuation(c);
+		((PFSA) automa).updateStreg(((PFSAContinuation) c).getStReg());
+	}
+	
+	
+	protected Continuation createContinuation()
+	{
+		return new PFSAContinuation(pointer_state,pointer_string, null, ((PFSA)automa).getStreg());
+	}
+}
