@@ -79,15 +79,14 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 						throw iae;
 					}
 				})
-				.map(l->{
-					return new Product(features.parallelStream()
+				.map(l->new Product(features.parallelStream()
 							.filter(s->l.contains(s))//required
 							.map(s->new Feature(s))
 							.collect(Collectors.toSet()),
 							features.parallelStream()
 							.filter(s->!l.contains(s))//forbidden
 							.map(s->new Feature(s))
-							.collect(Collectors.toSet()));})
+							.collect(Collectors.toSet())))
 				.collect(Collectors.toSet());
 		
 			return setprod; //generateProducts(setprod,features));
@@ -99,6 +98,10 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	{
 		File inputFile = new File(filename);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		// to be compliant, completely disable DOCTYPE declaration:
+		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		
+		
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(inputFile);
 		doc.getDocumentElement().normalize();

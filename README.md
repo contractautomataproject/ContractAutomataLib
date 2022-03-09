@@ -1,6 +1,6 @@
 <!--[![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)-->
 ![CodeQL](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/codeql-analysis.yml/badge.svg)
-![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/github.yml/badge.svg)
+![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
 [![Code Quality Score](https://api.codiga.io/project/30471/score/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
 [![Code Grade](https://api.codiga.io/project/30471/status/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
