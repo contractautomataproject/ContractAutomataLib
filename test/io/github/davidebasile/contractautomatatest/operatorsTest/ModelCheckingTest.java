@@ -102,7 +102,6 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
 		
-		System.out.println(orc);
 		assertTrue(MSCATest.checkTransitions(orc, test));
 
 	}
