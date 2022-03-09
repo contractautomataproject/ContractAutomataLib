@@ -125,6 +125,9 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	{
 		File inputFile = new File(filename);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		// to be compliant, completely disable DOCTYPE declaration:
+		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
 		Document doc = dBuilder.parse(inputFile);
