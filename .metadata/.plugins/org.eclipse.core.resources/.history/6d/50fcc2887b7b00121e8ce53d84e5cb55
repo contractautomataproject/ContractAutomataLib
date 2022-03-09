@@ -1,4 +1,0 @@
-
-public class FMAContinuation extends Continuation{
-	private int[] register; //the register of the automaton
-}

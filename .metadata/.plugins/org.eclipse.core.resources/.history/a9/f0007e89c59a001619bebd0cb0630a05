@@ -1,8 +1,0 @@
-Rank: 1
-Number of states: [4]
-Initial state: [0]
-Final states: [[3]]
-Transitions:
-
-([0],[1],[1])
-!([1],[-1],[2])
