@@ -91,9 +91,8 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
 		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop,new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "modelchecking_loop_mc.data");
+		
 		assertTrue(MSCATest.checkTransitions(comp, test));
-
-//		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
 	}
 
 	@Test
