@@ -1,7 +1,7 @@
 #https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 #https://hyp0th3rmi4.medium.com/configuring-coveralls-io-reports-for-maven-builds-with-github-actions-393b11fa3402
 
-name: Java CI
+name: GitHub CI
 
 on: [push]
 
@@ -38,4 +38,4 @@ jobs:
       - name: 🚀 Coveralls Coverage Report Submission
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: 🐛 Analyze with SpotBugs 
-        run: mvn spotbugs:check
+        run: mvn site
