@@ -93,8 +93,9 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 			final Set<T> trbackup = aut.getTransition();
 			final Set<S> statesbackup= aut.getStates(); 
 			final S init = aut.getInitial();
+			Pair seed = new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init)));
 			
-			Pair fixpoint = Stream.iterate(new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init))), 
+			Pair fixpoint = Stream.iterate(seed, 
 					pair-> {
 						Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
 						
@@ -109,10 +110,10 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 								.map(Transition::getSource)
 								.collect(Collectors.toSet())); //Ri
 						
-						return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());
+						return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());//hasnext
 					},p->p)
-			.reduce((first,second)->second)
-			.orElse(new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init))));
+			.reduce((first,second)->new Pair(second.tr,second.s))
+			.orElse(seed);
 		
 			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.size()==0)
 				return null;
