@@ -60,8 +60,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	 * 
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
-			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))

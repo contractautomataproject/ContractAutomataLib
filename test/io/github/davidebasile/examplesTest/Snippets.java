@@ -46,6 +46,7 @@ public class Snippets {
 	{
 		MSCADataConverter bdc = new MSCADataConverter();
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
+		
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
 		bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 	}

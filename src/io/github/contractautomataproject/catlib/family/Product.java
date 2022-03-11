@@ -1,6 +1,7 @@
 package io.github.contractautomataproject.catlib.family;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -32,8 +33,8 @@ public class Product {
 				.anyMatch(f->required.contains(f)))
 			throw new IllegalArgumentException("A feature is both required and forbidden");
 
-		this.required=required;
-		this.forbidden=forbidden;
+		this.required= new HashSet<>(required);
+		this.forbidden= new HashSet<>(forbidden);
 	}
 
 	/**
@@ -49,12 +50,12 @@ public class Product {
 
 	public Set<Feature> getRequired()
 	{
-		return required;
+		return new HashSet<>(required);
 	}
 
 	public Set<Feature> getForbidden()
 	{
-		return forbidden;
+		return new HashSet<>(forbidden);
 	}
 
 	public int getForbiddenAndRequiredNumber()

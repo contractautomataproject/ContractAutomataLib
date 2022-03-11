@@ -1,5 +1,6 @@
 package io.github.contractautomataproject.catlib.automaton;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,10 +43,10 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 
 		T tt = tr.stream().findFirst().orElse(null);
 		if (tr.parallelStream()
-				.anyMatch(t->t.getRank()!=tt.getRank()))
+				.anyMatch(t->!t.getRank().equals(tt.getRank())))
 			throw new IllegalArgumentException("Transitions with different rank");
 
-		this.tra=tr;
+		this.tra=new HashSet<>(tr);
 
 		Set<? extends State<?>> states = this.getStates();
 
@@ -62,7 +63,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 
 	public  Set<T> getTransition()
 	{
-		return tra;
+		return new HashSet<>(tra);
 	}
 
 	/**

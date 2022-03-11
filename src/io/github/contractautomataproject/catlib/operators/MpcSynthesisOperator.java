@@ -8,7 +8,6 @@ import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
@@ -46,8 +45,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @return the synthesised most permissive controller
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
-			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut) {
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut) {
 
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> t.isLazy()))

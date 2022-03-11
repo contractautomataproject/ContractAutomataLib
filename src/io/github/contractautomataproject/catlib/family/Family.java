@@ -1,5 +1,7 @@
 package io.github.contractautomataproject.catlib.family;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -40,7 +42,7 @@ public class Family {
 		if (products==null||areComparable==null||compare==null)
 			throw new IllegalArgumentException();
 		
-		this.products=products;
+		this.products=new HashSet<>(products);
 		this.po=products.parallelStream()
 				.collect(Collectors.toMap(Function.identity(), 
 						p1->products.parallelStream()
@@ -51,11 +53,11 @@ public class Family {
 	}
 
 	public Set<Product> getProducts() {
-		return products;
+		return new HashSet<>(products);
 	}
 
 	public Map<Product, Map<Boolean, Set<Product>>> getPo() {
-		return po;
+		return new HashMap<>(po);
 	}
 
 	/**

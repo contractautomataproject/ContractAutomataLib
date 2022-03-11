@@ -23,7 +23,7 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	public Transition(S source, L label, S target){
 		if (source==null || label==null || target==null)
 			throw new IllegalArgumentException("source, label or target null");
-		if (!(source.getRank()==target.getRank()&&label.getRank()==source.getRank())) {
+		if (!(source.getRank().equals(target.getRank())&&label.getRank().equals(source.getRank()))) {
 //			System.out.println("error in "+source.toString()+label.toString()+target.toString()+
 //					source.getRank()+" "+label.getRank());
 			throw new IllegalArgumentException("source, label or target with different ranks");
@@ -35,7 +35,7 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 
 	public S getSource()
 	{
-		return this.source;
+		return source;
 	}
 
 	public S getTarget()
@@ -86,5 +86,5 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 				+",label="+this.getLabel().toCSV()
 				+",target="+this.getTarget().toCSV()+"]";
 	}
-
+	
 }

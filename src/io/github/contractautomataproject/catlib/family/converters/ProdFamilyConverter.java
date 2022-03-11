@@ -1,10 +1,14 @@
 package io.github.contractautomataproject.catlib.family.converters;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +32,10 @@ public class ProdFamilyConverter implements FamilyConverter {
 
 	@Override
 	public Set<Product> importProducts(String filename) throws IOException {
-		File f = new File(filename);
+		Path path = FileSystems.getDefault().getPath(filename);	
+		if (path==null)
+			throw new IllegalArgumentException("Empty file name");
+		File f = new File(path.toString());
 		
 		Charset charset = Charset.forName("ISO-8859-1");
 		List<String> lines = Files.readAllLines(f.toPath(), charset);
@@ -53,14 +60,18 @@ public class ProdFamilyConverter implements FamilyConverter {
 
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException{
-		if (filename=="")
+		if (filename==null || filename.isEmpty())
 			throw new IllegalArgumentException("Empty file name");
 
 		String suffix = (filename.endsWith(".prod"))?"":".prod";
 		List<Product> ar = new ArrayList<Product>(fam.getProducts());
-		try (PrintWriter pw = new PrintWriter(filename+suffix))
+		Path path = FileSystems.getDefault().getPath(filename+suffix);	
+		if (path==null)
+			throw new IllegalArgumentException("Empty file name");
+		
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), "UTF-8")))
 		{
-			pw.print(IntStream.range(0, ar.size())
+			pr.print(IntStream.range(0, ar.size())
 					.mapToObj(i->ar.get(i).toStringFile(i))
 					.collect(Collectors.joining(System.lineSeparator())));
 			

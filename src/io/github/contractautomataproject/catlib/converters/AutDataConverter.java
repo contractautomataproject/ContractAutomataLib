@@ -1,11 +1,17 @@
 package io.github.contractautomataproject.catlib.converters;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,13 +39,21 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
 public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends Label<List<String>>>,Automaton<?,?,?,?>> {
 	
 	public ModalAutomaton<? extends Label<List<String>>> importMSCA(String filename) throws IOException {
-		//TODO long method
+		// long method
 		// Open the file
 		if (!filename.endsWith(".data"))
 			throw new IllegalArgumentException("Not a .data format");
-
+		Path path = FileSystems.getDefault().getPath(filename);
+		
+		if (path==null)
+			throw new IllegalArgumentException("Empty file name");
+		
+		String safefilename = path.toString();
+		
 		Set<ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> tr;
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename))))
+
+		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), "UTF-8")))
 		{
 			int rank=0;
 			String[] initial = new String[1];
@@ -172,14 +186,20 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 	 * Export the textual description of the automaton in a .data file
 	 * 
 	 * @throws FileNotFoundException in case filename is not found
+	 * @throws UnsupportedEncodingException 
 	 */
 	@Override
-	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException {
-		if (filename=="")
+	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException, UnsupportedEncodingException {
+		if (filename.isEmpty())
 			throw new IllegalArgumentException("Empty file name");
 
 		String suffix=(filename.endsWith(".data"))?"":".data";
-		try (PrintWriter pr = new PrintWriter(filename+suffix))
+		Path path = FileSystems.getDefault().getPath(filename+suffix);
+		if (path==null)
+			throw new IllegalArgumentException("Empty file name");
+		String safefilename = 	path.toString();
+
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), "UTF-8")))
 		{
 			pr.print(aut.toString());
 		}

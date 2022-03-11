@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
@@ -21,14 +23,14 @@ import io.github.contractautomataproject.catlib.transition.Transition;
  *
  */
 public class SynthesisOperator<CS,CL,S extends State<CS>,
-L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperator<Automaton<CS,CL,S,T>>{
+L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS,CL,S,T>> implements UnaryOperator<A>{
 
 	private Map<S,Boolean> reachable;
 	private Map<S,Boolean> successful;
 	private TriPredicate<T, Set<T>, Set<S>> pruningPred;
 	private final TriPredicate<T, Set<T>, Set<S>> forbiddenPred;
-	private final Function<Automaton<CS,CL,S,T>,Automaton<CS,CL,S,T>> duplicateAut;
 	private final Predicate<L> req;
+	private final Function<Set<T>,A> createAut;
 
 	/**
 	 * 
@@ -38,13 +40,13 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	 */
 	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> pruningPredicate,
 			TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate, 
-			Predicate<L> req,
-			Function<Automaton<CS,CL,S,T>,Automaton<CS,CL,S,T>> duplicateAut) {
+			Predicate<L> req, 
+			Function<Set<T>,A> createAut) {
 		super();
 		this.pruningPred = (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
-		this.forbiddenPred = (x,t,bad) -> !t.contains(x)&&forbiddenPredicate.test(x, t, bad);
-		this.duplicateAut=duplicateAut;
+		this.forbiddenPred = (x,t,bad) -> !t.contains(x) && forbiddenPredicate.test(x, t, bad);
 		this.req=req;
+		this.createAut=createAut;
 	}
 
 
@@ -55,22 +57,19 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	 * @param req  the invariant requirement to enforce (e.g. agreement, strong agreement)
 	 */
 	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate, 
-			Predicate<L> req,
-			Function<Automaton<CS,CL,S,T>,Automaton<CS,CL,S,T>> duplicateAut) {
-		this((x,t,bad) -> false, forbiddenPredicate,req,duplicateAut);
+			Predicate<L> req, 
+			Function<Set<T>,A> createAut) {
+		this((x,t,bad) -> false, forbiddenPredicate,req, createAut);
 	}
-	
+
 
 	public void setPruningPred(TriPredicate<T, Set<T>, Set<S>> pruningPredicate, Predicate<L> req) {
-		this.pruningPred =  (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
+		this.pruningPred =  (x,t,bad) -> bad.contains(x.getTarget()) || !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
 	}
 
-	
-	
 	public Predicate<L> getReq() {
 		return req;
 	}
-
 
 	/** 
 	 * invokes the synthesis
@@ -79,53 +78,58 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 	 * 
 	 */
 	@Override
-	public Automaton<CS,CL,S,T> apply(Automaton<CS,CL,S,T> arg1) {
+	public A apply(A aut) {
 		{
-			if (arg1==null)
-				throw new IllegalArgumentException();
-			//creating an exact copy
-			Automaton<CS,CL,S,T> aut= duplicateAut.apply(arg1);
-						
+			class Pair{
+				Set<T> tr; Set<S> s;
+				public Pair(Set<T> tr, Set<S> s) {
+					this.tr = tr; this.s = s;
+				}
+			}
 			
-			Set<T> trbackup = new HashSet<T>(aut.getTransition());
-			Set<S> statesbackup= aut.getStates(); 
-			S init = aut.getInitial();
-			Set<S> R = new HashSet<S>(getDanglingStates(aut, statesbackup,init));//R0
-			boolean update=false;
-			do{
-				final Set<S> Rf = new HashSet<S>(R); 
-				final Set<T> trf= new HashSet<T>(aut.getTransition());
+			if (aut==null)
+				throw new IllegalArgumentException();
 
-				if (aut.getTransition().removeAll(aut.getTransition().parallelStream()
-						.filter(x->pruningPred.test(x,trf, Rf))
-						.collect(Collectors.toSet()))) //Ki
-					R.addAll(getDanglingStates(aut, statesbackup,init));
+			final Set<T> trbackup = aut.getTransition();
+			final Set<S> statesbackup= aut.getStates(); 
+			final S init = aut.getInitial();
+			
+			Pair fixpoint = Stream.iterate(new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init))), 
+					pair-> {
+						Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
+						
+						//next function embedded into hasnext
+						if (pair.tr.removeAll(pre.tr.parallelStream()
+								.filter(x->pruningPred.test(x,pre.tr, pre.s))
+								.collect(Collectors.toSet()))) //Ki
+							pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
 
-				R.addAll(trbackup.parallelStream() 
-						.filter(x->forbiddenPred.test(x,trf, Rf))
-						.map(Transition::getSource)
-						.collect(Collectors.toSet())); //Ri
-
-				update=Rf.size()!=R.size()|| trf.size()!=aut.getTransition().size();
-			} while(update);
-
-
-			if (R.contains(init)||aut.getTransition().size()==0)
+						pair.s.addAll(trbackup.parallelStream() 
+								.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
+								.map(Transition::getSource)
+								.collect(Collectors.toSet())); //Ri
+						
+						return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());
+					},p->p)
+			.reduce((first,second)->second)
+			.orElse(new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init))));
+		
+			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.size()==0)
 				return null;
 
 			//remove dangling transitions
-			aut.getTransition().removeAll(aut.getTransition().parallelStream()
+			fixpoint.tr.removeAll(fixpoint.tr.parallelStream()
 					.filter(x->!reachable.get(x.getSource())||!successful.get(x.getTarget()))
 					.collect(Collectors.toSet()));
 
-			return aut;
+			return createAut.apply(fixpoint.tr);			
 		}
 	}
 
 	/**
 	 * @return	states who do not reach a final state or are unreachable
 	 */
-	private Set<S> getDanglingStates(Automaton<CS,CL,S,T> aut, Set<S> states, S initial)
+	private Set<S> getDanglingStates(Set<T> tr, Set<S> states, S initial)
 	{
 
 		//all states' flags are reset
@@ -135,46 +139,80 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>> implements UnaryOperat
 				.collect(Collectors.toMap(x->x, x->false));
 
 		//set reachable
-		forwardVisit(aut, initial);  
+		forwardVisit(tr, initial);  
 
 		//set successful
 		states.forEach(
 				x-> {if (x.isFinalstate()&&this.reachable.get(x))//x.isReachable())
-					backwardVisit(aut,x);});  
+					backwardVisit(tr,x);});  
 
 		return states.parallelStream()
 				.filter(x->!(reachable.get(x)&&this.successful.get(x)))  //!(x.isReachable()&&x.isSuccessful()))
 				.collect(Collectors.toSet());
 	}
 
-	private void forwardVisit(Automaton<CS,CL,S,T> aut, S currentstate)
+	private void forwardVisit(Set<T> tr, S currentstate)
 	{ 
 		this.reachable.put(currentstate, true);  //currentstate.setReachable(true);
-		aut.getForwardStar(currentstate).forEach(x->{
+		tr.parallelStream()
+		.filter(x->x.getSource().equals(currentstate)) //forward star
+		.forEach(x->{
 			if (!this.reachable.get(x.getTarget()))//!x.getTarget().isReachable())
-				forwardVisit(aut,x.getTarget());
+				forwardVisit(tr,x.getTarget());
 		});
 	}
 
-	private void backwardVisit(Automaton<CS,CL,S,T> aut, S currentstate)
+
+
+	private void backwardVisit(Set<T> tr, S currentstate)
 	{ 
 		this.successful.put(currentstate, true); //currentstate.setSuccessful(true);
 
-		aut.getTransition().stream()
-		.filter(x->x.getTarget().equals(currentstate))
+		tr.stream()
+		.filter(x->x.getTarget().equals(currentstate))// backward star
 		.forEach(x->{
 			if (!this.successful.get(x.getSource()))//!x.getSource().isSuccessful())
-				backwardVisit(aut, x.getSource());
+				backwardVisit(tr, x.getSource());
 		});
 	}
 }
 
 
+//
+// earlier implementation without Stream.iterate.
+//
+//Set<T> tr = aut.getTransition();
+//Set<S> R = new HashSet<>(getDanglingStates(tr, statesbackup,init));//R0
+//boolean update=false;
+//do{
+//	final Set<S> Rf = new HashSet<>(R); 
+//	final Set<T> trf= new HashSet<>(tr);
+//
+//	if (tr.removeAll(trf.parallelStream()
+//			.filter(x->pruningPred.test(x,trf, Rf))
+//			.collect(Collectors.toSet()))) //Ki
+//		R.addAll(getDanglingStates(tr, statesbackup,init));
+//
+//	R.addAll(trbackup.parallelStream() 
+//			.filter(x->forbiddenPred.test(x,trf, Rf))
+//			.map(Transition::getSource)
+//			.collect(Collectors.toSet())); //Ri
+//
+//	update=Rf.size()!=R.size()|| trf.size()!=tr.size();
+//} while(update);
+//
+//
+//if (R.contains(init)||tr.size()==0)
+//	return null;
+//
+////remove dangling transitions
+//tr.removeAll(tr.parallelStream()
+//		.filter(x->!reachable.get(x.getSource())||!successful.get(x.getTarget()))
+//		.collect(Collectors.toSet()));
+//
+//return createAut.apply(tr);
 
-//
-// an attempt to perform a fixpoint computation with Stream.iterate failed because the synthesis is mutating 
-// the automaton and because it does not simplify the code
-//
+
 
 ///**
 // * 

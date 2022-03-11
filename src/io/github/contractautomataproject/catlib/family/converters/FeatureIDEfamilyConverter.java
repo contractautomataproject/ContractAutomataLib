@@ -3,7 +3,9 @@ package io.github.contractautomataproject.catlib.family.converters;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,10 +54,15 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 				features.remove(eq[i][1]);
 		}
 
+		String safefilename=getSafeFileName(filename);
 		
-		File folder = new File(filename.substring(0, filename.lastIndexOf(File.separator))+File.separator+"products"+File.separator);
+		File folder = new File(safefilename.substring(0, safefilename.lastIndexOf(File.separator))+File.separator+"products"+File.separator);
 		
-		List<File> listOfFiles = Arrays.asList(folder.listFiles());
+		File[] listFiles = folder.listFiles();
+		if (listFiles==null)
+			return new HashSet<>();
+		
+		List<File> listOfFiles = Arrays.asList(listFiles);
 
 		Set<Product> setprod=listOfFiles.parallelStream()
 				.map(f->{
@@ -96,7 +103,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	
 	private Set<String> parseFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
-		File inputFile = new File(filename);
+		File inputFile = new File(getSafeFileName(filename));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		// to be compliant, completely disable DOCTYPE declaration:
 		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -123,7 +130,8 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	 */
 	private String[][] detectDuplicates(String filename) throws ParserConfigurationException, SAXException, IOException
 	{
-		File inputFile = new File(filename);
+
+		File inputFile = new File(getSafeFileName(filename));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		// to be compliant, completely disable DOCTYPE declaration:
 		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -154,6 +162,12 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		return table;		
 	}
 
+	private String getSafeFileName(String filename) {
+		Path path = FileSystems.getDefault().getPath(filename);	
+		if (path==null)
+			throw new IllegalArgumentException("Empty file name");
+		return path.toString();
+	}
 
 
 	@Override

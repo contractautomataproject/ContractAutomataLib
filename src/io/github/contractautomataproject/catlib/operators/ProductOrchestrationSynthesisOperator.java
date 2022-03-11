@@ -1,15 +1,10 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import java.util.List;
 import java.util.function.Predicate;
 
-import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.family.Product;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
  * Class implenenting the orchestration synthesis for a specific product
@@ -35,8 +30,7 @@ public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthes
 	 * @return the synthesised orchestration of product p
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
-			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> aut)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
 	{
 		ModalAutomaton<CALabel> a= super.apply(aut);
 

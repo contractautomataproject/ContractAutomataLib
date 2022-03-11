@@ -92,7 +92,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 			Function<Set<T>,? extends Automaton<CS,CL,S,T>> createAutomaton,
 			Predicate<L> pruningPred)
 	{
-		this.aut=aut;
+		this.aut= new ArrayList<>(aut);
 		this.rank=computeRank.apply(aut.stream()
 				.map(a->(Ranked)a)
 				.collect(Collectors.toList()));

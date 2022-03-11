@@ -11,7 +11,7 @@
 
 	<name>ContractAutomataLib</name>
 	<description>Library for specifying and verifying contract automata.</description>
-	<url>https://github.com/davidebasile/ContractAutomataLib</url>
+	<url>https://github.com/ContractAutomataProject/ContractAutomataLib</url>
 
 	<licenses>
 		<license>

@@ -30,7 +30,7 @@ public class CAState extends State<List<BasicState>> {
 					.map(s->(BasicState)s)
 					.collect(Collectors.toList())
 					:null);
-		if (lstate==null||lstate.isEmpty())
+		if (lstate.isEmpty())
 			throw new IllegalArgumentException();
 	}
 

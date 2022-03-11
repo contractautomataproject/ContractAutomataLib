@@ -22,7 +22,8 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOperator<CALabel> {
+public class ModelCheckingSynthesisOperator extends 
+SynthesisOperator<List<BasicState>,List<String>,CAState,CALabel,ModalTransition<List<BasicState>,List<String>,CAState,CALabel>,ModalAutomaton<CALabel>> {
 
 	private final Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop;
 	private final Function<CALabel,CALabel> changeLabel;
@@ -47,7 +48,7 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop,
 			Function<CALabel,CALabel> changeLabel) 
 	{
-		super(pruningPredicate,forbiddenPredicate,req,CALabel::new);
+		super(pruningPredicate,forbiddenPredicate,req,ModalAutomaton::new);
 		this.prop=prop;
 		this.changeLabel=changeLabel;
 		this.reqmc=reqmc;
@@ -73,8 +74,7 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 	}
 
 	@Override
-	public ModalAutomaton<CALabel> apply(Automaton<List<BasicState>,List<String>,CAState,
-			ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> arg1) {
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> arg1) {
 		if (prop==null)
 			return super.apply(arg1);
 		else
@@ -87,8 +87,8 @@ public class ModelCheckingSynthesisOperator extends ModalAutomatonSynthesisOpera
 			
 			//the following steps are necessary to reuse the synthesis of MSCA
 			//firstly silencing the prop action and treat lazy transitions satisfying the pruningPredicate: 
-			//they must be detectable as "bad" also after reverting to an MSCA  
-			ModalAutomaton<CALabel> deletingPropAction = new ModalAutomaton<CALabel>(comp.getTransition()
+			//they must be detectable as "badLafter reverting to an MSCA  
+			ModalAutomaton<CALabel> deletingPropAction = new ModalAutomaton<>(comp.getTransition()
 			.parallelStream().map(t->{
 				List<String> li = new ArrayList<>(t.getLabel().getAction());
 				li.set(t.getRank()-1, CALabel.idle); //removing the move of prop to have a CALabel

@@ -220,11 +220,6 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public CALabel(CALabel lab, Integer rank, Integer shift) {
 		super(shift(lab,rank,shift));
-		if (rank==null||rank<=0||lab==null||shift==null||shift<0 || 
-				lab.offerer+shift>rank||lab.requester+shift>rank)
-			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
-					+ "or out of rank");
-
 		this.rank = rank;
 		this.offerer=(lab.offerer==-1)?-1:lab.offerer+shift;
 		this.requester=(lab.requester==-1)?-1:lab.requester+shift;
@@ -233,6 +228,11 @@ public class CALabel extends Label<List<String>> {
 	
 	
 	private static List<String> shift(CALabel lab, Integer rank, Integer shift){
+		if (rank==null||rank<=0||lab==null||shift==null||shift<0 || 
+				lab.offerer+shift>rank||lab.requester+shift>rank)
+			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
+					+ "or out of rank");
+
 		List<String> l = new ArrayList<String>(rank);
 		l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
 		l.addAll(lab.getAction());
@@ -257,7 +257,7 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public /*@ pure @*/ Integer getOfferer() {
 		if (this.isRequest())
-			throw new UnsupportedOperationException("No offerer in a request action ");
+			throw new UnsupportedOperationException("No offerer in a request action "+this.toString());
 		else 
 			return offerer;
 	}
@@ -391,7 +391,7 @@ public class CALabel extends Label<List<String>> {
 		if (label instanceof CALabel)
 		{
 			CALabel l2 = (CALabel) label;
-			if (l2!=null&&(this.isOffer()&&l2.isRequest())||this.isRequest()&&l2.isOffer())
+			if (this.isOffer()&&l2.isRequest()||this.isRequest()&&l2.isOffer())
 			{
 				String la1 = this.getUnsignedAction();
 				String la2 = l2.getUnsignedAction();

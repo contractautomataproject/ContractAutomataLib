@@ -2,6 +2,7 @@ package io.github.contractautomataproject.catlib.family.converters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -33,7 +34,7 @@ import io.github.contractautomataproject.catlib.family.Product;
  */
 public class DimacFamilyConverter implements FamilyConverter {
 	private Function<IProblem,int[]> gen;
-	
+
 	public DimacFamilyConverter(boolean allModels) {
 		if (allModels)
 			gen = IProblem::model;
@@ -49,35 +50,38 @@ public class DimacFamilyConverter implements FamilyConverter {
 		ModelIterator mi = new ModelIterator(solver);
 		solver.setTimeout(3600); // 1 hour timeout
 		Reader reader = new DimacsReader(mi);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintWriter out = new PrintWriter(baos,true);
+		
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,"UTF-8"),true);)
+		{
 
-		IProblem problem =
-				reader.parseInstance(filename);// CNF filename
-		//IProblem sd = new Minimal4CardinalityModel(mi);
+			IProblem problem =
+					reader.parseInstance(filename);// CNF filename
+			//IProblem sd = new Minimal4CardinalityModel(mi);
 
-		Map<Integer,String> i2s = readFeatureStrings(filename);
+			Map<Integer,String> i2s = readFeatureStrings(filename);
 
-		boolean unsat=true;
-		while (problem.isSatisfiable()) { // do something with each model
-			unsat = false;
-			reader.decode(gen.apply(problem),out);
-			out.println();
-//			System.out.println(baos.toString());
+			boolean unsat=true;
+			while (problem.isSatisfiable()) { // do something with each model
+				unsat = false;
+				reader.decode(gen.apply(problem),out);
+				out.println();
+				//			System.out.println(baos.toString());
+			}
+			if (unsat) // do something for unsat case
+				return new HashSet<Product>();
+
+			return Arrays.stream(baos.toString("UTF-8").split(System.lineSeparator()))
+					.map(s->Arrays.stream(s.split(" "))
+							.mapToInt(Integer::parseInt)
+							.boxed()
+							.filter(i->i!=0)
+							.collect(Collectors.partitioningBy(i->i>=0, 
+							Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))), 
+									Collectors.toSet()))))
+					.map(e->new Product(e.get(true),e.get(false)))
+					.collect(Collectors.toSet());			
 		}
-		if (unsat) // do something for unsat case
-			return new HashSet<Product>();
-
-		return Arrays.stream(baos.toString().split(System.lineSeparator()))
-				.map(s->Arrays.stream(s.split(" "))
-						.mapToInt(Integer::parseInt)
-						.boxed()
-						.filter(i->i!=0)
-						.collect(Collectors.partitioningBy(i->i>=0, 
-						Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))), 
-								Collectors.toSet()))))
-				.map(e->new Product(e.get(true),e.get(false)))
-				.collect(Collectors.toSet());		
 	}
 
 
