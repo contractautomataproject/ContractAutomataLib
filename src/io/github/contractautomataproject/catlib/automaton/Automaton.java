@@ -86,7 +86,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 	@Override
 	public Integer getRank()
 	{
-		return this.getTransition().iterator().next().getRank();
+		return this.tra.iterator().next().getRank();
 	}
 	
 	public int getNumStates()
@@ -100,7 +100,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 	 * @return set of transitions outgoing state source
 	 */
 	public Set<T> getForwardStar(State<?> source) {
-		return this.getTransition().parallelStream()
+		return this.tra.parallelStream()
 				.filter(x->x.getSource().equals(source))
 				.collect(Collectors.toSet());
 	}
@@ -131,7 +131,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 		}
 		pr.append("]"+System.lineSeparator());
 		pr.append("Transitions: "+System.lineSeparator());
-		this.getTransition().stream()
+		this.tra.stream()
 		.sorted((t1,t2)->t1.toString().compareTo(t2.toString()))
 		.forEach(t->pr.append(t.toString()+System.lineSeparator()));
 		

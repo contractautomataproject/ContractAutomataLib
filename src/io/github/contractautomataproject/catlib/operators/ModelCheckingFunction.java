@@ -26,7 +26,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> 
+public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,Label<List<String>>,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>,ModalAutomaton<Label<List<String>>>> 
 {
 
 	public ModelCheckingFunction(ModalAutomaton<CALabel> aut, 
@@ -51,23 +51,6 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState>,
 				}, 
 				ModalAutomaton::new,
 				pruningPred);
-
-	}
-
-	/**
-	 * @param aut the plant automaton to verify
-	 * @param prop the automaton expressing the property to verify
-	 * @return the set of states violating prop
-	 */
-	@Override
-	public  ModalAutomaton<Label<List<String>>> apply(Integer bound)
-	{
-
-		//apply the instantiation
-		ModalAutomaton<Label<List<String>>> comp = 
-				(ModalAutomaton<Label<List<String>>>) super.apply(bound);
-
-		return comp;
 
 	}
 

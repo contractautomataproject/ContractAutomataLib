@@ -18,7 +18,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  */
 
-public class MSCACompositionFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,CALabel,ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> {
+public class MSCACompositionFunction extends CompositionFunction<List<BasicState>,List<String>,CAState,CALabel,ModalTransition<List<BasicState>,List<String>,CAState,CALabel>,ModalAutomaton<CALabel>> {
 
 	public MSCACompositionFunction(List<ModalAutomaton<CALabel>> aut,Predicate<CALabel> pruningPred)
 	{
@@ -48,13 +48,6 @@ public class MSCACompositionFunction extends CompositionFunction<List<BasicState
 				e.tra.getLabel().getTheAction(),ee.tra.getLabel().getTheAction());
 	}
 	
-	@Override
-	public ModalAutomaton<CALabel> apply(Integer bound)
-	{
-		return (ModalAutomaton<CALabel>) super.apply(bound);
-	}
-
-
 }
 
 

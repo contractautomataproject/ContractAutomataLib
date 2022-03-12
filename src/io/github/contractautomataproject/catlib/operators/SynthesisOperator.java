@@ -95,8 +95,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 			final S init = aut.getInitial();
 			Pair seed = new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init)));
 			
-			Pair fixpoint = Stream.iterate(seed, 
-					pair-> {
+			Pair fixpoint = Stream.iterate(seed, pair-> {
 						Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
 						
 						//next function embedded into hasnext

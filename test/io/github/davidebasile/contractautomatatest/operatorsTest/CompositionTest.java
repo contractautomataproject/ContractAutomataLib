@@ -46,7 +46,10 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"Broker.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"PriviledgedHotel.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new MSCACompositionFunction(aut,null).apply(100)));
+		
+		ModalAutomaton<CALabel> comp =new MSCACompositionFunction(aut,null).apply(100);
+		
+		assertTrue(new CompositionSpecCheck().test(aut,comp));
 	}
 
 
@@ -60,7 +63,11 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"Broker.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new MSCACompositionFunction(aut,null).apply(100)));
+		
+		ModalAutomaton<CALabel> comp =new MSCACompositionFunction(aut,null).apply(100);
+		
+		System.out.println(comp);
+		assertTrue(new CompositionSpecCheck().test(aut,comp));
 	}
 	
 	//**********************************SCICO2020 case study*******************************************************************

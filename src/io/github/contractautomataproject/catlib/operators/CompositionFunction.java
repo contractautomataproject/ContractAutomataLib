@@ -38,14 +38,14 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  */
 
 
-public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>>  implements Function<Integer,Automaton<CS,CL,S,T>>{
+public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>,A extends Automaton<CS,CL,S,T>>  implements Function<Integer,A>{
 
 	private final BiFunction<L,L,Boolean> match;
 	private final Function<List<S>,S> createState;
 	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
 	private final TriFunction<TIndex,TIndex,Integer,L> createLabel;
 	private final TriFunction<L,Integer,Integer, L> shiftLabel;
-	private final Function<Set<T>,? extends Automaton<CS,CL,S,T>> createAutomaton;
+	private final Function<Set<T>,A> createAutomaton;
 
 
 	//each transition of each MSCA in aut is associated with the corresponding index in aut
@@ -83,13 +83,13 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	 * @param createAutomaton a function taking as argument the set of transitions of the composition, and returns the composed automaton
 	 * 
 	 */
-	public <A extends Automaton<CS,CL,S,T>> CompositionFunction(List<A> aut,  
+	public CompositionFunction(List<A> aut,  
 			Function<List<? extends Ranked>,Integer> computeRank,
 			BiFunction<L,L,Boolean> match, Function<List<S>,S> createState, 
 			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
 			TriFunction<TIndex,TIndex,Integer,L> createLabel,
 			TriFunction<L,Integer,Integer, L> shiftLabel, 
-			Function<Set<T>,? extends Automaton<CS,CL,S,T>> createAutomaton,
+			Function<Set<T>,A> createAutomaton,
 			Predicate<L> pruningPred)
 	{
 		this.aut= new ArrayList<>(aut);
@@ -127,7 +127,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	 * @return  the composed automaton
 	 */
 	@Override
-	public Automaton<CS,CL,S,T> apply(Integer bound)
+	public A apply(Integer bound)
 	{
 		//TODO study non-associative composition but all-at-once
 		//TODO study remotion of requests on-credit for a closed composition
@@ -236,6 +236,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 							.collect(toSet()));
 				}
 			}
+			
 		} while (!toVisit.isEmpty());
 
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
