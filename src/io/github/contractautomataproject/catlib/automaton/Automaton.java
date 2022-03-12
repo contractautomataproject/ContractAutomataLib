@@ -71,7 +71,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 	 */
 	public final Set<S> getStates()
 	{
-		return this.getTransition().parallelStream()
+		return tra.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
 				.collect(Collectors.toSet()); //without equals, duplicates objects are detected
 	}

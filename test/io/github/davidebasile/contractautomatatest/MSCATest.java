@@ -54,7 +54,7 @@ public class MSCATest {
 
 	@Test
 	public void constructorTest_Exception_emptyTransitions() {
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>()))
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>()))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 
@@ -62,7 +62,7 @@ public class MSCATest {
 
 	@Test
 	public void constructor_Exception_nullArgument() throws Exception {
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
 		tr.add(null);
 		//	ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
@@ -84,24 +84,23 @@ public class MSCATest {
 		lab2.add(CALabel.request+"a");
 
 
-		BasicState bs0 = new BasicState("0",true,false);
-		BasicState bs1 = new BasicState("1",true,false);
-		BasicState bs2 = new BasicState("2",true,false);
-		BasicState bs3 = new BasicState("3",true,false);
+		BasicState<String> bs0 = new BasicState<String>("0",true,false);
+		BasicState<String> bs1 = new BasicState<String>("1",true,false);
+		BasicState<String> bs2 = new BasicState<String>("2",true,false);
+		BasicState<String> bs3 = new BasicState<String>("3",true,false);
 
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs0,bs1,bs3)//,0,0
-						),
-				Modality.PERMITTED));
+				new CAState(Arrays.asList(bs0,bs1,bs3)),
+				Modality.PERMITTED, CAState::new));
 		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
 				);
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(cs,
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(cs,
 				new CALabel(lab2),
 				cs,
-				Modality.PERMITTED));
+				Modality.PERMITTED,CAState::new));
 
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
@@ -115,17 +114,16 @@ public class MSCATest {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
 
-		BasicState bs0 = new BasicState("0",false,true);
-		BasicState bs1 = new BasicState("1",false,true);
+		BasicState<String> bs0 = new BasicState<String>("0",false,true);
+		BasicState<String> bs1 = new BasicState<String>("1",false,true);
 
 
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1)//,0,0
-						),
-				Modality.PERMITTED));
+				new CAState(Arrays.asList(bs1)),
+				Modality.PERMITTED,CAState::new));
 
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
@@ -138,17 +136,16 @@ public class MSCATest {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
 
-		BasicState bs0 = new BasicState("0",true,false);
-		BasicState bs1 = new BasicState("1",false,false);
+		BasicState<String> bs0 = new BasicState<String>("0",true,false);
+		BasicState<String> bs1 = new BasicState<String>("1",false,false);
 
 
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1)//,0,0
-						),
-				Modality.PERMITTED));
+				new CAState(Arrays.asList(bs1)),
+				Modality.PERMITTED,CAState::new));
 
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
@@ -163,23 +160,21 @@ public class MSCATest {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.offer+"a");
 
-		BasicState bs1 = new BasicState("0",true,false);
-		BasicState bs2 = new BasicState("0",false,true);
+		BasicState<String> bs1 = new BasicState<String>("0",true,false);
+		BasicState<String> bs2 = new BasicState<String>("0",false,true);
 
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs1)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs1)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2)//,0,0
-						),
-				Modality.PERMITTED));
+				new CAState(Arrays.asList(bs2)),
+				Modality.PERMITTED,CAState::new));
 
-		tr.add(new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs2)//,0,0
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs2)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2)//,0,0
-						),
-				Modality.PERMITTED));
+				new CAState(Arrays.asList(bs2)),
+				Modality.PERMITTED,CAState::new));
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
@@ -215,7 +210,7 @@ public class MSCATest {
 	//	public void getRankZero() throws Exception {
 	//		
 	//		ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
-	//		aut.setTransition(new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>());
+	//		aut.setTransition(new HashSet<ModalTransition<List<State<String>>,List<String>,CAState,CALabel>>());
 	//		assertEquals(aut.getRank(),0);
 	//	}
 

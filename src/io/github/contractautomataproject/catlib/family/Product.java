@@ -131,7 +131,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr)
+	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -145,7 +145,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr)
+	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -161,7 +161,7 @@ public class Product {
 		return this.getForbidden().contains(f);
 	}
 
-	//	private boolean isRequired(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> t)
+	//	private boolean isRequired(ModalTransition<List<State<String>>,List<String>,CAState,CALabel> t)
 	//	{
 	//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
 	//	}

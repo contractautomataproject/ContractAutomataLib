@@ -35,7 +35,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
 			Predicate<Label<List<String>>> reqmc,
-			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop){
+			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop){
 		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, reqmc, prop, 
 				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}
@@ -56,7 +56,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	}
 
 
-	private static boolean isUncontrollableOrchestration(ModalTransition<List<BasicState>,List<String>,CAState,CALabel> tra,Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> str, Set<CAState> badStates)
+	private static boolean isUncontrollableOrchestration(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tra,Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> str, Set<CAState> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal

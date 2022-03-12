@@ -50,7 +50,7 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 		
 		String safefilename = path.toString();
 		
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>> tr;
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), "UTF-8")))
@@ -58,9 +58,9 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 			int rank=0;
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
-			tr = new HashSet<ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>>();
+			tr = new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>>();
 			Set<CAState> states = new HashSet<CAState>();
-			Map<Integer,Set<BasicState>> mapBasicStates = new HashMap<>();
+			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
 
 			String strLine;
 			while ((strLine = br.readLine()) != null)   
@@ -125,7 +125,7 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 		return new ModalAutomaton<Label<List<String>>>(tr);
 	}
 
-	private ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.*)"+"\\],\\["+"(.*)"+"\\],\\["+"(.*)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -143,14 +143,14 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-		return new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(source,createLabel(tr),target,type); 
+		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(source,createLabel(tr),target,type,CAState::new); 
 	}
 
 	public Label<List<String>> createLabel(String[][] tr) {
 		return new Label<>(Arrays.asList(tr[1]));
 	}
 	
-	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState>> mapBasicStates, String[] state,String[] initial, String[][] fin) throws IOException {
+	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin) throws IOException {
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
@@ -160,19 +160,19 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 					CAState temp= new CAState(
 							IntStream.range(0, state.length) //creating the list of basic states using mapBasicStates
 							.mapToObj(i->{
-								Set<BasicState> l = mapBasicStates.get(i);
+								Set<BasicState<String>> l = mapBasicStates.get(i);
 								if (l==null || l.stream().allMatch(bs->!bs.getState().equals(state[i])))
 								{
-									BasicState bs=new BasicState(state[i]+"",
+									BasicState<String> bs=new BasicState<String>(state[i]+"",
 											state[i].equals(initial[i]),
 											Arrays.stream(fin[i]).anyMatch(id->id.equals(state[i])));
 									if (l==null)
-										mapBasicStates.put(i, new HashSet<BasicState>(Arrays.asList(bs)));
+										mapBasicStates.put(i, new HashSet<BasicState<String>>(Arrays.asList(bs)));
 									else
 										l.add(bs);
-									return (BasicState) bs;
+									return (BasicState<String>) bs;
 								} else
-									return (BasicState) l.stream()
+									return (BasicState<String>) l.stream()
 											.filter(bs->bs.getState().equals(state[i]))
 											.findFirst()
 											.orElseThrow(RuntimeException::new);

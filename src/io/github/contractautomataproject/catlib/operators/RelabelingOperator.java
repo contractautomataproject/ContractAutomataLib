@@ -42,11 +42,11 @@ public class RelabelingOperator<L extends Label<List<String>>> implements UnaryO
 		if (aut.getTransition().isEmpty())
 			throw new IllegalArgumentException();
 
-		Map<BasicState,BasicState> clonedstate = aut.getStates().stream()
+		Map<BasicState<String>,BasicState<String>> clonedstate = aut.getStates().stream()
 				.flatMap(x->x.getState().stream())
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), 
-						s->new BasicState(relabel.apply(s.getState()),
+						s->new BasicState<String>(relabel.apply(s.getState()),
 								s.isInitial(),s.isFinalstate())));
 
 		Map<CAState,CAState> clonedcastates  = aut.getStates().stream()
@@ -57,10 +57,10 @@ public class RelabelingOperator<L extends Label<List<String>>> implements UnaryO
 								)));
 
 		return new ModalAutomaton<L>(aut.getTransition().stream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,L>(clonedcastates.get(t.getSource()),
+				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>(clonedcastates.get(t.getSource()),
 						createLabel.apply(t.getLabel().getAction()),
 						clonedcastates.get(t.getTarget()),
-						t.getModality()))
+						t.getModality(),CAState::new))
 				.collect(Collectors.toSet()));
 	}
 }

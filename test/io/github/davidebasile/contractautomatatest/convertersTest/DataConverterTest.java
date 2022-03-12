@@ -40,7 +40,7 @@ public class DataConverterTest {
 
 		assertEquals(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
-				.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState>(cs.getState().indexOf(bs),bs)))
+				.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState<String>>(cs.getState().indexOf(bs),bs)))
 		.anyMatch(e1->aut.getStates()
 				.stream()
 				.map(cs->cs.getState().get(e1.getKey()))

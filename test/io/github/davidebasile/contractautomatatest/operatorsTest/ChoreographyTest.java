@@ -69,7 +69,7 @@ public class ChoreographyTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.data");
 
-		Function<Stream<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>>> choice = 
+		Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> choice = 
 				s -> s.sorted((t1,t2)->t1.toCSV().compareTo(t2.toCSV())).findFirst();
 				
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),choice).apply(aut);
@@ -133,8 +133,8 @@ public class ChoreographyTest {
 
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"violatingbranchingcondition.data");
 
-		final Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> trf = aut.getTransition();
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> violatingBC = aut.getTransition().stream()
+		final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trf = aut.getTransition();
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> violatingBC = aut.getTransition().stream()
 				.filter(x->!new ChoreographySynthesisOperator(new StrongAgreement())
 						.satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
 				.collect(Collectors.toSet());

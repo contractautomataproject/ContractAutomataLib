@@ -4,14 +4,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.operators.TriFunction;
 
 public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> extends Transition<CS,CL,S,L>  {
+	
 	/**
 	 * the modality of the transition
 	 */
@@ -21,16 +24,25 @@ public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> ext
 
 	private final Modality mod;
 
-	public ModalTransition(S source, L label, S target, Modality type)
+	public ModalTransition(S source, L label, S target, Modality type, Function<CS,S> createState)
 	{
-		super(source,label,target);
+		super(source,label,target,createState);
 		if (type==null)
 			throw new RuntimeException("Ill-formed transition");
 		else		
 			this.mod=type;
 
 	}
+	
+	public ModalTransition(S source, L label, S target,Modality type, TriFunction<CS,Boolean,Boolean,S> createState){
+		super(source,label,target,createState);
+		if (type==null)
+			throw new RuntimeException("Ill-formed transition");
+		else		
+			this.mod=type;
 
+	}
+	
 	public boolean isUrgent()
 	{
 		return (this.mod==Modality.URGENT);
@@ -100,8 +112,8 @@ public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> ext
 	 * @param controllabilityPred the controllability predicate
 	 * @return true if the transition is uncontrollable against the parameters
 	 */
-	public boolean isUncontrollable(Set<? extends ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> tr, Set<CAState> badStates,
-			BiPredicate<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>,ModalTransition<CS,CL,S,L>> controllabilityPred)
+	public boolean isUncontrollable(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr, Set<CAState> badStates,
+			BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<CS,CL,S,L>> controllabilityPred)
 	{
 		if (this.isUrgent())
 			return true;

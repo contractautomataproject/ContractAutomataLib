@@ -31,16 +31,16 @@ public class ModelCheckingTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final MSCADataConverter bdc = new MSCADataConverter();
 	private final AutDataConverter adc = new AutDataConverter();
-	private Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop ;
+	private Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop ;
 	
 	@Before
 	public void setup() {
-		BasicState s0 = new BasicState("0",true,false);
-		BasicState s1 = new BasicState("1",false,false);
-		BasicState s2 = new BasicState("2",false,true);
-		ModalTransition<String,String,BasicState,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,BasicState,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,BasicState,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
+		BasicState<String> s0 = new BasicState<String>("0",true,false);
+		BasicState<String> s1 = new BasicState<String>("1",false,false);
+		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<String,String,BasicState<String>,Label<String>>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
 		prop = new Automaton<>(Set.of(t1,t2,t3));
 	}
 	
@@ -59,16 +59,16 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
 		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
-
 		assertTrue(MSCATest.checkTransitions(synth, test));
 	}
 	
 	@Test
 	public void testLazyLoopMc() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop, new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);
+		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop, new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);	
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "test_lazy_loop_prop_mc.data");
 
+		
 		assertTrue(MSCATest.checkTransitions(comp, test));
 		
 	}
@@ -76,10 +76,7 @@ public class ModelCheckingTest {
 	@Test
 	public void testLazyLoopSynth() throws IOException {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
-		
-		adc.exportMSCA(dir + "test_lazy_loop_prop_synth.data", synth);
-		
+		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);	
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "test_lazy_loop_prop_synth.data");
 
 		assertTrue(MSCATest.checkTransitions(synth, test));
@@ -110,45 +107,42 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");	
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
+		
 		assertTrue(MSCATest.checkTransitions(orc, test));
 	}
 	
 	@Test
 	public void testCorSynthesis2021() throws IOException {
-		BasicState s0 = new BasicState("0",true,false);
-		BasicState s1 = new BasicState("1",false,true);
-		BasicState s2 = new BasicState("2",false,true);
-		ModalTransition<String,String,BasicState,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("m"), s1, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,BasicState,Label<String>> t2 = new ModalTransition<>(s0, new Label<String>("m"), s2, ModalTransition.Modality.PERMITTED);
-		Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop  = new Automaton<>(Set.of(t1,t2));
+		BasicState<String> s0 = new BasicState<String>("0",true,false);
+		BasicState<String> s1 = new BasicState<String>("1",false,true);
+		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("m"), s1, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s0, new Label<String>("n"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop  = new Automaton<>(Set.of(t1,t2));
 		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
-	
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
-		
+	
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");		
+		
 		assertTrue(MSCATest.checkTransitions(cor, test));
 	}
 	
 	@Test
 	public void mpcEmptyTestNoDanglingWithProperty() throws Exception
 	{
-		BasicState s0 = new BasicState("0",true,false);
-		BasicState s1 = new BasicState("1",false,false);
-		BasicState s2 = new BasicState("2",false,true);
-		ModalTransition<String,String,BasicState,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT);
-		ModalTransition<String,String,BasicState,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,BasicState,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
+		BasicState<String> s0 = new BasicState<String>("0",true,false);
+		BasicState<String> s1 = new BasicState<String>("1",false,false);
+		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
 		
-		Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));;
+		Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));;
 
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
 		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		assertTrue(mpc==null);
-		
-//		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement(),prop).apply(aut))
-//		.isInstanceOf(IllegalArgumentException.class);
-//		.hasMessage("No transitions");
 	}
 }

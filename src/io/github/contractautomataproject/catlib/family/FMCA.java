@@ -90,7 +90,7 @@ public class FMCA {
 	public Map<Product,ModalAutomaton<CALabel>> getCanonicalProducts()
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
-				.map(ModalTransition<List<BasicState>,List<String>,CAState,CALabel>::getLabel)
+				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
@@ -186,7 +186,7 @@ public class FMCA {
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(ModalAutomaton<CALabel> a,Predicate<Product> pred)
 	{
 		if (a.getForwardStar(a.getInitial()).stream()
-				.map(ModalTransition<List<BasicState>,List<String>,CAState,CALabel>::getLabel)
+				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
@@ -218,12 +218,12 @@ public class FMCA {
 //private Set<Product> applyOnFamilyOrchestration(ModalAutomaton<CALabel> aut, Function<ModalAutomaton<CALabel>,Set<Product>> fun)
 //{
 //	if (!aut.getForwardStar(aut.getInitial()).stream()
-//			.map(ModalTransition<List<BasicState>,List<String>,CAState,CALabel>::getLabel)
+//			.map(ModalTransition<List<State<String>>,List<String>,CAState,CALabel>::getLabel)
 //			.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
 //		throw new UnsupportedOperationException();
 //
 //	return aut.getForwardStar(aut.getInitial()).stream()
-//			.map(ModalTransition<List<BasicState>,List<String>,CAState,CALabel>::getTarget)
+//			.map(ModalTransition<List<State<String>>,List<String>,CAState,CALabel>::getTarget)
 //			.map(s1->{
 //				ModalAutomaton<CALabel> a=aut.clone();
 //				a.getInitial().setInitial(false);

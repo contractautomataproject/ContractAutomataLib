@@ -13,10 +13,10 @@ import org.junit.Test;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
-import io.github.contractautomataproject.catlib.operators.CompositionSpecCheck;
 import io.github.contractautomataproject.catlib.operators.MSCACompositionFunction;
 import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
+import io.github.contractautomataproject.catlib.spec.CompositionSpecCheck;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class CompositionTest {
@@ -66,7 +66,6 @@ public class CompositionTest {
 		
 		ModalAutomaton<CALabel> comp =new MSCACompositionFunction(aut,null).apply(100);
 		
-		System.out.println(comp);
 		assertTrue(new CompositionSpecCheck().test(aut,comp));
 	}
 	

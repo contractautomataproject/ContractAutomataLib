@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * @author Davide Basile
  * 
  */
-public class CAState extends State<List<BasicState>> {
+public class CAState extends State<List<BasicState<String>>> {
 
 	/**
 	 * Construct a new CAState from
@@ -18,16 +18,17 @@ public class CAState extends State<List<BasicState>> {
 	 * - a list of CAStates by flattening them into  a list of basic states
 	 * @param lstate states the list of castates or basicstates
 	 */
-	public <T extends State<?>> CAState(List<T> lstate)//, float x, float y)
+	@SuppressWarnings("unchecked")
+	public <T extends State<?>> CAState(List<T> lstate)
 	{
 		super((lstate.get(0) instanceof CAState)?
 				lstate.stream()
 				.map(s->(CAState) s)
 				.map(CAState::getState)
-				.reduce(new ArrayList<BasicState>(), (x,y)->{x.addAll(y); return x;})
-				:(lstate.get(0) instanceof BasicState)?
+				.reduce(new ArrayList<BasicState<String>>(), (x,y)->{x.addAll(y); return x;})
+				:(lstate.get(0) instanceof BasicState<?>) && (lstate.get(0).getState() instanceof String)?
 					lstate.stream()
-					.map(s->(BasicState)s)
+					.map(s-> (BasicState<String>)s)
 					.collect(Collectors.toList())
 					:null);
 		if (lstate.isEmpty())
@@ -57,22 +58,26 @@ public class CAState extends State<List<BasicState>> {
 
 	@Override
 	public boolean isInitial() {
-		return this.getState().stream().allMatch(BasicState::isInitial);
+		return this.getState().stream().allMatch(BasicState<String>::isInitial);
 	}
 	
-	@Override
 	public void setInitial(boolean initial) {
 		this.getState().forEach(s->s.setInitial(initial));
 	}
 
 	@Override
 	public boolean isFinalstate() {
-		return this.getState().stream().allMatch(BasicState::isFinalstate);
+		return this.getState().stream().allMatch(BasicState<String>::isFinalstate);
+	}
+	
+	public void setFinalstate(boolean fin) {
+		this.getState().forEach(s->s.setFinalstate(fin));
 	}
 	
 	@Override
-	public void setFinalstate(boolean fin) {
-		this.getState().forEach(s->s.setFinalstate(fin));
+	public  List<BasicState<String>> getState() {
+		return new ArrayList<>(super.getState());
+		//return super.getState();
 	}
 
 	/**
@@ -101,6 +106,22 @@ public class CAState extends State<List<BasicState>> {
 
 		return sb.toString();
 	}
+}
+	
+// equals could cause errors of duplication of states in transitions to go undetected. 	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		CAState other = (CAState) obj;
+//		if ((this.getState() == null)&&(other.getState() != null))
+//				return false;
+//		return (this.getState().equals(other.getState())); 
+//	}
 	
 //	/**
 //	 * this method shall not be invoked, because BasicStates are usually shared 
@@ -108,9 +129,8 @@ public class CAState extends State<List<BasicState>> {
 //	 */
 //	@Override
 //	public CAState getCopy() {
-//		throw new UnsupportedOperationException();
+//		return new CAState(new ArrayList<>(this.getState()));
 //	}
-}
 
 	
 //	public boolean hasSameBasicStateLabelsOf(CAState s) {
@@ -119,5 +139,5 @@ public class CAState extends State<List<BasicState>> {
 //		return IntStream.range(0, this.state.size())
 //		.allMatch(i->state.get(i).getLabel().equals(s.getState().get(i).getLabel()));
 //	}
-// equals could cause errors of duplication of states in transitions to go undetected. 
+
 

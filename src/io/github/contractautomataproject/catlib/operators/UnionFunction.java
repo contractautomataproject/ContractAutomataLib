@@ -48,7 +48,7 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 		.flatMap(Set::stream)
 		.map(CAState::getState)
 		.flatMap(List::stream)
-		.map(BasicState::getState)
+		.map(BasicState<String>::getState)
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
@@ -61,17 +61,17 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 
 		//new initial state
 		CAState newinitial = new CAState(IntStream.range(0,rank)
-				.mapToObj(i->new BasicState("0",true,false))
+				.mapToObj(i->new BasicState<String>("0",true,false))
 				.collect(Collectors.toList())//,0,0
 				);
 
-		Set<ModalTransition<List<BasicState>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(relabeled.stream()
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(relabeled.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+relabeled.size());  //Initialized to the total number of transitions
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),ModalTransition.Modality.PERMITTED))
+				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),ModalTransition.Modality.PERMITTED,CAState::new))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
 		//remove old initial states, I need to do this now

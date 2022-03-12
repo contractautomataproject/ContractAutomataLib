@@ -20,10 +20,10 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class ModalAutomaton<L extends Label<List<String>>> extends Automaton<List<BasicState>,List<String>, CAState, 
-ModalTransition<List<BasicState>,List<String>,CAState,L>>
+public class ModalAutomaton<L extends Label<List<String>>> extends Automaton<List<BasicState<String>>,List<String>, CAState, 
+ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 { 
-	public ModalAutomaton(Set<ModalTransition<List<BasicState>,List<String>,CAState,L>> tr) 
+	public ModalAutomaton(Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> tr) 
 	{
 		super(tr);
 		Set<CAState> states = this.getStates();
@@ -31,7 +31,7 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 		if(states.stream()
 				.anyMatch(x-> states.stream()
 						.filter(y->x!=y && x.getState().equals(y.getState()))
-						.peek(y->System.out.println(x+" "+y))
+						//.peek(y->System.out.println(x+" "+y))
 						.count()!=0))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 	}
@@ -40,12 +40,12 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 	 * 
 	 * @return a map where for each entry the key is the index of principal, and the value is its set of basic states
 	 */
-	public Map<Integer,Set<BasicState>> getBasicStates()
+	public Map<Integer,Set<BasicState<String>>> getBasicStates()
 	{
 
 		return this.getStates().stream()
 				.flatMap(cs->cs.getState().stream()
-						.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState>(cs.getState().indexOf(bs),bs)))
+						.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState<String>>(cs.getState().indexOf(bs),bs)))
 				.collect(Collectors.groupingBy(Entry::getKey, Collectors.mapping(Entry::getValue, Collectors.toSet())));
 
 	}
@@ -67,14 +67,14 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 		for (int i=0;i<rank;i++) {
 			pr.append(Arrays.toString(
 					this.getBasicStates().get(i).stream()
-					.filter(BasicState::isFinalstate)
-					.map(BasicState::getState)
+					.filter(BasicState<String>::isFinalstate)
+					.map(BasicState<String>::getState)
 					//.mapToInt(Integer::parseInt)
 					.toArray()));
 		}
 		pr.append("]\n");
 		pr.append("Transitions: \n");
-		for (ModalTransition<List<BasicState>,List<String>,CAState,L> t : this.getTransition())
+		for (ModalTransition<List<BasicState<String>>,List<String>,CAState,L> t : this.getTransition())
 			pr.append(t.toString()+"\n");
 		return pr.toString();
 	}
@@ -83,10 +83,10 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 	 * 
 	 * @return return a conversion of the MSCA into an automaton where CALabel are substituted by Label<List<String>>
 	 */
-	public Automaton<List<BasicState>,List<String>, CAState, ModalTransition<List<BasicState>,List<String>,CAState,L>> relaxAsAutomaton(){
+	public Automaton<List<BasicState<String>>,List<String>, CAState, ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> relaxAsAutomaton(){
 		return new Automaton<>(this.getTransition().parallelStream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,L>
-				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality()))
+				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>
+				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality(),CAState::new))
 				.collect(Collectors.toSet()));
 	}
 
@@ -100,10 +100,10 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 	{
 		return new ModalAutomaton<CALabel>(this.getTransition()
 				.parallelStream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,CALabel>(t.getSource(), 
+				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(t.getSource(), 
 						new CALabel(t.getLabel().getAction()),
 						t.getTarget(),
-						t.getModality()))
+						t.getModality(),CAState::new))
 				.collect(Collectors.toSet()));
 	}
 	
@@ -111,10 +111,10 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 	{
 		return new ModalAutomaton<Label<List<String>>>(this.getTransition()
 				.parallelStream()
-				.map(t->new ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>(t.getSource(), 
+				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(t.getSource(), 
 						(Label<List<String>>)t.getLabel(),
 						t.getTarget(),
-						t.getModality()))
+						t.getModality(),CAState::new))
 				.collect(Collectors.toSet()));
 	}
 	
@@ -123,9 +123,9 @@ ModalTransition<List<BasicState>,List<String>,CAState,L>>
 }
 	
 	
-//	private static <L extends Label<List<String>>, T extends  ModalTransition<List<BasicState>,List<String>,CAState,L>, 
-//	A extends Automaton<List<BasicState>,List<String>,CAState,T>> A revertTo(
-//			Automaton<List<BasicState>,List<String>,CAState,ModalTransition<List<BasicState>,List<String>,CAState,Label<List<String>>>>  aut,
+//	private static <L extends Label<List<String>>, T extends  ModalTransition<List<State<String>>,List<String>,CAState,L>, 
+//	A extends Automaton<List<State<String>>,List<String>,CAState,T>> A revertTo(
+//			Automaton<List<State<String>>,List<String>,CAState,ModalTransition<List<State<String>>,List<String>,CAState,Label<List<String>>>>  aut,
 //			Function<List<String>,L> createLabel, 
 //			TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
 //			Function<Set<T>,A> createAut)

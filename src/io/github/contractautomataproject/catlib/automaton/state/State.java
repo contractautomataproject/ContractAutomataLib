@@ -3,7 +3,7 @@ package io.github.contractautomataproject.catlib.automaton.state;
 import io.github.contractautomataproject.catlib.automaton.Ranked;
 
 /**
- * Abstract class encoding a state
+ * class encoding a state
  * 
  * @author Davide Basile
  *
@@ -19,27 +19,30 @@ public abstract class State<T> implements Ranked {
 		this.state=label;
 	}
 	
-	public abstract boolean isFinalstate();
-	
-	public abstract boolean isInitial();
-	
-	public abstract void setInitial(boolean init);
-	
-	public abstract void setFinalstate(boolean fin);
-	
 	public T getState() {
 		return state;
 	}
 	
-
-	/**
-	 * 
-	 * @return an encoding of the object as comma separated values
-	 */
-	public String toCSV()
-	{
-		return "[state="+state+"]";
-	}
+	public abstract boolean isFinalstate();
 	
-//	public abstract State<T> getCopy();
+	public abstract boolean isInitial();
+
+	public abstract String toCSV();
+	
+//	@Override
+//	public String toString() {
+//		return state.toString();//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
+//	}
+
+	
+//	/**
+//	 * 
+//	 * @return an encoding of the object as comma separated values
+//	 */
+//	public String toCSV()
+//	{
+//		return "[state="+state+"]";
+//	}
+	
+//	public abstract <U extends State<T>> U getCopy();
 }

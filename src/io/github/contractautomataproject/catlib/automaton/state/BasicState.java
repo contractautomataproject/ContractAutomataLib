@@ -1,21 +1,24 @@
 package io.github.contractautomataproject.catlib.automaton.state;
 
 /**
- * Class representing a BasicState
+ * class encoding a state
  * 
- * @author Davide
+ * @author Davide Basile
  *
+ * @param <T> generic type of the instance variable of the state
  */
-public class BasicState extends State<String> {
-
+public class BasicState<T> extends State<T>{
+	
 	private boolean init;
 	private boolean fin;
+
 	
-	public BasicState(String label, boolean init, boolean fin) {
+	public BasicState(T label, Boolean init, Boolean fin) {
 		super(label);
-		this.init = init;
-		this.fin = fin;
+		this.init=init;
+		this.fin=fin;
 	}
+	
 	
 	@Override
 	public boolean isFinalstate() {
@@ -27,7 +30,6 @@ public class BasicState extends State<String> {
 		return init;
 	}
 	
-	@Override
 	public void setInitial(boolean init) {
 		this.init = init;
 	}
@@ -35,6 +37,7 @@ public class BasicState extends State<String> {
 	public void setFinalstate(boolean fin) {
 		this.fin=fin;
 	}
+	
 	
 	
 	@Override
@@ -57,9 +60,9 @@ public class BasicState extends State<String> {
 	/**
 	 * 
 	 * @param s the encoding of the object as comma separated values
-	 * @return a new basicstate object constructed from the parameter s
+	 * @return a new State<String> object constructed from the parameter s
 	 */
-	public static BasicState readCSV(String s) {
+	public static BasicState<String> readCSV(String s) {
 		boolean init=false, fin=false;
 		String label="";
 		String[] cs = s.split(",");
@@ -73,14 +76,19 @@ public class BasicState extends State<String> {
 			else if (kv[0].equals("final"))
 				fin=true;
 		}
-		return new BasicState(label,init,fin);
+		return new BasicState<String>(label,init,fin);
 		
 	}
-		
-	//equals creates problems
-	
-//	@Override
-//	public BasicState getCopy() {
-//		return new BasicState(this.getState(),this.isInitial(),this.isFinalstate());
+
+
+//	/**
+//	 * 
+//	 * @return an encoding of the object as comma separated values
+//	 */
+//	public String toCSV()
+//	{
+//		return "[state="+state+"]";
 //	}
+	
+//	public abstract <U extends State<T>> U getCopy();
 }

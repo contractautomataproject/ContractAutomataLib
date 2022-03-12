@@ -33,7 +33,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public MpcSynthesisOperator(Predicate<CALabel> req, Predicate<Label<List<String>>> reqmc,	 
-			Automaton<String,String,BasicState,ModalTransition<String,String,BasicState,Label<String>>>  prop)
+			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop)
 	{
 		super((x,t,bad) -> x.isUrgent(), req, reqmc, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}	

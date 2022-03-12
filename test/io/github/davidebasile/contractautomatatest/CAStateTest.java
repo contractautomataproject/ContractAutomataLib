@@ -22,11 +22,11 @@ public class CAStateTest {
 	
 	@Before
 	public void setup() {
-		BasicState bs0 = new BasicState("0",true,false);
-		BasicState bs1 = new BasicState("1",true,false);
-		BasicState bs2 = new BasicState("2",true,false);
-		BasicState bs4 = new BasicState("4",true,false);
-		BasicState bs10 = new BasicState("10",true,false);
+		BasicState<String> bs0 = new BasicState<String>("0",true,false);
+		BasicState<String> bs1 = new BasicState<String>("1",true,false);
+		BasicState<String> bs2 = new BasicState<String>("2",true,false);
+		BasicState<String> bs4 = new BasicState<String>("4",true,false);
+		BasicState<String> bs10 = new BasicState<String>("10",true,false);
 		
 		List<CAState> l = new ArrayList<>();
 		l.add(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
@@ -59,7 +59,7 @@ public class CAStateTest {
 	@Test
 	public void toStringFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState(bs.getState(),false,true))
+		.map(bs->new BasicState<String>(bs.getState(),false,true))
 		.collect(Collectors.toList())//,0,0
 		);
 		assertEquals(test2.toString()," Final [0, 1, 2, 0, 0, 4, 10]");
@@ -68,7 +68,7 @@ public class CAStateTest {
 	@Test
 	public void toStringNoInitialNoFinalTest() {
 		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState(bs.getState(),false,false))
+		.map(bs->new BasicState<String>(bs.getState(),false,false))
 		.collect(Collectors.toList())//,0,0
 		);
 		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
@@ -83,7 +83,7 @@ public class CAStateTest {
 	
 	@Test
 	public void readCSVtest() {
-		BasicState b =test.getState().get(0);
+		BasicState<String> b =test.getState().get(0);
 		b.setFinalstate(true);
 		assertEquals(BasicState.readCSV(b.toCSV()).toString(), b.toString());
 	}
