@@ -127,7 +127,7 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 
 	private ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
-		String regex = "\\(\\["+"(.*)"+"\\],\\["+"(.*)"+"\\],\\["+"(.*)"+"\\]\\)";
+		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(str);
 

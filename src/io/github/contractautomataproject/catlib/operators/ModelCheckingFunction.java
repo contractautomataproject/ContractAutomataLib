@@ -46,7 +46,7 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 					l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
 					l.addAll(lab.getAction());
 					if (rank-l.size()>0)
-						l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
+						l.addAll(Stream.generate(()->CALabel.idle).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 					return new Label<List<String>>(l);
 				}, 
 				ModalAutomaton::new,

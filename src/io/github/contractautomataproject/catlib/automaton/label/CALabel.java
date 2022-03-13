@@ -233,11 +233,11 @@ public class CALabel extends Label<List<String>> {
 			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
 					+ "or out of rank");
 
-		List<String> l = new ArrayList<String>(rank);
+		List<String> l = new ArrayList<>(rank);
 		l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
 		l.addAll(lab.getAction());
 		if (rank-l.size()>0)
-			l.addAll(Stream.generate(()->CALabel.idle).limit(rank-l.size()).collect(Collectors.toList()));
+			l.addAll(Stream.generate(()->CALabel.idle).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 		return l;
 	}
 
