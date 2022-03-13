@@ -42,8 +42,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 
 	private final BiFunction<L,L,Boolean> match;
 	private final Function<List<S>,S> createState;
-	private final Function<CS,S> createStateTransition;
-	private final PentaFunction<S,L,S,ModalTransition.Modality,Function<CS,S>, T> createTransition;
+	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
 	private final TriFunction<TIndex,TIndex,Integer,L> createLabel;
 	private final TriFunction<L,Integer,Integer, L> shiftLabel;
 	private final Function<Set<T>,A> createAutomaton;
@@ -87,8 +86,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	public CompositionFunction(List<A> aut,  
 			Function<List<? extends Ranked>,Integer> computeRank,
 			BiFunction<L,L,Boolean> match, Function<List<S>,S> createState, 
-			Function<CS,S> createStateTransition,
-			PentaFunction<S,L,S,ModalTransition.Modality, Function<CS,S>, T> createTransition, 
+			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
 			TriFunction<TIndex,TIndex,Integer,L> createLabel,
 			TriFunction<L,Integer,Integer, L> shiftLabel, 
 			Function<Set<T>,A> createAutomaton,
@@ -115,7 +113,6 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 		this.match=match;
 		this.createState=createState;
 		this.createLabel=createLabel;
-		this.createStateTransition=createStateTransition;
 		this.createTransition=createTransition;
 		this.shiftLabel=shiftLabel;
 		this.createAutomaton=createAutomaton;
@@ -178,7 +175,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 									T tradd=createTransition.apply(sourcestate,	
 											this.createLabel.apply(e, ee, rank),
 											operandstat2compstat.computeIfAbsent(targetlist, v->createState.apply(v)), 
-											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality(),createStateTransition);
+											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
 									return Stream.of((SimpleEntry<T, SimpleEntry<T,List<S>>>) 
 											new AbstractMap.SimpleEntry<T, SimpleEntry<T,List<S>>>(e.tra, 
@@ -203,7 +200,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 										.map(i->aut.get(i).getRank())
 										.sum()),//shifting positions of label
 								operandstat2compstat.computeIfAbsent(targetlist, v->createState.apply(v)),
-								e.tra.getModality(),createStateTransition),
+								e.tra.getModality()),
 								targetlist);},
 								toSet()));
 				trmap.addAll(matchtransitions.values().parallelStream()//matched transitions

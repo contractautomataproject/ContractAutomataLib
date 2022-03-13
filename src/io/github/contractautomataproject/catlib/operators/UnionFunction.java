@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
@@ -52,36 +53,47 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(aut.stream()
+				.map(x->x.getTransition().size())
+				.reduce(Integer::sum)
+				.orElse(0)+aut.size());  //Initialized to the total number of transitions
 		
-		//relabeling
-		List<ModalAutomaton<CALabel>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s))
+		//storing initial states of aut
+		List<CAState> initialStates = aut.stream()
+				.map(s->s.getInitial())
+				.collect(Collectors.toList());
+		
+		//relabeling, removing initial states
+		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> relabeled=IntStream.range(0, aut.size())
+		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,s->s.isFinalstate())
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
 		//new initial state
 		CAState newinitial = new CAState(IntStream.range(0,rank)
 				.mapToObj(i->new BasicState<String>("0",true,false))
-				.collect(Collectors.toList())//,0,0
-				);
+				.collect(Collectors.toList()));
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(relabeled.stream()
-				.map(x->x.getTransition().size())
-				.reduce(Integer::sum)
-				.orElse(0)+relabeled.size());  //Initialized to the total number of transitions
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(newinitial,new CALabel(rank, 0, "!dummy"),relabeled.get(i).getInitial(),ModalTransition.Modality.PERMITTED,CAState::new))
+				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(
+						newinitial,new CALabel(rank, 0, "!dummy"),
+						relabeled.get(i).parallelStream()
+						.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
+						.filter(s->IntStream.range(0, s.getRank())
+								.allMatch(j->s.getState().get(j).getState().split("_")[1].equals(initialStates.get(i).getState().get(j).getState())))
+						.findFirst().orElseThrow(RuntimeException::new),
+						ModalTransition.Modality.PERMITTED))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
-		//remove old initial states, I need to do this now
-		relabeled.parallelStream()
-		.flatMap(a->a.getStates().stream())
-		.filter(CAState::isInitial)
-		.forEach(x->x.setInitial(false));
+//		//remove old initial states, I need to do this now
+//		relabeled.parallelStream()
+//		.flatMap(a->a.getStates().stream())
+//		.filter(CAState::isInitial)
+//		.forEach(x->x.setInitial(false));
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->relabeled.get(i).getTransition())
+				.mapToObj(i->relabeled.get(i))
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 

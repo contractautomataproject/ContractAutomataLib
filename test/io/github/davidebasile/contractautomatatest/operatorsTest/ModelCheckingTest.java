@@ -38,9 +38,9 @@ public class ModelCheckingTest {
 		BasicState<String> s0 = new BasicState<String>("0",true,false);
 		BasicState<String> s1 = new BasicState<String>("1",false,false);
 		BasicState<String> s2 = new BasicState<String>("2",false,true);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<String,String,BasicState<String>,Label<String>>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.PERMITTED,BasicState::new);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<String,String,BasicState<String>,Label<String>>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
 		prop = new Automaton<>(Set.of(t1,t2,t3));
 	}
 	
@@ -116,8 +116,8 @@ public class ModelCheckingTest {
 		BasicState<String> s0 = new BasicState<String>("0",true,false);
 		BasicState<String> s1 = new BasicState<String>("1",false,true);
 		BasicState<String> s2 = new BasicState<String>("2",false,true);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("m"), s1, ModalTransition.Modality.PERMITTED,BasicState::new);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s0, new Label<String>("n"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("m"), s1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s0, new Label<String>("n"), s2, ModalTransition.Modality.PERMITTED);
 		Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop  = new Automaton<>(Set.of(t1,t2));
 		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
@@ -134,9 +134,9 @@ public class ModelCheckingTest {
 		BasicState<String> s0 = new BasicState<String>("0",true,false);
 		BasicState<String> s1 = new BasicState<String>("1",false,false);
 		BasicState<String> s2 = new BasicState<String>("2",false,true);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT,BasicState::new);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
-		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED,BasicState::new);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.URGENT);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
 		
 		Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));;
 

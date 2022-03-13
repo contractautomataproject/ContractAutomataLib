@@ -28,21 +28,27 @@ public abstract class State<T> implements Ranked {
 	public abstract boolean isInitial();
 
 	public abstract String toCSV();
-	
-//	@Override
-//	public String toString() {
-//		return state.toString();//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
-//	}
 
-	
-//	/**
-//	 * 
-//	 * @return an encoding of the object as comma separated values
-//	 */
-//	public String toCSV()
-//	{
-//		return "[state="+state+"]";
-//	}
-	
-//	public abstract <U extends State<T>> U getCopy();
 }
+
+//@Override
+//public int hashCode() {
+//	return Objects.hash(state.hashCode());
+//}
+//
+// equals could cause errors of duplication of states in transitions to go undetected. 	
+//@Override
+//public boolean equals(Object obj) {
+//	if (this == obj)
+//		return true;
+//	if (obj == null)
+//		return false;
+//	if (getClass() != obj.getClass())
+//		return false;
+//	State<?> other = (State<?>) obj;
+//	if ((state == null) && (other.state != null))
+//			return false;
+//	return (state.equals(other.state));
+//}
+//public abstract <U extends State<T>> U getCopy();
+

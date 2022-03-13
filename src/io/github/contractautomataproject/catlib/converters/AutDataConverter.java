@@ -143,7 +143,7 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(source,createLabel(tr),target,type,CAState::new); 
+		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(source,createLabel(tr),target,type); 
 	}
 
 	public Label<List<String>> createLabel(String[][] tr) {

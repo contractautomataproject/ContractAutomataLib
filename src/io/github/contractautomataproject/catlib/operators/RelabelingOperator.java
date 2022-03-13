@@ -2,7 +2,9 @@ package io.github.contractautomataproject.catlib.operators;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -17,27 +19,40 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class RelabelingOperator<L extends Label<List<String>>> implements UnaryOperator<ModalAutomaton<L>> {
-	private UnaryOperator<String> relabel;
+public class RelabelingOperator<L extends Label<List<String>>> implements Function<ModalAutomaton<L>, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>> {
+	final private UnaryOperator<String> relabel;
+	final private Function<List<String>,L> createLabel;
+	final private Predicate<BasicState<String>> initialStatePred;
+	final private Predicate<BasicState<String>> finalStatePred;
 
-	private Function<List<String>,L> createLabel;
+//	public RelabelingOperator(Function<List<String>,L> createLabel) {
+//		this.createLabel=createLabel;
+//		this.relabel = s->s;
+//		this.initialStatePred= s->s.isInitial();
+//		this.finalStatePred= s->s.isFinalstate();
+//	}
 
-	public RelabelingOperator(Function<List<String>,L> createLabel) {
-		this.createLabel=createLabel;
-		this.relabel = s->s;
-	}
+//	/**
+//	 * @param relabel the relabeling operator to apply to each basicstate
+//	 */
+//	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel) {
+//		this.createLabel=createLabel;
+//		this.relabel=relabel;
+//		this.initialStatePred= s->s.isInitial();
+//		this.finalStatePred= s->s.isFinalstate();
+//	}
 
-	/**
-	 * 
-	 * @param relabel the relabeling operator to apply to each basicstate
-	 */
-	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel) {
+	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel,Predicate<BasicState<String>> initialStatePred, 
+			Predicate<BasicState<String>> finalStatePred) {
 		this.createLabel=createLabel;
 		this.relabel=relabel;
+		this.initialStatePred= initialStatePred;
+		this.finalStatePred= finalStatePred;
 	}
 
+	
 	@Override
-	public ModalAutomaton<L> apply(ModalAutomaton<L> aut)
+	public Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> apply(ModalAutomaton<L> aut)
 	{	
 		if (aut.getTransition().isEmpty())
 			throw new IllegalArgumentException();
@@ -47,7 +62,7 @@ public class RelabelingOperator<L extends Label<List<String>>> implements UnaryO
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), 
 						s->new BasicState<String>(relabel.apply(s.getState()),
-								s.isInitial(),s.isFinalstate())));
+								initialStatePred.test(s),finalStatePred.test(s))));
 
 		Map<CAState,CAState> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
@@ -56,12 +71,12 @@ public class RelabelingOperator<L extends Label<List<String>>> implements UnaryO
 								.collect(Collectors.toList())
 								)));
 
-		return new ModalAutomaton<L>(aut.getTransition().stream()
+		return aut.getTransition().stream()
 				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>(clonedcastates.get(t.getSource()),
 						createLabel.apply(t.getLabel().getAction()),
 						clonedcastates.get(t.getTarget()),
-						t.getModality(),CAState::new))
-				.collect(Collectors.toSet()));
+						t.getModality()))
+				.collect(Collectors.toSet());
 	}
 }
 

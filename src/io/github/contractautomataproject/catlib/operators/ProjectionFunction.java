@@ -80,7 +80,7 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 						map2princst.get(t.getTarget()),
 						(t.isPermitted()||(t.getLabel().isMatch()&&!getNecessaryPrincipal.apply(t).equals(indexprincipal)))
 						?ModalTransition.Modality.PERMITTED
-								:t.isLazy()?ModalTransition.Modality.LAZY:ModalTransition.Modality.URGENT,CAState::new))
+								:t.isLazy()?ModalTransition.Modality.LAZY:ModalTransition.Modality.URGENT))
 				.collect(Collectors.toSet()));
 	}
 

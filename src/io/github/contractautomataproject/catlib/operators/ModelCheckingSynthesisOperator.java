@@ -94,51 +94,13 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 						if (mcf.getPruningPred().test(t.getLabel())&&t.isLazy()&&this.getReq().test(lab)) //the transition was bad lazy, but after removing 
 							//the prop move is lazy good: it must be changed.
 							lab=changeLabel.apply(lab); //change either to request or offer
-						return new ModalTransition<>(t.getSource(),lab,t.getTarget(),t.getModality(),CAState::new);})
+						return new ModalTransition<>(t.getSource(),lab,t.getTarget(),t.getModality());})
 					.collect(Collectors.toSet()));
 
-			//computing the synthesis before modifying the states, this is important for the lazy transitions
-			//that are quantified existentially on the states: the states must not be modified
+			//computing the synthesis lazy transitions are quantified existentially on the states: the states must not be modified
 			ModalAutomaton<CALabel>  aut = super.apply(deletingPropAction);
 
 			return aut;
-
-//			Map<CAState, CAState> map = aut.getStates().parallelStream()
-//			.collect(Collectors.toMap(s->s, 
-//					s->	aut.getTransition().parallelStream()
-//					.filter(t->{ 
-//						//filtering transitions where s is the target and only prop has moved (looking at the state)
-//						//this means an unfolding had happened
-//						List<BasicState<String>> sourcestate = t.getSource().getState();
-//						List<BasicState<String>> targetstate = t.getTarget().getState();
-//						return  targetstate.equals(s.getState()) &&  
-//								sourcestate.subList(0, sourcestate.size()-1).equals(
-//										targetstate.subList(0, targetstate.size()-1))&&
-//								!sourcestate.get(sourcestate.size()-1).equals(
-//										targetstate.get(targetstate.size()-1));})
-//					.map(t->{ 
-//						List<BasicState<String>> targetstate = t.getTarget().getState();
-//						List<BasicState<String>> newtargetstate = IntStream.range(0,t.getLabel().getRank())
-//								.mapToObj(i->{
-//									if (!t.getLabel().getAction().get(i).equals(CALabel.idle)) {
-//										return new BasicState<String>(targetstate.get(i).getState()+"_"+targetstate.get(targetstate.size()-1).getState(),		
-//												false,targetstate.get(i).isFinalstate());
-//									} else return targetstate.get(i);})
-//								.collect(Collectors.toList());
-//						return new CAState(newtargetstate.subList(0, newtargetstate.size()-1));})
-//					.findAny()
-//					.orElse(new CAState(s.getState().subList(0, s.getState().size()-1)))));
-//			
-//			System.out.println(map);
-//			
-//			return new ModalAutomaton<CALabel>(aut.getTransition().parallelStream()
-//					.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(
-//							map.get(t.getSource()),
-//							new CALabel(t.getLabel().getAction().subList(0,t.getLabel().getRank()-1)),
-//							map.get(t.getTarget()),
-//							t.getModality()))
-//					.collect(Collectors.toSet()));
-
 		}
 	}
 }
@@ -198,3 +160,5 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 //				cs2cs.get(t.getTarget().getState().subList(0, t.getTarget().getRank()-1)),
 //				t.getModality()))
 //		.collect(Collectors.toSet()));
+
+

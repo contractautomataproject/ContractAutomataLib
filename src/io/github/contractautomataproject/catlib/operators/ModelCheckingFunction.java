@@ -37,7 +37,6 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 				MSCACompositionFunction::computeRank,
 				(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), //match
 				CAState::new, 
-				CAState::new,
 				ModalTransition::new, 
 				(e, ee,rank) -> new Label<List<String>>(Stream.concat(e.tra.getLabel().getAction().stream(), 
 						ee.tra.getLabel().getAction().stream())
@@ -67,7 +66,7 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 	A extends ModalAutomaton<L>> A convert(
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  aut,
 			Function<List<String>,L> createLabel, 
-			PentaFunction<CAState,L,CAState,ModalTransition.Modality,Function<List<BasicState<String>>,CAState>,T> createTransition, 
+			TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
 			Function<Set<T>,A> createAut)
 	{
 		Map<BasicState<String>,CAState> bs2cs = aut.getStates().stream()
@@ -77,7 +76,7 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 				.map(t->createTransition.apply(bs2cs.get(t.getSource()),
 						createLabel.apply(List.of(t.getLabel().getAction())),
 						bs2cs.get(t.getTarget()), 
-						t.getModality(),CAState::new))
+						t.getModality()))
 				.collect(Collectors.toSet()));
 
 		return conv;

@@ -1,12 +1,10 @@
 package io.github.contractautomataproject.catlib.transition;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 import io.github.contractautomataproject.catlib.automaton.Ranked;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.operators.TriFunction;
 
 /**
  * Transition of a Contract Automaton
@@ -21,23 +19,14 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	final private S source;
 	final private S target;
 	final private L label;
-	final private TriFunction<U,Boolean,Boolean,S> createState;
+//	final private TriFunction<U,Boolean,Boolean,S> createState;
 	
 	
-	public Transition(S source, L label, S target,Function<U,S> createState){
+	public Transition(S source, L label, S target){
 		check(source,label,target);
 		this.source=source;
 		this.label=label;
 		this.target=target;
-		this.createState= (s,a,b) -> createState.apply(s);
-	}
-	
-	public Transition(S source, L label, S target,TriFunction<U,Boolean,Boolean,S> createState){
-		check(source,label,target);
-		this.source=source;
-		this.label=label;
-		this.target=target;
-		this.createState=createState;
 	}
 
 	private void check(S source, L label, S target) {

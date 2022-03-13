@@ -23,7 +23,7 @@ public class MSCACompositionFunction extends CompositionFunction<List<BasicState
 	public MSCACompositionFunction(List<ModalAutomaton<CALabel>> aut,Predicate<CALabel> pruningPred)
 	{
 		super(aut, MSCACompositionFunction::computeRank,(l1,l2)->l1.match(l2),
-				CAState::new,CAState::new,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::new, 
+				CAState::new,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::new, 
 				(e, ee,rank) -> MSCACompositionFunction.createLabel(e, ee, rank, aut), 
 				CALabel::new, ModalAutomaton<CALabel>::new, pruningPred);
 	}

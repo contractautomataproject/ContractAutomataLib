@@ -86,7 +86,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	public Automaton<List<BasicState<String>>,List<String>, CAState, ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> relaxAsAutomaton(){
 		return new Automaton<>(this.getTransition().parallelStream()
 				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>
-				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality(),CAState::new))
+				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality()))
 				.collect(Collectors.toSet()));
 	}
 
@@ -103,7 +103,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(t.getSource(), 
 						new CALabel(t.getLabel().getAction()),
 						t.getTarget(),
-						t.getModality(),CAState::new))
+						t.getModality()))
 				.collect(Collectors.toSet()));
 	}
 	
@@ -114,7 +114,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(t.getSource(), 
 						(Label<List<String>>)t.getLabel(),
 						t.getTarget(),
-						t.getModality(),CAState::new))
+						t.getModality()))
 				.collect(Collectors.toSet()));
 	}
 	

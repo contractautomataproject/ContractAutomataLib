@@ -2,7 +2,6 @@ package io.github.davidebasile.contractautomatatest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,12 +28,9 @@ public class CAStateTest {
 		BasicState<String> bs10 = new BasicState<String>("10",true,false);
 		
 		List<CAState> l = new ArrayList<>();
-		l.add(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
-				)); //new int[] {0,1,2},true,false));
-		l.add(new CAState(Arrays.asList(bs0,bs0)//,0,0
-				));//(new int[] {0,0},true,false));
-		l.add(new CAState(Arrays.asList(bs4,bs10)//,0,0
-				));//(new int[] {4,10},true,false));
+		l.add(new CAState(Arrays.asList(bs0,bs1,bs2))); 
+		l.add(new CAState(Arrays.asList(bs0,bs0)));
+		l.add(new CAState(Arrays.asList(bs4,bs10)));
 		
 		test = new CAState(l);
 	}
@@ -74,17 +70,16 @@ public class CAStateTest {
 		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
 	}
 	
-	@Test
-	public void setFinalStatesTest() {
-		test.setFinalstate(true);
-		
-		assertTrue(test.getState().stream().allMatch(s->s.isFinalstate()));
-	}
+//	@Test
+//	public void setFinalStatesTest() {
+//		test.setFinalstate(true);
+//		
+//		assertTrue(test.getState().stream().allMatch(s->s.isFinalstate()));
+//	}
 	
 	@Test
 	public void readCSVtest() {
 		BasicState<String> b =test.getState().get(0);
-		b.setFinalstate(true);
 		assertEquals(BasicState.readCSV(b.toCSV()).toString(), b.toString());
 	}
 	

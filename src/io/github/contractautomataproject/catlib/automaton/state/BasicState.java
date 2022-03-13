@@ -9,8 +9,8 @@ package io.github.contractautomataproject.catlib.automaton.state;
  */
 public class BasicState<T> extends State<T>{
 	
-	private boolean init;
-	private boolean fin;
+	final private boolean init;
+	final private boolean fin;
 
 	
 	public BasicState(T label, Boolean init, Boolean fin) {
@@ -18,7 +18,6 @@ public class BasicState<T> extends State<T>{
 		this.init=init;
 		this.fin=fin;
 	}
-	
 	
 	@Override
 	public boolean isFinalstate() {
@@ -29,16 +28,6 @@ public class BasicState<T> extends State<T>{
 	public boolean isInitial() {
 		return init;
 	}
-	
-	public void setInitial(boolean init) {
-		this.init = init;
-	}
-		
-	public void setFinalstate(boolean fin) {
-		this.fin=fin;
-	}
-	
-	
 	
 	@Override
 	public String toString() {
@@ -79,16 +68,23 @@ public class BasicState<T> extends State<T>{
 		return new BasicState<String>(label,init,fin);
 		
 	}
+}
 
-
-//	/**
-//	 * 
-//	 * @return an encoding of the object as comma separated values
-//	 */
-//	public String toCSV()
-//	{
-//		return "[state="+state+"]";
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(super.hashCode(),init,fin);
 //	}
+//
+//	// equals could cause errors of duplication of states in transitions to go undetected. 	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (!super.equals(obj))
+//			return false;
+//		BasicState<?> other = (BasicState<?>) obj;
+//		return fin==other.fin && init==other.init;
+//	}
+
+
 	
 //	public abstract <U extends State<T>> U getCopy();
-}
+
