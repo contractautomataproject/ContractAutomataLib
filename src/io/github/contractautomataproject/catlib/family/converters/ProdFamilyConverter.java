@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
 
 import io.github.contractautomataproject.catlib.family.Family;
 import io.github.contractautomataproject.catlib.family.Feature;
@@ -40,7 +41,7 @@ public class ProdFamilyConverter implements FamilyConverter {
 		Charset charset = Charset.forName("ISO-8859-1");
 		List<String> lines = Files.readAllLines(f.toPath(), charset);
 
-		Pattern pattern = Pattern.compile("p[0-9]++: R=\\{(.*)\\} F=\\{(.*)\\}");
+		Pattern pattern = Pattern.compile("p[0-9]+: R=\\{(.*)\\} F=\\{(.*)\\}");
 
 		return lines.parallelStream()
 				.map(pattern::matcher)

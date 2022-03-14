@@ -69,7 +69,12 @@
 			<version>3.10.0</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- fixing catastrophic backtracking of java regex https://github.com/google/re2j -->
+		<dependency>
+			<groupId>com.google.re2j</groupId>
+			<artifactId>re2j</artifactId>
+			<version>1.6</version>
+		</dependency>
 		<!-- https://www.sat4j.org/products.php -->
 		<dependency>
 			<groupId>org.ow2.sat4j</groupId>

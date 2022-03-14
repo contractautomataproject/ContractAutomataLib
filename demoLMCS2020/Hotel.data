@@ -1,8 +1,0 @@
-Rank: 1
-Initial state: [0]
-Final states: [[3, 4]]
-Transitions: 
-([0],[?check],[1])
-([1],[!ans],[2])
-([2],[?nobook],[4])
-([2],[?book],[3])

@@ -18,10 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;

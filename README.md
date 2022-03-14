@@ -1,6 +1,8 @@
 <!--[![Build Status](https://app.travis-ci.com/davidebasile/ContractAutomataLib.svg?branch=code-cleaning)](https://app.travis-ci.com/davidebasile/ContractAutomataLib)-->
 ![CodeQL](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/codeql-analysis.yml/badge.svg)
 ![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ContractAutomataProject_ContractAutomataLib)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 [![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
 [![Code Quality Score](https://api.codiga.io/project/30471/score/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
 [![Code Grade](https://api.codiga.io/project/30471/status/svg)](https://app.codiga.io/public/project/30471/ContractAutomataLib/dashboard)
@@ -51,4 +53,8 @@ The user documentation, containing information on the usage and installation of 
 <h2>Contacts</h2>
 
 If you have any question contact me on davide.basile@isti.cnr.it.
+
+<h3>Previous Version</h3> 
+If you are reaching this repository from our JSCP2020 or LMCS2020 papers you may want to check the <tt>old-backup</tt> branch where the case studies described in these papers are available. 
+For other video tutorials check the repository <a href="https://github.com/ContractAutomataProject/ContractAutomataApp">https://github.com/ContractAutomataProject/ContractAutomataApp</a>.
 

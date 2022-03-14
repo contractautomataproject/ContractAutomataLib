@@ -1,8 +1,0 @@
-Rank: 1
-Initial state: [0]
-Final states: [[0, 3, 4]]
-Transitions: 
-([2],[!reject],[4])
-([2],[!accept],[3])
-([0],[!contact],[1])
-([1],[?bestoffer],[2])
