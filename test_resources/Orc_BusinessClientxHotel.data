@@ -1,0 +1,11 @@
+Rank: 2
+Initial state: [0, 0]
+Final states: [[3][3]]
+Transitions: 
+([6, 6],[?noFreeCancellation, !noFreeCancellation],[9, 5])
+([2, 2],[?receipt, !receipt],[3, 3])
+!L([2, 9],[?invoice, !invoice],[3, 3])
+([2, 2],[-, !freebrk],[2, 9])
+!U([0, 0],[?singleRoom, !singleRoom],[6, 6])
+([9, 5],[?privateBathroom, !privateBathroom],[1, 1])
+([1, 1],[!card, ?card],[2, 2])
