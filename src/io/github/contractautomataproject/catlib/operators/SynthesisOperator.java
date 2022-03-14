@@ -32,13 +32,6 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	private final Predicate<L> req;
 	private final Function<Set<T>,A> createAut;
 
-	private class Pair{
-		Set<T> tr; 
-		Set<S> s;
-		public Pair(Set<T> tr, Set<S> s) {
-			this.tr = tr; this.s = s;
-		}
-	}
 	/**
 	 * 
 	 * @param pruningPredicate  the pruning predicate 
@@ -86,44 +79,49 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	 */
 	@Override
 	public A apply(A aut) {
-		{
-			if (aut==null)
-				throw new IllegalArgumentException();
-
-			final Set<T> trbackup = aut.getTransition();
-			final Set<S> statesbackup= aut.getStates(); 
-			final S init = aut.getInitial();
-			Pair seed = new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init)));
-
-			Pair fixpoint = Stream.iterate(seed, pair-> {
-				Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
-
-				//next function embedded into hasnext
-				if (pair.tr.removeAll(pre.tr.parallelStream()
-						.filter(x->pruningPred.test(x,pre.tr, pre.s))
-						.collect(Collectors.toSet()))) //Ki
-					pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
-
-				pair.s.addAll(trbackup.parallelStream() 
-						.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
-						.map(Transition::getSource)
-						.collect(Collectors.toSet())); //Ri
-
-				return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());//hasnext
-			},p->p)
-					.reduce((first,second)->new Pair(second.tr,second.s))
-					.orElse(seed);
-
-			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.isEmpty())
-				return null;
-
-			//remove dangling transitions
-			fixpoint.tr.removeAll(fixpoint.tr.parallelStream()
-					.filter(x->!reachable.get(x.getSource())||!successful.get(x.getTarget()))
-					.collect(Collectors.toSet()));
-
-			return createAut.apply(fixpoint.tr);			
+		class Pair{
+			Set<T> tr; 
+			Set<S> s;
+			public Pair(Set<T> tr, Set<S> s) {
+				this.tr = tr; this.s = s;
+			}
 		}
+		if (aut==null)
+			throw new IllegalArgumentException();
+
+		final Set<T> trbackup = aut.getTransition();
+		final Set<S> statesbackup= aut.getStates(); 
+		final S init = aut.getInitial();
+		Pair seed = new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init)));
+
+		Pair fixpoint = Stream.iterate(seed, pair-> {
+			Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
+
+			//next function embedded into hasnext
+			if (pair.tr.removeAll(pre.tr.parallelStream()
+					.filter(x->pruningPred.test(x,pre.tr, pre.s))
+					.collect(Collectors.toSet()))) //Ki
+				pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
+
+			pair.s.addAll(trbackup.parallelStream() 
+					.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
+					.map(Transition::getSource)
+					.collect(Collectors.toSet())); //Ri
+
+			return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());//hasnext
+		},p->p)
+				.reduce((first,second)->new Pair(second.tr,second.s))
+				.orElse(seed);
+
+		if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.isEmpty())
+			return null;
+
+		//remove dangling transitions
+		fixpoint.tr.removeAll(fixpoint.tr.parallelStream()
+				.filter(x->!reachable.get(x.getSource())||!successful.get(x.getTarget()))
+				.collect(Collectors.toSet()));
+
+		return createAut.apply(fixpoint.tr);			
 	}
 
 	/**

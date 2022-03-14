@@ -122,7 +122,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 	}
 
 	/**
-	 * This is the most important method of the tool, it computes the non-associative composition of contract automata.
+	 * This is the most important method of the tool, it computes the non-associative composition (of contract automata).
 	 * 
 	 * @param pruningPred  the invariant that all transitions must satisfy
 	 * @param bound  the bound on the depth of the visit
@@ -161,49 +161,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 				//						.filter(e -> e.tra.getRank() != aut.get(e.ind).rank)
 				//						.count()==0);
 
-				//firstly match transitions are generated
-				Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
-						trans2index.parallelStream()
-						.flatMap(e -> trans2index.parallelStream()
-								.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
-								.flatMap(ee->{ 
-									List<S> targetlist =  new ArrayList<>(source);
-									targetlist.set(e.ind, e.tra.getTarget());
-									targetlist.set(ee.ind, ee.tra.getTarget());
-
-									T tradd=createTransition.apply(sourcestate,	
-											this.createLabel.apply(e, ee, rank),
-											operandstat2compstat.computeIfAbsent(targetlist, createState::apply), 
-											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
-
-									return Stream.of(new AbstractMap.SimpleEntry<>(e.tra, 
-											new AbstractMap.SimpleEntry<>(tradd,targetlist)),
-											new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
-													new AbstractMap.SimpleEntry<>(tradd, (List<S>)new ArrayList<S>())));
-								}))
-						.collect(groupingByConcurrent(Entry::getKey, 
-								mapping(Entry::getValue,toList())));//each principal transition can have more matches
-
-
-				//collecting match transitions and adding unmatched transitions
-				Set<SimpleEntry<T,List<S>>> trmap = trans2index.parallelStream()
-						.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
-						.collect(mapping(e->{List<S> targetlist = new ArrayList<>(source);
-						targetlist.set(e.ind, e.tra.getTarget());
-						return 	new AbstractMap.SimpleEntry<T,List<S>>
-						(createTransition.apply(sourcestate,
-								shiftLabel.apply(e.tra.getLabel(),rank, //change here if you would like to preserve the CM constraints
-										IntStream.range(0, e.ind)
-										.map(i->aut.get(i).getRank())
-										.sum()),//shifting positions of label
-								operandstat2compstat.computeIfAbsent(targetlist, createState::apply),
-								e.tra.getModality()),
-								targetlist);},
-								toSet()));
-				trmap.addAll(matchtransitions.values().parallelStream()//matched transitions
-						.flatMap(List::parallelStream)
-						.filter(e->(!e.getValue().isEmpty())) //no duplicates
-						.collect(toSet()));
+				Set<SimpleEntry<T,List<S>>> trmap = computeComposedForwardStar(trans2index,source,sourcestate);
 
 				//if source state is bad then don't visit target states
 				boolean badsourcestate = pruningPred!=null && trmap.parallelStream()
@@ -243,6 +201,56 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 			return null;
 		else
 			return this.createAutomaton.apply(tr);
+	}
+	
+	private Set<SimpleEntry<T,List<S>>> computeComposedForwardStar(List<TIndex> trans2index,List<S> source, S sourcestate){
+		List<S> emptyList = new ArrayList<>();
+		
+		//firstly match transitions are generated
+		Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
+				trans2index.parallelStream()
+				.flatMap(e -> trans2index.parallelStream()
+						.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
+						.flatMap(ee->{ 
+							List<S> targetlist =  new ArrayList<>(source);
+							targetlist.set(e.ind, e.tra.getTarget());
+							targetlist.set(ee.ind, ee.tra.getTarget());
+
+							T tradd=createTransition.apply(sourcestate,	
+									this.createLabel.apply(e, ee, rank),
+									operandstat2compstat.computeIfAbsent(targetlist, createState::apply), 
+									e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
+
+							return Stream.of(new AbstractMap.SimpleEntry<>(e.tra, 
+									new AbstractMap.SimpleEntry<>(tradd,targetlist)),
+									new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
+											new AbstractMap.SimpleEntry<>(tradd, emptyList)));
+						}))
+				.collect(groupingByConcurrent(Entry::getKey, 
+						mapping(Entry::getValue,toList())));//each principal transition can have more matches
+
+
+		//collecting match transitions and adding unmatched transitions
+		Set<SimpleEntry<T,List<S>>> trmap = trans2index.parallelStream()
+				.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
+				.collect(mapping(e->{List<S> targetlist = new ArrayList<>(source);
+				targetlist.set(e.ind, e.tra.getTarget());
+				return 	new AbstractMap.SimpleEntry<T,List<S>>
+				(createTransition.apply(sourcestate,
+						shiftLabel.apply(e.tra.getLabel(),rank, //change here if you would like to preserve the CM constraints
+								IntStream.range(0, e.ind)
+								.map(i->aut.get(i).getRank())
+								.sum()),//shifting positions of label
+						operandstat2compstat.computeIfAbsent(targetlist, createState::apply),
+						e.tra.getModality()),
+						targetlist);},
+						toSet()));
+		trmap.addAll(matchtransitions.values().parallelStream()//matched transitions
+				.flatMap(List::parallelStream)
+				.filter(e->(!e.getValue().isEmpty())) //no duplicates
+				.collect(toSet()));
+		
+		return trmap;
 	}
 
 	public boolean isFrontierEmpty() {

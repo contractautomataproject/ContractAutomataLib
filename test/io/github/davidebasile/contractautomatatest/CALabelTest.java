@@ -43,7 +43,7 @@ public class CALabelTest {
 		lab.add(CALabel.OFFER+"a");
 		lab.add(CALabel.REQUEST+"a");
 		CALabel calab= new CALabel(lab);
-		assertTrue(calab.equals(calab));
+		Assert.assertEquals(calab,calab);
 	}
 	
 	@Test
@@ -52,7 +52,7 @@ public class CALabelTest {
 		lab.add(CALabel.IDLE);
 		lab.add(CALabel.OFFER+"a");
 		lab.add(CALabel.REQUEST+"a");
-		assertTrue(new CALabel(lab).equals(new CALabel(lab)));
+		Assert.assertEquals(new CALabel(lab),new CALabel(lab));
 	}
 	
 	@Test
@@ -214,7 +214,8 @@ public class CALabelTest {
 	@Test
 	public void matchException() {
 		Label<List<String>> l  = new Label<>(List.of("ei"));
-		assertThatThrownBy(() -> new CALabel(1,0,"!a").match(l))
+		CALabel ca = new CALabel(1,0,"!a");
+		assertThatThrownBy(() -> ca.match(l))
 	    .isInstanceOf(IllegalArgumentException.class);
 	
 	}

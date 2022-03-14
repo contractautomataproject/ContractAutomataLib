@@ -36,9 +36,9 @@ public class CALabel extends Label<List<String>> {
 
 	//in case of match, the action is always the offer
 
-	public final static String IDLE="-";
-	public final static String OFFER="!";
-	public final static String REQUEST="?";
+	public static final String IDLE="-";
+	public static final String OFFER="!";
+	public static final String REQUEST="?";
 
 	/**
 	 * the actiontype is used for redundant checks

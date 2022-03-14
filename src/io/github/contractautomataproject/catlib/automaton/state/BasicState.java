@@ -39,7 +39,6 @@ public class BasicState<T> extends State<T>{
 	 * @return a string encoding the object as comma separated values
 	 */
 	public String toCSV() {
-
 		String finalstate= (this.isFinalstate())?",final=true":"";
 		String initial= (this.isInitial())?",initial=true":"";
 		return "label="+this.getState()+finalstate+initial;
@@ -51,7 +50,8 @@ public class BasicState<T> extends State<T>{
 	 * @return a new State<String> object constructed from the parameter s
 	 */
 	public static BasicState<String> readCSV(String s) {
-		boolean initial=false, finalstate=false;
+		boolean initial=false; 
+		boolean	finalstate=false;
 		String label="";
 		String[] cs = s.split(",");
 		for (String keyval : cs)

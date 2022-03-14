@@ -51,13 +51,6 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	}
 
 	@Override
-	public CAState getInitial()
-	{
-		return super.getInitial();
-
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
 		int rank = this.getRank();
@@ -99,7 +92,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	 */
 	public  ModalAutomaton<CALabel> convertLabelsToCALabels()
 	{
-		return new ModalAutomaton<CALabel>(this.getTransition()
+		return new ModalAutomaton<>(this.getTransition()
 				.parallelStream()
 				.map(t->new ModalTransition<>(t.getSource(), 
 						new CALabel(t.getLabel().getAction()),
@@ -110,9 +103,9 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	
 	public  ModalAutomaton<Label<List<String>>> convertLabelsToLabelsListString()
 	{
-		return new ModalAutomaton<Label<List<String>>>(this.getTransition()
+		return new ModalAutomaton<>(this.getTransition()
 				.parallelStream()
-				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(t.getSource(), 
+				.map(t->new ModalTransition<>(t.getSource(), 
 						(Label<List<String>>)t.getLabel(),
 						t.getTarget(),
 						t.getModality()))

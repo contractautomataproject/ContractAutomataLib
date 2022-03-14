@@ -85,7 +85,7 @@ public class CMLabelTest {
 	public void hashCodeTrue() {
 		CMLabel equal = new CMLabel("Alice","Bob","!apple");
 	    CMLabel	cm_of = new CMLabel("Alice","Bob","!apple");
-		assertTrue(cm_of.hashCode()==equal.hashCode());
+		assertEquals(cm_of.hashCode(),equal.hashCode());
 	}
 	
 	@Test

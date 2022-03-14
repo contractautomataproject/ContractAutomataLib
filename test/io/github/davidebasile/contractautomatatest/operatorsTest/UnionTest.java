@@ -44,7 +44,8 @@ public class UnionTest {
 	public void union_empty() 
 	{
 		UnionFunction uf = new UnionFunction();
-		assertThatThrownBy(()->uf.apply(new ArrayList<ModalAutomaton<CALabel>>()))
+		List<ModalAutomaton<CALabel>> arg = new ArrayList<>();
+		assertThatThrownBy(()->uf.apply(arg))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 	

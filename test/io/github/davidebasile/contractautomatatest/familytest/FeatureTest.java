@@ -4,7 +4,6 @@ package io.github.davidebasile.contractautomatatest.familytest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,14 +15,14 @@ public class FeatureTest {
 	@Test
 	public void constructorTestAction() {
 		Feature f = new Feature("!a");
-		assertEquals(f.getName(),"a");
+		assertEquals("a",f.getName());
 	}
 	
 
 	@Test
 	public void testEquals1() {
 		Feature p = new Feature("cherry");
-		assertTrue(p.equals(p));
+		assertEquals(p,p);
 	}
 
 	@Test

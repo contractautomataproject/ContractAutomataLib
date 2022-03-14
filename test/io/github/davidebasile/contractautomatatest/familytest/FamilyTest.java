@@ -41,7 +41,7 @@ public class FamilyTest {
 	{
 		String fileName =dir +"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		assertEquals(fam.getMaximumDepth(),11);
+		assertEquals(11,fam.getMaximumDepth());
 	}
 
 	@Test

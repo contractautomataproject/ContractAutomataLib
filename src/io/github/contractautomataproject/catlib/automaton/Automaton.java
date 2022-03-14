@@ -55,8 +55,8 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 				.count()!=1)
 			throw new IllegalArgumentException("Not Exactly one Initial State found! ");
 
-		if (!states.parallelStream()
-				.anyMatch(State::isFinalstate))
+		if (states.parallelStream()
+				.noneMatch(State::isFinalstate))
 			throw new IllegalArgumentException("No Final States!");
 	}
 

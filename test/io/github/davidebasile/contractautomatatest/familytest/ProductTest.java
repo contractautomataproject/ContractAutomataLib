@@ -65,14 +65,14 @@ public class ProductTest {
 	@Test
 	public void testToStringId() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.toStringFile(0),"p0: R={cherry,ananas,} F={blueberry,}");
+		assertEquals("p0: R={cherry,ananas,} F={blueberry,}", p.toStringFile(0));
 	}
 
 	@Test
 	public void testToHTMLString() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.toHTMLString("P0"),"<html>P0 R:[cherry, ananas]<br />" + 
-				"F:[blueberry]</html>");
+		assertEquals("<html>P0 R:[cherry, ananas]<br />" + 
+				"F:[blueberry]</html>", p.toHTMLString("P0"));
 	}
 
 //	@Test
