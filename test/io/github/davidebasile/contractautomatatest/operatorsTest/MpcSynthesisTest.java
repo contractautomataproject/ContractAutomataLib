@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
@@ -25,8 +26,7 @@ public class MpcSynthesisTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
 		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
-
-		assertEquals(mpc,null);
+		Assert.assertNull(mpc);
 	}
 
 	@Test
@@ -34,8 +34,7 @@ public class MpcSynthesisTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
-
-		assertEquals(mpc,null);
+		Assert.assertNull(mpc);
 	}
 	
 	@Test
@@ -50,8 +49,7 @@ public class MpcSynthesisTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_urgent.data");		
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
-		assertTrue(MSCATest.checkTransitions(new MpcSynthesisOperator(new Agreement()).apply(aut),
-				test));	
+		assertTrue(MSCATest.autEquals(new MpcSynthesisOperator(new Agreement()).apply(aut),test));	
 	}
 	
 	@Test
@@ -59,7 +57,8 @@ public class MpcSynthesisTest {
 	{
 
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-		assertThatThrownBy(() -> new MpcSynthesisOperator(new Agreement()).apply(orc))
+		MpcSynthesisOperator m = new MpcSynthesisOperator(new Agreement());
+		assertThatThrownBy(() -> m.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 

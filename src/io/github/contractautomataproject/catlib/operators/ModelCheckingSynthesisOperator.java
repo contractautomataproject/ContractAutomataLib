@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
@@ -44,7 +45,7 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 			Predicate<CALabel> req,
 			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop,
-			Function<CALabel,CALabel> changeLabel) 
+			UnaryOperator<CALabel> changeLabel) 
 	{
 		super(pruningPredicate,forbiddenPredicate,req,ModalAutomaton::new);
 		this.prop=prop;
@@ -66,7 +67,7 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 			Predicate<CALabel> req,
 			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop,
-			Function<CALabel,CALabel> changeLabel) 
+			UnaryOperator<CALabel> changeLabel) 
 	{
 		this((x,t,bad) -> false, forbiddenPredicate,req,reqmc,prop,changeLabel);
 	}
@@ -77,7 +78,7 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 			return super.apply(arg1);
 		else
 		{
-			ModelCheckingFunction mcf = new ModelCheckingFunction(new ModalAutomaton<CALabel>(arg1.getTransition()),prop,reqmc);
+			ModelCheckingFunction mcf = new ModelCheckingFunction(new ModalAutomaton<>(arg1.getTransition()),prop,reqmc);
 			ModalAutomaton<Label<List<String>>> comp=mcf.apply(Integer.MAX_VALUE);	
 
 			if (comp==null)
@@ -89,7 +90,7 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 			ModalAutomaton<CALabel> deletingPropAction = new ModalAutomaton<>(comp.getTransition()
 					.parallelStream().map(t->{
 						List<String> li = new ArrayList<>(t.getLabel().getAction());
-						li.set(t.getRank()-1, CALabel.idle); //removing the move of prop to have a CALabel
+						li.set(t.getRank()-1, CALabel.IDLE); //removing the move of prop to have a CALabel
 						CALabel lab = new CALabel(li);
 						if (mcf.getPruningPred().test(t.getLabel())&&t.isLazy()&&this.getReq().test(lab)) //the transition was bad lazy, but after removing 
 							//the prop move is lazy good: it must be changed.
@@ -98,9 +99,7 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 					.collect(Collectors.toSet()));
 
 			//computing the synthesis lazy transitions are quantified existentially on the states: the states must not be modified
-			ModalAutomaton<CALabel>  aut = super.apply(deletingPropAction);
-
-			return aut;
+			return  super.apply(deletingPropAction);
 		}
 	}
 }

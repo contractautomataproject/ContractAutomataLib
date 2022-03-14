@@ -25,7 +25,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req){
-		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, null, null,null);
+		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, null, null,null);
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
 			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop){
-		super((x,st,bad) -> isUncontrollableOrchestration(x,st, bad),req, reqmc, prop, 
+		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, reqmc, prop, 
 				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}
 
@@ -62,8 +62,8 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
 				&&(t.getSource().getState().get(t.getLabel().getRequester())
 						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state					
-				&&(tt.getLabel().isRequest()&&t.getLabel().getTheAction().equals(tt.getLabel().getCoAction())|| 
-						tt.getLabel().isMatch()&&t.getLabel().getTheAction().equals(tt.getLabel().getTheAction())));//doing the same request
+				&&(tt.getLabel().isRequest()&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getCoAction())|| 
+						tt.getLabel().isMatch()&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getPrincipalAction())));//doing the same request
 	}
 
 

@@ -20,27 +20,10 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  *
  */
 public class RelabelingOperator<L extends Label<List<String>>> implements Function<ModalAutomaton<L>, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>> {
-	final private UnaryOperator<String> relabel;
-	final private Function<List<String>,L> createLabel;
-	final private Predicate<BasicState<String>> initialStatePred;
-	final private Predicate<BasicState<String>> finalStatePred;
-
-//	public RelabelingOperator(Function<List<String>,L> createLabel) {
-//		this.createLabel=createLabel;
-//		this.relabel = s->s;
-//		this.initialStatePred= s->s.isInitial();
-//		this.finalStatePred= s->s.isFinalstate();
-//	}
-
-//	/**
-//	 * @param relabel the relabeling operator to apply to each basicstate
-//	 */
-//	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel) {
-//		this.createLabel=createLabel;
-//		this.relabel=relabel;
-//		this.initialStatePred= s->s.isInitial();
-//		this.finalStatePred= s->s.isFinalstate();
-//	}
+	private final UnaryOperator<String> relabel;
+	private final Function<List<String>,L> createLabel;
+	private final Predicate<BasicState<String>> initialStatePred;
+	private final Predicate<BasicState<String>> finalStatePred;
 
 	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel,Predicate<BasicState<String>> initialStatePred, 
 			Predicate<BasicState<String>> finalStatePred) {
@@ -67,7 +50,7 @@ public class RelabelingOperator<L extends Label<List<String>>> implements Functi
 		Map<CAState,CAState> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
 						x->new CAState(x.getState().stream()
-								.map(s->clonedstate.get(s))
+								.map(clonedstate::get)
 								.collect(Collectors.toList())
 								)));
 
@@ -80,6 +63,25 @@ public class RelabelingOperator<L extends Label<List<String>>> implements Functi
 	}
 }
 
+
+
+
+//public RelabelingOperator(Function<List<String>,L> createLabel) {
+//	this.createLabel=createLabel;
+//	this.relabel = s->s;
+//	this.initialStatePred= s->s.isInitial();
+//	this.finalStatePred= s->s.isFinalstate();
+//}
+
+///**
+// * @param relabel the relabeling operator to apply to each basicstate
+// */
+//public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel) {
+//	this.createLabel=createLabel;
+//	this.relabel=relabel;
+//	this.initialStatePred= s->s.isInitial();
+//	this.finalStatePred= s->s.isFinalstate();
+//}
 
 //if (createLabel==null) {
 //	L lab=aut.getTransition().iterator().next().getLabel();
@@ -100,7 +102,7 @@ public class RelabelingOperator<L extends Label<List<String>>> implements Functi
 //	private CALabel getCopy(CALabel la) {
 //		if (la.isMatch())
 //			return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getTheAction(),la.getCoAction());
-//			//TODO check I removed this constructor call return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
+//			//check I removed this constructor call return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
 //		else 
 //			return new CALabel(la.getRank(),(la.isOffer())?la.getOfferer():la.getRequester(),la.getTheAction());
 //	}

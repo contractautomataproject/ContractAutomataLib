@@ -39,17 +39,16 @@ public class FMCATest {
 	
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new FMCA(null, new Family(new HashSet<Product>())))
+		Family fam = new Family(new HashSet<Product>());
+		assertThatThrownBy(() -> new FMCA(null, fam))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	public void getAut_test() throws Exception 
 	{
-		
 		ModalAutomaton<CALabel> a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		FMCA aut = new FMCA(a,new Family(new HashSet<Product>()));	
-		
 		assertEquals(aut.getAut(),a);
 	}
 	
@@ -67,7 +66,7 @@ public class FMCATest {
 
 		Family test = new Family(dfc.importProducts(dir+"validProductsOrcTest.prod"));
 		
-		assertTrue(vp.equals(test.getProducts()));
+		assertEquals(vp,test.getProducts());
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class FMCATest {
 		
 		Family test = new Family(dfc.importProducts(dir+"canonicalProductsTest.prod"));
 
-		assertTrue(cps.equals(test.getProducts()));
+		assertEquals(cps,test.getProducts());
 	}
 
 	@Test
@@ -95,7 +94,7 @@ public class FMCATest {
 
 		Family test = new Family(dfc.importProducts(dir+"productsWithNonEmptyOrchestration.prod"));
 		
-		assertTrue(vp.equals(test.getProducts()));
+		assertEquals(vp,test.getProducts());
 	}
 
 	@Test
@@ -108,12 +107,11 @@ public class FMCATest {
 
 		ModalAutomaton<CALabel> controller = faut.getOrchestrationOfFamily();		
 
-		assertTrue(MSCATest.checkTransitions(controller, test));
+		assertTrue(MSCATest.autEquals(controller, test));
 	}
 	@Test
 	public void testOrchestrationOfFamilyEnumerative() throws Exception
 	{
-		
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
@@ -121,13 +119,10 @@ public class FMCATest {
 		ModalAutomaton<CALabel> ofe =  aut.getOrchestrationOfFamilyEnumerative();
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
 					
-		
 //		int[][] vpdummy = new int[1][];
 //		ModalAutomaton<CALabel> test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
 		
-		
-		assertTrue(MSCATest.checkTransitions(ofe, test));
-
+		assertTrue(MSCATest.autEquals(ofe, test));
 	}
 
 	//exceptions
@@ -138,8 +133,8 @@ public class FMCATest {
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
-
-		assertThatThrownBy(() ->new FMCA(aut,fam).getCanonicalProducts())
+		FMCA fmca = new FMCA(aut,fam);
+		assertThatThrownBy(() ->fmca.getCanonicalProducts())
 		.isInstanceOf(UnsupportedOperationException.class);	
 	}
 

@@ -48,7 +48,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut) {
 
 		if (aut.getTransition().parallelStream()
-				.anyMatch(t-> t.isLazy()))
+				.anyMatch(ModalTransition::isLazy))
 			throw new UnsupportedOperationException("The automaton contains semi-controllable transitions");
 		
 		return super.apply(aut);

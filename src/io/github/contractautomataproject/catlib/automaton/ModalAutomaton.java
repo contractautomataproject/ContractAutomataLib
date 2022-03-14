@@ -50,9 +50,10 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 
 	}
 
+	@Override
 	public CAState getInitial()
 	{
-		return (CAState) super.getInitial();
+		return super.getInitial();
 
 	}
 
@@ -85,7 +86,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	 */
 	public Automaton<List<BasicState<String>>,List<String>, CAState, ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> relaxAsAutomaton(){
 		return new Automaton<>(this.getTransition().parallelStream()
-				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>
+				.map(t->new ModalTransition<>
 				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality()))
 				.collect(Collectors.toSet()));
 	}
@@ -100,7 +101,7 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	{
 		return new ModalAutomaton<CALabel>(this.getTransition()
 				.parallelStream()
-				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(t.getSource(), 
+				.map(t->new ModalTransition<>(t.getSource(), 
 						new CALabel(t.getLabel().getAction()),
 						t.getTarget(),
 						t.getModality()))
@@ -117,11 +118,19 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 						t.getModality()))
 				.collect(Collectors.toSet()));
 	}
-	
-	
-
 }
 	
+
+//END OF THE CLASS
+
+
+interface TetraFunction<T,U,V,W,Z> {
+	public Z apply(T arg1, U arg2, V arg3,W arg4);
+}
+
+
+
+
 	
 //	private static <L extends Label<List<String>>, T extends  ModalTransition<List<State<String>>,List<String>,CAState,L>, 
 //	A extends Automaton<List<State<String>>,List<String>,CAState,T>> A revertTo(
@@ -139,21 +148,6 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 //
 //		return conv;
 //	}
-
-
-interface TetraFunction<T,U,V,W,Z> {
-	public Z apply(T arg1, U arg2, V arg3,W arg4);
-}
-
-
-//END OF THE CLASS
-
-
-
-
-
-
-
 ///**
 //* the only initial state in the set of states is set to be the one equal to argument initial
 //* @param initial the state to be set

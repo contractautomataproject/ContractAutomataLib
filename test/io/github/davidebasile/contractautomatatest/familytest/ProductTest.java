@@ -3,15 +3,12 @@ package io.github.davidebasile.contractautomatatest.familytest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
-/*
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
- */
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.HashSet;
+import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.family.Feature;
@@ -30,25 +27,24 @@ public class ProductTest {
 	@Test
 	public void testEquals1() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.equals(p),true);
+		assertEquals(p,p);
 	}
 
 	@Test
 	public void testEquals2() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.equals(null),false);
+		Assert.assertNotNull(p);
 	}
 
 	@Test
 	public void testEquals3() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-		assertEquals(p.equals(new Object()),false);
+		assertNotEquals(p,new Object());
 	}
 
 	@Test
 	public void testEquals4 () {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-
 		Product pp = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
 		assertEquals(p,pp);
 	}
@@ -56,14 +52,12 @@ public class ProductTest {
 	@Test
 	public void testEquals5() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-
 		Product pp = new Product(new String[] {"cherry","ananas"}, new String[] {"lemon"});
-		assertFalse(p.equals(pp));
+		assertNotEquals(p,pp);
 	}
 	@Test
 	public void testHashcode() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-
 		Product pp = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
 		assertEquals(p.hashCode(),pp.hashCode());
 	}
@@ -77,7 +71,6 @@ public class ProductTest {
 	@Test
 	public void testToHTMLString() {
 		Product p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
-//		System.out.println(p.toString());
 		assertEquals(p.toHTMLString("P0"),"<html>P0 R:[cherry, ananas]<br />" + 
 				"F:[blueberry]</html>");
 	}
@@ -111,19 +104,22 @@ public class ProductTest {
 
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new Product(null,new String[0]))
+		String[] arg = new String[0];
+		assertThatThrownBy(() -> new Product(null,arg))
 		.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
 	public void constructorTest_Exception_nullArgument2() {
-		assertThatThrownBy(() -> new Product(null,new HashSet<Feature>()))
+		Set<Feature> arg = new HashSet<>();
+		assertThatThrownBy(() -> new Product(null,arg))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 	
 	@Test
 	public void constructorTest_Exception_3() {
-		assertThatThrownBy(() -> new Product(new String[] {"pippo"}, new String[] {"pippo"}))
+		String[] arg = new String[] {"pippo"};
+		assertThatThrownBy(() -> new Product(arg, arg))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("A feature is both required and forbidden");
 	}

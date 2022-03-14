@@ -2,6 +2,8 @@ package io.github.davidebasile.contractautomatatest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,12 +38,18 @@ public class CAStateTest {
 	}
 	
 	@Test
-	public void constructorTest() {
-		assertEquals(hasSameBasicStateLabelsOf(test, new int[] {0,1,2,0,0,4,10}),true);
-		assertEquals(test.isInitial(),true);
-		assertEquals(test.isFinalstate(),false);
+	public void constructor1Test() {
+		assertTrue(hasSameBasicStateLabelsOf(test, new int[] {0,1,2,0,0,4,10}));
 	}
-	
+
+	@Test
+	public void constructor2Test() {
+		assertTrue(test.isInitial());
+	}
+	@Test
+	public void constructor3Test() {
+		assertFalse(test.isFinalstate());
+	}
 	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
 		return IntStream.range(0, cs.getState().size())
 		.allMatch(i->Integer.parseInt(cs.getState().get(i).getState())==s[i]);
@@ -49,7 +57,7 @@ public class CAStateTest {
 	
 	@Test
 	public void toStringInitialTest() {
-		assertEquals(test.toString()," Initial [0, 1, 2, 0, 0, 4, 10]");
+		assertEquals(" Initial [0, 1, 2, 0, 0, 4, 10]", test.toString());
 	}
 	
 	@Test
@@ -58,7 +66,7 @@ public class CAStateTest {
 		.map(bs->new BasicState<String>(bs.getState(),false,true))
 		.collect(Collectors.toList())//,0,0
 		);
-		assertEquals(test2.toString()," Final [0, 1, 2, 0, 0, 4, 10]");
+		assertEquals(" Final [0, 1, 2, 0, 0, 4, 10]", test2.toString());
 	}
 	
 	@Test
@@ -67,7 +75,7 @@ public class CAStateTest {
 		.map(bs->new BasicState<String>(bs.getState(),false,false))
 		.collect(Collectors.toList())//,0,0
 		);
-		assertEquals(test2.toString(),"[0, 1, 2, 0, 0, 4, 10]");
+		assertEquals("[0, 1, 2, 0, 0, 4, 10]", test2.toString());
 	}
 	
 //	@Test
@@ -111,8 +119,7 @@ public class CAStateTest {
 	
 	@Test
 	public void constructorTest1_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CAState(null//,0,0
-				))
+		assertThatThrownBy(() -> new CAState(null))
 	    .isInstanceOf(NullPointerException.class);
 	}
 

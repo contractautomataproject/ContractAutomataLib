@@ -1,21 +1,14 @@
 package io.github.davidebasile.contractautomatatest.familytest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertFalse;
-/*
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import org.junit.Test;
- */
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.family.Family;
@@ -30,18 +23,15 @@ public class FamilyTest {
 	@Test
 	public void maximalProducts() throws Exception
 	{
-		
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=  new Family(dfc.importProducts(fileName));
 		//		Set<Product> mp = Arrays.stream(fam.getMaximalProducts())
 		//				.mapToObj(i->fam.getElements()[i])
 		//				.collect(Collectors.toSet());
-
 		Set<Product> mp= fam.getMaximalProducts();
-
 		Set<Product> test = dfc.importProducts(dir +"maximalProductsTest.prod");
 
-		assertTrue(mp.equals(test));
+		assertEquals(mp,test);
 	}
 
 
@@ -49,10 +39,9 @@ public class FamilyTest {
 	@Test
 	public void testMaximumDepth() throws Exception
 	{
-		
 		String fileName =dir +"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		assertTrue(fam.getMaximumDepth()==11);
+		assertEquals(fam.getMaximumDepth(),11);
 	}
 
 	@Test
@@ -76,26 +65,21 @@ public class FamilyTest {
 		Set<Product> test = dfc.importProducts(dir +"superProductsOfProduct_test.prod"); //)superProductsofProductTest.prod");	
 		
 		
-		assertTrue(products.equals(test));
+		assertEquals(products,test);
 	}
 
 	@Test
 	public void getSubProductsofProduct() throws Exception
 	{
-		
 		String fileName =dir +"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		Set<Product> pr=fam.getProducts();
 		List<Product> ar = new ArrayList<>(pr);
-
 		int pindex=100;
-
 		Set<Product> products = fam.getSubProductsofProduct(ar.get(pindex));
-
-		//Family.writeFile(dir +"subProductsOfProduct_test", products);
 		Set<Product> test = dfc.importProducts(dir +"subProductsOfProduct_test.prod"); 
 		
-		assertTrue(products.equals(test));
+		assertEquals(products,test);
 	}
 
 
@@ -118,29 +102,28 @@ public class FamilyTest {
 	@Test
 	public void testEquals1() throws Exception {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
-		assertTrue(fam.equals(fam));
+		assertEquals(fam,fam);
 	}
 	
 	@Test
 	public void testEquals2() throws Exception {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
-		assertFalse(fam.equals(null));
+		Assert.assertNotNull(fam);
 	}
 
 	@Test
 	public void testToString() throws Exception {
 		String ln = System.lineSeparator();
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
-		assertTrue(fam.toString().equals("Family [products=[R:[apple];"+ln+"F:[];"+ln+"]]"));
+		assertEquals(fam.toString(),"Family [products=[R:[apple];"+ln+"F:[];"+ln+"]]");
 	}
 	
 	@Test
 	public void testHashCode() throws Exception {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
-
 		Family fam2 = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		
-		assertTrue(fam.hashCode()==fam2.hashCode());
+		assertEquals(fam.hashCode(),fam2.hashCode());
 	}
 
 }

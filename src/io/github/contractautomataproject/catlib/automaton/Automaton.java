@@ -16,12 +16,12 @@ import io.github.contractautomataproject.catlib.transition.Transition;
  * 
  * @author Davide Basile
  *
- * @param <CS> the generic type in State<CS>
- * @param <CL> the generic type in Label<CL>
+ * @param <S1> the generic type in State<S1>
+ * @param <L1> the generic type in Label<L1>
  * @param <S> the generic type of states
  * @param <T> the generic type of transitions
  */
-public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? extends Label<CL>>> implements Ranked
+public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? extends Label<L1>>> implements Ranked
 { 
 
 	/**
@@ -56,8 +56,7 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 			throw new IllegalArgumentException("Not Exactly one Initial State found! ");
 
 		if (!states.parallelStream()
-				.filter(State::isFinalstate)
-				.findAny().isPresent())
+				.anyMatch(State::isFinalstate))
 			throw new IllegalArgumentException("No Final States!");
 	}
 
@@ -105,12 +104,6 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 				.collect(Collectors.toSet());
 	}
 
-//	public Set<String> geActions(){
-//		return this.getTransition().parallelStream()
-//		.map(t->t.getLabel().getAction())  
-//		.collect(Collectors.toSet());
-//	}
-
 	@Override
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
@@ -142,3 +135,10 @@ public class Automaton<CS,CL,S extends State<CS>,T extends Transition<CS,CL,S,? 
 
 
 //END OF THE CLASS
+
+
+//public Set<String> geActions(){
+//return this.getTransition().parallelStream()
+//.map(t->t.getLabel().getAction())  
+//.collect(Collectors.toSet());
+//}

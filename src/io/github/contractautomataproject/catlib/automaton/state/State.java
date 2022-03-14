@@ -10,17 +10,17 @@ import io.github.contractautomataproject.catlib.automaton.Ranked;
  * @param <T> generic type of the instance variable of the state
  */
 public abstract class State<T> implements Ranked {
-	final private T state;
+	private final T label;
 	
-	public State(T label) {
+	protected State(T label) {
 		if (label==null)
 			throw new IllegalArgumentException();
 		
-		this.state=label;
+		this.label=label;
 	}
 	
 	public T getState() {
-		return state;
+		return label;
 	}
 	
 	public abstract boolean isFinalstate();

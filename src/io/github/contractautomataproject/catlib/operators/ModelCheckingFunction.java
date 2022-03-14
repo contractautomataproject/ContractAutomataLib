@@ -42,11 +42,11 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 						ee.tra.getLabel().getAction().stream())
 						.collect(Collectors.toList())), 
 				(lab, rank, shift) ->{ 
-					List<String> l = new ArrayList<String>(rank);
-					l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
+					List<String> l = new ArrayList<>(rank);
+					l.addAll(Stream.generate(()->CALabel.IDLE).limit(shift).collect(Collectors.toList()));
 					l.addAll(lab.getAction());
 					if (rank-l.size()>0)
-						l.addAll(Stream.generate(()->CALabel.idle).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
+						l.addAll(Stream.generate(()->CALabel.IDLE).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 					return new Label<List<String>>(l);
 				}, 
 				ModalAutomaton::new,
@@ -72,14 +72,12 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 		Map<BasicState<String>,CAState> bs2cs = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), s->new CAState(Arrays.asList(s))));
 
-		A conv = createAut.apply(aut.getTransition().parallelStream()
+		return createAut.apply(aut.getTransition().parallelStream()
 				.map(t->createTransition.apply(bs2cs.get(t.getSource()),
 						createLabel.apply(List.of(t.getLabel().getAction())),
 						bs2cs.get(t.getTarget()), 
 						t.getModality()))
 				.collect(Collectors.toSet()));
-
-		return conv;
 	}
 
 }

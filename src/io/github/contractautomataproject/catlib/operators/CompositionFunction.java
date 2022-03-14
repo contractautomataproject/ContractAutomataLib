@@ -18,9 +18,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -38,9 +40,9 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  */
 
 
-public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>,A extends Automaton<CS,CL,S,T>>  implements Function<Integer,A>{
+public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>,A extends Automaton<S1,L1,S,T>>  implements IntFunction<A>{
 
-	private final BiFunction<L,L,Boolean> match;
+	private final BiPredicate<L,L> match;
 	private final Function<List<S>,S> createState;
 	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
 	private final TriFunction<TIndex,TIndex,Integer,L> createLabel;
@@ -58,7 +60,7 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 		}
 	}
 
-	private final List<? extends Automaton<CS,CL,S,T>> aut;
+	private final List<? extends Automaton<S1,L1,S,T>> aut;
 	private int rank;
 	private List<S> initial;
 	private S initialstate;
@@ -84,8 +86,8 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	 * 
 	 */
 	public CompositionFunction(List<A> aut,  
-			Function<List<? extends Ranked>,Integer> computeRank,
-			BiFunction<L,L,Boolean> match, Function<List<S>,S> createState, 
+			ToIntFunction<List<? extends Ranked>> computeRank,
+			BiPredicate<L,L> match, Function<List<S>,S> createState, 
 			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
 			TriFunction<TIndex,TIndex,Integer,L> createLabel,
 			TriFunction<L,Integer,Integer, L> shiftLabel, 
@@ -93,8 +95,8 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 			Predicate<L> pruningPred)
 	{
 		this.aut= new ArrayList<>(aut);
-		this.rank=computeRank.apply(aut.stream()
-				.map(a->(Ranked)a)
+		this.rank=computeRank.applyAsInt(aut.stream()
+				.map(Ranked.class::cast)
 				.collect(Collectors.toList()));
 
 		this.initial = aut.stream()  
@@ -103,13 +105,13 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 				.collect(Collectors.toList());
 
 		this.initialstate = createState.apply(initial);
-		this.toVisit = new ConcurrentLinkedQueue<Entry<List<S>,Integer>>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));//List.of(Map.entry(initial,0)));
-		this.frontier = new ConcurrentLinkedQueue<Entry<List<S>,Integer>>();
-		this.operandstat2compstat = new ConcurrentHashMap<List<S>, S>();//);Map.of(initial, initialstate));
+		this.toVisit = new ConcurrentLinkedQueue<>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));
+		this.frontier = new ConcurrentLinkedQueue<>();
+		this.operandstat2compstat = new ConcurrentHashMap<>();
 		this.operandstat2compstat.put(initial, initialstate);//used to avoid duplicate target states 
-		this.tr = new HashSet<T>();//transitions of the composed automaton to build
-		this.visited = new HashSet<List<S>>();
-		this.dontvisit = new ConcurrentLinkedQueue<S>();
+		this.tr = new HashSet<>();//transitions of the composed automaton to build
+		this.visited = new HashSet<>();
+		this.dontvisit = new ConcurrentLinkedQueue<>();
 		this.match=match;
 		this.createState=createState;
 		this.createLabel=createLabel;
@@ -127,11 +129,8 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 	 * @return  the composed automaton
 	 */
 	@Override
-	public A apply(Integer bound)
+	public A apply(int bound)
 	{
-		//TODO study non-associative composition but all-at-once
-		//TODO study remotion of requests on-credit for a closed composition
-
 		if (!frontier.isEmpty())//in case this method is called more than once, a potential frontier can be restored
 		{
 			toVisit.addAll(frontier);
@@ -166,23 +165,21 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 				Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
 						trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
-								.filter(ee->(e.ind<ee.ind) && match.apply(e.tra.getLabel(), ee.tra.getLabel()))
+								.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
 								.flatMap(ee->{ 
-									List<S> targetlist =  new ArrayList<S>(source);
+									List<S> targetlist =  new ArrayList<>(source);
 									targetlist.set(e.ind, e.tra.getTarget());
 									targetlist.set(ee.ind, ee.tra.getTarget());
 
 									T tradd=createTransition.apply(sourcestate,	
 											this.createLabel.apply(e, ee, rank),
-											operandstat2compstat.computeIfAbsent(targetlist, v->createState.apply(v)), 
+											operandstat2compstat.computeIfAbsent(targetlist, createState::apply), 
 											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
-									return Stream.of((SimpleEntry<T, SimpleEntry<T,List<S>>>) 
-											new AbstractMap.SimpleEntry<T, SimpleEntry<T,List<S>>>(e.tra, 
-													new AbstractMap.SimpleEntry<T,List<S>>(tradd,targetlist)),
-											(SimpleEntry<T, SimpleEntry<T,List<S>>>)//dummy, ee.tra is matched
-											new AbstractMap.SimpleEntry<T, SimpleEntry<T,List<S>>>(ee.tra, 
-													new AbstractMap.SimpleEntry<T,List<S>>(tradd, (List<S>)new ArrayList<S>())));
+									return Stream.of(new AbstractMap.SimpleEntry<>(e.tra, 
+											new AbstractMap.SimpleEntry<>(tradd,targetlist)),
+											new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
+													new AbstractMap.SimpleEntry<>(tradd, (List<S>)new ArrayList<S>())));
 								}))
 						.collect(groupingByConcurrent(Entry::getKey, 
 								mapping(Entry::getValue,toList())));//each principal transition can have more matches
@@ -191,15 +188,15 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 				//collecting match transitions and adding unmatched transitions
 				Set<SimpleEntry<T,List<S>>> trmap = trans2index.parallelStream()
 						.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
-						.collect(mapping(e->{List<S> targetlist = new ArrayList<S>(source);
+						.collect(mapping(e->{List<S> targetlist = new ArrayList<>(source);
 						targetlist.set(e.ind, e.tra.getTarget());
 						return 	new AbstractMap.SimpleEntry<T,List<S>>
 						(createTransition.apply(sourcestate,
-								shiftLabel.apply(e.tra.getLabel(),rank, //TODO change if you would like to preserve the CM constraints
+								shiftLabel.apply(e.tra.getLabel(),rank, //change here if you would like to preserve the CM constraints
 										IntStream.range(0, e.ind)
 										.map(i->aut.get(i).getRank())
 										.sum()),//shifting positions of label
-								operandstat2compstat.computeIfAbsent(targetlist, v->createState.apply(v)),
+								operandstat2compstat.computeIfAbsent(targetlist, createState::apply),
 								e.tra.getModality()),
 								targetlist);},
 								toSet()));
@@ -208,18 +205,16 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 						.filter(e->(!e.getValue().isEmpty())) //no duplicates
 						.collect(toSet()));
 
-				if (pruningPred!=null && trmap.parallelStream()
-						.anyMatch(x->pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent()))
-				{
-					if (sourcestate.equals(initialstate))
-						return null;
-					continue;//source state is bad in this case don't visit target states
-				}
-				else 
-				{//adding transitions, updating states
+				//if source state is bad then don't visit target states
+				boolean badsourcestate = pruningPred!=null && trmap.parallelStream()
+						.anyMatch(x->pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent());
+				
+				if (badsourcestate && sourcestate.equals(initialstate))
+					return null;
+				else if (!badsourcestate) {//adding transitions, updating states
 					Set<T> trans=trmap.parallelStream()
 							.filter(x->pruningPred==null||x.getKey().isNecessary()||pruningPred.negate().test(x.getKey().getLabel()))//semicontrollable are not pruned
-							.collect(mapping((Entry<T, List<S>> e)-> e.getKey(),toSet()));
+							.collect(mapping(Entry::getKey,toSet()));
 					tr.addAll(trans);
 
 					if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
@@ -230,21 +225,21 @@ public class CompositionFunction<CS,CL,S extends State<CS>,L extends Label<CL>,T
 
 					toVisit.addAll(trmap.parallelStream()
 							.filter(x->pruningPred==null||x.getKey().isNecessary()||pruningPred.negate().test(x.getKey().getLabel()))//semicontrollable are not pruned
-							.collect(mapping((Entry<T, List<S>> e)-> e.getValue(),toSet()))
+							.collect(mapping(Entry::getValue,toSet()))
 							.parallelStream()
 							.map(s->new AbstractMap.SimpleEntry<List<S>,Integer>(s,sourceEntry.getValue()+1))
 							.collect(toSet()));
 				}
 			}
-			
+
 		} while (!toVisit.isEmpty());
 
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
 
 		//in case of pruning if no final states are reachable return null
-		if (pruningPred!=null&& !tr.parallelStream()
+		if (pruningPred!=null&& tr.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
-				.distinct().anyMatch(s->s.isFinalstate()))
+				.distinct().noneMatch(State::isFinalstate))
 			return null;
 		else
 			return this.createAutomaton.apply(tr);

@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
@@ -31,7 +32,7 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 	private boolean rank(List<ModalAutomaton<CALabel>> aut, ModalAutomaton<CALabel> comp) 
 	{
 		return comp.getRank()==aut.stream()
-				.mapToInt(a->a.getRank())
+				.mapToInt(Automaton::getRank)
 				.sum();
 	}
 
@@ -51,37 +52,21 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 			aut.get(j).getStates().parallelStream().filter(pred).allMatch(cs2-> //for all states cs2 of aut.get(j) satisfying pred
 			comp.getStates().parallelStream().filter(pred).anyMatch(cs-> //there exists a state cs of the composition satisfying pred s.t.
 			cs.getState().size()==comp.getRank() &&
-			IntStream.range(0, cs2.getState().size()).allMatch(i_bs->	//for all  indexes i_bs of basic states of cs2 cs
-				cs2.getState().get(i_bs).equals(cs.getState().get(i_bs+shift(aut,j))  //the basic state of cs2 at index bs_i is equal to the basic state of cs at index i_bs+shift
+			IntStream.range(0, cs2.getState().size()).allMatch(iBs->	//for all  indexes iBs of basic states of cs2 cs
+				cs2.getState().get(iBs).equals(cs.getState().get(iBs+shift(aut,j))  //the basic state of cs2 at index bs_i is equal to the basic state of cs at index iBs+shift
 						)))));
 	}
 	
 	private boolean initialState(List<ModalAutomaton<CALabel>> aut, ModalAutomaton<CALabel> comp) 
 	{
-
-		return 
-		comp.getInitial().getState().size()==comp.getRank() &&
+		return comp.getInitial().getState().size()==comp.getRank() &&
 		IntStream.range(0,aut.size()).allMatch(j->  //forall indexes j of operands
-		IntStream.range(0, aut.get(j).getInitial().getState().size()).allMatch(i_bs->  //forall indexes i_bs of basicstates of the initial state of operand at index j
-		aut.get(j).getInitial().getState().get(i_bs).equals(comp.getInitial().getState().get(i_bs+shift(aut,j))) //the basic state of the initial state of operand j at index bs_i is equal to the basic state of the initial state of comp at index i_bs+shift
+		IntStream.range(0, aut.get(j).getInitial().getState().size()).allMatch(iBs->  //forall indexes iBs of basicstates of the initial state of operand at index j
+		aut.get(j).getInitial().getState().get(iBs).equals(comp.getInitial().getState().get(iBs+shift(aut,j))) //the basic state of the initial state of operand j at index bs_i is equal to the basic state of the initial state of comp at index iBs+shift
 						)); 
 	}
-	
-//	public CAState getInitialState(List<ModalAutomaton<CALabel>> aut) {
-//		List<State<String>> ic = new ArrayList<>(aut.stream()
-//				.mapToInt(a->a.getRank())
-//				.sum());
-//		
-//		IntStream.range(0,aut.size())
-//		.forEach(j->{IntStream.range(0, aut.get(j).getInitial().getState().size())
-//				.forEach(i_bs->ic.set(i_bs+shift(aut,j), aut.get(j).getInitial().getState().get(i_bs)));}
-//				);
-//		
-//		return new CAState(ic,0,0);
-//	}
 
 	private boolean transitions(List<ModalAutomaton<CALabel>> aut, ModalAutomaton<CALabel> comp) {
-
 		//true if the source of transition t (of the operand at index ind)  is a component of composite state s
 		TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,Integer,CAState> sourcestatepred= (t,ind,s)-> 
 		s.getState().size()==comp.getRank()&&
@@ -95,11 +80,11 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 		PentaPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,Integer,Integer> labelmatchpred = (t,ti,tj,i,j)->
 		t.getLabel().getAction().size()==comp.getRank() &&
 		IntStream.range(0,t.getLabel().getAction().size()).allMatch(li->
-		(li<shift(aut,i))?t.getLabel().getAction().get(li).equals(CALabel.idle)
+		(li<shift(aut,i))?t.getLabel().getAction().get(li).equals(CALabel.IDLE)
 				:(li<shift(aut,i+1))?t.getLabel().getAction().get(li).equals(ti.getLabel().getAction().get(li-shift(aut,i)))
-						:(li<shift(aut,j))?t.getLabel().getAction().get(li).equals(CALabel.idle)
+						:(li<shift(aut,j))?t.getLabel().getAction().get(li).equals(CALabel.IDLE)
 								:(li<shift(aut,j+1))?t.getLabel().getAction().get(li).equals(tj.getLabel().getAction().get(li-shift(aut,j)))
-										:t.getLabel().getAction().get(li).equals(CALabel.idle)) ;
+										:t.getLabel().getAction().get(li).equals(CALabel.IDLE)) ;
 
 		PentaPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,Integer,Integer> targetmatchpred = (t,ti,tj,i,j)->
 		t.getTarget().getState().size()==comp.getRank() &&
@@ -115,15 +100,15 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 				(!t.getModality().equals(ModalTransition.Modality.PERMITTED) && (!ti.getModality().equals(ModalTransition.Modality.PERMITTED)||
 				!tj.getModality().equals(ModalTransition.Modality.PERMITTED))));
 		
-		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> aut_tr = aut.stream()
-				.map(a->a.getTransition())
+		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> autTr = aut.stream()
+				.map(Automaton::getTransition)
 				.collect(Collectors.toList());
 		
-		Predicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> pred_match = t-> 
+		Predicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> predMatch = t-> 
 		IntStream.range(0, aut.size()).anyMatch(i-> 		//exists i in [0,aut.size]
 		IntStream.range(i+1, aut.size()).anyMatch(j->		//exists j in [i+1,aut.size]
-		aut_tr.get(i).parallelStream().filter(ti->sourcestatepred.test(ti, i, t.getSource())).anyMatch(ti->
-		aut_tr.get(j).parallelStream().filter(tj->sourcestatepred.test(tj, j, t.getSource())).anyMatch(tj->
+		autTr.get(i).parallelStream().filter(ti->sourcestatepred.test(ti, i, t.getSource())).anyMatch(ti->
+		autTr.get(j).parallelStream().filter(tj->sourcestatepred.test(tj, j, t.getSource())).anyMatch(tj->
 		ti.getLabel().match(tj.getLabel()) && labelmatchpred.test(t, ti, tj, i, j) && targetmatchpred.test(t, ti, tj, i, j) && modalitymatchpred.test(t, ti, tj)
 		))));
 		
@@ -135,9 +120,9 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 		TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, Integer> labelintrleavpred = (t,ti,i)->
 		t.getLabel().getAction().size()==comp.getRank() &&
 		IntStream.range(0,t.getLabel().getAction().size()).allMatch(li->
-		(li<shift(aut,i))?t.getLabel().getAction().get(li).equals(CALabel.idle)
+		(li<shift(aut,i))?t.getLabel().getAction().get(li).equals(CALabel.IDLE)
 				:(li<shift(aut,i+1))?t.getLabel().getAction().get(li).equals(ti.getLabel().getAction().get(li-shift(aut,i)))
-							:t.getLabel().getAction().get(li).equals(CALabel.idle));
+							:t.getLabel().getAction().get(li).equals(CALabel.IDLE));
 		
 		TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, Integer> targetstateintrleavpred = (t,ti,i)-> 
 		t.getTarget().getState().size()==comp.getRank() &&
@@ -147,17 +132,17 @@ public class CompositionSpecCheck implements BiPredicate<List<ModalAutomaton<CAL
 								:t.getTarget().getState().get(bsti).equals(t.getSource().getState().get(bsti)));
 		
 
-		Predicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> pred_intrleav = t->
+		Predicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> predIntrleav = t->
 		IntStream.range(0, aut.size()).anyMatch(i-> 	
-		aut_tr.get(i).parallelStream().filter(ti->sourcestatepred.test(ti, i, t.getSource())).anyMatch(ti->
+		autTr.get(i).parallelStream().filter(ti->sourcestatepred.test(ti, i, t.getSource())).anyMatch(ti->
 		IntStream.range(0, aut.size()).filter(j->j!=i).allMatch(j->		
-		aut_tr.get(j).parallelStream().filter(tj->sourcestatepred.test(tj, j, t.getSource())).allMatch(tj->
+		autTr.get(j).parallelStream().filter(tj->sourcestatepred.test(tj, j, t.getSource())).allMatch(tj->
 		!ti.getLabel().match(tj.getLabel()) && labelintrleavpred.test(t,ti,i) && targetstateintrleavpred.test(t,ti,i) && t.getModality().equals(ti.getModality())
 		))));		
 
 		//-------------------------------------------------------------------------------------
 		
-		return comp.getTransition().parallelStream().allMatch(t->pred_match.test(t)||pred_intrleav.test(t));
+		return comp.getTransition().parallelStream().allMatch(t->predMatch.test(t)||predIntrleav.test(t));
 	}
 	
 	private int shift(List<ModalAutomaton<CALabel>> aut, int j) {

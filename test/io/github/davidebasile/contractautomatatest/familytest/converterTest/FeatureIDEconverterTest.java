@@ -1,7 +1,7 @@
 package io.github.davidebasile.contractautomatatest.familytest.converterTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class FeatureIDEconverterTest {
 		UnaryOperator<Set<Product>> spg = new PartialProductGenerator();
 		Family f1= new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml")));
 		Family f2= new Family(pfc.importProducts(dir +"ValidProducts.prod"));
-		assertTrue(f1.getProducts().equals(f2.getProducts()));
+		assertEquals(f1.getProducts(),f2.getProducts());
 	}
 	
 //	@Test

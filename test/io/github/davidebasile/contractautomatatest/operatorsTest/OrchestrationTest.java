@@ -1,12 +1,12 @@
 package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
@@ -25,7 +25,7 @@ public class OrchestrationTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertTrue(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(MSCATest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}	
 	
 	@Test
@@ -33,7 +33,7 @@ public class OrchestrationTest {
 		ModalAutomaton<CALabel> comp = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_BusinessClientxHotel.data");
-		assertTrue(MSCATest.checkTransitions(orc,test));
+		assertTrue(MSCATest.autEquals(orc,test));
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class OrchestrationTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
-		assertTrue(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(MSCATest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}
 
 //	@Test
@@ -57,14 +57,14 @@ public class OrchestrationTest {
 	public void orcEmptyTestNoDangling() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_orc_nodangling.data");
-		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),null);
+		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(aut));
 	}
 		
 	@Test
 	public void orcTest_empty() throws Exception
 	{
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc.data");
-		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(orc),null);
+		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(orc));
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class OrchestrationTest {
 	{
 
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(orc),null);
+		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(orc));
 	}
 	
 	@Test
@@ -80,7 +80,7 @@ public class OrchestrationTest {
 	{
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"test_lazy_loop.data");
 		ModalAutomaton<CALabel> orc =  new OrchestrationSynthesisOperator(new Agreement()).apply(test);
-		assertTrue(MSCATest.checkTransitions(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
+		assertTrue(MSCATest.autEquals(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
 	}
 
 //	@Test
@@ -95,7 +95,8 @@ public class OrchestrationTest {
 	public void orc_necessaryoffer_exception() throws Exception
 	{
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
-		assertThatThrownBy(() -> new OrchestrationSynthesisOperator(new Agreement()).apply(orc))
+		OrchestrationSynthesisOperator os = new OrchestrationSynthesisOperator(new Agreement());
+		assertThatThrownBy(() -> os.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 }

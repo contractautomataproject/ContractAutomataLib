@@ -1,10 +1,9 @@
 package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
@@ -25,9 +24,7 @@ public class ProductOrchestrationTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
-		assertEquals(MSCATest.checkTransitions(
-				new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)
-				,test),true);
+		Assert.assertTrue(MSCATest.autEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),test));
 	}
 
 
@@ -36,7 +33,7 @@ public class ProductOrchestrationTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"dummy"}, new String[] {""});
-		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 	}
 
 	@Test
@@ -44,7 +41,7 @@ public class ProductOrchestrationTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-		assertEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),null);
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 	}	
 	
 	@Test
@@ -52,7 +49,7 @@ public class ProductOrchestrationTest {
 		
 		ModalAutomaton<CALabel> aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		assertEquals(null,new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 		
 	}
 

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -41,8 +42,8 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  */
 public class AutDataConverter<L extends Label<List<String>>>  implements AutConverter<ModalAutomaton<L>,Automaton<?,?,?,?>> {
 	private final Function<List<String>,L> createLabel;
-	private final String suffix = ".data";
-	private final String emptymsg = "Empty file name";
+	private static final String SUFFIX = ".data";
+	private static final String EMPTYMSG = "Empty file name";
 
 	public AutDataConverter(Function<List<String>, L> createLabel) {
 		super();
@@ -52,25 +53,25 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 	public ModalAutomaton<L> importMSCA(String filename) throws IOException {
 		// long method
 		// Open the file
-		if (!filename.endsWith(suffix))
+		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
 
 		if (path==null)
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 
 		String safefilename = path.toString();
 
 		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), "UTF-8")))
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), StandardCharsets.UTF_8)))
 		{
 			int rank=0;
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
-			tr = new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>();
-			Set<CAState> states = new HashSet<CAState>();
+			tr = new HashSet<>();
+			Set<CAState> states = new HashSet<>();
 			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
 
 			String strLine;
@@ -134,7 +135,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 		}
 
-		return new ModalAutomaton<L>(tr);
+		return new ModalAutomaton<>(tr);
 	}
 
 	private ModalTransition<List<BasicState<String>>,List<String>,CAState,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
@@ -155,19 +156,17 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>(source,createLabel(tr),target,type); 
+		return new ModalTransition<>(source,createLabel(tr),target,type); 
 	}
 
 	public L createLabel(String[][] tr) {
-		if (tr[1].length==1 && tr[1][0].contains(CMLabel.action_separator))
+		if (tr[1].length==1 && tr[1][0].contains(CMLabel.ACTION_SEPARATOR))
 			return createLabel.apply(List.of(tr[1][0]));//new CMLabel(tr[1][0]);
 		else 
 			return createLabel.apply(Arrays.asList(tr[1]));//new CALabel(Arrays.asList(tr[1]));
-
-		//		return new Label<>(Arrays.asList(tr[1]));
 	}
 
-	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin) throws IOException {
+	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
@@ -180,22 +179,20 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 								Set<BasicState<String>> l = mapBasicStates.get(i);
 								if (l==null || l.stream().allMatch(bs->!bs.getState().equals(state[i])))
 								{
-									BasicState<String> bs=new BasicState<String>(state[i]+"",
+									BasicState<String> bs=new BasicState<>(state[i]+"",
 											state[i].equals(initial[i]),
 											Arrays.stream(fin[i]).anyMatch(id->id.equals(state[i])));
 									if (l==null)
-										mapBasicStates.put(i, new HashSet<BasicState<String>>(Arrays.asList(bs)));
+										mapBasicStates.put(i, new HashSet<>(Arrays.asList(bs)));
 									else
 										l.add(bs);
-									return (BasicState<String>) bs;
+									return bs;
 								} else
-									return (BasicState<String>) l.stream()
+									return l.stream()
 											.filter(bs->bs.getState().equals(state[i]))
 											.findFirst()
 											.orElseThrow(RuntimeException::new);
-							}).collect(Collectors.toList())
-							//,0,0
-							); 							
+							}).collect(Collectors.toList())); 							
 					states.add(temp); return temp;});
 	}
 
@@ -208,15 +205,15 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 	@Override
 	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException, UnsupportedEncodingException {
 		if (filename.isEmpty())
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 
-		String ext=(filename.endsWith(suffix))?"":suffix;
+		String ext=(filename.endsWith(SUFFIX))?"":SUFFIX;
 		Path path = FileSystems.getDefault().getPath(filename+ext);
 		if (path==null)
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 		String safefilename = 	path.toString();
 
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), "UTF-8")))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), StandardCharsets.UTF_8)))
 		{
 			pr.print(aut.toString());
 		}

@@ -16,10 +16,9 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
  * @param <L> generic type of the label 
  */
 public class Transition<U,V, S extends State<U>,L extends Label<V>> { 
-	final private S source;
-	final private S target;
-	final private L label;
-//	final private TriFunction<U,Boolean,Boolean,S> createState;
+	private final S source;
+	private final S target;
+	private final L label;
 	
 	
 	public Transition(S source, L label, S target){
@@ -32,22 +31,18 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	private void check(S source, L label, S target) {
 		if (source==null || label==null || target==null)
 			throw new IllegalArgumentException("source, label or target null");
-		if (!(source.getRank().equals(target.getRank())&&label.getRank().equals(source.getRank()))) {
-//			System.out.println("error in "+source.toString()+label.toString()+target.toString()+
-//					source.getRank()+" "+label.getRank());
+		if (!(source.getRank().equals(target.getRank())&&label.getRank().equals(source.getRank()))) 
 			throw new IllegalArgumentException("source, label or target with different ranks");
-		}		
 	}
+	
 	public S getSource()
 	{
 		return source;
-//		return createState.apply(source.getState(),source.isInitial(),source.isFinalstate());
 	}
 
 	public S getTarget()
 	{
 		return target;
-//		return createState.apply(target.getState(),source.isInitial(),source.isFinalstate());
 	}
 
 	public L getLabel()

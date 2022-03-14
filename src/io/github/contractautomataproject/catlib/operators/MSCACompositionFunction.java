@@ -45,7 +45,7 @@ public class MSCACompositionFunction extends CompositionFunction<List<BasicState
 		return new CALabel(rank,
 				computeSumPrincipal(e.tra,e.ind,aut),//index of principal in e
 				computeSumPrincipal(ee.tra,ee.ind,aut),	//index of principal in ee										
-				e.tra.getLabel().getTheAction(),ee.tra.getLabel().getTheAction());
+				e.tra.getLabel().getPrincipalAction(),ee.tra.getLabel().getPrincipalAction());
 	}
 	
 }

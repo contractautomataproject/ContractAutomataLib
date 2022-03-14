@@ -9,8 +9,8 @@ package io.github.contractautomataproject.catlib.automaton.state;
  */
 public class BasicState<T> extends State<T>{
 	
-	final private boolean init;
-	final private boolean fin;
+	private final boolean init;
+	private final boolean fin;
 
 	
 	public BasicState(T label, Boolean init, Boolean fin) {
@@ -40,10 +40,9 @@ public class BasicState<T> extends State<T>{
 	 */
 	public String toCSV() {
 
-		String fin= (this.isFinalstate())?",final=true":"";
-		String init= (this.isInitial())?",initial=true":"";
-
-		return "label="+this.getState()+fin+init;
+		String finalstate= (this.isFinalstate())?",final=true":"";
+		String initial= (this.isInitial())?",initial=true":"";
+		return "label="+this.getState()+finalstate+initial;
 	}
 	
 	/**
@@ -52,7 +51,7 @@ public class BasicState<T> extends State<T>{
 	 * @return a new State<String> object constructed from the parameter s
 	 */
 	public static BasicState<String> readCSV(String s) {
-		boolean init=false, fin=false;
+		boolean initial=false, finalstate=false;
 		String label="";
 		String[] cs = s.split(",");
 		for (String keyval : cs)
@@ -61,11 +60,11 @@ public class BasicState<T> extends State<T>{
 			if(kv[0].equals("label"))
 				label=kv[1];
 			else if (kv[0].equals("initial"))
-				init=true;
+				initial=true;
 			else if (kv[0].equals("final"))
-				fin=true;
+				finalstate=true;
 		}
-		return new BasicState<String>(label,init,fin);
+		return new BasicState<>(label,initial,finalstate);
 		
 	}
 }

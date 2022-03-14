@@ -66,7 +66,7 @@ public class Family {
 	public int getMaximumDepth()
 	{
 		return products.parallelStream()
-				.mapToInt(p->p.getForbiddenAndRequiredNumber())
+				.mapToInt(Product::getForbiddenAndRequiredNumber)
 				.max().orElse(0)+1; //also consider products with zero features	
 	}
 

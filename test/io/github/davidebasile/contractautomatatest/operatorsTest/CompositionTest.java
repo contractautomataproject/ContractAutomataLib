@@ -1,13 +1,13 @@
 package io.github.davidebasile.contractautomatatest.operatorsTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
@@ -25,7 +25,6 @@ public class CompositionTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	//***********************************testing impl against spec on scenarios **********************************************
-	
 	
 	@Test
 	public void scico2020Test() throws Exception{
@@ -81,7 +80,7 @@ public class CompositionTest {
 
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,null).apply(100);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
-		assertEquals(MSCATest.checkTransitions(comp,test),true);
+		assertTrue(MSCATest.autEquals(comp,test));
 	}
 
 	@Test
@@ -92,7 +91,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,null).apply(100);
-		assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),null);
+		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(comp));
 	}
 
 	@Test
@@ -104,7 +103,7 @@ public class CompositionTest {
 
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,l->l.isRequest()).apply(100);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"BusinessClientxHotel_closed.data");
-		assertEquals(MSCATest.checkTransitions(comp,test),true);
+		assertTrue(MSCATest.autEquals(comp,test));
 	}
 
 
@@ -118,7 +117,7 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
 		ModalAutomaton<CALabel> comp = new MSCACompositionFunction(aut,null).apply(100);
 		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
-		assertEquals(MSCATest.checkTransitions(comp,test),true);	
+		assertTrue(MSCATest.autEquals(comp,test));	
 	}
 
 	@Test
@@ -132,9 +131,7 @@ public class CompositionTest {
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,l->l.isRequest()).apply(100);
 
 		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),test),true);
-
-		//		assertEquals(comp.orchestration().getNumStates(),14);
+		assertTrue(MSCATest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),test));
 	}	
 
 	///////////////
@@ -150,7 +147,7 @@ public class CompositionTest {
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,null).apply(100);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"(AxB).data");
 
-		assertEquals(MSCATest.checkTransitions(comp,test),true);
+		assertTrue(MSCATest.autEquals(comp,test));
 	}
 
 
@@ -164,7 +161,7 @@ public class CompositionTest {
 
 		ModalAutomaton<CALabel> comp=new MSCACompositionFunction(aut,l->l.isRequest()).apply(100);
 
-		assertEquals(comp,null);
+		Assert.assertNull(comp);
 	}
 
 	@Test
@@ -175,7 +172,8 @@ public class CompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
-		assertThatThrownBy(() -> new MSCACompositionFunction(aut,null).apply(0))
+		MSCACompositionFunction mcf = new MSCACompositionFunction(aut,null);
+		assertThatThrownBy(() -> mcf.apply(0))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 	}

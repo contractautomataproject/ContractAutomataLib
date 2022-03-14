@@ -16,6 +16,7 @@ import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.transition.Transition;
 
 /**
  * Class implementing the Choreography Synthesis
@@ -31,21 +32,21 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<List<String>>> reqmc, 
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,reqmc, prop, 
-				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getTheAction()));//offers are necessary
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,reqmc, prop, 
+				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getPrincipalAction()));//offers are necessary
 		this.req=req;
 	}
 	
 
 	public ChoreographySynthesisOperator(Predicate<CALabel> req){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null, null,null);
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
 		this.req=req;
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
 			Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,
 				Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> choice){
-		super((x,st,bad) -> isUncontrollableChoreography(x,st, bad),req,null, null,null);
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
 		this.req=req;
 		this.choice=choice;
 	}
@@ -78,7 +79,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 				break;
 			final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trf = chor.getTransition();
 			toRemove=choice.apply(chor.getTransition().parallelStream()
-					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<CAState>())))
+					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
 		} while (toRemove!=null && violatingbc.add(toRemove.toCSV()));
 		return chor;
@@ -88,7 +89,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
-				&&t.getLabel().getTheAction().equals(tt.getLabel().getTheAction()) //the same offer 
+				&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getPrincipalAction()) //the same offer 
 				&&t.getSource().equals(tt.getSource()));//the same global source state
 	}
 
@@ -100,15 +101,12 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	 */
 	public boolean satisfiesBranchingCondition(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tra, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trans, Set<CAState> bad) 
 	{
-//		if (!req.test(tra)||bad.contains(tra.getSource()) || bad.contains(tra.getTarget()))
-//			return false;		//ignore tra transition because it is going to be pruned in the synthesis
-
 		final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> ftr = trans.parallelStream()
 				.filter(x->req.test(x.getLabel())&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 
 		return ftr.parallelStream()
-				.map(x->x.getSource())
+				.map(Transition::getSource)
 				.filter(x->x!=tra.getSource()&&
 				tra.getSource().getState().get(tra.getLabel().getOfferer()).getState()
 				.equals(x.getState().get(tra.getLabel().getOfferer()).getState()))
@@ -122,7 +120,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 }
 
 
-
+//END OF CLASS
 
 
 

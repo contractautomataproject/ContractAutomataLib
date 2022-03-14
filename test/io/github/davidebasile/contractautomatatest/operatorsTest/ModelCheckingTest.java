@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +51,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<Label<List<String>>> comp = mcf.apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir+"(AlicexBob)_forte2021_mc.data");
 
-		assertTrue(MSCATest.checkTransitions(comp, test));
+		assertTrue(MSCATest.autEquals(comp, test));
 	}
 	
 	@Test
@@ -58,7 +59,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
 		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
-		assertTrue(MSCATest.checkTransitions(synth, test));
+		assertTrue(MSCATest.autEquals(synth, test));
 	}
 	
 	@Test
@@ -68,7 +69,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "test_lazy_loop_prop_mc.data");
 
 		
-		assertTrue(MSCATest.checkTransitions(comp, test));
+		assertTrue(MSCATest.autEquals(comp, test));
 		
 	}
 	
@@ -78,7 +79,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);	
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "test_lazy_loop_prop_synth.data");
 
-		assertTrue(MSCATest.checkTransitions(synth, test));
+		assertTrue(MSCATest.autEquals(synth, test));
 		
 	}
 	
@@ -88,7 +89,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<Label<List<String>>> comp = new ModelCheckingFunction(aut, prop,new StrongAgreementModelChecking<Label<List<String>>>()).apply(Integer.MAX_VALUE);
 		ModalAutomaton<? extends Label<List<String>>> test = adc.importMSCA(dir + "modelchecking_loop_mc.data");
 		
-		assertTrue(MSCATest.checkTransitions(comp, test));
+		assertTrue(MSCATest.autEquals(comp, test));
 	}
 
 	@Test
@@ -97,7 +98,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
 		
-		assertTrue(MSCATest.checkTransitions(orc, test));
+		assertTrue(MSCATest.autEquals(orc, test));
 
 	}
 	
@@ -107,7 +108,7 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
 		
-		assertTrue(MSCATest.checkTransitions(orc, test));
+		assertTrue(MSCATest.autEquals(orc, test));
 	}
 	
 	@Test
@@ -124,7 +125,7 @@ public class ModelCheckingTest {
 	
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");		
 		
-		assertTrue(MSCATest.checkTransitions(cor, test));
+		assertTrue(MSCATest.autEquals(cor, test));
 	}
 	
 	@Test
@@ -142,6 +143,6 @@ public class ModelCheckingTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
 		ModalAutomaton<CALabel> mpc=new MpcSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
-		assertTrue(mpc==null);
+		Assert.assertNull(mpc);
 	}
 }

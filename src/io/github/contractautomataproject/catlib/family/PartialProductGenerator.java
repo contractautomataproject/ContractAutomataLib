@@ -44,12 +44,12 @@ public class PartialProductGenerator implements UnaryOperator<Set<Product>>{
 			Map<Product,Set<Product>> map = features.stream()
 					.map(f->sp.parallelStream()
 							.collect(Collectors.groupingByConcurrent(p->p.removeFeatures(Set.of(f)),Collectors.toSet())))
-					.reduce(new ConcurrentHashMap<Product,Set<Product>>(),(x,y)->{x.putAll(y); return x;});	
+					.reduce(new ConcurrentHashMap<>(),(x,y)->{x.putAll(y); return x;});	
 			return map.entrySet().parallelStream()
 					.filter(e->e.getValue().size()>1)
 					.map(Entry::getKey)
 					.collect(Collectors.toSet());})
-		.reduce(new HashSet<Product>(),(x,y)->{x.addAll(y); return x;});
+		.reduce(new HashSet<>(),(x,y)->{x.addAll(y); return x;});
 	}
 
 }

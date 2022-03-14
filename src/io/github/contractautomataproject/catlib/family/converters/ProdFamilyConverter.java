@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,17 +31,16 @@ import io.github.contractautomataproject.catlib.family.Product;
  */
 public class ProdFamilyConverter implements FamilyConverter {
 
-	private final String emptymsg = "Empty file name";
+	private static final String EMPTYMSG = "Empty file name";
 	
 	@Override
 	public Set<Product> importProducts(String filename) throws IOException {
 		Path path = FileSystems.getDefault().getPath(filename);	
 		if (path==null)
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 		File f = new File(path.toString());
 		
-		Charset charset = Charset.forName("ISO-8859-1");
-		List<String> lines = Files.readAllLines(f.toPath(), charset);
+		List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
 
 		Pattern pattern = Pattern.compile("p[0-9]+: R=\\{(.*)\\} F=\\{(.*)\\}");
 
@@ -64,15 +63,15 @@ public class ProdFamilyConverter implements FamilyConverter {
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException{
 		if (filename==null || filename.isEmpty())
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 
 		String suffix = (filename.endsWith(".prod"))?"":".prod";
-		List<Product> ar = new ArrayList<Product>(fam.getProducts());
+		List<Product> ar = new ArrayList<>(fam.getProducts());
 		Path path = FileSystems.getDefault().getPath(filename+suffix);	
 		if (path==null)
-			throw new IllegalArgumentException(emptymsg);
+			throw new IllegalArgumentException(EMPTYMSG);
 		
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), "UTF-8")))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), StandardCharsets.UTF_8)))
 		{
 			pr.print(IntStream.range(0, ar.size())
 					.mapToObj(i->ar.get(i).toStringFile(i))

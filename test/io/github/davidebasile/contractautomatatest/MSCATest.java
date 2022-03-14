@@ -26,7 +26,7 @@ public class MSCATest {
 //	private final DataConverter bdc = new DataConverter();
 
 
-	public static boolean checkTransitions(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
+	public static boolean autEquals(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
 				.map(t->t.toCSV())
 				.collect(Collectors.toSet());
@@ -54,7 +54,8 @@ public class MSCATest {
 
 	@Test
 	public void constructorTest_Exception_emptyTransitions() {
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>()))
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> s = new HashSet<>();
+		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(s))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");
 
@@ -64,7 +65,6 @@ public class MSCATest {
 	public void constructor_Exception_nullArgument() throws Exception {
 		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
 		tr.add(null);
-		//	ModalAutomaton<CALabel> aut = ModalAutomaton<CALabel>IO.parseXMLintoModalAutomaton<CALabel>(dir+"test_chor_controllablelazyoffer.mxe");
 		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Null element");
@@ -73,15 +73,15 @@ public class MSCATest {
 	@Test
 	public void constructor_Exception_differentRank() throws Exception {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
 
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.idle);
-		lab2.add(CALabel.idle);
-		lab2.add(CALabel.offer+"a");
-		lab2.add(CALabel.request+"a");
+		lab2.add(CALabel.IDLE);
+		lab2.add(CALabel.IDLE);
+		lab2.add(CALabel.OFFER+"a");
+		lab2.add(CALabel.REQUEST+"a");
 
 
 		BasicState<String> bs0 = new BasicState<String>("0",true,false);
@@ -112,7 +112,7 @@ public class MSCATest {
 	public void noInitialState_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.OFFER+"a");
 
 		BasicState<String> bs0 = new BasicState<String>("0",false,true);
 		BasicState<String> bs1 = new BasicState<String>("1",false,true);
@@ -134,7 +134,7 @@ public class MSCATest {
 	public void noFinalStatesInTransitions_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.OFFER+"a");
 
 		BasicState<String> bs0 = new BasicState<String>("0",true,false);
 		BasicState<String> bs1 = new BasicState<String>("1",false,false);
@@ -158,7 +158,7 @@ public class MSCATest {
 	public void ambiguousStates_exception() throws Exception
 	{
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.offer+"a");
+		lab.add(CALabel.OFFER+"a");
 
 		BasicState<String> bs1 = new BasicState<String>("0",true,false);
 		BasicState<String> bs2 = new BasicState<String>("0",false,true);

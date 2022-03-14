@@ -2,7 +2,7 @@ package io.github.contractautomataproject.catlib.family.converters;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,7 +64,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		
 		List<File> listOfFiles = Arrays.asList(listFiles);
 
-		Set<Product> setprod=listOfFiles.parallelStream()
+		return listOfFiles.parallelStream()
 				.map(f->{
 					if (f.isFile()&&f.getName().contains("config"))
 						return f.getAbsolutePath();//no sub-directory on products
@@ -79,7 +79,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 				.filter(s->s.length()>0)
 				.map(s->{
 					try {
-						return Files.readAllLines(Paths.get(s), Charset.forName("ISO-8859-1"));//required features
+						return Files.readAllLines(Paths.get(s), StandardCharsets.UTF_8);//required features
 					} catch (IOException e) {
 						IllegalArgumentException iae = new IllegalArgumentException();
 						iae.initCause(e);
@@ -87,17 +87,14 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 					}
 				})
 				.map(l->new Product(features.parallelStream()
-							.filter(s->l.contains(s))//required
-							.map(s->new Feature(s))
+							.filter(l::contains)//required
+							.map(Feature::new)
 							.collect(Collectors.toSet()),
 							features.parallelStream()
 							.filter(s->!l.contains(s))//forbidden
-							.map(s->new Feature(s))
+							.map(Feature::new)
 							.collect(Collectors.toSet())))
 				.collect(Collectors.toSet());
-		
-			return setprod; //generateProducts(setprod,features));
-
 	}
 	
 	
@@ -113,7 +110,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		Document doc = dBuilder.parse(inputFile);
 		doc.getDocumentElement().normalize();
 
-		NodeList nodeList = (NodeList) doc.getElementsByTagName("feature");
+		NodeList nodeList = doc.getElementsByTagName("feature");
 
 		Set<String> features=new HashSet<>();
 		for (int i = 0; i < nodeList.getLength(); i++) 
@@ -141,7 +138,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		Document doc = dBuilder.parse(inputFile);
 		doc.getDocumentElement().normalize();
 
-		NodeList nodeList = (NodeList) doc.getElementsByTagName("eq");
+		NodeList nodeList = doc.getElementsByTagName("eq");
 
 		String[][] table= new String[nodeList.getLength()][2]; //exact length
 
@@ -149,9 +146,9 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		for (int i = 0; i < nodeList.getLength(); i++) 
 		{
 			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 			{
-				NodeList childs = (NodeList) nNode.getChildNodes();
+				NodeList childs = nNode.getChildNodes();
 				Node first = childs.item(1);
 				Node second = childs.item(3);
 				table[ind][0]= first.getTextContent();    

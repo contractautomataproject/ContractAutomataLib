@@ -1,12 +1,13 @@
 package io.github.davidebasile.contractautomatatest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,23 +38,23 @@ public class CMLabelTest {
 	
 	@Test
 	public void testConstructorIdOf(){
-		assertTrue(cm_of.getId().equals("Alice"));
+		assertEquals("Alice",cm_of.getId());
 	}
 	
 	@Test
 	public void testConstructorPartnerOf(){
-		assertTrue(cm_of.getPartner().equals("Bob"));
+		assertEquals("Bob", cm_of.getPartner());
 	}
 	
 	@Test
 	public void testConstructorIdReq(){
-		assertTrue(cm_req.getId().equals("Bob"));
+		assertEquals("Bob", cm_req.getId());
 	}
 	
 
 	@Test
 	public void testConstructorPartnerReq(){
-		assertTrue(cm_req.getPartner().equals("Alice"));
+		assertEquals("Alice", cm_req.getPartner());
 	}
 	
 	@Test
@@ -64,42 +65,43 @@ public class CMLabelTest {
 
 	@Test
 	public void equalsSame() {
-		assertTrue(cm_of.equals(cm_of));
+		assertEquals(cm_of, cm_of);
 	}
 	
 	@Test
 	public void equalsFalse() {
-		assertFalse(cm_of.equals(cm_req));
+		Assert.assertNotEquals(cm_of, cm_req);
 	}
 	
 
 	@Test
 	public void equalsTrue() {
-		CMLabel equal = 
-				cm_of = new CMLabel("Alice","Bob","!apple");
-		assertTrue(cm_of.equals(equal));
+		CMLabel equal = new CMLabel("Alice","Bob","!apple");
+		CMLabel cm_of = new CMLabel("Alice","Bob","!apple");
+		assertEquals(equal, cm_of);
 	}
 	
 	@Test
 	public void hashCodeTrue() {
-		CMLabel equal = 
-				cm_of = new CMLabel("Alice","Bob","!apple");
+		CMLabel equal = new CMLabel("Alice","Bob","!apple");
+	    CMLabel	cm_of = new CMLabel("Alice","Bob","!apple");
 		assertTrue(cm_of.hashCode()==equal.hashCode());
 	}
 	
 	@Test
 	public void testToStringOffer() {
-		assertEquals(cm_of.toString(),"[Alice_Bob@!apple]");
+		assertEquals("[Alice_Bob@!apple]", cm_of.toString());
 	}
 	
 	@Test
 	public void testToStringRequest() {
-		assertEquals(cm_req.toString(),"[Alice_Bob@?apple]");
+		assertEquals("[Alice_Bob@?apple]", cm_req.toString());
 	}
 	
 	@Test
 	public void testMatchException() {
-		CALabel test = new CALabel(Arrays.asList("?a"));
+		List<String> t = Arrays.asList("?a");
+		CALabel test = new CALabel(t);
 		assertThatThrownBy(()->cm_of.match(test))
 		.isInstanceOf(IllegalArgumentException.class);
 	}

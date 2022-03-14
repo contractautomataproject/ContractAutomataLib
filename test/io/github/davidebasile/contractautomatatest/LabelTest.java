@@ -1,8 +1,8 @@
 package io.github.davidebasile.contractautomatatest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.label.Label;
@@ -12,7 +12,7 @@ public class LabelTest {
 	@Test
 	public void testEquals() {
 		Label<String> lab = new Label<>("dummy");
-		assertTrue(lab.equals(lab));
+		Assert.assertEquals(lab,lab);
 	}
 	
 	@Test

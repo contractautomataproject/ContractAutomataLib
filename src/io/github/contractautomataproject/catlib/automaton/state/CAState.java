@@ -23,9 +23,9 @@ public class CAState extends State<List<BasicState<String>>> {
 	{
 		super((lstate.get(0) instanceof CAState)?
 				lstate.stream()
-				.map(s->(CAState) s)
+				.map(CAState.class::cast)
 				.map(CAState::getState)
-				.reduce(new ArrayList<BasicState<String>>(), (x,y)->{x.addAll(y); return x;})
+				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;})
 				:(lstate.get(0) instanceof BasicState<?>) && (lstate.get(0).getState() instanceof String)?
 						lstate.stream()
 						.map(s-> (BasicState<String>)s)
@@ -63,7 +63,7 @@ public class CAState extends State<List<BasicState<String>>> {
 	public String toCSV()
 	{
 		return "[state=["+this.getState().stream()
-				.map(bs->bs.toCSV())
+				.map(BasicState::toCSV)
 				.collect(Collectors.joining())+"]]";
 	}
 

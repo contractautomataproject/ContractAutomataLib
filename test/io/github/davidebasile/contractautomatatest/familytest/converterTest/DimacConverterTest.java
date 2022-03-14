@@ -2,6 +2,7 @@ package io.github.davidebasile.contractautomatatest.familytest.converterTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +33,6 @@ public class DimacConverterTest {
 	public void testImport() throws Exception
 	{
 		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
-
-//		System.out.println(prod);
-		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 //		Set<Feature> actions = aut.getUnsignedActions().stream()
@@ -48,7 +46,7 @@ public class DimacConverterTest {
 		
 		
 		FMCA fmca_two = new FMCA(aut, ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
-		assertTrue(fmca.getFamily().equals(fmca_two.getFamily()));
+		assertEquals(fmca.getFamily(), fmca_two.getFamily());
 	}
 	
 	@Test
@@ -59,9 +57,7 @@ public class DimacConverterTest {
 		PartialProductGenerator pg = new PartialProductGenerator();
 		Family f2 = new Family(pg.apply(prodall));
 		Set<Product> max = f2.getMaximalProducts();
-		
-		
-		assertTrue(prod.equals(max));
+		assertEquals(prod,max);
 	
 	}
 	

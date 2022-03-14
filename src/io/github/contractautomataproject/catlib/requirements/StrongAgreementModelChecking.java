@@ -18,9 +18,9 @@ public class StrongAgreementModelChecking<T extends Label<List<String>>> impleme
 	@Override
 	public boolean test(T l) {
 		//only transitions where both aut and prop moves together are allowed
-		return l.getAction().get(l.getRank()-1).equals(CALabel.idle)||
+		return l.getAction().get(l.getRank()-1).equals(CALabel.IDLE)||
 		IntStream.range(0, l.getRank()-1)
-		.allMatch(i->l.getAction().get(i).equals(CALabel.idle));	
+		.allMatch(i->l.getAction().get(i).equals(CALabel.IDLE));	
 	} 
 
 }

@@ -18,7 +18,7 @@ public class AgreementModelChecking<T extends Label<List<String>>> implements Pr
 	@Override
 	public boolean test(T l) {
 		return IntStream.range(0, l.getRank()-1)
-		.allMatch(i->l.getAction().get(i).equals(CALabel.idle));	
+		.allMatch(i->l.getAction().get(i).equals(CALabel.IDLE));	
 	} 
 
 }

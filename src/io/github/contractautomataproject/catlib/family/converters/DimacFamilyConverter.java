@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
@@ -55,7 +55,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 		Reader reader = new DimacsReader(mi);
 		
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,"UTF-8"),true);)
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,StandardCharsets.UTF_8),true);)
 		{
 
 			IProblem problem =
@@ -72,7 +72,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 				//			System.out.println(baos.toString());
 			}
 			if (unsat) // do something for unsat case
-				return new HashSet<Product>();
+				return new HashSet<>();
 
 			return Arrays.stream(baos.toString("UTF-8").split(System.lineSeparator()))
 					.map(s->Arrays.stream(s.split(" "))
@@ -90,7 +90,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 
 	private Map<Integer,String> readFeatureStrings(String filename) throws IOException
 	{
-		return Files.readAllLines(Paths.get(filename), Charset.forName("ISO-8859-1"))
+		return Files.readAllLines(Paths.get(filename), StandardCharsets.UTF_8)
 				.stream()
 				.filter(s->s.startsWith("c")) //comment
 				.map(s->s.split(" "))

@@ -15,8 +15,8 @@ public class CMLabel extends CALabel {
 
 	private final String partner;	
 
-	public static final String id_separator = "_";
-	public static final String action_separator = "@";
+	public static final String ID_SEPARATOR = "_";
+	public static final String ACTION_SEPARATOR = "@";
 
 
 	/**
@@ -26,8 +26,8 @@ public class CMLabel extends CALabel {
 	 * 		  where either sender==this.id and action is an offer or receiver==this.id and action is a request. 
 	 */
 	public CMLabel(String lab) {
-		super(1,0,lab.split(action_separator)[1]);
-		String[] p = lab.split(action_separator)[0].split(id_separator);
+		super(1,0,lab.split(ACTION_SEPARATOR)[1]);
+		String[] p = lab.split(ACTION_SEPARATOR)[0].split(ID_SEPARATOR);
 		if (p.length!=2)
 			throw new IllegalArgumentException();
 
@@ -49,7 +49,7 @@ public class CMLabel extends CALabel {
 	 */
 	public CMLabel(String sender, String receiver, String action)
 	{
-		this(sender+id_separator+receiver+action_separator+action);
+		this(sender+ID_SEPARATOR+receiver+ACTION_SEPARATOR+action);
 
 	}
 
@@ -104,23 +104,21 @@ public class CMLabel extends CALabel {
 	@Override
 	public String toString() {
 		if (this.isOffer())
-			return "["+this.id+id_separator+this.partner+action_separator+super.getTheAction()+"]";
+			return "["+this.id+ID_SEPARATOR+this.partner+ACTION_SEPARATOR+super.getPrincipalAction()+"]";
 		else
-			return "["+this.partner+id_separator+this.id+action_separator+this.getTheAction()+"]";
+			return "["+this.partner+ID_SEPARATOR+this.id+ACTION_SEPARATOR+this.getPrincipalAction()+"]";
 	}
-
-//	//currently not supported
-//	@Override
-//	public CMLabel getCopy() {
-//		throw new IllegalArgumentException();
-//	}
-
 
 }
 
 
 
 
+////currently not supported
+//@Override
+//public CMLabel getCopy() {
+//	throw new IllegalArgumentException();
+//}
 
 
 

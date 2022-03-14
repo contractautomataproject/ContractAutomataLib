@@ -27,10 +27,10 @@ public class Product {
 		if (required==null||forbidden==null)
 			throw new IllegalArgumentException();
 		if (required.parallelStream()
-				.anyMatch(f->forbidden.contains(f))
+				.anyMatch(forbidden::contains)
 				||
 				forbidden.parallelStream()
-				.anyMatch(f->required.contains(f)))
+				.anyMatch(required::contains))
 			throw new IllegalArgumentException("A feature is both required and forbidden");
 
 		this.required= new HashSet<>(required);
@@ -44,8 +44,8 @@ public class Product {
 	 */
 	public Product(String[] r, String[] f)
 	{
-		this(Arrays.stream(r).map(s->new Feature(s)).collect(Collectors.toSet()),
-				Arrays.stream(f).map(s->new Feature(s)).collect(Collectors.toSet()));
+		this(Arrays.stream(r).map(Feature::new).collect(Collectors.toSet()),
+				Arrays.stream(f).map(Feature::new).collect(Collectors.toSet()));
 	}
 
 	public Set<Feature> getRequired()
@@ -62,39 +62,6 @@ public class Product {
 	{
 		return required.size()+forbidden.size();
 	}
-
-
-//	/**
-//	 * check if all forbidden features of p are contained 
-//	 * @param p
-//	 * @return
-//	 */
-//	public boolean containsAllForbiddenFeatures(Product p)
-//	{
-//		return this.forbidden.containsAll(p.getForbidden());
-//	}
-//
-//	/**
-//	 * check if all required features of p are contained 
-//	 * @param p
-//	 * @return
-//	 */
-//	public boolean containsAllRequiredFeatures(Product p)
-//	{
-//		return this.required.containsAll(p.getRequired());
-//	}
-//
-//	/**
-//	 * 
-//	 * @param f
-//	 * @return  true if feature f is contained (either required or forbidden)
-//	 */
-//	public boolean containFeature(Feature f)
-//	{
-//		Product rp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>());
-//		Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
-//		return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
-//	}
 
 	/**
 	 * 
@@ -119,10 +86,10 @@ public class Product {
 	public Product retainFeatures(Set<Feature> sf)
 	{
 		return new Product(this.required.stream()
-				.filter(f->sf.contains(f))
+				.filter(sf::contains)
 				.collect(Collectors.toSet()),
 				this.forbidden.stream()
-				.filter(f->sf.contains(f))
+				.filter(sf::contains)
 				.collect(Collectors.toSet()));
 	}
 	
@@ -138,7 +105,7 @@ public class Product {
 				.collect(Collectors.toSet());
 		return required.stream()
 				.map(Feature::getName)
-				.allMatch(s->act.contains(s));
+				.allMatch(act::contains);
 	}
 
 	/**
@@ -161,11 +128,6 @@ public class Product {
 		return this.getForbidden().contains(f);
 	}
 
-	//	private boolean isRequired(ModalTransition<List<State<String>>,List<String>,CAState,CALabel> t)
-	//	{
-	//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
-	//	}
-
 	public boolean isValid(ModalAutomaton<CALabel> aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
@@ -187,10 +149,10 @@ public class Product {
 	public String toStringFile(int id)
 	{
 		String req=required.stream()
-				.map(f->f.getName())
+				.map(Feature::getName)
 				.collect(Collectors.joining(","));
 		String forb=forbidden.stream()
-				.map(f->f.getName())
+				.map(Feature::getName)
 				.collect(Collectors.joining(","));
 		return "p"+id+": R={"+req+",} F={"+forb+",}";
 	}
@@ -222,6 +184,43 @@ public class Product {
 
 //END OF CLASS
 
+
+
+//	private boolean isRequired(ModalTransition<List<State<String>>,List<String>,CAState,CALabel> t)
+//	{
+//		return (FMCAUtils.getIndex(this.getRequired(),t.getLabel().getUnsignedAction())>=0);		
+//	}
+///**
+//* check if all forbidden features of p are contained 
+//* @param p
+//* @return
+//*/
+//public boolean containsAllForbiddenFeatures(Product p)
+//{
+//	return this.forbidden.containsAll(p.getForbidden());
+//}
+//
+///**
+//* check if all required features of p are contained 
+//* @param p
+//* @return
+//*/
+//public boolean containsAllRequiredFeatures(Product p)
+//{
+//	return this.required.containsAll(p.getRequired());
+//}
+//
+///**
+//* 
+//* @param f
+//* @return  true if feature f is contained (either required or forbidden)
+//*/
+//public boolean containFeature(Feature f)
+//{
+//	Product rp = new Product(new HashSet<Feature>(Arrays.asList(f)),new HashSet<Feature>());
+//	Product fp = new Product(new HashSet<Feature>(),new HashSet<Feature>(Arrays.asList(f)));
+//	return (this.containsAllRequiredFeatures(rp)||this.containsAllForbiddenFeatures(fp));
+//}
 
 //	@Override
 //	public Product clone()

@@ -1,6 +1,6 @@
 package io.github.davidebasile.contractautomatatest.operatorsTest;
 
-import static io.github.davidebasile.contractautomatatest.MSCATest.checkTransitions;
+import static io.github.davidebasile.contractautomatatest.MSCATest.autEquals;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import javax.xml.transform.TransformerException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
@@ -53,7 +54,7 @@ public class ChoreographyTest {
 		//			do {
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
 		check = tests.stream()
-				.anyMatch(a->checkTransitions(cor,a));
+				.anyMatch(a->autEquals(cor,a));
 		//				corsave=cor;
 
 		//			} while (check);
@@ -75,7 +76,7 @@ public class ChoreographyTest {
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),choice).apply(aut);
 	
 
-		assertTrue(checkTransitions(cor,test));
+		assertTrue(autEquals(cor,test));
 	}
 
 	@Test
@@ -83,7 +84,7 @@ public class ChoreographyTest {
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_chor_controllablelazyoffer.data");
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Chor_(test_chor_controllablelazyoffer).data");
-		assertEquals(checkTransitions(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut),test),true);
+		assertTrue(autEquals(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut),test));
 	}
 
 
@@ -91,21 +92,22 @@ public class ChoreographyTest {
 	public void chorTest_empty() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_lazy_empty_cor.data");
-		assertEquals(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut),null);
+		Assert.assertNull(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut));
 	}
 
 	@Test
 	public void chorTest_urgent_empty() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_chor_urgentoffer.data");
-		assertEquals(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut),null);
+		Assert.assertNull( new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut));
 	}
 
 	@Test
 	public void chor_lazy_exception() throws Exception
 	{
 		ModalAutomaton<CALabel> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-		assertThatThrownBy(() -> new ChoreographySynthesisOperator(new StrongAgreement()).apply(orc))
+		ChoreographySynthesisOperator cso = new ChoreographySynthesisOperator(new StrongAgreement());
+		assertThatThrownBy(() -> cso.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 
@@ -115,7 +117,7 @@ public class ChoreographyTest {
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(t,aut.getTransition(), 
 						new HashSet<CAState>()));
-		assertEquals(bc,false);	
+		Assert.assertFalse(bc);	
 	}
 
 	@Test
@@ -124,23 +126,20 @@ public class ChoreographyTest {
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(t,aut.getTransition(), 
 						new HashSet<CAState>()));
-		assertEquals(bc,false);	
+		Assert.assertFalse(bc);	
 	}
 
 
 	@Test
 	public void branchingCondition() throws NumberFormatException, IOException {
-
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"violatingbranchingcondition.data");
-
 		final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trf = aut.getTransition();
 		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> violatingBC = aut.getTransition().stream()
 				.filter(x->!new ChoreographySynthesisOperator(new StrongAgreement())
 						.satisfiesBranchingCondition(x,trf, new HashSet<CAState>()))
 				.collect(Collectors.toSet());
 
-
-		assertEquals(violatingBC.size(),6);
+		assertEquals(6,violatingBC.size());
 	}
 
 
@@ -154,7 +153,7 @@ public class ChoreographyTest {
 	//				(x,t,bad) -> bad.contains(x.getTarget()) && x.isUncontrollableChoreography(t, bad))
 	//				.apply(aut);
 	//
-	//		assertEquals(cor,null);
+	//		Assert.assertNull(cor);
 	//	}
 
 

@@ -22,8 +22,8 @@ import io.github.contractautomataproject.catlib.transition.Transition;
  * @author Davide Basile
  *
  */
-public class SynthesisOperator<CS,CL,S extends State<CS>,
-L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS,CL,S,T>> implements UnaryOperator<A>{
+public class SynthesisOperator<S1,L1,S extends State<S1>,
+L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1,L1,S,T>> implements UnaryOperator<A>{
 
 	private Map<S,Boolean> reachable;
 	private Map<S,Boolean> successful;
@@ -32,6 +32,13 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 	private final Predicate<L> req;
 	private final Function<Set<T>,A> createAut;
 
+	private class Pair{
+		Set<T> tr; 
+		Set<S> s;
+		public Pair(Set<T> tr, Set<S> s) {
+			this.tr = tr; this.s = s;
+		}
+	}
 	/**
 	 * 
 	 * @param pruningPredicate  the pruning predicate 
@@ -80,13 +87,6 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 	@Override
 	public A apply(A aut) {
 		{
-			class Pair{
-				Set<T> tr; Set<S> s;
-				public Pair(Set<T> tr, Set<S> s) {
-					this.tr = tr; this.s = s;
-				}
-			}
-
 			if (aut==null)
 				throw new IllegalArgumentException();
 
@@ -114,7 +114,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 					.reduce((first,second)->new Pair(second.tr,second.s))
 					.orElse(seed);
 
-			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.size()==0)
+			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.isEmpty())
 				return null;
 
 			//remove dangling transitions
@@ -133,7 +133,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 	{
 
 		//all states' flags are reset
-		this.reachable=states.parallelStream()   //this.getStates().forEach(s->{s.setReachable(false);	s.setSuccessful(false);});
+		this.reachable=states.parallelStream() 
 				.collect(Collectors.toMap(x->x, x->false));
 		this.successful=states.parallelStream()
 				.collect(Collectors.toMap(x->x, x->false));
@@ -143,21 +143,21 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 
 		//set successful
 		states.forEach(x-> {
-			if (x.isFinalstate()&&this.reachable.get(x))//x.isReachable())
+			if (x.isFinalstate()&& Boolean.TRUE.equals(this.reachable.get(x)))
 				backwardVisit(tr,x);});  
 
 		return states.parallelStream()
-				.filter(x->!(reachable.get(x)&&this.successful.get(x)))  //!(x.isReachable()&&x.isSuccessful()))
+				.filter(x->!(reachable.get(x)&&this.successful.get(x)))
 				.collect(Collectors.toSet());
 	}
 
 	private void forwardVisit(Set<T> tr, S currentstate)
 	{ 
-		this.reachable.put(currentstate, true);  //currentstate.setReachable(true);
+		this.reachable.put(currentstate, true);
 		tr.parallelStream()
 		.filter(x->x.getSource().equals(currentstate)) //forward star
 		.forEach(x->{
-			if (!this.reachable.get(x.getTarget()))//!x.getTarget().isReachable())
+			if (Boolean.FALSE.equals(this.reachable.get(x.getTarget())))
 				forwardVisit(tr,x.getTarget());
 		});
 	}
@@ -166,16 +166,17 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 
 	private void backwardVisit(Set<T> tr, S currentstate)
 	{ 
-		this.successful.put(currentstate, true); //currentstate.setSuccessful(true);
+		this.successful.put(currentstate, true);
 
 		tr.stream()
 		.filter(x->x.getTarget().equals(currentstate))// backward star
 		.forEach(x->{
-			if (!this.successful.get(x.getSource()))//!x.getSource().isSuccessful())
+			if (Boolean.FALSE.equals(this.successful.get(x.getSource())))
 				backwardVisit(tr, x.getSource());
 		});
 	}
 }
+
 
 
 //
@@ -212,38 +213,5 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 //
 //return createAut.apply(tr);
 
-
-
-///**
-// * 
-// * @param state
-// * @return true if the successful value of state has changed
-// */
-//private boolean forwardNeighbourVisit(S state)
-//{	
-//	boolean b = state.isSuccessful();
-//	state.setSuccessful(Arrays.stream(this.getTransitionsWithSource(state))
-//			.map(FMCATransition::getTarget)
-//			.anyMatch(S::isSuccessful));
-//
-//	return b!=state.isSuccessful();
-//	
-//}
-//
-///**
-// * 
-// * @param state
-// * @return true if the reachable value of state has changed
-// */
-//private boolean backwardNeighbourVisit(S state)
-//{	
-//	boolean b = state.isReachable();
-//	
-//	state.setReachable(Arrays.stream(this.getTransitionsWithTarget(state))
-//			.map(FMCATransition::getSource)
-//			.anyMatch(S::isReachable));
-//	return b!=state.isReachable();
-//	
-//}	
 
 

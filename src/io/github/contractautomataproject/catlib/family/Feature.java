@@ -17,7 +17,7 @@ public class Feature {
 			throw new IllegalArgumentException();
 		
 		//features are unsigned actions of CALabel
-		this.name = (name.startsWith(CALabel.offer)||name.startsWith(CALabel.request))?
+		this.name = (name.startsWith(CALabel.OFFER)||name.startsWith(CALabel.REQUEST))?
 				new CALabel(1,0,name).getUnsignedAction()
 				:name;
 	}

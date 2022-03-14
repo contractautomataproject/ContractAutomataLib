@@ -1,11 +1,12 @@
 package io.github.davidebasile.contractautomatatest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
@@ -16,60 +17,60 @@ public class CALabelTest {
 	@Test
 	public void constructor_getaction_Test() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assertEquals(calab.getTheAction().startsWith(CALabel.offer),true);
+		assertTrue(calab.getPrincipalAction().startsWith(CALabel.OFFER));
 	}
 
 	@Test
 	public void constructorTest() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
 		CALabel calab= new CALabel(lab);
 		
-		assertEquals(calab.getTheAction().startsWith(CALabel.offer),true);
+		assertTrue(calab.getPrincipalAction().startsWith(CALabel.OFFER));
 	}
 
 	@Test
 	public void equalsSameTrue() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
 		CALabel calab= new CALabel(lab);
-		assertEquals(calab.equals(calab),true);
+		assertTrue(calab.equals(calab));
 	}
 	
 	@Test
 	public void equalsTwoInstancesTrue() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-		assertEquals( new CALabel(lab).equals(new CALabel(lab)),true);
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
+		assertTrue(new CALabel(lab).equals(new CALabel(lab)));
 	}
 	
 	@Test
 	public void equalsNullFalse() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-		assertEquals(new CALabel(lab).equals(null),false);
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
+		Assert.assertNotNull(new CALabel(lab));
 	}
 	
 	@Test
 	public void equalsFalse() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.idle);
-		lab.add(CALabel.offer+"a");
-		lab.add(CALabel.request+"a");
-	assertEquals(new CALabel(lab).equals(new CALabel(1,0,"!a")),false);
+		lab.add(CALabel.IDLE);
+		lab.add(CALabel.OFFER+"a");
+		lab.add(CALabel.REQUEST+"a");
+		Assert.assertNotEquals(new CALabel(lab),new CALabel(1,0,"!a"));
 	}
 
 	//********************** testing exceptions *********************
@@ -88,7 +89,8 @@ public class CALabelTest {
 //	
 	@Test
 	public void constructorTest3_Exception() {
-		assertThatThrownBy(() -> new CALabel(new CALabel(1,0,"!a"),0,-2))
+		CALabel ca = new CALabel(1,0,"!a");
+		assertThatThrownBy(() -> new CALabel(ca,0,-2))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
@@ -133,7 +135,8 @@ public class CALabelTest {
 
 	@Test
 	public void constructorTest_Exception_emptyLabel() {
-		assertThatThrownBy(() -> new CALabel(new ArrayList<String>()))
+		List<String> arg = new ArrayList<String>();
+		assertThatThrownBy(() -> new CALabel(arg))
 	    .isInstanceOf(IllegalArgumentException.class);
 	//    .hasMessageContaining("Empty label");
 	}
@@ -159,7 +162,7 @@ public class CALabelTest {
 	@Test
 	public void constructorTest_Exception_notWellFormedIdleLabel() {
 		List<String> l = new ArrayList<String>();
-		l.add(CALabel.idle);
+		l.add(CALabel.IDLE);
 		assertThatThrownBy(() -> new CALabel(l))
 	    .isInstanceOf(IllegalArgumentException.class);
 	   // .hasMessageContaining("The label is not well-formed");
@@ -187,14 +190,16 @@ public class CALabelTest {
 	
 	@Test
 	public void getOffererTest_Exception() {
-		assertThatThrownBy(() -> new CALabel(1,0,"?a").getOfferer())
+		CALabel cl = new CALabel(1,0,"?a");
+		assertThatThrownBy(() -> cl.getOfferer())
 	    .isInstanceOf(UnsupportedOperationException.class)
 	    .hasMessageContaining("No offerer in a request action");
 	}
 	
 	@Test
 	public void getRequesterTest_Exception() {
-		assertThatThrownBy(() -> new CALabel(1,0,"!a").getRequester())
+		CALabel cl = new CALabel(1,0,"!a");
+		assertThatThrownBy(() -> cl.getRequester())
 	    .isInstanceOf(UnsupportedOperationException.class)
 	    .hasMessageContaining("No requester in an offer action");
 	}

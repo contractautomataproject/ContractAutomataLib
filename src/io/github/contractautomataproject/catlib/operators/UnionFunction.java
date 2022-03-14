@@ -35,7 +35,7 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 			throw new IllegalArgumentException();
 		
 		if (aut.parallelStream()
-				.anyMatch(x->Objects.isNull(x)))
+				.anyMatch(Objects::isNull))
 			throw new IllegalArgumentException();
 
 		int rank=aut.get(0).getRank(); 
@@ -60,12 +60,12 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 		
 		//storing initial states of aut
 		List<CAState> initialStates = aut.stream()
-				.map(s->s.getInitial())
+				.map(ModalAutomaton::getInitial)
 				.collect(Collectors.toList());
 		
 		//relabeling, removing initial states
 		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,s->s.isFinalstate())
+		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalstate)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
@@ -93,11 +93,11 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 //		.forEach(x->x.setInitial(false));
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->relabeled.get(i))
+				.mapToObj(relabeled::get)
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 
-		return new ModalAutomaton<CALabel>(uniontr);
+		return new ModalAutomaton<>(uniontr);
 	}
 
 }

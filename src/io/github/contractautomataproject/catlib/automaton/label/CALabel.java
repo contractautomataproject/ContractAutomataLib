@@ -23,39 +23,39 @@ public class CALabel extends Label<List<String>> {
 	 * the rank of the label (i.e. number of principals)
 	 */
 	private final /*@ spec_public @*/  Integer rank;
-	
+
 	/**
 	 * the index of the offerer in the label or -1
 	 */
 	private final /*@ spec_public @*/ Integer offerer;
-	
+
 	/**
 	 * the index of the requester in the label or -1
 	 */
 	private final /*@ spec_public @*/ Integer requester;
-	
+
 	//in case of match, the action is always the offer
 
-	final public static String idle="-";
-	final public static String offer="!";
-	final public static String request="?";
-	
+	public final static String IDLE="-";
+	public final static String OFFER="!";
+	public final static String REQUEST="?";
+
 	/**
 	 * the actiontype is used for redundant checks
 	 *
 	 */
 	enum ActionType{
-		REQUEST,OFFER,MATCH
+		REQUEST_TYPE,OFFER_TYPE,MATCH_TYPE
 	}
-	
+
 	private final ActionType actiontype;
 
 
 	/*@ invariant rank!=null && rank>0; @*/
 	/*@ public invariant action!=null && action.length()>1 && 
 			(action.startsWith(offer) || action.startsWith(request)); @*/
-	
-	
+
+
 	/*
 	 * @ public normal_behavior
 	 * @ 	requires rank!=null && principal !=null && action != null;
@@ -74,21 +74,21 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public CALabel(Integer rank, Integer principal, String action) {
 		super(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal)?action:idle)
+				.mapToObj(i->(i==principal)?action:IDLE)
 				.collect(Collectors.toList()));
 		if (principal==null||action==null||rank<=0)
 			throw new IllegalArgumentException(rank + " " + principal);
 
-		if (action.startsWith(offer))
+		if (action.startsWith(OFFER))
 		{
 			this.offerer=principal;
-			this.actiontype=CALabel.ActionType.OFFER;
+			this.actiontype=CALabel.ActionType.OFFER_TYPE;
 			this.requester=-1;
 		}
-		else if (action.startsWith(request))
+		else if (action.startsWith(REQUEST))
 		{
 			this.requester=principal;
-			this.actiontype=CALabel.ActionType.REQUEST;
+			this.actiontype=CALabel.ActionType.REQUEST_TYPE;
 			this.offerer=-1;
 		}
 		else
@@ -96,8 +96,8 @@ public class CALabel extends Label<List<String>> {
 
 		this.rank = rank;
 	}
-	
-	
+
+
 	/**
 	 * Constructor for a match transition
 	 * 
@@ -109,16 +109,16 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
 		super(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:idle)
+				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:IDLE)
 				.collect(Collectors.toList()));
 		if (principal1==null||principal2==null||action2==null||rank<=0||action2.length()<=1)
 			throw new IllegalArgumentException("Null argument");
 
-		if ((action1.startsWith(offer)&&!action2.startsWith(request))||
-				(action2.startsWith(offer)&&!action1.startsWith(request)))
+		if ((action1.startsWith(OFFER)&&!action2.startsWith(REQUEST))||
+				(action2.startsWith(OFFER)&&!action1.startsWith(REQUEST)))
 			throw new IllegalArgumentException("The actions must be an offer and a request");
 
-		if (action1.startsWith(offer))
+		if (action1.startsWith(OFFER))
 		{
 			this.offerer=principal1;
 			this.requester=principal2;
@@ -129,7 +129,7 @@ public class CALabel extends Label<List<String>> {
 			this.requester=principal1;
 		}
 		this.rank = rank;
-		this.actiontype=CALabel.ActionType.MATCH;
+		this.actiontype=CALabel.ActionType.MATCH_TYPE;
 	}
 
 	/*
@@ -162,7 +162,7 @@ public class CALabel extends Label<List<String>> {
     			  	&& offerer==i && requester==j && action.startsWith(offer));
     	@ 	ensures (offerer!=-1 && requester !=-1) ==> action.startsWith(offer);  
     	@ 	ensures this.rank>0;		
-  	*/
+	 */
 	/**
 	 * Constructor using a list of strings. Each position in the list is an index  
 	 * in the CALabel and each string is the action of the principal at that position.
@@ -172,46 +172,38 @@ public class CALabel extends Label<List<String>> {
 	{		
 		super(label);
 
-		label.forEach(
-				x -> {if (x==null) throw new IllegalArgumentException("Label contains null references");}
-				);
+		this.rank = label.size();
+
+		if (label.stream()
+				.anyMatch(Objects::isNull))
+			throw new IllegalArgumentException("Label contains null references");
 
 		if (label.isEmpty())
 			throw new IllegalArgumentException();
-		
-		int offtemp=-1,requtemp=-1;//offerer and requester are final
-		for (int i=0;i<label.size();i++)
-		{
-			if (label.get(i).startsWith(offer)) 
-			{
-				if (offtemp!=-1)
-					throw new IllegalArgumentException("The label is not well-formed");
-				offtemp=i; 
-			}
-			else if (label.get(i).startsWith(request))
-			{
-				if (requtemp!=-1)
-					throw new IllegalArgumentException("The label is not well-formed");
-				requtemp=i; 
-			}
-			else if (!label.get(i).equals(idle)) 
-				throw new IllegalArgumentException("The label is not well-formed "+label.get(i));
-		}
-		this.offerer=offtemp;
-		this.requester=requtemp;
-		
+
+		 if (label.stream().anyMatch(l->!l.startsWith(OFFER)&&!l.startsWith(REQUEST)&&!l.equals(IDLE)) ||
+				 label.stream().allMatch(l->l.equals(IDLE)) ||
+				 label.stream().filter(l->l.startsWith(OFFER)).count()>1 || 
+				 label.stream().filter(l->l.startsWith(REQUEST)).count()>1)
+			 throw new IllegalArgumentException("The label is not well-formed");
+		 
+		this.offerer= IntStream.range(0, rank)
+				.filter(i->label.get(i).startsWith(OFFER))
+				.findAny().orElse(-1);
+		this.requester=IntStream.range(0, rank)
+				.filter(i->label.get(i).startsWith(REQUEST))
+				.findAny().orElse(-1);
+
 		if (offerer!=-1&&requester!=-1)
-			this.actiontype=CALabel.ActionType.MATCH;
+			this.actiontype=CALabel.ActionType.MATCH_TYPE;
 		else if (offerer!=-1)
-			this.actiontype=CALabel.ActionType.OFFER;
+			this.actiontype=CALabel.ActionType.OFFER_TYPE;
 		else if (requester!=-1)
-			this.actiontype=CALabel.ActionType.REQUEST;
+			this.actiontype=CALabel.ActionType.REQUEST_TYPE;
 		else
 			throw new IllegalArgumentException("The action is not a request nor an offer "+label);
-
-		this.rank = label.size();
 	}
-	
+
 	/**
 	 * Construct a CALabel by shifting of some positions the index of principals moving in the label
 	 * @param lab the object label to shift
@@ -225,8 +217,8 @@ public class CALabel extends Label<List<String>> {
 		this.requester=(lab.requester==-1)?-1:lab.requester+shift;
 		this.actiontype=lab.actiontype;
 	}
-	
-	
+
+
 	private static List<String> shift(CALabel lab, Integer rank, Integer shift){
 		if (rank==null||rank<=0||lab==null||shift==null||shift<0 || 
 				lab.offerer+shift>rank||lab.requester+shift>rank)
@@ -234,10 +226,10 @@ public class CALabel extends Label<List<String>> {
 					+ "or out of rank");
 
 		List<String> l = new ArrayList<>(rank);
-		l.addAll(Stream.generate(()->CALabel.idle).limit(shift).collect(Collectors.toList()));
+		l.addAll(Stream.generate(()->CALabel.IDLE).limit(shift).collect(Collectors.toList()));
 		l.addAll(lab.getAction());
 		if (rank-l.size()>0)
-			l.addAll(Stream.generate(()->CALabel.idle).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
+			l.addAll(Stream.generate(()->CALabel.IDLE).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 		return l;
 	}
 
@@ -246,8 +238,9 @@ public class CALabel extends Label<List<String>> {
 	  @     requires this.rank != null; 
 	  @     ensures \result == this.rank;
 	  @*/
+	@Override
 	public Integer getRank() {
-			return rank;
+		return rank;
 	}
 
 	/*
@@ -302,16 +295,16 @@ public class CALabel extends Label<List<String>> {
 	/**
 	 * @return in case the calabel is a request it return the requests action, in case of offer or match returns the offer action
 	 */
-	public String getTheAction() {
+	public String getPrincipalAction() {
 		String act = this.getAction().stream()
-						.filter(s->!s.equals(CALabel.idle))
-						.findAny().orElseThrow(IllegalArgumentException::new);
-		if (this.actiontype==ActionType.REQUEST)
-			return CALabel.request+act.substring(1);
+				.filter(s->!s.equals(CALabel.IDLE))
+				.findAny().orElseThrow(IllegalArgumentException::new);
+		if (this.actiontype==ActionType.REQUEST_TYPE)
+			return CALabel.REQUEST+act.substring(1);
 		else
-			return CALabel.offer+act.substring(1);
+			return CALabel.OFFER+act.substring(1);
 	}
-	
+
 
 
 	/*	  
@@ -328,16 +321,16 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public  /*@ pure @*/ String getCoAction()
 	{	
-		String action = this.getTheAction();
-		if (action.startsWith(offer))
-			return request+action.substring(1,action.length());
+		String action = this.getPrincipalAction();
+		if (action.startsWith(OFFER))
+			return REQUEST+action.substring(1,action.length());
 		else // if (action.startsWith(request))
-			return offer+action.substring(1,action.length());
-//		else
-//			throw new IllegalArgumentException("The label is not an action");
+			return OFFER+action.substring(1,action.length());
+		//		else
+		//			throw new IllegalArgumentException("The label is not an action");
 	}
-	
-	
+
+
 
 	/*
 	 * @ public normal behavior
@@ -346,14 +339,14 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public /*@ pure @*/ boolean isMatch()
 	{
-//		if ((this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer))
-//				&&this.actiontype!=CALabel.ActionType.MATCH)
-//			throw new RuntimeException("The type of the label is not correct");
-		
-		return this.offerer!=-1 && this.requester!=-1 && this.getTheAction().startsWith(offer)
-				&&this.actiontype==CALabel.ActionType.MATCH;
+		//		if ((this.offerer!=-1 && this.requester!=-1 && this.action.startsWith(offer))
+		//				&&this.actiontype!=CALabel.ActionType.MATCH)
+		//			throw new RuntimeException("The type of the label is not correct");
+
+		return this.offerer!=-1 && this.requester!=-1 && this.getPrincipalAction().startsWith(OFFER)
+				&&this.actiontype==CALabel.ActionType.MATCH_TYPE;
 	}
-	
+
 	/*
 	 * @ public normal behavior
 	 * @ 	requires this.action != null;
@@ -361,12 +354,12 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public /*@ pure @*/ boolean isOffer()
 	{
-//		if ( (this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)) 
-//				&& this.actiontype!=CALabel.ActionType.OFFER)
-//			throw new RuntimeException("The type of the label is not correct");
-		
-		return this.offerer!=-1 && this.requester==-1 && this.getTheAction().startsWith(offer)
-				&& this.actiontype==CALabel.ActionType.OFFER;
+		//		if ( (this.offerer!=-1 && this.requester==-1 && this.action.startsWith(offer)) 
+		//				&& this.actiontype!=CALabel.ActionType.OFFER)
+		//			throw new RuntimeException("The type of the label is not correct");
+
+		return this.offerer!=-1 && this.requester==-1 && this.getPrincipalAction().startsWith(OFFER)
+				&& this.actiontype==CALabel.ActionType.OFFER_TYPE;
 	}
 
 	/*
@@ -376,12 +369,12 @@ public class CALabel extends Label<List<String>> {
 	 */
 	public /*@ pure @*/ boolean isRequest()
 	{
-//		if ( (this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)) 
-//				&& this.actiontype!=CALabel.ActionType.REQUEST)
-//			throw new RuntimeException("The type of the label is not correct");
-	
-		return this.offerer==-1 && this.requester!=-1 && this.getTheAction().startsWith(request)
-				&& this.actiontype==CALabel.ActionType.REQUEST;
+		//		if ( (this.offerer==-1 && this.requester!=-1 && this.action.startsWith(request)) 
+		//				&& this.actiontype!=CALabel.ActionType.REQUEST)
+		//			throw new RuntimeException("The type of the label is not correct");
+
+		return this.offerer==-1 && this.requester!=-1 && this.getPrincipalAction().startsWith(REQUEST)
+				&& this.actiontype==CALabel.ActionType.REQUEST_TYPE;
 	}
 
 
@@ -403,7 +396,7 @@ public class CALabel extends Label<List<String>> {
 		else 
 			throw new IllegalArgumentException();
 	}
-	
+
 	/*
 	 * @ public normal_behaviour
 	 * @	requires this.getAction() != null;
@@ -418,17 +411,17 @@ public class CALabel extends Label<List<String>> {
 	{
 
 		String act = this.getAction().stream()
-						.filter(s->!s.equals(CALabel.idle))
-						.findAny().orElseThrow(IllegalArgumentException::new);
+				.filter(s->!s.equals(CALabel.IDLE))
+				.findAny().orElseThrow(IllegalArgumentException::new);
 		return act.substring(1);
 	}
 
-//	private static String getUnsignedAction(String action)
-//	{
-//		return action.substring(1,action.length());
-//	}
+	//	private static String getUnsignedAction(String action)
+	//	{
+	//		return action.substring(1,action.length());
+	//	}
 
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(),offerer.hashCode(),rank.hashCode(),requester.hashCode());
@@ -446,18 +439,18 @@ public class CALabel extends Label<List<String>> {
 	}
 
 
-/*
+	/*
 @ public normal_behaviour
 @     requires this.rank >=0;
 @     requires this.action != null; 
 @		requires this.action.length()>=2;
 @		requires this.action.startsWith(offer) || this.action.startsWith(request);
-*/
+	 */
 	@Override
 	public String toString() {
 		return this.getAction().toString();
 	}
-	
+
 	/**
 	 * 
 	 * @return a string description of the calabel in comma separated values
@@ -467,22 +460,14 @@ public class CALabel extends Label<List<String>> {
 		return "[rank=" + rank + ", offerer=" + offerer + ", requester=" + requester
 				+ ", actiontype=" + actiontype + "]";
 	}
-	
-//	@Override
-//	public CALabel getCopy() {
-//		if (this.isMatch())
-//			return new CALabel(this.getRank(),this.getOfferer(),this.getRequester(),this.getAction());
-//		else 
-//			return new CALabel(this.getRank(),(this.isOffer())?this.getOfferer():this.getRequester(),this.getAction());
-//	}
-	
-//	@Override
-//	public CALabel getCopy() {
-//		if (this.isMatch())
-//			return new CALabel(this.getRank(),this.getOfferer(),this.getRequester(),this.getTheAction(),this.getCoAction());
-//			//TODO check I removed this constructor call return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
-//		else 
-//			return new CALabel(this.getRank(),(this.isOffer())?this.getOfferer():this.getRequester(),this.getTheAction());
-//	}
+
+	//	@Override
+	//	public CALabel getCopy() {
+	//		if (this.isMatch())
+	//			return new CALabel(this.getRank(),this.getOfferer(),this.getRequester(),this.getTheAction(),this.getCoAction());
+	//			//I removed this constructor call return new CALabel(la.getRank(),la.getOfferer(),la.getRequester(),la.getAction());
+	//		else 
+	//			return new CALabel(this.getRank(),(this.isOffer())?this.getOfferer():this.getRequester(),this.getTheAction());
+	//	}
 
 }

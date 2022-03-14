@@ -1,7 +1,7 @@
 package io.github.davidebasile.contractautomatatest.familytest.converterTest;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class ProdFamilyConverterTest {
 		Family fam=new Family(dfc.importProducts(fileName));
 		Set<Product> prod = fam.getProducts();
 		Set<Product> test=dfc.importProducts(fileName);
-		assertTrue(prod.equals(test));
+		assertEquals(prod,test);
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class ProdFamilyConverterTest {
 
 		Set<Product> test = dfc.importProducts(dir +"write_test.prod");
 
-		assertTrue(fam.getProducts().equals(test));
+		assertEquals(fam.getProducts(),test);
 
 	}
 	

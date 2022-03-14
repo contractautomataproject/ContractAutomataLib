@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,7 +24,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,Integer,Function<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, Integer>,ModalAutomaton<CALabel>> {
+public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,Integer,ToIntFunction<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,ModalAutomaton<CALabel>> {
 	BiFunction<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,Integer,CALabel> createLabel;
 
 	/**
@@ -32,11 +33,10 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 	 */
 	public ProjectionFunction(Label<List<String>> lab)
 	{
-		//TODO only principals labels are CM
 		if (lab instanceof CMLabel)
-			this.createLabel = (t,i) -> createLabelCM(t,i);
+			this.createLabel = this::createLabelCM;
 		else
-			this.createLabel = (t,i) -> createLabelCA(t,i);
+			this.createLabel = this::createLabelCA;
 
 	}
 
@@ -50,7 +50,7 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 	 * 
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut, Integer indexprincipal, Function<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, Integer> getNecessaryPrincipal)
+	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut, Integer indexprincipal, ToIntFunction<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> getNecessaryPrincipal)
 	{
 		if ((indexprincipal<0)||(indexprincipal>aut.getRank())) 
 			throw new IllegalArgumentException("Index out of rank");
@@ -71,14 +71,14 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 				.collect(Collectors.toMap(Function.identity(), s->bs2cs.get(s.getState().get(indexprincipal))));
 
 
-		return new ModalAutomaton<CALabel>(aut.getTransition().parallelStream()
+		return new ModalAutomaton<>(aut.getTransition().parallelStream()
 				.filter(t-> t.getLabel().isMatch()
 						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
 								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
 				.map(t-> new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(map2princst.get(t.getSource()),
 						createLabel.apply(t,indexprincipal),
 						map2princst.get(t.getTarget()),
-						(t.isPermitted()||(t.getLabel().isMatch()&&!getNecessaryPrincipal.apply(t).equals(indexprincipal)))
+						(t.isPermitted()||(t.getLabel().isMatch()&&getNecessaryPrincipal.applyAsInt(t)!=indexprincipal))
 						?ModalTransition.Modality.PERMITTED
 								:t.isLazy()?ModalTransition.Modality.LAZY:ModalTransition.Modality.URGENT))
 				.collect(Collectors.toSet()));
@@ -86,8 +86,8 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 
 	private CALabel createLabelCA(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t,Integer indexprincipal) {
 		return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
-				new CALabel(1,0,t.getLabel().getTheAction())
-				:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getTheAction()
+				new CALabel(1,0,t.getLabel().getPrincipalAction())
+				:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getPrincipalAction()
 						:t.getLabel().getCoAction());
 
 	}
@@ -98,7 +98,7 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 		
 		return new CMLabel(t.getLabel().getOfferer()+"",t.getLabel().getRequester()+"",
 				((t.getLabel().getOfferer().equals(indexprincipal))?
-						t.getLabel().getTheAction():t.getLabel().getCoAction()));
+						t.getLabel().getPrincipalAction():t.getLabel().getCoAction()));
 
 	}
 }

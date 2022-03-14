@@ -11,7 +11,7 @@ import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 
-public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> extends Transition<CS,CL,S,L>  {
+public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> extends Transition<S1,L1,S,L>  {
 	
 	/**
 	 * the modality of the transition
@@ -26,7 +26,7 @@ public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> ext
 	{
 		super(source,label,target);
 		if (type==null)
-			throw new RuntimeException("Ill-formed transition");
+			throw new IllegalArgumentException();
 		else		
 			this.mod=type;
 
@@ -102,17 +102,17 @@ public class ModalTransition<CS,CL, S extends State<CS>,L extends Label<CL>> ext
 	 * @return true if the transition is uncontrollable against the parameters
 	 */
 	public boolean isUncontrollable(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr, Set<CAState> badStates,
-			BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<CS,CL,S,L>> controllabilityPred)
+			BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<S1,L1,S,L>> controllabilityPred)
 	{
 		if (this.isUrgent())
 			return true;
-		if (this.isPermitted())//||(this.getLabel().isMatch()&&tr.contains(this))
+		if (this.isPermitted())
 			return false;
-		return !tr.parallelStream()
+		return tr.parallelStream()
 				.filter(t->t.getLabel().isMatch()
 						&& !badStates.contains(t.getSource()))
 				//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
-				.anyMatch(t->controllabilityPred.test(t,this));
+				.noneMatch(t->controllabilityPred.test(t,this));
 	}
 
 }
