@@ -1,13 +1,20 @@
 package io.github.contractautomataproject.catlib.converters;
 
-import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.transition.Transition;
+import java.io.IOException;
 
-public interface AutConverter<CS,CL,S extends BasicState<CS>,T extends Transition<CS,CL,S,? extends Label<CL>>> {
-	public Automaton<CS,CL,S,T> importMSCA(String filename) throws Exception;
-	public void  exportMSCA(String filename, ModalAutomaton<CALabel>  aut) throws Exception;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
+
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+
+/**
+ * The interface used to import/export MSCA
+ * @author Davide Basile
+ *
+ */
+public interface AutConverter<A1 extends Automaton<?,?,?,?>,A2 extends Automaton<?,?,?,?>> {
+	public  A1 importMSCA(String filename) throws IOException, ParserConfigurationException, SAXException;
+	public void  exportMSCA(String filename, A2  aut) throws IOException,ParserConfigurationException, TransformerException;
 }

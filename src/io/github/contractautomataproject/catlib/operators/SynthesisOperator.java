@@ -86,7 +86,7 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 					this.tr = tr; this.s = s;
 				}
 			}
-			
+
 			if (aut==null)
 				throw new IllegalArgumentException();
 
@@ -94,26 +94,26 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 			final Set<S> statesbackup= aut.getStates(); 
 			final S init = aut.getInitial();
 			Pair seed = new Pair(aut.getTransition(), new HashSet<>(getDanglingStates(aut.getTransition(), statesbackup,init)));
-			
-			Pair fixpoint = Stream.iterate(seed, pair-> {
-						Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
-						
-						//next function embedded into hasnext
-						if (pair.tr.removeAll(pre.tr.parallelStream()
-								.filter(x->pruningPred.test(x,pre.tr, pre.s))
-								.collect(Collectors.toSet()))) //Ki
-							pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
 
-						pair.s.addAll(trbackup.parallelStream() 
-								.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
-								.map(Transition::getSource)
-								.collect(Collectors.toSet())); //Ri
-						
-						return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());//hasnext
-					},p->p)
-			.reduce((first,second)->new Pair(second.tr,second.s))
-			.orElse(seed);
-		
+			Pair fixpoint = Stream.iterate(seed, pair-> {
+				Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
+
+				//next function embedded into hasnext
+				if (pair.tr.removeAll(pre.tr.parallelStream()
+						.filter(x->pruningPred.test(x,pre.tr, pre.s))
+						.collect(Collectors.toSet()))) //Ki
+					pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
+
+				pair.s.addAll(trbackup.parallelStream() 
+						.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
+						.map(Transition::getSource)
+						.collect(Collectors.toSet())); //Ri
+
+				return (pre.tr.size()!=pair.tr.size() || pre.s.size() != pair.s.size());//hasnext
+			},p->p)
+					.reduce((first,second)->new Pair(second.tr,second.s))
+					.orElse(seed);
+
 			if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.size()==0)
 				return null;
 
@@ -142,9 +142,9 @@ L extends Label<CL>,T extends ModalTransition<CS,CL,S,L>, A extends Automaton<CS
 		forwardVisit(tr, initial);  
 
 		//set successful
-		states.forEach(
-				x-> {if (x.isFinalstate()&&this.reachable.get(x))//x.isReachable())
-					backwardVisit(tr,x);});  
+		states.forEach(x-> {
+			if (x.isFinalstate()&&this.reachable.get(x))//x.isReachable())
+				backwardVisit(tr,x);});  
 
 		return states.parallelStream()
 				.filter(x->!(reachable.get(x)&&this.successful.get(x)))  //!(x.isReachable()&&x.isSuccessful()))

@@ -31,11 +31,13 @@ import io.github.contractautomataproject.catlib.family.Product;
  */
 public class ProdFamilyConverter implements FamilyConverter {
 
+	private final String emptymsg = "Empty file name";
+	
 	@Override
 	public Set<Product> importProducts(String filename) throws IOException {
 		Path path = FileSystems.getDefault().getPath(filename);	
 		if (path==null)
-			throw new IllegalArgumentException("Empty file name");
+			throw new IllegalArgumentException(emptymsg);
 		File f = new File(path.toString());
 		
 		Charset charset = Charset.forName("ISO-8859-1");
@@ -62,13 +64,13 @@ public class ProdFamilyConverter implements FamilyConverter {
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException{
 		if (filename==null || filename.isEmpty())
-			throw new IllegalArgumentException("Empty file name");
+			throw new IllegalArgumentException(emptymsg);
 
 		String suffix = (filename.endsWith(".prod"))?"":".prod";
 		List<Product> ar = new ArrayList<Product>(fam.getProducts());
 		Path path = FileSystems.getDefault().getPath(filename+suffix);	
 		if (path==null)
-			throw new IllegalArgumentException("Empty file name");
+			throw new IllegalArgumentException(emptymsg);
 		
 		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), "UTF-8")))
 		{

@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.operators.MpcSynthesisOperator;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
@@ -18,7 +18,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class MpcSynthesisTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	@Test
 	public void mpcEmptyTestLMCS2020() throws Exception

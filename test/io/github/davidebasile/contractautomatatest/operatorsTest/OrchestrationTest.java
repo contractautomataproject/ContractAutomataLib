@@ -5,35 +5,43 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class OrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-//	private final MSCAConverter bmc = new MxeConverter();
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		ModalAutomaton<CALabel> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test),true);
+		assertTrue(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}	
+	
+	@Test
+	public void orcTestSCP2020_BusinessClientxHotel_transitions() throws IOException {
+		ModalAutomaton<CALabel> comp = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
+		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
+		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_BusinessClientxHotel.data");
+		assertTrue(MSCATest.checkTransitions(orc,test));
+	}
 	
 	@Test
 	public void orcTestLMCS2020Transitions() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
-		assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test),true);
+		assertTrue(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}
 
 //	@Test

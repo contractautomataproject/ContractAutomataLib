@@ -16,7 +16,6 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
 import io.github.contractautomataproject.catlib.operators.ChoreographySynthesisOperator;
 import io.github.contractautomataproject.catlib.operators.ModelCheckingFunction;
 import io.github.contractautomataproject.catlib.operators.MpcSynthesisOperator;
@@ -29,8 +28,8 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ModelCheckingTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	private final MSCADataConverter bdc = new MSCADataConverter();
-	private final AutDataConverter adc = new AutDataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
+	private final AutDataConverter<Label<List<String>>> adc = new AutDataConverter<>(Label::new);
 	private Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop ;
 	
 	@Before

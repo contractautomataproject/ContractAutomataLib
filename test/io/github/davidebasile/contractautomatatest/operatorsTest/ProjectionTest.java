@@ -17,7 +17,7 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.operators.ChoreographySynthesisOperator;
 import io.github.contractautomataproject.catlib.operators.MSCACompositionFunction;
 import io.github.contractautomataproject.catlib.operators.ProjectionFunction;
@@ -26,8 +26,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 
 public class ProjectionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	//private final MSCAConverter bmc = new MxeConverter();
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	
 	@Test
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
@@ -83,9 +82,12 @@ public class ProjectionTest {
 	
 	@Test
 	public void projectOnMachineAndImport() throws Exception {
+		AutDataConverter<CMLabel> cmdc = new AutDataConverter<>(CMLabel::new);
+		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		ModalAutomaton<CALabel> cm = new ProjectionFunction(new CMLabel("1","2","!dummy")).apply(aut,0, t->t.getLabel().getOfferer());
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"cm_concur21.data");
+		
+		ModalAutomaton<CMLabel> test = cmdc.importMSCA(dir+"cm_concur21.data");
 		
 		assertTrue(MSCATest.checkTransitions(cm, test));
 

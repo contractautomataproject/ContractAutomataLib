@@ -18,9 +18,12 @@ import java.util.stream.Collectors;
 
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.reader.DimacsReader;
+import org.sat4j.reader.ParseFormatException;
 import org.sat4j.reader.Reader;
+import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
+import org.sat4j.specs.TimeoutException;
 import org.sat4j.tools.ModelIterator;
 
 import io.github.contractautomataproject.catlib.family.Family;
@@ -43,7 +46,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 	}
 
 	@Override
-	public Set<Product> importProducts(String filename) throws Exception {
+	public Set<Product> importProducts(String filename) throws IOException, ParseFormatException, ContradictionException, TimeoutException {
 		//http://www.sat4j.org/r15/doc/
 		//https://sat4j.gitbooks.io/case-studies/content/using-sat4j-as-a-java-library.html
 		ISolver solver = SolverFactory.newDefault();

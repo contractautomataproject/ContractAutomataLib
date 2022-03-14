@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.family.FMCA;
 import io.github.contractautomataproject.catlib.family.Family;
 import io.github.contractautomataproject.catlib.family.Product;
@@ -33,7 +33,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
  *
  */
 public class FMCATest {
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;;
 	private final FamilyConverter dfc = new ProdFamilyConverter();
 	
@@ -108,7 +108,7 @@ public class FMCATest {
 
 		ModalAutomaton<CALabel> controller = faut.getOrchestrationOfFamily();		
 
-		assertEquals(MSCATest.checkTransitions(controller, test),true);
+		assertTrue(MSCATest.checkTransitions(controller, test));
 	}
 	@Test
 	public void testOrchestrationOfFamilyEnumerative() throws Exception
@@ -126,7 +126,7 @@ public class FMCATest {
 //		ModalAutomaton<CALabel> test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
 		
 		
-		assertEquals(MSCATest.checkTransitions(ofe, test),true);
+		assertTrue(MSCATest.checkTransitions(ofe, test));
 
 	}
 

@@ -110,9 +110,6 @@ public class Family {
 	public String toString() {
 		return "Family [products=" + products + "]";
 	}
-
-
-
 }
 
 //END OF THE CLASS

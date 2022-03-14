@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,6 +27,7 @@ import com.google.re2j.Pattern;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
@@ -38,21 +39,29 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends Label<List<String>>>,Automaton<?,?,?,?>> {
-	
-	public ModalAutomaton<? extends Label<List<String>>> importMSCA(String filename) throws IOException {
+public class AutDataConverter<L extends Label<List<String>>>  implements AutConverter<ModalAutomaton<L>,Automaton<?,?,?,?>> {
+	private final Function<List<String>,L> createLabel;
+	private final String suffix = ".data";
+	private final String emptymsg = "Empty file name";
+
+	public AutDataConverter(Function<List<String>, L> createLabel) {
+		super();
+		this.createLabel = createLabel;
+	}
+
+	public ModalAutomaton<L> importMSCA(String filename) throws IOException {
 		// long method
 		// Open the file
-		if (!filename.endsWith(".data"))
+		if (!filename.endsWith(suffix))
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
-		
+
 		if (path==null)
-			throw new IllegalArgumentException("Empty file name");
-		
+			throw new IllegalArgumentException(emptymsg);
+
 		String safefilename = path.toString();
-		
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>> tr;
+
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), "UTF-8")))
@@ -60,7 +69,7 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 			int rank=0;
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
-			tr = new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>>();
+			tr = new HashSet<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>();
 			Set<CAState> states = new HashSet<CAState>();
 			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
 
@@ -114,20 +123,21 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 							type=ModalTransition.Modality.URGENT;
 						else if ("L".equals(stype))
 							type=ModalTransition.Modality.LAZY;
-						
+
 						tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
 						break;
 					}
+					default : 
 					}
 				}
 			}
 
 		}
-		
-		return new ModalAutomaton<Label<List<String>>>(tr);
+
+		return new ModalAutomaton<L>(tr);
 	}
 
-	private ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<List<BasicState<String>>,List<String>,CAState,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -145,13 +155,18 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 
 		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
 		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
-		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,Label<List<String>>>(source,createLabel(tr),target,type); 
+		return new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>(source,createLabel(tr),target,type); 
 	}
 
-	public Label<List<String>> createLabel(String[][] tr) {
-		return new Label<>(Arrays.asList(tr[1]));
+	public L createLabel(String[][] tr) {
+		if (tr[1].length==1 && tr[1][0].contains(CMLabel.action_separator))
+			return createLabel.apply(List.of(tr[1][0]));//new CMLabel(tr[1][0]);
+		else 
+			return createLabel.apply(Arrays.asList(tr[1]));//new CALabel(Arrays.asList(tr[1]));
+
+		//		return new Label<>(Arrays.asList(tr[1]));
 	}
-	
+
 	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin) throws IOException {
 
 		return states.stream()
@@ -193,12 +208,12 @@ public class AutDataConverter  implements MSCAConverter<ModalAutomaton<? extends
 	@Override
 	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException, UnsupportedEncodingException {
 		if (filename.isEmpty())
-			throw new IllegalArgumentException("Empty file name");
+			throw new IllegalArgumentException(emptymsg);
 
-		String suffix=(filename.endsWith(".data"))?"":".data";
-		Path path = FileSystems.getDefault().getPath(filename+suffix);
+		String ext=(filename.endsWith(suffix))?"":suffix;
+		Path path = FileSystems.getDefault().getPath(filename+ext);
 		if (path==null)
-			throw new IllegalArgumentException("Empty file name");
+			throw new IllegalArgumentException(emptymsg);
 		String safefilename = 	path.toString();
 
 		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), "UTF-8")))

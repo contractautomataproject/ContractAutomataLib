@@ -12,14 +12,12 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.operators.UnionFunction;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-//	private final MSCAConverter bmc = new MxeConverter();
-	private final MSCADataConverter bdc = new MSCADataConverter();
-	
+	AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);	
 	@Test
 	public void unionTest() throws Exception {
 		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);

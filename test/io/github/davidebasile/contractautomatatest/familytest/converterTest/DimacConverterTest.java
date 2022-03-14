@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.family.FMCA;
 import io.github.contractautomataproject.catlib.family.Family;
 import io.github.contractautomataproject.catlib.family.PartialProductGenerator;
@@ -26,7 +26,7 @@ public class DimacConverterTest {
 	private final FamilyConverter dfc = new DimacFamilyConverter(true);
 	private final FamilyConverter dfc_pi = new DimacFamilyConverter(false);
 	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	
 	@Test
 	public void testImport() throws Exception

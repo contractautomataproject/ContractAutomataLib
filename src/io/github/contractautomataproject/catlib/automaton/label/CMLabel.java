@@ -34,6 +34,12 @@ public class CMLabel extends CALabel {
 		this.id=this.isOffer()?p[0]:p[1];
 		this.partner=this.isOffer()?p[1]:p[0];
 	}
+	
+	public CMLabel(List<String> lab) {
+		this(lab.get(0));
+		if (lab.size()!=1)
+			throw new IllegalArgumentException();
+	}
 
 	/**
 	 * 

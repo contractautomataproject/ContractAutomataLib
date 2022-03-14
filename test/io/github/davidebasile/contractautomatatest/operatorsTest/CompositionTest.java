@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.converters.MSCADataConverter;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.operators.MSCACompositionFunction;
 import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
@@ -22,7 +22,7 @@ import io.github.davidebasile.contractautomatatest.MSCATest;
 public class CompositionTest {
 
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	private final MSCADataConverter bdc = new MSCADataConverter();
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	//***********************************testing impl against spec on scenarios **********************************************
 	
