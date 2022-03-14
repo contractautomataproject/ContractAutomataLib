@@ -54,7 +54,8 @@ The user documentation, containing information on the usage and installation of 
 <h2>Branches</h2> 
 This repository has currently two branches: this is the <tt>main</tt> branch of the repository. The github page of this repository is hosted in the branch <tt>gh-pages</tt>.
 
-If you are searching for an <tt>old-backup</tt> branch, it has been removed. This branch contained an old version of the repository, available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
+If you are searching for an <tt>old-backup</tt> branch, it has been removed. This branch contained an old version of the repository, prior to its refactoring. 
+This old version is still available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
 If you are reaching this repository from our <tt>JSCP2020</tt> or <tt>LMCS2020</tt> papers, check that old version of the repository: the case studies of these papers are available under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
 
 <h2>Contacts</h2>
