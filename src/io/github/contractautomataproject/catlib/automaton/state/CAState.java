@@ -67,7 +67,6 @@ public class CAState extends State<List<BasicState<String>>> {
 				.collect(Collectors.joining())+"]]";
 	}
 
-
 	@Override
 	public String toString()
 	{
@@ -84,25 +83,4 @@ public class CAState extends State<List<BasicState<String>>> {
 
 	// equals could cause errors of duplication of states in transitions to go undetected. 	
 
-
 }
-
-
-//	/**
-//	 * this method shall not be invoked, because BasicStates are usually shared 
-//	 * with other CAStates
-//	 */
-//	@Override
-//	public CAState getCopy() {
-//		return new CAState(new ArrayList<>(this.getState()));
-//	}
-
-
-//	public boolean hasSameBasicStateLabelsOf(CAState s) {
-//		if (s.getState().size()!=this.state.size())
-//				return false;
-//		return IntStream.range(0, this.state.size())
-//		.allMatch(i->state.get(i).getLabel().equals(s.getState().get(i).getLabel()));
-//	}
-
-

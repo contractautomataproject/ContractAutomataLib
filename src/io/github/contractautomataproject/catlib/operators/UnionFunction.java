@@ -86,12 +86,6 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 						ModalTransition.Modality.PERMITTED))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
-//		//remove old initial states, I need to do this now
-//		relabeled.parallelStream()
-//		.flatMap(a->a.getStates().stream())
-//		.filter(CAState::isInitial)
-//		.forEach(x->x.setInitial(false));
-
 		uniontr.addAll(IntStream.range(0, relabeled.size())
 				.mapToObj(relabeled::get)
 				.flatMap(Set::stream)

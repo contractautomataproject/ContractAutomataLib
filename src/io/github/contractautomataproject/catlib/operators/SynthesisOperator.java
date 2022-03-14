@@ -79,6 +79,7 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	 */
 	@Override
 	public A apply(A aut) {
+		
 		class Pair{
 			Set<T> tr; 
 			Set<S> s;
@@ -86,6 +87,7 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 				this.tr = tr; this.s = s;
 			}
 		}
+		
 		if (aut==null)
 			throw new IllegalArgumentException();
 
@@ -174,42 +176,3 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 		});
 	}
 }
-
-
-
-//
-// earlier implementation without Stream.iterate.
-//
-//Set<T> tr = aut.getTransition();
-//Set<S> R = new HashSet<>(getDanglingStates(tr, statesbackup,init));//R0
-//boolean update=false;
-//do{
-//	final Set<S> Rf = new HashSet<>(R); 
-//	final Set<T> trf= new HashSet<>(tr);
-//
-//	if (tr.removeAll(trf.parallelStream()
-//			.filter(x->pruningPred.test(x,trf, Rf))
-//			.collect(Collectors.toSet()))) //Ki
-//		R.addAll(getDanglingStates(tr, statesbackup,init));
-//
-//	R.addAll(trbackup.parallelStream() 
-//			.filter(x->forbiddenPred.test(x,trf, Rf))
-//			.map(Transition::getSource)
-//			.collect(Collectors.toSet())); //Ri
-//
-//	update=Rf.size()!=R.size()|| trf.size()!=tr.size();
-//} while(update);
-//
-//
-//if (R.contains(init)||tr.size()==0)
-//	return null;
-//
-////remove dangling transitions
-//tr.removeAll(tr.parallelStream()
-//		.filter(x->!reachable.get(x.getSource())||!successful.get(x.getTarget()))
-//		.collect(Collectors.toSet()));
-//
-//return createAut.apply(tr);
-
-
-

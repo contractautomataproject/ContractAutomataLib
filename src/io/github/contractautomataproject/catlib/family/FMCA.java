@@ -97,9 +97,6 @@ public class FMCA {
 		Set<String> act=aut.getTransition().parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet()); 
-//				.getTransition().parallelStream()
-//		.map(x-> x.getLabel().getUnsignedAction())//CALabel.getUnsignedAction(x.getLabel().getAction()))
-//		.collect(Collectors.toSet());
 		
 		Map<Set<Feature>, Map<Product,ModalAutomaton<CALabel>>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
@@ -204,35 +201,3 @@ public class FMCA {
 	}
 
 }
-
-//public Set<Product> productsWithNonEmptyOrchestrationFamily()
-//{
-//	return applyOnFamilyOrchestration(aut,this::productsWithNonEmptyOrchestration);
-//}
-
-//public Set<Product> respectingValidityFamily()
-//{
-//	return applyOnFamilyOrchestration(aut, this::productsRespectingValidity);
-//}
-
-//private Set<Product> applyOnFamilyOrchestration(ModalAutomaton<CALabel> aut, Function<ModalAutomaton<CALabel>,Set<Product>> fun)
-//{
-//	if (!aut.getForwardStar(aut.getInitial()).stream()
-//			.map(ModalTransition<List<State<String>>,List<String>,CAState,CALabel>::getLabel)
-//			.allMatch(l->CALabel.getUnsignedAction(l.getAction()).equals("dummy")))
-//		throw new UnsupportedOperationException();
-//
-//	return aut.getForwardStar(aut.getInitial()).stream()
-//			.map(ModalTransition<List<State<String>>,List<String>,CAState,CALabel>::getTarget)
-//			.map(s1->{
-//				ModalAutomaton<CALabel> a=aut.clone();
-//				a.getInitial().setInitial(false);
-//				CAState s = a.getStates().parallelStream()
-//						.filter(s2->s2.getState().toString().equals(s1.getState().toString()))//ignoring initial flag
-//						.findAny().orElseThrow(IllegalArgumentException::new);
-//				s.setInitial(true);
-//				return fun.apply(a);
-//			})
-//			.flatMap(Set::stream)
-//			.collect(Collectors.toSet());
-//}

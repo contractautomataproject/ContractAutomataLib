@@ -111,7 +111,8 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		return tr.parallelStream()
 				.filter(t->t.getLabel().isMatch()
 						&& !badStates.contains(t.getSource()))
-				//	&&!badStates.contains(t.getTarget())//guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
+				//	badStates does not contains target of t, 
+				//  guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
 				.noneMatch(t->controllabilityPred.test(t,this));
 	}
 

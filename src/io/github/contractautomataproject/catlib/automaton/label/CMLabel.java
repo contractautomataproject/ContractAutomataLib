@@ -53,17 +53,6 @@ public class CMLabel extends CALabel {
 
 	}
 
-//	public CMLabel(CMLabel lab, Integer rank, Integer shift)
-//	{	
-//		super(lab,rank,shift);
-//
-//		this.id = (Integer.parseInt(lab.id)+shift)+"";
-//		this.partner = (Integer.parseInt(lab.partner)+shift)+"";
-//	}
-
-
-
-
 	@Override
 	public boolean match(Label<List<String>> l2)
 	{
@@ -110,34 +99,3 @@ public class CMLabel extends CALabel {
 	}
 
 }
-
-
-
-
-////currently not supported
-//@Override
-//public CMLabel getCopy() {
-//	throw new IllegalArgumentException();
-//}
-
-
-
-
-//	@Override
-//	public String getUnsignedAction()
-//	{
-//		System.out.println(super.getUnsignedAction());
-//		return this.getAction().split(action_separator)[1];
-//	}
-
-//public CMLabel(Integer rank, Integer principal, String action,Integer id, Integer partner) {
-//	super(rank,principal,action);
-//	this.id=id;
-//	this.partner=partner;
-//}
-
-//public CMLabel(CALabel lab,Integer id, Integer partner) {
-//	super(lab,1,0);
-//	this.id=id;
-//	this.partner=partner;
-//}

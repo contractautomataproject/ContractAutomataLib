@@ -27,11 +27,9 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	{
 		super(tr);
 		Set<CAState> states = this.getStates();
-
 		if(states.stream()
 				.anyMatch(x-> states.stream()
 						.filter(y->x!=y && x.getState().equals(y.getState()))
-						//.peek(y->System.out.println(x+" "+y))
 						.count()!=0))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 	}
@@ -51,25 +49,15 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	}
 
 	@Override
-	public String toString() {
+	public String printFinalStates() {
 		StringBuilder pr = new StringBuilder();
-		int rank = this.getRank();
-		pr.append("Rank: "+rank+"\n");
-
-		pr.append("Initial state: " +this.getInitial().getState().toString()+"\n");
-		pr.append("Final states: [");
-		for (int i=0;i<rank;i++) {
+		for (int i=0;i<this.getRank();i++) {
 			pr.append(Arrays.toString(
 					this.getBasicStates().get(i).stream()
 					.filter(BasicState<String>::isFinalstate)
 					.map(BasicState<String>::getState)
-					//.mapToInt(Integer::parseInt)
 					.toArray()));
 		}
-		pr.append("]\n");
-		pr.append("Transitions: \n");
-		for (ModalTransition<List<BasicState<String>>,List<String>,CAState,L> t : this.getTransition())
-			pr.append(t.toString()+"\n");
 		return pr.toString();
 	}
 	
@@ -113,54 +101,8 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 				.collect(Collectors.toSet()));
 	}
 }
-	
-
-//END OF THE CLASS
 
 
 interface TetraFunction<T,U,V,W,Z> {
 	public Z apply(T arg1, U arg2, V arg3,W arg4);
 }
-
-
-
-
-	
-//	private static <L extends Label<List<String>>, T extends  ModalTransition<List<State<String>>,List<String>,CAState,L>, 
-//	A extends Automaton<List<State<String>>,List<String>,CAState,T>> A revertTo(
-//			Automaton<List<State<String>>,List<String>,CAState,ModalTransition<List<State<String>>,List<String>,CAState,Label<List<String>>>>  aut,
-//			Function<List<String>,L> createLabel, 
-//			TetraFunction<CAState,L,CAState,ModalTransition.Modality,T> createTransition, 
-//			Function<Set<T>,A> createAut)
-//	{
-//		A conv = createAut.apply(aut.getTransition().parallelStream()
-//				.map(t->createTransition.apply(t.getSource(),
-//						createLabel.apply(t.getLabel().getAction()),
-//						t.getTarget(), 
-//						t.getModality()))
-//				.collect(Collectors.toSet()));
-//
-//		return conv;
-//	}
-///**
-//* the only initial state in the set of states is set to be the one equal to argument initial
-//* @param initial the state to be set
-//*/
-//private void setInitialCA(CAState initial)
-//{
-//	Set<CAState> states=this.getStates();
-//
-//	states.parallelStream()
-//	.filter(CAState::isInitial)
-//	.forEach(x->x.setInitial(false));
-//
-//	CAState init = states.parallelStream()
-//			.filter(x->x==initial)
-//			.findAny().orElseThrow(IllegalArgumentException::new);
-//
-//	init.setInitial(true);
-//}
-
-
-
-

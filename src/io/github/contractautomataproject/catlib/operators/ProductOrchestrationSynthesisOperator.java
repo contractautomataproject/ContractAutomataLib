@@ -39,6 +39,4 @@ public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthes
 		
 		return a;
 	}
-
-
 }

@@ -58,9 +58,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,StandardCharsets.UTF_8),true);)
 		{
 
-			IProblem problem =
-					reader.parseInstance(filename);// CNF filename
-			//IProblem sd = new Minimal4CardinalityModel(mi);
+			IProblem problem =reader.parseInstance(filename);// CNF filename
 
 			Map<Integer,String> i2s = readFeatureStrings(filename);
 
@@ -69,7 +67,6 @@ public class DimacFamilyConverter implements FamilyConverter {
 				unsat = false;
 				reader.decode(gen.apply(problem),out);
 				out.println();
-				//			System.out.println(baos.toString());
 			}
 			if (unsat) // do something for unsat case
 				return new HashSet<>();
@@ -103,96 +100,3 @@ public class DimacFamilyConverter implements FamilyConverter {
 		throw new UnsupportedOperationException();
 	}
 }
-
-
-
-
-
-
-////	System.out.println(models.toString());
-//
-////Set<Integer> concfeat = getConcreteFeatures(models);
-//
-////System.out.println(concfeat.toString());
-//
-////Set<Integer> absfeat=IntStream.iterate(1, i->i+1)
-////		.limit(problem.nVars())
-////		.boxed()
-////		.collect(Collectors.toCollection(TreeSet::new));
-////absfeat.removeAll(concfeat);
-//
-////	System.out.println(absfeat.toString());
-//	
-////
-////Set<Integer> ignorefeature = getEquivalentToIgnore(concfeat,i2s,models);
-////
-//// Boolean[] toConsider = IntStream.range(0, problem.nVars())
-////.mapToObj(i->concfeat.contains(i)&&!ignorefeature.contains(i))
-////.toArray(Boolean[]::new);
-//// 
-////System.out.println(i2s.toString());
-//private void removeLiterals(Set<List<Boolean>> models, Set<Integer> toRemove)
-//{
-//	models.stream()
-//	.forEach(li->toRemove.stream()
-//				.forEach(i->li.remove(i.intValue()-1))); this shift literals!
-//
-//}
-////always positive
-//private Set<Integer> getConcreteFeatures(Set<List<Boolean>> models)
-//{
-//	return models.parallelStream()
-//	.flatMap(l->IntStream.range(0, l.size())
-//			.filter(i->!l.get(i))//abstract features are enabled by default,
-//			  //thus concrete features appear as false in some clause
-//			.map(i->i+1) //features start from 1
-//			.boxed())
-//	.distinct()
-//	.map(Math::abs)
-//	.collect(Collectors.toSet());
-//}
-//
-//private Map<Integer,String> readFeatureStrings(String filename,Set<Integer> concfeat) throws IOException
-//{
-//	return Files.readAllLines(Paths.get(filename), Charset.forName("ISO-8859-1"))
-//	.stream()
-//	.filter(s->s.startsWith("c")) //comment
-//	.map(s->s.split(" "))
-//	.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1]),ar[2]))
-//	.filter(e-> concfeat.contains(e.getKey()))//only concrete features
-//	.collect(Collectors.toMap(Entry::getKey, Entry::getValue));		
-//}
-//
-//private Set<Integer> getEquivalentToIgnore(Set<Integer> concfeat,Map<Integer,String> i2s,Set<List<Boolean>> models) throws IOException
-//{
-//	//i1 -> {i | \forall l in models. l.get(i)==l.get(i1) && i!=i1}
-//
-//	Map<Integer,Set<Integer>> map_eq=
-//			concfeat.stream()
-//			.map(i1->new AbstractMap.SimpleEntry<Integer,Set<Integer>>(i1,concfeat.stream()
-//					.filter(i->i!=i1)
-//					.filter(i->models.parallelStream()
-//							.allMatch(l->l.get(i-1)==l.get(i1-1)))
-//					.collect(Collectors.toCollection(TreeSet::new))))
-//			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-//		
-//	Set<Integer> equ_key = map_eq.entrySet().stream()
-//	.filter(e->e.getValue().stream()
-//			.allMatch(i->i2s.get(i).contains(i2s.get(e.getKey()))))
-//	.map(Entry::getKey)
-//	.collect(Collectors.toCollection(TreeSet::new));
-//	
-//	Set<Integer> ignoreEquivalent =  map_eq.entrySet().stream()
-//						.filter(e->equ_key.contains(e.getKey()))
-//						.map(Entry::getValue)
-//						.flatMap(Set::stream)
-//						.collect(Collectors.toCollection(TreeSet::new));
-//	
-//	if (map_eq.entrySet().stream()
-//	.filter(e->!e.getValue().isEmpty())
-//	.map(Entry::getKey)
-//	.anyMatch(i->!equ_key.contains(i)&&!ignoreEquivalent.contains(i)))
-//		throw new IOException("Found malformed equivalent feature");
-//	
-//	return ignoreEquivalent;
-//}

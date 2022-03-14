@@ -31,7 +31,7 @@ public class BasicState<T> extends State<T>{
 	
 	@Override
 	public String toString() {
-		return this.getState().toString();//"[init=" + init + ", fin=" + fin + ", label=" + label + "]";
+		return this.getState().toString();
 	}
 	
 	/**
@@ -65,25 +65,7 @@ public class BasicState<T> extends State<T>{
 				finalstate=true;
 		}
 		return new BasicState<>(label,initial,finalstate);
-		
 	}
-}
-
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(super.hashCode(),init,fin);
-//	}
-//
-//	// equals could cause errors of duplication of states in transitions to go undetected. 	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!super.equals(obj))
-//			return false;
-//		BasicState<?> other = (BasicState<?>) obj;
-//		return fin==other.fin && init==other.init;
-//	}
-
-
 	
-//	public abstract <U extends State<T>> U getCopy();
-
+	// equals could cause errors of duplication of states in transitions to go undetected. 	
+}

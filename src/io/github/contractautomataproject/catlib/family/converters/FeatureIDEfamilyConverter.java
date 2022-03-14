@@ -116,7 +116,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 		for (int i = 0; i < nodeList.getLength(); i++) 
 		{
 			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))//&&(nNode.getNodeName()=="mxCell")) {
+			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
 				features.add(((Element) nNode).getAttribute("name"));    
 		}
 		return features;		

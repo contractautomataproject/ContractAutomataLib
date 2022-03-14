@@ -20,7 +20,7 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 
 	public Label(T action) {
 		super();
-		if (action==null)// || action.length()==0)
+		if (action==null)
 			throw new IllegalArgumentException();
 		this.action = action;
 	}
@@ -57,11 +57,6 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	public String toCSV() {
 		return "[action=" +action+"]";
 	}
-
-//	
-//	public List<T> getLabelAsList(){
-//		return List.of(action);
-//	}
 	
 	@Override
 	public Integer getRank() {
@@ -70,9 +65,4 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 		}
 		return 1;
 	}
-
-	
-//	public Label<T> getCopy(){
-//		return new Label<T>(action);
-//	}
 }

@@ -25,7 +25,6 @@ public class DataConverterTest {
 	@Test
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
-		
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.data",aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");

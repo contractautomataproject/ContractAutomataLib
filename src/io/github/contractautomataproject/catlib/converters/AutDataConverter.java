@@ -51,8 +51,6 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 	}
 
 	public ModalAutomaton<L> importMSCA(String filename) throws IOException {
-		// long method
-		// Open the file
 		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
@@ -161,9 +159,9 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 	public L createLabel(String[][] tr) {
 		if (tr[1].length==1 && tr[1][0].contains(CMLabel.ACTION_SEPARATOR))
-			return createLabel.apply(List.of(tr[1][0]));//new CMLabel(tr[1][0]);
+			return createLabel.apply(List.of(tr[1][0]));
 		else 
-			return createLabel.apply(Arrays.asList(tr[1]));//new CALabel(Arrays.asList(tr[1]));
+			return createLabel.apply(Arrays.asList(tr[1]));
 	}
 
 	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
