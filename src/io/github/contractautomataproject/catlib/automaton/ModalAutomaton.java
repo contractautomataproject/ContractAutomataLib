@@ -105,10 +105,11 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	{
 		return new ModalAutomaton<>(this.getTransition()
 				.parallelStream()
-				.map(t->new ModalTransition<>(t.getSource(), 
-						(Label<List<String>>)t.getLabel(),
+				.map(t->{Label<List<String>> lab = t.getLabel();
+					return new ModalTransition<>(t.getSource(), 
+						lab,
 						t.getTarget(),
-						t.getModality()))
+						t.getModality());})
 				.collect(Collectors.toSet()));
 	}
 }

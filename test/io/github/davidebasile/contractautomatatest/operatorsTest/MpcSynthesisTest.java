@@ -41,7 +41,7 @@ public class MpcSynthesisTest {
 	public void mpcTest_nonempty() throws Exception
 	{
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"test_urgent.data");
-		assertEquals(new MpcSynthesisOperator(new Agreement()).apply(aut).getNumStates(),2);
+		assertEquals(2, new MpcSynthesisOperator(new Agreement()).apply(aut).getNumStates());
 	}
 
 	@Test 

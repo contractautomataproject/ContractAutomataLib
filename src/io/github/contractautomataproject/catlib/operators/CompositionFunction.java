@@ -235,7 +235,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 				.filter(e->!matchtransitions.containsKey(e.tra))//transitions not matched
 				.collect(mapping(e->{List<S> targetlist = new ArrayList<>(source);
 				targetlist.set(e.ind, e.tra.getTarget());
-				return 	new AbstractMap.SimpleEntry<T,List<S>>
+				return 	new AbstractMap.SimpleEntry<>
 				(createTransition.apply(sourcestate,
 						shiftLabel.apply(e.tra.getLabel(),rank, //change here if you would like to preserve the CM constraints
 								IntStream.range(0, e.ind)
