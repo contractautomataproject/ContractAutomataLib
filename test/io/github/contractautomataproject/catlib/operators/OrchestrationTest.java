@@ -1,27 +1,44 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import static io.github.contractautomataproject.catlib.operators.ModelCheckingTest.prop;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.ModalAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.contractautomataproject.catlib.requirements.StrongAgreementModelChecking;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class OrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
+	private Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop ;
+	
+	@Before
+	public void setup() {
+		BasicState<String> s0 = new BasicState<String>("0",true,false);
+		BasicState<String> s1 = new BasicState<String>("1",false,false);
+		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t1 = new ModalTransition<String,String,BasicState<String>,Label<String>>(s0, new Label<String>("blueberry"), s1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t2 = new ModalTransition<>(s1, new Label<String>("ananas"), s2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,BasicState<String>,Label<String>> t3 = new ModalTransition<>(s0, new Label<String>("cherry"), s2, ModalTransition.Modality.PERMITTED);
+		prop = new Automaton<>(Set.of(t1,t2,t3));
+	}
+
 
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions() throws Exception
@@ -84,6 +101,8 @@ public class OrchestrationTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
 		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
+		
+		System.out.println(aut + " " + prop + " " + synth + " " + test);
 		assertTrue(ModalAutomatonTest.autEquals(synth, test));
 	}
 	
