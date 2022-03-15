@@ -32,12 +32,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: 📦 Build with Maven 👓 Analyze with Sonar Cloud
+      - name: 📦 Build with Maven 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B jacoco:prepare-agent verify  jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib
+        run: mvn -B jacoco:prepare-agent verify  jacoco:report
+      - name: 🐛 Analyze with SonarCloud and SpotBugs
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib spotbugs:check
       - name: 🚀 Coveralls Coverage Report Submission
-        run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
-      - name: 🐛 Analyze with SpotBugs 
-        run: mvn site
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: mvn coveralls:report --define repoToken=COVERALLS_TOKEN
