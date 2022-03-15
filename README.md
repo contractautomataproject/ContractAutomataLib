@@ -14,8 +14,11 @@
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ContractAutomataProject_ContractAutomataLib)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 
+<div align=center>
 <h1>Contract Automata Lib </h1>
+</div>
 
+<h2>About</h2>
 The Contract Automata Toolkit is an ongoing basic research activity about implementing 
 and experimenting with new developments in the theoretical framework of Contract Automata (CA). 
 This repository contains the Contract Automata Library, which is the main repository of the Contract Automata Toolkit.
@@ -28,14 +31,17 @@ They are used for specifying services' interface, called behavioral contracts,
 
 The source code has been redesigned and refactored using the new functionalities introduced with Java 8 (streams, lambda).
 
-<h2>License</h2>
-The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
+<h2>Getting Started</h2>
 
-<h2> API Documentation</h2>
 
-This software has been developed also using the Model-based Software Engineering tool Sparx Enterprise Architect. 
-The following documentation is up-to date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
+<h4>User Documentation</h4>
 
+For  information on the usage and installation of the library, check the User Documentation at the Github Page https://contractautomataproject.github.io/ContractAutomataLib/.
+
+<h4> API Documentation</h4>
+
+
+For the API documentation, check the links below. 
 <ul>
   <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
 </li>
@@ -45,20 +51,23 @@ The following documentation is up-to date to the commit <a href="https://github.
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
 
-
-<h2>User Documentation</h2>
-
-The user documentation, containing information on the usage and installation of the library, is available at the Github Page https://contractautomataproject.github.io/ContractAutomataLib/.
+The documentation is up-to date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
+The diagrams contained in this documentation have been generated using the Model-based Software Engineering tool Sparx Enterprise Architect. 
 
 
-<h2>Branches</h2> 
-This repository has currently two branches: this is the <tt>main</tt> branch of the repository. The github page of this repository is hosted in the branch <tt>gh-pages</tt>.
+<h2>License</h2>
+The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
-If you are searching for an <tt>old-backup</tt> branch, it has been removed. This branch contained an old version of the repository, prior to its refactoring. 
-This old version is still available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
-If you are reaching this repository from our <tt>JSCP2020</tt> or <tt>LMCS2020</tt> papers, check that old version of the repository: the case studies of these papers are available under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
+
+<h2>Legacy</h2> 
+ 
+If you are reaching this repository from some previous paper on contract automata (e.g., <tt>JSCP2020</tt>, <tt>LMCS2020</tt>), you may be interested in checking an old version of the repository, before its refactoring. 
+The latest version of this repository before its refactoring started is available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
+The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
+The branch <tt>old-backup</tt> pointing to that old version has been removed. 
+
 
 <h2>Contacts</h2>
 
-If you have any question contact me on davide.basile@isti.cnr.it.
+Davide Basile - davide.basile@isti.cnr.it.
 
