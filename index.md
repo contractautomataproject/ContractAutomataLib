@@ -2,14 +2,8 @@
 
 
 
-The Contract Automata Tool is an ongoing basic research activity about implementing 
-and experimenting with new developments in the theoretical framework of Contract Automata (CA).
-Contract automata are a formalism developed in the research area of foundations for services and distributed 
-computing.
-They are used for specifying services' interface, called behavioral contracts, 
- as finite-state automata, with functionalities for composing contracts and generating the 
- orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
- lines (FMCA).
+The Contract Automata Toolkit is an ongoing basic research activity about implementing and experimenting with new developments in the theoretical framework of Contract Automata (CA). The Contract Automata Library  is the main repository of the Contract Automata Toolkit. Contract automata are a formalism developed in the research area of foundations for services and distributed computing. They are used for specifying services' interface, called behavioral contracts, as finite state automata, with functionalities for composing contracts and generating the orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product lines (FMCA).
+The source code has been redesigned and refactored using the new functionalities introduced with Java 8 (streams, lambda).
  
  
 <h2>License</h2>
