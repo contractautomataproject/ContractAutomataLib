@@ -101,8 +101,3 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 				.collect(Collectors.toSet()));
 	}
 }
-
-
-interface TetraFunction<T,U,V,W,Z> {
-	public Z apply(T arg1, U arg2, V arg3,W arg4);
-}

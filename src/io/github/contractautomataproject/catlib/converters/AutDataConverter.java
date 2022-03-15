@@ -92,7 +92,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 								.map(String::trim)
 								.toArray(String[]::new);
 						if (initial.length!=rank)
-							throw new IOException("Initial state with different rank");
+							throw new IllegalArgumentException("Initial state with different rank");
 						break;
 					}
 					case "F": //Final state
@@ -105,7 +105,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 										.toArray(String[]::new))
 								.toArray(String[][]::new);
 						if (fin.length!=rank)
-							throw new IOException("Final states with different rank");
+							throw new IllegalArgumentException("Final states with different rank");
 
 						break;
 					}
@@ -122,6 +122,8 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 							type=ModalTransition.Modality.URGENT;
 						else if ("L".equals(stype))
 							type=ModalTransition.Modality.LAZY;
+						else
+							throw new IllegalArgumentException("Invalid modality");
 
 						tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
 						break;
