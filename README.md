@@ -14,9 +14,7 @@
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ContractAutomataProject_ContractAutomataLib)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 
-<div align=center>
-<h1>Contract Automata Lib </h1>
-</div>
+<h1 align=center>Contract Automata Lib </h1>
 
 <h2>About</h2>
 The Contract Automata Toolkit is an ongoing basic research activity about implementing 
@@ -59,15 +57,14 @@ The diagrams contained in this documentation have been generated using the Model
 The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
 
+<h2>Contacts</h2>
+
+Davide Basile - davide.basile@isti.cnr.it.
+
+
 <h2>Legacy</h2> 
  
 If you are reaching this repository from some previous paper on contract automata (e.g., <tt>JSCP2020</tt>, <tt>LMCS2020</tt>), you may be interested in checking an old version of the repository, before its refactoring. 
 The latest version of this repository before its refactoring started is available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
 The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
 The branch <tt>old-backup</tt> pointing to that old version has been removed. 
-
-
-<h2>Contacts</h2>
-
-Davide Basile - davide.basile@isti.cnr.it.
-
