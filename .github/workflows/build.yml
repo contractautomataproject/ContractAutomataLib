@@ -33,11 +33,11 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: 📦 Build with Maven 
+        run: mvn -B jacoco:prepare-agent verify  jacoco:report
+      - name: 🐛 Analyze with SonarCloud and SpotBugs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B jacoco:prepare-agent verify  jacoco:report
-      - name: 🐛 Analyze with SonarCloud and SpotBugs
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib spotbugs:check
       - name: 🚀 Coveralls Coverage Report Submission
