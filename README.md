@@ -68,3 +68,5 @@ If you are reaching this repository from some previous paper on contract automat
 The latest version of this repository before its refactoring started is available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
 The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
 The branch <tt>old-backup</tt> pointing to that old version has been removed. 
+
+<img src="https://raw.githubusercontent.com/ContractAutomataProject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>
