@@ -92,7 +92,7 @@ public class ProjectionFunction implements TriFunction<ModalAutomaton<CALabel>,I
 
 	}
 
-	private CALabel createLabelCM(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t,Integer indexprincipal) {
+	private CMLabel createLabelCM(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t,Integer indexprincipal) {
 		if (!t.getLabel().isMatch())
 			throw new UnsupportedOperationException();
 		

@@ -48,10 +48,10 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 
 		this.tra=new HashSet<>(tr);
 
-		Set<? extends State<?>> states = this.getStates();
+		Set<S> states = this.getStates();
 
 		if (states.parallelStream()
-				.filter(State::isInitial)
+				.filter(S::isInitial)
 				.count()!=1)
 			throw new IllegalArgumentException("Not Exactly one Initial State found! ");
 
@@ -77,7 +77,8 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 
 	public S getInitial()
 	{
-		return this.getStates().parallelStream()
+		return  tra.parallelStream()
+				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
 				.filter(State::isInitial)
 				.findFirst().orElseThrow(NullPointerException::new);
 	}

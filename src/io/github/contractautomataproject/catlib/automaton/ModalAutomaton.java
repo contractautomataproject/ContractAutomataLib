@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
@@ -59,45 +58,5 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 					.toArray()));
 		}
 		return pr.toString();
-	}
-	
-	/**
-	 * 
-	 * @return return a conversion of the MSCA into an automaton where CALabel are substituted by Label<List<String>>
-	 */
-	public Automaton<List<BasicState<String>>,List<String>, CAState, ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> relaxAsAutomaton(){
-		return new Automaton<>(this.getTransition().parallelStream()
-				.map(t->new ModalTransition<>
-				(t.getSource(),t.getLabel(),t.getTarget(),t.getModality()))
-				.collect(Collectors.toSet()));
-	}
-
-	/**
-	 * revert a relaxed automaton to an MSCA
-	 * 
-	 * @param aut  the relaxed automaton
-	 * @return the MSCA
-	 */
-	public  ModalAutomaton<CALabel> convertLabelsToCALabels()
-	{
-		return new ModalAutomaton<>(this.getTransition()
-				.parallelStream()
-				.map(t->new ModalTransition<>(t.getSource(), 
-						new CALabel(t.getLabel().getAction()),
-						t.getTarget(),
-						t.getModality()))
-				.collect(Collectors.toSet()));
-	}
-	
-	public  ModalAutomaton<Label<List<String>>> convertLabelsToLabelsListString()
-	{
-		return new ModalAutomaton<>(this.getTransition()
-				.parallelStream()
-				.map(t->{Label<List<String>> lab = t.getLabel();
-					return new ModalTransition<>(t.getSource(), 
-						lab,
-						t.getTarget(),
-						t.getModality());})
-				.collect(Collectors.toSet()));
 	}
 }

@@ -47,7 +47,7 @@ public class BasicState<T> extends State<T>{
 	/**
 	 * 
 	 * @param s the encoding of the object as comma separated values
-	 * @return a new State<String> object constructed from the parameter s
+	 * @return a new BasicState<String> object constructed from the parameter s
 	 */
 	public static BasicState<String> readCSV(String s) {
 		boolean initial=false; 

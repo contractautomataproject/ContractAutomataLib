@@ -66,9 +66,10 @@ public class ProjectionTest {
 		List<ModalAutomaton<CALabel>> principals = IntStream.range(0,aut.getRank())
 				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"","!dummy")).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
+				
 		ModalAutomaton<CALabel> closed_aut = new MSCACompositionFunction(principals,new StrongAgreement().negate()).apply(100);
-//		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM.data", closed_aut);
 	
+		//bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM_new.data", closed_aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 
 //		boolean bc = closed_aut.getTransition().stream()

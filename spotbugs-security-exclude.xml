@@ -7,7 +7,7 @@
 -->
 <FindBugsFilter>
   <Match>
-    <!-- Spotbugs issue with nested classes -->
+    <!-- Spotbugs issue with nested classes https://github.com/find-sec-bugs/find-sec-bugs/issues/241 -->
     <Bug pattern="PATH_TRAVERSAL_IN" />
   </Match>
 </FindBugsFilter>

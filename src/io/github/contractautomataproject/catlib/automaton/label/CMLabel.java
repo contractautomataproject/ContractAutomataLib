@@ -12,7 +12,6 @@ import java.util.Objects;
 public class CMLabel extends CALabel {
 
 	private final String id;
-
 	private final String partner;	
 
 	public static final String ID_SEPARATOR = "_";
@@ -20,7 +19,7 @@ public class CMLabel extends CALabel {
 
 
 	/**
-	 * Construct a CMLabel enconded in a string lab
+	 * Construct a CMLabel encoded in a string lab
 	 * 
 	 * @param lab the string must be in the format sender + id_separator + receiver + action_separator + action, 
 	 * 		  where either sender==this.id and action is an offer or receiver==this.id and action is a request. 
@@ -33,6 +32,10 @@ public class CMLabel extends CALabel {
 
 		this.id=this.isOffer()?p[0]:p[1];
 		this.partner=this.isOffer()?p[1]:p[0];
+		
+		if (this.id.isEmpty() 
+				|| this.partner.isEmpty())
+			throw new IllegalArgumentException();
 	}
 	
 	public CMLabel(List<String> lab) {
@@ -60,8 +63,8 @@ public class CMLabel extends CALabel {
 		{
 			CMLabel cl2 = (CMLabel) l2;
 			return super.match(l2)
-					&& this.getPartner().equals(cl2.getId()) 
-					&& cl2.getId().equals(this.getPartner());
+					&& partner.equals(cl2.getId())
+					&& id.equals(cl2.getPartner());
 		}
 		else
 			throw new IllegalArgumentException();
@@ -82,12 +85,11 @@ public class CMLabel extends CALabel {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj) || getClass() != obj.getClass())
+		if (!super.equals(obj))
 			return false;
 		CMLabel other = (CMLabel) obj;
-		return Objects.equals(id, other.id)&&Objects.equals(partner, other.partner);
+		return Objects.equals(id, other.id)
+				&&Objects.equals(partner, other.partner);
 	}
 
 	@Override
@@ -96,6 +98,11 @@ public class CMLabel extends CALabel {
 			return "["+this.id+ID_SEPARATOR+this.partner+ACTION_SEPARATOR+super.getPrincipalAction()+"]";
 		else
 			return "["+this.partner+ID_SEPARATOR+this.id+ACTION_SEPARATOR+this.getPrincipalAction()+"]";
+	}
+	
+	@Override
+	public String toCSV() {
+		return "[id=" + id+ ", partner=" + partner + "]"+super.toCSV();
 	}
 
 }

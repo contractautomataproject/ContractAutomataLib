@@ -32,7 +32,11 @@ public class ModelCheckingFunction extends CompositionFunction<List<BasicState<S
 	public ModelCheckingFunction(ModalAutomaton<CALabel> aut, 
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>> prop, 
 			Predicate<Label<List<String>>> pruningPred) {
-		super(Arrays.asList(aut.convertLabelsToLabelsListString(),
+		super(Arrays.asList(new ModalAutomaton<>(aut.getTransition() //converting labels to Label<List<Stri
+				.parallelStream()
+				.map(t->{Label<List<String>> lab = t.getLabel();
+					return new ModalTransition<>(t.getSource(),lab,t.getTarget(),t.getModality());})
+				.collect(Collectors.toSet())),
 				ModelCheckingFunction.convert(prop, Label::new, ModalTransition::new, ModalAutomaton::new)), 
 				MSCACompositionFunction::computeRank,
 				(l1,l2)->new CALabel(l1.getAction()).getUnsignedAction().equals(l2.getAction().get(0)), //match

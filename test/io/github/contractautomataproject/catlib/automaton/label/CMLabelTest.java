@@ -11,9 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
-
 public class CMLabelTest {
 	CMLabel cm_of;
 	CMLabel cm_req;
@@ -22,6 +19,21 @@ public class CMLabelTest {
 	public void setup() {
 		cm_of = new CMLabel("Alice","Bob","!apple");
 		cm_req = new CMLabel("Alice","Bob","?apple");
+	}
+	
+	@Test
+	public void testConstructor1() {
+		assertEquals(cm_of,new CMLabel("Alice_Bob@!apple"));
+	}
+	
+	@Test
+	public void testConstructor1Request() {
+		assertEquals(cm_req,new CMLabel("Alice_Bob@?apple"));
+	}
+	
+	@Test
+	public void testConstructor2() {
+		assertEquals(cm_of,new CMLabel(List.of("Alice_Bob@!apple")));
 	}
 	
 	@Test
@@ -58,11 +70,32 @@ public class CMLabelTest {
 	}
 	
 	@Test
-	public void testMatch() {
+	public void testMatchTrue() {
 		assertTrue(cm_of.match(cm_req));
 	}
 	
+	@Test
+	public void testMatchFalseSuper() {
+		Assert.assertFalse(cm_of.match(cm_of));
+	}
+	
+	@Test
+	public void testMatchFalsePartner() {
+		Assert.assertFalse(cm_of.match(new CMLabel("Alice","Carl","?apple")));
+	}
+	
+	@Test
+	public void testMatchFalseId() {
+		Assert.assertFalse(cm_of.match(new CMLabel("Carl","Bob","?apple")));	
+	}
+	
 
+	@Test
+	public void testMatchFalseReceiver() {
+		Assert.assertFalse(new CMLabel("2_1@!m").match(new CMLabel("2_0@?m")));
+	}
+	
+	
 	@Test
 	public void equalsSame() {
 		assertEquals(cm_of, cm_of);
@@ -75,16 +108,24 @@ public class CMLabelTest {
 	
 
 	@Test
-	public void equalsTrue() {
+	public void testEqualsTrue() {
 		CMLabel equal = new CMLabel("Alice","Bob","!apple");
-		CMLabel cm_of = new CMLabel("Alice","Bob","!apple");
 		assertEquals(equal, cm_of);
 	}
 	
 	@Test
-	public void hashCodeTrue() {
+	public void testEqualsFalsePartner() {
+		Assert.assertNotEquals(cm_of, new CMLabel("Alice","Carl","!apple"));
+	}
+	
+	@Test
+	public void testEqualsFalseId() {
+		Assert.assertNotEquals(cm_of, new CMLabel("Carl","Bob","!apple"));
+	}
+	
+	@Test
+	public void testHashCodeTrue() {
 		CMLabel equal = new CMLabel("Alice","Bob","!apple");
-	    CMLabel	cm_of = new CMLabel("Alice","Bob","!apple");
 		assertEquals(cm_of.hashCode(),equal.hashCode());
 	}
 	
@@ -107,8 +148,34 @@ public class CMLabelTest {
 	}
 	
 	@Test
-	public void testConstructorException() {
+	public void testConstructor1ExceptionNoSenderReceiver() {
 		assertThatThrownBy(()->new CMLabel("@?a"))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	@Test
+	public void testConstructor1ExceptionNoSender() {
+		assertThatThrownBy(()->new CMLabel("_Bob@!a"))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	
+	@Test
+	public void testConstructor1ExceptionNoReceiver() {
+		assertThatThrownBy(()->new CMLabel("Alice_@?a"))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	@Test
+	public void testConstructor1ExceptionNoPartner() {
+		assertThatThrownBy(()->new CMLabel("_Bob@?a"))
+		.isInstanceOf(IllegalArgumentException.class);
+	}
+	
+	@Test
+	public void testConstructor2Exception() {
+		List<String> test = List.of("Alice_Bob@!apple","Alice_Bob@?apple");
+		assertThatThrownBy(()->new CMLabel(test))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 }

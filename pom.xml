@@ -6,7 +6,7 @@
 	<!-- https://central.sonatype.org/publish/requirements/ -->
 	<groupId>io.github.davidebasile</groupId>
 	<artifactId>contractautomatalib</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>ContractAutomataLib</name>
@@ -30,9 +30,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/davidebasile/ContractAutomataLib.git</connection>
-		<developerConnection>scm:git:ssh://github.com:davidebasile/ContractAutomataLib.git</developerConnection>
-		<url>http://github.com/davidebasile/ContractAutomataLib/tree/code-cleaning</url>
+		<connection>scm:git:git://github.com/ContractAutomataProject/ContractAutomataLib.git</connection>
+		<developerConnection>scm:git:ssh://github.com:ContractAutomataProject/ContractAutomataLib.git</developerConnection>
+		<url>http://github.com/ContractAutomataProject/ContractAutomataLib/tree/code-cleaning</url>
 	</scm>
 
 	<distributionManagement>
@@ -69,6 +69,13 @@
 			<version>3.10.0</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>4.3.1</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- fixing catastrophic backtracking of java regex https://github.com/google/re2j -->
 		<dependency>
 			<groupId>com.google.re2j</groupId>
@@ -81,7 +88,6 @@
 			<artifactId>org.ow2.sat4j.core</artifactId>
 			<version>2.3.4</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -155,6 +161,19 @@
 						<source>1.9</source>
 						<target>1.9</target>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M5</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
