@@ -101,8 +101,6 @@ public class OrchestrationTest {
 		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
 		ModalAutomaton<CALabel> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<List<String>>>(),prop).apply(aut);
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
-		
-		System.out.println(aut + " " + prop + " " + synth + " " + test);
 		assertTrue(ModalAutomatonTest.autEquals(synth, test));
 	}
 	

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +37,10 @@ public class ModalAutomatonTest {
 	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t2;
 
 	ModalAutomaton<CALabel> aut;
+	
 	Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> st;
+	
+	Map<Integer,Set<BasicState<String>>> map;
 
 	@Before
 	public void setup() {
@@ -48,15 +51,20 @@ public class ModalAutomatonTest {
 
 		when(t1.getSource()).thenReturn(cs1);
 		when(t1.getTarget()).thenReturn(cs2);
+		when(t1.getRank()).thenReturn(2);
+		
 		when(t2.getSource()).thenReturn(cs2);
 		when(t2.getTarget()).thenReturn(cs3);
+		when(t2.getRank()).thenReturn(2);
 
 		when(cs1.getState()).thenReturn(Arrays.asList(bs0,bs0));
 		when(cs2.getState()).thenReturn(Arrays.asList(bs1,bs0));
 		when(cs3.getState()).thenReturn(Arrays.asList(bs1,bs2));
 
-		st = Set.of(t1,t2);
+		st = new HashSet<>(Set.of(t1,t2));
 		aut = new ModalAutomaton<CALabel>(st);
+		
+		map = Map.of(0,Set.of(bs0,bs1),1, Set.of(bs0,bs2));		
 	}
 
 	@After
@@ -67,9 +75,6 @@ public class ModalAutomatonTest {
 
 	@Test
 	public void testGetBasicStates() {
-		Map<Integer,Set<BasicState<String>>> map = new HashMap<>();
-		map.put(0, Set.of(bs0,bs1));
-		map.put(1, Set.of(bs0,bs2));
 		Assert.assertEquals(map, aut.getBasicStates());
 	}
 
@@ -79,9 +84,12 @@ public class ModalAutomatonTest {
 		when(bs2.isFinalstate()).thenReturn(true);
 		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
-		when(t2.getRank()).thenReturn(2);
+		
+//		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
+//		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
+//		aut = new ModalAutomaton<>(spyst);
+		
 		String test = "[1][2]";
-
 		Assert.assertEquals(test, aut.printFinalStates());
 	}
 

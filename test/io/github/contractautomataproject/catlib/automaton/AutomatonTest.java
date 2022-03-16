@@ -86,8 +86,7 @@ public class AutomatonTest {
 	@Test
 	public void constructorTest_Exception_nullArgument() {
 		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(null))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Null argument");
+		.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test

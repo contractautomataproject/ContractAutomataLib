@@ -31,8 +31,7 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 
 	public Automaton(Set<T> tr) 
 	{
-		if (tr == null)
-			throw new IllegalArgumentException("Null argument");
+		Objects.requireNonNull(tr);
 
 		if (tr.isEmpty())
 			throw new IllegalArgumentException("No transitions");
