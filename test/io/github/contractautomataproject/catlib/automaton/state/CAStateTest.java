@@ -1,151 +1,153 @@
 package io.github.contractautomataproject.catlib.automaton.state;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import org.junit.BeforeClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class CAStateTest {
 	private static CAState test;
 	
-	@BeforeClass
-	public static void setup() {		
-		BasicState<String> bs0 = new BasicState<String>("0",true,false);
-		BasicState<String> bs1 = new BasicState<String>("1",true,false);
-		BasicState<String> bs2 = new BasicState<String>("2",true,false);
-		BasicState<String> bs4 = new BasicState<String>("4",true,false);
-		BasicState<String> bs10 = new BasicState<String>("10",true,false);
+
+	@Mock BasicState<String> bs0; 
+	@Mock BasicState<String> bs1;
+	@Mock BasicState<String> bs2;
+	@Mock BasicState<String> bs4;
+	
+	@Mock BasicState<Integer> bs3;
+	
+	@Before
+	public void setup() {		
+		
+		when(bs0.getState()).thenReturn("0");
+		when(bs0.isInitial()).thenReturn(true);
+
+		when(bs1.getState()).thenReturn("1");
+		when(bs1.isInitial()).thenReturn(true);
+		
+		when(bs2.getState()).thenReturn("2");
+
 		
 		List<CAState> l = new ArrayList<>();
 		l.add(new CAState(Arrays.asList(bs0,bs1,bs2))); 
-		l.add(new CAState(Arrays.asList(bs0,bs0)));
-		l.add(new CAState(Arrays.asList(bs4,bs10)));
+		l.add(new CAState(Arrays.asList(bs2,bs0)));
+		l.add(new CAState(Arrays.asList(bs1)));
 		
 		test = new CAState(l);
 	}
 	
 	@Test
-	public void constructor1Test() {
-		assertTrue(hasSameBasicStateLabelsOf(test, new int[] {0,1,2,0,0,4,10}));
-	}
-
-	@Test
-	public void constructor2Test() {
+	public void testIsInitialTrue() {
+		when(bs2.isInitial()).thenReturn(true);
 		assertTrue(test.isInitial());
-	}
-	@Test
-	public void constructor3Test() {
-		assertFalse(test.isFinalstate());
-	}
-	private static boolean hasSameBasicStateLabelsOf(CAState cs, int[] s) {
-		return IntStream.range(0, cs.getState().size())
-		.allMatch(i->Integer.parseInt(cs.getState().get(i).getState())==s[i]);
 	}
 	
 	@Test
+	public void testIsInitialFalse() {
+		assertFalse(test.isInitial());
+	}
+	
+
+	@Test
+	public void testIsFinalStateTrue() {
+		when(bs0.isFinalstate()).thenReturn(true);
+		when(bs1.isFinalstate()).thenReturn(true);
+		when(bs2.isFinalstate()).thenReturn(true);
+		assertTrue(test.isFinalstate());
+	}
+	
+	
+	@Test
+	public void testIsFinalStateFalse() {
+		assertFalse(test.isFinalstate());
+	}
+	
+	@Test
+	public void testGetRank() {
+		assertEquals(6,test.getRank().intValue());
+	}
+	
+	@Test
+	public void testGetState() {
+		assertEquals(List.of(bs0,bs1,bs2,bs2,bs0,bs1),test.getState());
+	}
+	
+	@Test
+	public void testGetStateNewList() {
+		List<BasicState<String>> list = List.of(bs0,bs1);
+		assertTrue(list!=new CAState(list).getState());
+	}
+	
+	
+	@Test
 	public void toStringInitialTest() {
-		assertEquals(" Initial [0, 1, 2, 0, 0, 4, 10]", test.toString());
+		String test = "[label=0,initial=true, label=1,initial=true, label=2, label=2, label=0,initial=true, label=1,initial=true]";
+
+		assertEquals(test, test.toString());
 	}
 	
 	@Test
 	public void toStringFinalTest() {
-		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState<String>(bs.getState(),false,true))
-		.collect(Collectors.toList()));
-		assertEquals(" Final [0, 1, 2, 0, 0, 4, 10]", test2.toString());
-	}
-	
-	@Test
-	public void toStringNoInitialNoFinalTest() {
-		CAState test2=new CAState(test.getState().stream()
-		.map(bs->new BasicState<String>(bs.getState(),false,false))
-		.collect(Collectors.toList()));
-		assertEquals("[0, 1, 2, 0, 0, 4, 10]", test2.toString());
+		when(bs4.getState()).thenReturn("5");
+		when(bs4.toString()).thenReturn("label=5,final=true");
+		List<BasicState<String>> l = List.of(bs4,bs4);
+		
+		CAState test2=new CAState(l);
+		
+		assertEquals("[label=5,final=true, label=5,final=true]", test2.toString());
 	}
 	
 
 	//********************** testing exceptions *********************
 	
 	@Test
-	public void constructorTest1_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CAState(null))
-	    .isInstanceOf(NullPointerException.class);
+	public void testConstructorException_empty() {
+		Assert.assertThrows(ArrayIndexOutOfBoundsException.class, () -> new CAState(List.of()));
+	}
+	
+	@Test
+	public void testConstructorException_null() {
+		Assert.assertThrows(NullPointerException.class, () -> new CAState(null));
+	}
+	
+	@Test
+	public void testConstructorException_nullelement() {
+		Assert.assertThrows(NullPointerException.class, () -> new CAState(List.of(bs0,null)));
+	}
+	
+	@Test
+	public void testConstructorException_notStringState() {
+		Assert.assertThrows(IllegalArgumentException.class, () -> new CAState(List.of(bs3)));
+	}
+	
+	@Test
+	public void testConstructorException_notBasicState() {
+			
+		State<String> temp = new State<String>("test") {
+			@Override
+			public boolean isFinalstate() {
+				throw new RuntimeException();
+			}
+
+			@Override
+			public boolean isInitial() {
+				throw new RuntimeException();
+			}
+		};
+		Assert.assertThrows(IllegalArgumentException.class, () -> new CAState(List.of(temp)));
 	}
 }
-
-
-
-
-	
-//	@Test
-//	public void hasSameLabels() {
-//		BasicState bs0 = new BasicState("0",true,false);
-//		BasicState bs1 = new BasicState("1",true,false);
-//		BasicState bs2 = new BasicState("2",true,false);
-//		BasicState bs2bis = new BasicState("2",false,false);
-//
-//		List<CAState> l = new ArrayList<>();
-//		l.add(new CAState(Arrays.asList(bs0,bs1,bs2),0,0)); 
-//		l.add(new CAState(Arrays.asList(bs0,bs1,bs2bis),0,0));
-//		
-//		assertEquals(l.get(0).hasSameBasicStateLabelsOf(l.get(1)),true);
-//	}
-
-
-//	@Test
-//	public void constructorTest3_Exception_nullArgument() {
-//		assertThatThrownBy(() -> new CAState(new ArrayList<>()//,0,0
-//				))
-//	    .isInstanceOf(IllegalArgumentException.class);
-//	}
-	
-
-	
-	
-//	@Test
-//	public void setState_Exception_nullArgument() {
-//		BasicState bs0 = new BasicState("0",true,false);
-//		BasicState bs1 = new BasicState("1",true,false);
-//		BasicState bs2 = new BasicState("2",true,false);
-//		
-//		assertThatThrownBy(() -> new CAState(Arrays.asList(bs0,bs1,bs2),0,0).setState(null))
-//	    .isInstanceOf(IllegalArgumentException.class);
-//	}
-	
-//	@Test
-//	public void hasSameState_Exception_nullArgument() {
-//		assertEquals(new CAState(new int[] {0,0},true,true)
-//				.hasSameBasicStateLabelsOf(new CAState(new int[] {0,0,0},true,true)),false);
-//	}
-	
-
-//	@Test
-//	public void testDifferentStatesButSameBasicStateLabels()
-//	{
-//		Set<CAState> cs = new HashSet<CAState>();
-//		CAState s = new CAState(new int[]{ 1, 2, 3 },false,false);
-//		cs.add(s);
-//		cs.add(s);
-//		cs.add(new CAState(new int[]{ 1, 2, 3 },false,false));
-//		
-//		boolean test=cs.stream()
-//				.anyMatch(x-> cs.stream()
-//						.filter(y->x!=y && x.hasSameBasicStateLabelsOf(y))//Arrays.equals(getArrayState(x), getArrayState(y)))
-//						.count()>0);
-//		
-//		assertEquals(true,test);
-//	}
 

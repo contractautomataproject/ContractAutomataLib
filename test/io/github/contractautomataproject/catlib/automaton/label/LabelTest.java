@@ -1,7 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.util.List;
 
 import org.junit.Assert;
@@ -50,11 +48,6 @@ public class LabelTest {
 		Assert.assertEquals("a", lab.toString());
 	}
 	
-//	@Test
-//	public void testToCSV() {
-//		Assert.assertEquals("[action=a]", lab.toCSV());
-//	}
-	
 	@Test
 	public void equalsSameTrue() {
 		Assert.assertEquals(lab,lab);
@@ -83,17 +76,6 @@ public class LabelTest {
 	
 	@Test
 	public void constructorException1() {
-		assertThatThrownBy(() -> new Label<String>(null))
-	    .isInstanceOf(IllegalArgumentException.class);
-
+		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(null));
 	}
-
-	
-//	@Test
-//	public void constructorException2() {
-//		assertThatThrownBy(() -> new Label<String>(""))
-//	    .isInstanceOf(IllegalArgumentException.class);
-//
-//	}
-
 }

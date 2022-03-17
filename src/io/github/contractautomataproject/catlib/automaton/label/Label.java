@@ -54,9 +54,9 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 		return action.toString();
 	}	
 	
-	public String toCSV() {
-		return "[action=" +action+"]";
-	}
+//	public String toCSV() {
+//		return "[action=" +action+"]";
+//	}
 	
 	@Override
 	public Integer getRank() {

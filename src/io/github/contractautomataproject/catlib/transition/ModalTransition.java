@@ -29,7 +29,6 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 			throw new IllegalArgumentException();
 		else		
 			this.mod=type;
-
 	}
 	
 	public boolean isUrgent()
@@ -67,19 +66,6 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		else 
 			return super.toString();
 	}
-
-//	/**
-//	 * 
-//	 * @return encoding of the object into comma separated values
-//	 */
-//	@Override
-//	public String toCSV()
-//	{
-//		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
-//				+",label="+this.getLabel().toCSV()
-//				+",target="+this.getTarget().toCSV()+"]";
-//	}
-
 
 	@Override
 	public int hashCode() {

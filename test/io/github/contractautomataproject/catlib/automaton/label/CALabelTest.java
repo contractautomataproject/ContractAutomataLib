@@ -1,6 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -251,138 +250,110 @@ public class CALabelTest {
 		Assert.assertNotEquals("test", offer);
 	}
 	
-//	@Test
-//	public void testToCSV() {
-//		assertEquals("[rank=3, offerer=1, requester=2, actiontype=MATCH]",match.toCSV());
-//	}
-	
-	
 	//********************** testing exceptions *********************
 	
 	@Test
 	public void testConstructor1_Exception_nullArgument() {
-		assertThatThrownBy(() -> new CALabel(1,0,null))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,null));
 	}
 	
 	@Test
 	public void testConstructor1Exception_rankZero() {
-		assertThatThrownBy(() -> new CALabel(0,0,CALabel.OFFER+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0,CALabel.OFFER+"a"));
 	}
 	
 	@Test
 	public void testConstructor1Exception_actionLength() {
-		assertThatThrownBy(() -> new CALabel(1,0,"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,"a"));
 	}
 	
 	@Test
 	public void testConstructor1Exception_principalGreaterOrEqualRank() {
-		assertThatThrownBy(() -> new CALabel(1,1,CALabel.OFFER+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,1,CALabel.OFFER+"a"));
 	}
 	
 	@Test
 	public void testConstructor1Exception_notRequestNorOffer() {
-		assertThatThrownBy(() -> new CALabel(1,0,"aa"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,"aa"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_nullArgument1() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,null, CALabel.OFFER+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,null, CALabel.OFFER+"a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_nullArgument2() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,CALabel.OFFER+"a",null))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,CALabel.OFFER+"a",null));
 	}
 	
 	@Test
 	public void testConstructor2Exception_rankZero() {
-		assertThatThrownBy(() -> new CALabel(0,0,1,CALabel.OFFER+"a",CALabel.REQUEST+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0,1,CALabel.OFFER+"a",CALabel.REQUEST+"a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_actionLength1() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,"a",CALabel.REQUEST+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,"a",CALabel.REQUEST+"a"));
 	}
 
 	@Test
 	public void testConstructor2Exception_actionLength2() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,CALabel.REQUEST+"a","a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,CALabel.REQUEST+"a","a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_twoOffers() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,CALabel.OFFER+"a",CALabel.OFFER+"a"))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("The action must be an offer and a request");
+		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,CALabel.OFFER+"a",CALabel.OFFER+"a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_twoRequests() {
-		assertThatThrownBy(() -> new CALabel(2,0,1,CALabel.REQUEST+"a",CALabel.REQUEST+"a"))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("The action must be an offer and a request");
+		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,CALabel.REQUEST+"a",CALabel.REQUEST+"a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_principal1GreaterOrEqualRank() {
-		assertThatThrownBy(() -> new CALabel(2,2,1,CALabel.OFFER+"a",CALabel.REQUEST+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,2,1,CALabel.OFFER+"a",CALabel.REQUEST+"a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception_principal2GreaterOrEqualRank() {
-		assertThatThrownBy(() -> new CALabel(2,0,2,CALabel.OFFER+"a",CALabel.REQUEST+"a"))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,2,CALabel.OFFER+"a",CALabel.REQUEST+"a"));
 	}
 	
 	@Test
 	public void testConstructor3Exception_Empty() {
 		List<String> l = new ArrayList<String>();
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 
 	@Test
 	public void testConstructor3Exception_emptyLabel() {
 		List<String> arg = new ArrayList<String>();
-		assertThatThrownBy(() -> new CALabel(arg))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(arg));
 	}
 	
 	@Test
 	public void testConstructor3Exception_nullReferencesLabel() {
 		List<String> l = new ArrayList<String>();
 		l.add(null);
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("Label contains null references");
+		Assert.assertThrows("Label contains null references", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 
 	@Test
 	public void testConstructor3Exception_notWellFormedLabel() {
 		List<String> l = new ArrayList<String>();
 		l.add("aaa");
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 		
 	@Test
 	public void testConstructor3Exception_notWellFormedIdleLabel() {
 		List<String> l = new ArrayList<String>();
 		l.add(CALabel.IDLE);
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
@@ -390,66 +361,57 @@ public class CALabelTest {
 		List<String> l = new ArrayList<String>();
 		l.add(CALabel.OFFER+"a");
 		l.add(CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("The label is not well-formed");
+		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
 	public void testConstructor3Exception_notWellFormedRequestsLabel() {
 		List<String> l = List.of(CALabel.REQUEST+"a",CALabel.REQUEST+"a");
-		assertThatThrownBy(() -> new CALabel(l))
-	    .isInstanceOf(IllegalArgumentException.class)
-	    .hasMessageContaining("The label is not well-formed");
+		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
 	public void testConstructor4ExceptionNullShift() {
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(ca,2,null))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,null));
 	}
+	
 	
 	@Test
 	public void testConstructor4ExceptionNullRank() {
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(ca,null,1))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,null,1));
 	}
 	
 	@Test
 	public void testConstructor4ExceptionNullLabel() {
-		assertThatThrownBy(() -> new CALabel(null,2,1))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(null,2,1));
 	}
 	
 	@Test
 	public void testConstructor4ExceptionNegativeRank() {
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(ca,-1,1))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,-1,1));
 	}
 	
 
 	@Test
 	public void testConstructor4ExceptionNegativeShift() {
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(ca,2,-2))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,-2));
+
 	}
 	
 	@Test
 	public void testConstructor4ExceptionOffererShiftGreaterRank() {
 		CALabel ca = new CALabel(2,1,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> new CALabel(ca,3,2))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
 	}
 	
 	@Test
 	public void testConstructor4ExceptionRequestShiftGreaterRank() {
 		CALabel ca = new CALabel(2,1,CALabel.REQUEST+"a");
-		assertThatThrownBy(() -> new CALabel(ca,3,2))
-	    .isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
 	}
 	
 	/// ----------------------------
@@ -457,32 +419,26 @@ public class CALabelTest {
 	
 	@Test
 	public void testGetOffererException() {
-		CALabel cl = new CALabel(1,0,CALabel.REQUEST+"a");
-		assertThatThrownBy(() -> cl.getOfferer())
-	    .isInstanceOf(UnsupportedOperationException.class);
+		CALabel cl = new CALabel(1,0,CALabel.REQUEST+"a");		
+		Assert.assertThrows(UnsupportedOperationException.class, ()->cl.getOfferer());
 	}
 	
 	@Test
 	public void testGetRequesterException() {
 		CALabel cl = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> cl.getRequester())
-	    .isInstanceOf(UnsupportedOperationException.class);
+		Assert.assertThrows(UnsupportedOperationException.class, ()->cl.getRequester());
 	}
 	
 	@Test
-	public void testGetOffererOrRequesterTestException() {
-		assertThatThrownBy(() -> match.getOffererOrRequester())
-	    .isInstanceOf(UnsupportedOperationException.class)
-	    .hasMessageContaining("Action is not a request nor an offer");
+	public void testGetOffererOrRequesterTestException() {		
+		Assert.assertThrows("Action is not a request nor an offer",UnsupportedOperationException.class, ()->match.getOffererOrRequester());
 	}
 	
 	@Test
 	public void testMatchException() {
 		Label<List<String>> l  = new Label<>(List.of("ei"));
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
-		assertThatThrownBy(() -> ca.match(l))
-	    .isInstanceOf(IllegalArgumentException.class);
-	
+		Assert.assertThrows(IllegalArgumentException.class, ()->ca.match(l));
 	}
 	
 }

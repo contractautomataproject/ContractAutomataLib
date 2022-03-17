@@ -1,7 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -71,9 +69,7 @@ public class AutomatonTestIT {
 				cs,
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Transitions with different rank");
+		Assert.assertThrows("Transitions with different rank", IllegalArgumentException.class, () -> new ModalAutomaton<CALabel>(tr));
 	}
 
 
@@ -94,9 +90,9 @@ public class AutomatonTestIT {
 				new CAState(Arrays.asList(bs1)),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Not Exactly one Initial State found!");
+		Assert.assertThrows("Not Exactly one Initial State found!", 
+				IllegalArgumentException.class,
+				() -> new ModalAutomaton<CALabel>(tr));
 	}
 
 	@Test
@@ -116,9 +112,9 @@ public class AutomatonTestIT {
 				new CAState(Arrays.asList(bs1)),
 				Modality.PERMITTED));
 
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(tr))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("No Final States!");
+		Assert.assertThrows("No Final States!", 
+				IllegalArgumentException.class,
+				() -> new ModalAutomaton<CALabel>(tr));
 	}
 
 }

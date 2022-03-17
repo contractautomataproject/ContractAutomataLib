@@ -31,8 +31,6 @@ public class CAState extends State<List<BasicState<String>>> {
 						.map(s-> (BasicState<String>)s)
 						.collect(Collectors.toList())
 						:null);
-		if (lstate.isEmpty())
-			throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -60,22 +58,6 @@ public class CAState extends State<List<BasicState<String>>> {
 	{
 		return this.getState().toString();
 	}
-
-//	@Override
-//	public String toString()
-//	{
-//		StringBuilder sb = new StringBuilder();
-//		if (this.isInitial())
-//			sb.append(" Initial ");
-//		if (this.isFinalstate())
-//			sb.append(" Final ");
-//		
-//		sb.append(this.getState().stream()
-//				.map(BasicState::getState)
-//				.collect(Collectors.toList()));
-//
-//		return sb.toString();
-//	}
 
 	// equals could cause errors of duplication of states in transitions to go undetected. 	
 

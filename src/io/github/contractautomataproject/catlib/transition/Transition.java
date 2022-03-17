@@ -60,7 +60,6 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 		return Objects.hash(source.hashCode(),label.hashCode(),target.hashCode());
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -77,14 +76,6 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	public String toString() {
 		return "("+source+","+label+","+target+")";
 	}
-	
-//	public String toCSV()
-//	{
-//		return "[source="+this.getSource().toCSV()
-//				+",label="+this.getLabel().toCSV()
-//				+",target="+this.getTarget().toCSV()+"]";
-//	}
-	
 }
 
 

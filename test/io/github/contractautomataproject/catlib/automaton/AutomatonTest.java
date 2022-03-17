@@ -1,12 +1,12 @@
 package io.github.contractautomataproject.catlib.automaton;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +25,7 @@ public class AutomatonTest {
 	@Mock BasicState<String> s2mock;
 	@Mock Transition<String,String,BasicState<String>,Label<String>> t1mock;
 	@Mock Transition<String,String,BasicState<String>,Label<String>> t2mock;
+	@Mock Label<String> lab;
 	
 	Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>> prop;
 	
@@ -44,13 +45,15 @@ public class AutomatonTest {
 
 		when(t1mock.getSource()).thenReturn(s0mock);
 		when(t1mock.getTarget()).thenReturn(s1mock);
-		when(t1mock.toString()).thenReturn("(0,m,1)");
+		when(t1mock.getLabel()).thenReturn(lab);
 		when(t1mock.getRank()).thenReturn(1);
 		
 		when(t2mock.getSource()).thenReturn(s0mock);
 		when(t2mock.getTarget()).thenReturn(s2mock);
-		when(t2mock.toString()).thenReturn("(0,m,2)");
+		when(t2mock.getLabel()).thenReturn(lab);
 		when(t2mock.getRank()).thenReturn(1);	
+		
+		when(lab.toString()).thenReturn("m");
 
 		prop = new Automaton<>(Set.of(t1mock,t2mock));
 	}
@@ -85,16 +88,18 @@ public class AutomatonTest {
 
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(null))
-		.isInstanceOf(NullPointerException.class);
+		Assert.assertThrows("Null argument",
+				NullPointerException.class,
+				()->new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(null));
+
 	}
 
 	@Test
 	public void constructorTest_Exception_emptyTransitions() {
 		Set<Transition<String,String, BasicState<String>,Label<String>>> s = new HashSet<>();
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(s))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("No transitions");
+		Assert.assertThrows("No transitions",
+				IllegalArgumentException.class ,
+				() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(s));
 
 	}
 
@@ -102,26 +107,26 @@ public class AutomatonTest {
 	public void constructor_Exception_nullArgument() throws Exception {
 		Set<Transition<String,String, BasicState<String>,Label<String>>> s = new HashSet<>();
 		s.add(null);
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(s))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Null element");
+		Assert.assertThrows("Null element", 
+				IllegalArgumentException.class,
+				() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(s));
 	}
 
 	@Test
 	public void constructor_Exception_differentRank() throws Exception {
 		when(t2mock.getRank()).thenReturn(2);
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Transitions with different rank");
+		Assert.assertThrows("Transitions with different rank", 
+				IllegalArgumentException.class,
+				() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)));
 	}
 
 	@Test
 	public void noInitialState_exception() throws Exception
 	{
 		when(s1mock.isInitial()).thenReturn(true);
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Not Exactly one Initial State found!");
+		Assert.assertThrows("Not Exactly one Initial State found!", 
+				IllegalArgumentException.class,
+				() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)));
 	}
 
 	@Test
@@ -129,9 +134,9 @@ public class AutomatonTest {
 	{
 		when(s1mock.isFinalstate()).thenReturn(false);
 		when(s2mock.isFinalstate()).thenReturn(false);
-		assertThatThrownBy(() -> new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("No Final States!");
+		Assert.assertThrows("No Final States!", 
+				IllegalArgumentException.class, 
+				()->new Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>>(Set.of(t1mock,t2mock)));
 	}
 
 }

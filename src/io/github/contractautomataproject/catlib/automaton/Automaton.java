@@ -78,7 +78,7 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 	{
 		return  tra.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
-				.filter(State::isInitial)
+				.filter(S::isInitial)
 				.findFirst().orElseThrow(NullPointerException::new);
 	}
 
@@ -114,7 +114,8 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 		pr.append("Transitions: "+System.lineSeparator());
 		this.tra.stream()
 		.sorted((t1,t2)->t1.toString().compareTo(t2.toString()))
-		.forEach(t->pr.append(t.toString()+System.lineSeparator()));
+		.forEach(t->pr.append("("+t.getSource().getState()+","+t.getLabel().toString()+","+t.getTarget().getState()+")"
+				+System.lineSeparator()));
 		return pr.toString();
 	}
 

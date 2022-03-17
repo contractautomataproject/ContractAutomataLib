@@ -58,8 +58,7 @@ public class BasicState<T> extends State<T>{
 				label=kv[1];
 			else if (kv[0].equals("initial"))
 				initial=true;
-			else if (kv[0].equals("final"))
-				finalstate=true;
+			else finalstate=true;
 		}
 		return new BasicState<>(label,initial,finalstate);
 	}

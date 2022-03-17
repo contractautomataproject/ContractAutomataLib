@@ -98,11 +98,5 @@ public class CMLabel extends CALabel {
 			return "["+this.id+ID_SEPARATOR+this.partner+ACTION_SEPARATOR+super.getPrincipalAction()+"]";
 		else
 			return "["+this.partner+ID_SEPARATOR+this.id+ACTION_SEPARATOR+this.getPrincipalAction()+"]";
-	}
-	
-	@Override
-	public String toCSV() {
-		return "[id=" + id+ ", partner=" + partner + "]"+super.toCSV();
-	}
-
+	}	
 }

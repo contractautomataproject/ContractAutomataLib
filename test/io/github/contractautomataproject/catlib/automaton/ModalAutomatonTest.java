@@ -1,7 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton;
 
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -23,6 +21,7 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.CAState;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModalAutomatonTest {
@@ -35,6 +34,8 @@ public class ModalAutomatonTest {
 	@Mock CAState cs3;	
 	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t1;
 	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t2;
+	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t3;
+	@Mock CALabel lab;
 
 	ModalAutomaton<CALabel> aut;
 	
@@ -44,24 +45,44 @@ public class ModalAutomatonTest {
 
 	@Before
 	public void setup() {
-		when(cs1.isInitial()).thenReturn(true);
-		when(cs2.isInitial()).thenReturn(false);
-		when(cs3.isInitial()).thenReturn(false);
-		when(cs3.isFinalstate()).thenReturn(true);
+		when(bs1.isFinalstate()).thenReturn(true);
+		when(bs2.isFinalstate()).thenReturn(true);
 
-		when(t1.getSource()).thenReturn(cs1);
-		when(t1.getTarget()).thenReturn(cs2);
-		when(t1.getRank()).thenReturn(2);
+		when(bs0.getState()).thenReturn("0");
+		when(bs1.getState()).thenReturn("1");
+		when(bs2.getState()).thenReturn("2");
 		
-		when(t2.getSource()).thenReturn(cs2);
-		when(t2.getTarget()).thenReturn(cs3);
-		when(t2.getRank()).thenReturn(2);
+		
+		when(cs1.isInitial()).thenReturn(true);
+		when(cs3.isFinalstate()).thenReturn(true);
 
 		when(cs1.getState()).thenReturn(Arrays.asList(bs0,bs0));
 		when(cs2.getState()).thenReturn(Arrays.asList(bs1,bs0));
 		when(cs3.getState()).thenReturn(Arrays.asList(bs1,bs2));
 
-		st = new HashSet<>(Set.of(t1,t2));
+		when(t1.getSource()).thenReturn(cs1);
+		when(t1.getLabel()).thenReturn(lab);
+		when(t1.getTarget()).thenReturn(cs2);
+		when(t1.getRank()).thenReturn(2);
+		when(t1.getModality()).thenReturn(Modality.URGENT);
+		
+		when(t2.getSource()).thenReturn(cs2);
+		when(t2.getLabel()).thenReturn(lab);
+		when(t2.getTarget()).thenReturn(cs3);
+		when(t2.getRank()).thenReturn(2);
+		when(t2.getModality()).thenReturn(Modality.PERMITTED);
+		
+
+		when(t3.getSource()).thenReturn(cs3);
+		when(t3.getLabel()).thenReturn(lab);
+		when(t3.getTarget()).thenReturn(cs1);
+		when(t3.getRank()).thenReturn(2);
+		when(t3.getModality()).thenReturn(Modality.LAZY);
+
+		
+		when(lab.toString()).thenReturn("[!test,?test]");
+
+		st = new HashSet<>(Set.of(t1,t2,t3));
 		aut = new ModalAutomaton<CALabel>(st);
 		
 		map = Map.of(0,Set.of(bs0,bs1),1, Set.of(bs0,bs2));		
@@ -77,21 +98,23 @@ public class ModalAutomatonTest {
 	public void testGetBasicStates() {
 		Assert.assertEquals(map, aut.getBasicStates());
 	}
+	
 
-//	@Test
-//	public void testPrintFinalStates() {
-//		when(bs1.isFinalstate()).thenReturn(true);
-//		when(bs2.isFinalstate()).thenReturn(true);
-//		when(bs1.getState()).thenReturn("1");
-//		when(bs2.getState()).thenReturn("2");
-//		
-////		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
-////		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
-////		aut = new ModalAutomaton<>(spyst);
-//		
-//		String test = "[1][2]";
-//		Assert.assertEquals(test, aut.printFinalStates());
-//	}
+	@Test
+	public void testPrintFinalStates() {
+//		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
+//		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
+//		aut = new ModalAutomaton<>(spyst);
+		
+		String test = "Rank: 2" + System.lineSeparator()+
+				"Initial state: [0, 0]" + System.lineSeparator()+ 
+				"Final states: [[1][2]]" + System.lineSeparator()+ 
+				"Transitions: " + System.lineSeparator()+
+				"!U([0, 0],[!test,?test],[1, 0])" + System.lineSeparator()+
+				"([1, 0],[!test,?test],[1, 2])"  + System.lineSeparator()+ 
+				"!L([1, 2],[!test,?test],[0, 0])" + System.lineSeparator();
+		Assert.assertEquals(test, aut.toString());
+	}
 
 	@Test
 	public void testAmbiguousStates_exception() throws Exception
@@ -102,9 +125,9 @@ public class ModalAutomatonTest {
 
 
 		st = Set.of(t1,t2);
-		assertThatThrownBy(() -> new ModalAutomaton<CALabel>(st))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("Transitions have ambiguous states (different objects for the same state).");
+		Assert.assertThrows("Transitions have ambiguous states (different objects for the same state).", 
+				IllegalArgumentException.class,
+				() -> new ModalAutomaton<CALabel>(st));
 	}
 
 	public static boolean autEquals(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {

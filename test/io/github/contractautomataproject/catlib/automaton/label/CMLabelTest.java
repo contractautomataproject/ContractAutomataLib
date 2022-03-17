@@ -1,6 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -141,41 +140,34 @@ public class CMLabelTest {
 	
 	@Test
 	public void testMatchException() {
-		List<String> t = Arrays.asList("?a");
-		CALabel test = new CALabel(t);
-		assertThatThrownBy(()->cm_of.match(test))
-		.isInstanceOf(IllegalArgumentException.class);
+		CALabel test = new CALabel(Arrays.asList("?a"));
+		Assert.assertThrows(IllegalArgumentException.class, ()->cm_of.match(test));
 	}
 	
 	@Test
 	public void testConstructor1ExceptionNoSenderReceiver() {
-		assertThatThrownBy(()->new CMLabel("@?a"))
-		.isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CMLabel("@?a"));
 	}
 	
 	@Test
 	public void testConstructor1ExceptionNoSender() {
-		assertThatThrownBy(()->new CMLabel("_Bob@!a"))
-		.isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CMLabel("_Bob@!a"));
 	}
 	
 	
 	@Test
 	public void testConstructor1ExceptionNoReceiver() {
-		assertThatThrownBy(()->new CMLabel("Alice_@?a"))
-		.isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CMLabel("Alice_@?a"));
 	}
 	
 	@Test
 	public void testConstructor1ExceptionNoPartner() {
-		assertThatThrownBy(()->new CMLabel("_Bob@?a"))
-		.isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CMLabel("_Bob@?a"));
 	}
 	
 	@Test
 	public void testConstructor2Exception() {
 		List<String> test = List.of("Alice_Bob@!apple","Alice_Bob@?apple");
-		assertThatThrownBy(()->new CMLabel(test))
-		.isInstanceOf(IllegalArgumentException.class);
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CMLabel(test));
 	}
 }
