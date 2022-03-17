@@ -78,16 +78,12 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 		return "("+source+","+label+","+target+")";
 	}
 	
-	/**
-	 * 
-	 * @return encoding of the object into comma separated values
-	 */
-	public String toCSV()
-	{
-		return "[source="+this.getSource().toCSV()
-				+",label="+this.getLabel().toCSV()
-				+",target="+this.getTarget().toCSV()+"]";
-	}
+//	public String toCSV()
+//	{
+//		return "[source="+this.getSource().toCSV()
+//				+",label="+this.getLabel().toCSV()
+//				+",target="+this.getTarget().toCSV()+"]";
+//	}
 	
 }
 

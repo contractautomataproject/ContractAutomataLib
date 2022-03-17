@@ -118,7 +118,7 @@ public class Automaton<S1,L1,S extends State<S1>,T extends Transition<S1,L1,S,? 
 		return pr.toString();
 	}
 
-	public String printFinalStates() {
+	private String printFinalStates() {
 		StringBuilder pr = new StringBuilder();
 		Set<S> states = this.getStates();
 		for (int i=0;i<this.getRank();i++) {

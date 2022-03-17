@@ -48,7 +48,26 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 	}
 
 	@Override
-	public String printFinalStates() {
+	public String toString() {
+		StringBuilder pr = new StringBuilder();
+		int rank = this.getRank();
+		pr.append("Rank: "+rank+System.lineSeparator());
+		pr.append("Initial state: " +printState(this.getInitial())+System.lineSeparator());
+		pr.append("Final states: ["+printFinalStates()+"]"+System.lineSeparator());
+		pr.append("Transitions: "+System.lineSeparator());
+		this.getTransition().stream()
+		.sorted((t1,t2)->t1.toString().compareTo(t2.toString()))
+		.forEach(t->pr.append(printTransition(t)+System.lineSeparator()));
+		return pr.toString();
+	}
+	
+	private List<String> printState(CAState s) {
+		return s.getState().stream()
+				.map(BasicState<String>::getState)
+				.collect(Collectors.toList());
+	}
+	
+	private String printFinalStates() {
 		StringBuilder pr = new StringBuilder();
 		for (int i=0;i<this.getRank();i++) {
 			pr.append(Arrays.toString(
@@ -58,5 +77,16 @@ ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>
 					.toArray()));
 		}
 		return pr.toString();
+	}
+	
+	private String printTransition(ModalTransition<List<BasicState<String>>,List<String>,CAState,L> tr)
+	{
+		String str = "("+printState(tr.getSource())+","+tr.getLabel().toString()+","+printState(tr.getTarget())+")";
+		if (tr.getModality()==ModalTransition.Modality.URGENT)
+			return "!U"+str;
+		else if (tr.getModality()==ModalTransition.Modality.LAZY)	
+			return "!L"+str;
+		else
+			return str;
 	}
 }

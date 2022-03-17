@@ -78,20 +78,20 @@ public class ModalAutomatonTest {
 		Assert.assertEquals(map, aut.getBasicStates());
 	}
 
-	@Test
-	public void testPrintFinalStates() {
-		when(bs1.isFinalstate()).thenReturn(true);
-		when(bs2.isFinalstate()).thenReturn(true);
-		when(bs1.getState()).thenReturn("1");
-		when(bs2.getState()).thenReturn("2");
-		
-//		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
-//		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
-//		aut = new ModalAutomaton<>(spyst);
-		
-		String test = "[1][2]";
-		Assert.assertEquals(test, aut.printFinalStates());
-	}
+//	@Test
+//	public void testPrintFinalStates() {
+//		when(bs1.isFinalstate()).thenReturn(true);
+//		when(bs2.isFinalstate()).thenReturn(true);
+//		when(bs1.getState()).thenReturn("1");
+//		when(bs2.getState()).thenReturn("2");
+//		
+////		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
+////		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
+////		aut = new ModalAutomaton<>(spyst);
+//		
+//		String test = "[1][2]";
+//		Assert.assertEquals(test, aut.printFinalStates());
+//	}
 
 	@Test
 	public void testAmbiguousStates_exception() throws Exception
@@ -109,10 +109,10 @@ public class ModalAutomatonTest {
 
 	public static boolean autEquals(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
-				.map(t->t.toCSV())
+				.map(t->t.toString())
 				.collect(Collectors.toSet());
 		Set<String> testTr=test.getTransition().parallelStream()
-				.map(t->t.toCSV())
+				.map(t->t.toString())
 				.collect(Collectors.toSet());
 
 		return autTr.parallelStream()

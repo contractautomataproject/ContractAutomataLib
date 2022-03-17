@@ -29,16 +29,13 @@ public class BasicState<T> extends State<T>{
 		return init;
 	}
 	
-	@Override
-	public String toString() {
-		return this.getState().toString();
-	}
 	
 	/**
 	 * 
 	 * @return a string encoding the object as comma separated values
 	 */
-	public String toCSV() {
+	@Override
+	public String toString() {
 		String finalstate= (this.isFinalstate())?",final=true":"";
 		String initial= (this.isInitial())?",initial=true":"";
 		return "label="+this.getState()+finalstate+initial;

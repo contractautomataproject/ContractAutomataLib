@@ -26,6 +26,4 @@ public abstract class State<T> implements Ranked {
 	public abstract boolean isFinalstate();
 	
 	public abstract boolean isInitial();
-
-	public abstract String toCSV();
 }

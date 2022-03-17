@@ -459,16 +459,14 @@ public class CALabelTest {
 	public void testGetOffererException() {
 		CALabel cl = new CALabel(1,0,CALabel.REQUEST+"a");
 		assertThatThrownBy(() -> cl.getOfferer())
-	    .isInstanceOf(UnsupportedOperationException.class)
-	    .hasMessageContaining("No offerer in a request action");
+	    .isInstanceOf(UnsupportedOperationException.class);
 	}
 	
 	@Test
 	public void testGetRequesterException() {
 		CALabel cl = new CALabel(1,0,CALabel.OFFER+"a");
 		assertThatThrownBy(() -> cl.getRequester())
-	    .isInstanceOf(UnsupportedOperationException.class)
-	    .hasMessageContaining("No requester in an offer action");
+	    .isInstanceOf(UnsupportedOperationException.class);
 	}
 	
 	@Test

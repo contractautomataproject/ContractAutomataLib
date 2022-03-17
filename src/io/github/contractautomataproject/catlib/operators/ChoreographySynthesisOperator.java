@@ -68,7 +68,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
 		
 		final Set<String> violatingbc = new HashSet<>();
-		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toCSV()),req);
+		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
 		
 		ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> toRemove=null; 
 		ModalAutomaton<CALabel> chor;
@@ -81,7 +81,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 			toRemove=choice.apply(chor.getTransition().parallelStream()
 					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
-		} while (toRemove!=null && violatingbc.add(toRemove.toCSV()));
+		} while (toRemove!=null && violatingbc.add(toRemove.toString()));
 		return chor;
 	}
 

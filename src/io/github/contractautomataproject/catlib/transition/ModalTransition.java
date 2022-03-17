@@ -61,24 +61,24 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	public String toString()
 	{
 		if (this.mod==Modality.URGENT)
-			return "!U("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
+			return "!U" + super.toString();
 		else if (this.mod==Modality.LAZY)	
-			return "!L("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
+			return "!L"+super.toString();
 		else 
-			return "("+getSource().getState().toString()+","+getLabel().toString()+","+getTarget().getState().toString()+")";
+			return super.toString();
 	}
 
-	/**
-	 * 
-	 * @return encoding of the object into comma separated values
-	 */
-	@Override
-	public String toCSV()
-	{
-		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
-				+",label="+this.getLabel().toCSV()
-				+",target="+this.getTarget().toCSV()+"]";
-	}
+//	/**
+//	 * 
+//	 * @return encoding of the object into comma separated values
+//	 */
+//	@Override
+//	public String toCSV()
+//	{
+//		return "[mod="+this.getModality()+",source="+this.getSource().toCSV()
+//				+",label="+this.getLabel().toCSV()
+//				+",target="+this.getTarget().toCSV()+"]";
+//	}
 
 
 	@Override

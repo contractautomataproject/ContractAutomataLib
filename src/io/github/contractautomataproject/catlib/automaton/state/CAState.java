@@ -55,31 +55,27 @@ public class CAState extends State<List<BasicState<String>>> {
 		return new ArrayList<>(super.getState());
 	}
 
-	/**
-	 * 
-	 * @return an encoding of the object as comma separated values
-	 */
-	@Override
-	public String toCSV()
-	{
-		return "[state=["+this.getState().stream()
-				.map(BasicState::toCSV)
-				.collect(Collectors.joining())+"]]";
-	}
-
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder();
-		if (this.isInitial())
-			sb.append(" Initial ");
-		if (this.isFinalstate())
-			sb.append(" Final ");
-
-		sb.append(this.getState().toString());
-
-		return sb.toString();
+		return this.getState().toString();
 	}
+
+//	@Override
+//	public String toString()
+//	{
+//		StringBuilder sb = new StringBuilder();
+//		if (this.isInitial())
+//			sb.append(" Initial ");
+//		if (this.isFinalstate())
+//			sb.append(" Final ");
+//		
+//		sb.append(this.getState().stream()
+//				.map(BasicState::getState)
+//				.collect(Collectors.toList()));
+//
+//		return sb.toString();
+//	}
 
 	// equals could cause errors of duplication of states in transitions to go undetected. 	
 

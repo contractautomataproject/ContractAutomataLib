@@ -74,7 +74,7 @@ public class ChoreographyTest {
 		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.data");
 
 		Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> choice = 
-				s -> s.sorted((t1,t2)->t1.toCSV().compareTo(t2.toCSV())).findFirst();
+				s -> s.sorted((t1,t2)->t1.toString().compareTo(t2.toString())).findFirst();
 				
 		ModalAutomaton<CALabel> cor = new ChoreographySynthesisOperator(new StrongAgreement(),choice).apply(aut);
 	
