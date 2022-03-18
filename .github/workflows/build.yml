@@ -38,6 +38,10 @@ jobs:
       - name: 🚀 Coveralls Coverage Report Submission
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
+        
+      - name: 👓 Mutation Testing with Pit
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage site
 
       - name: 🐛 Analyze with SonarCloud and SpotBugs
         env:
