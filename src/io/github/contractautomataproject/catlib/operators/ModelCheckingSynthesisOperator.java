@@ -22,7 +22,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  *
  */
 public class ModelCheckingSynthesisOperator extends 
-SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalAutomaton<CALabel>> {
+SynthesisOperator<List<BasicState<String>>,List<String>,CAState<String>,CALabel,ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>,ModalAutomaton<CALabel>> {
 
 	private final Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop;
 	private final Function<CALabel,CALabel> changeLabel;
@@ -36,12 +36,12 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 	 * @param prop another property to enforce expressed by an automaton
 	 */
 	public ModelCheckingSynthesisOperator(
-			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, 
-			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>, 
-			Set<CAState>> pruningPredicate,
-			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, 
-			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>, 
-			Set<CAState>> forbiddenPredicate,
+			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>, 
+			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>, 
+			Set<CAState<String>>> pruningPredicate,
+			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>, 
+			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>, 
+			Set<CAState<String>>> forbiddenPredicate,
 			Predicate<CALabel> req,
 			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop,
@@ -61,9 +61,9 @@ SynthesisOperator<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTra
 	 * @param prop another property to enforce expressed by an automaton
 	 */
 	public ModelCheckingSynthesisOperator(
-			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>, 
-			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>, 
-			Set<CAState>> forbiddenPredicate,
+			TriPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>, 
+			Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>, 
+			Set<CAState<String>>> forbiddenPredicate,
 			Predicate<CALabel> req,
 			Predicate<Label<List<String>>> reqmc,
 			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop,

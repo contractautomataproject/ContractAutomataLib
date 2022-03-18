@@ -282,6 +282,26 @@
 						</plugins>
 					</configuration>
 				</plugin>
+				<!-- https://pitest.org/quickstart/maven/ -->
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>LATEST</version>
+					<configuration>
+						<targetClasses>
+							<param>io.github.contractautomataproject.catlib.automaton*</param>
+							<param>io.github.contractautomataproject.catlib.label*</param>
+							<param>io.github.contractautomataproject.catlib.state*</param>
+							<param>io.github.contractautomataproject.catlib.transition*</param>
+						</targetClasses>
+						<targetTests>
+							<param>io.github.contractautomataproject.catlib.automaton*</param>
+							<param>io.github.contractautomataproject.catlib.label*</param>
+							<param>io.github.contractautomataproject.catlib.state*</param>
+							<param>io.github.contractautomataproject.catlib.transition*</param>
+						</targetTests>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -306,6 +326,18 @@
 						</plugin>
 					</plugins>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>LATEST</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>

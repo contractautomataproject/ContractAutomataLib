@@ -123,9 +123,14 @@ public class CMLabelTest {
 	}
 	
 	@Test
-	public void testHashCodeTrue() {
+	public void testHashCodeEquals() {
 		CMLabel equal = new CMLabel("Alice","Bob","!apple");
 		assertEquals(cm_of.hashCode(),equal.hashCode());
+	}
+	
+	public void testHashCodeNotEquals() {
+		CMLabel equal = new CMLabel("Carol","Bob","!apple");
+		Assert.assertNotEquals(cm_of.hashCode(),equal.hashCode());
 	}
 	
 	@Test

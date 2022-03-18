@@ -98,7 +98,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr)
+	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -112,7 +112,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr)
+	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())

@@ -90,7 +90,7 @@ public class FMCA {
 	public Map<Product,ModalAutomaton<CALabel>> getCanonicalProducts()
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
-				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::getLabel)
+				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
@@ -183,7 +183,7 @@ public class FMCA {
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(ModalAutomaton<CALabel> a,Predicate<Product> pred)
 	{
 		if (a.getForwardStar(a.getInitial()).stream()
-				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::getLabel)
+				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 

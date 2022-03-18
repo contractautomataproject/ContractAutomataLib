@@ -29,17 +29,17 @@ public class ModalAutomatonTest {
 	@Mock BasicState<String> bs0;
 	@Mock BasicState<String> bs1;
 	@Mock BasicState<String> bs2;
-	@Mock CAState cs1;
-	@Mock CAState cs2;	
-	@Mock CAState cs3;	
-	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t1;
-	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t2;
-	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> t3;
+	@Mock CAState<String> cs1;
+	@Mock CAState<String> cs2;	
+	@Mock CAState<String> cs3;	
+	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t1;
+	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2;
+	@Mock ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t3;
 	@Mock CALabel lab;
 
 	ModalAutomaton<CALabel> aut;
 	
-	Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> st;
+	Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> st;
 	
 	Map<Integer,Set<BasicState<String>>> map;
 
@@ -102,7 +102,7 @@ public class ModalAutomatonTest {
 
 	@Test
 	public void testPrintFinalStates() {
-//		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> spyst = Mockito.spy(st);
+//		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> spyst = Mockito.spy(st);
 //		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
 //		aut = new ModalAutomaton<>(spyst);
 		
@@ -146,9 +146,9 @@ public class ModalAutomatonTest {
 	}
 }
 //	private static <T extends State<?>> String csvState(T state) {
-//		if (state instanceof CAState)
+//		if (state instanceof CAState<String>)
 //		{
-//			CAState castate = (CAState) state;
+//			CAState<String> castate = (CAState<String>) state;
 //			return castate.getState().stream()
 //					.map(BasicState::toCSV)
 //					.collect(Collectors.joining());

@@ -22,8 +22,14 @@ public class LabelTest {
 	}
 	
 	@Test
-	public void testMatch() {
+	public void testMatchTrue() {
 		Assert.assertTrue(lab.match(new Label<>("a")));
+	}
+	
+
+	@Test
+	public void testMatchFalse() {
+		Assert.assertFalse(lab.match(new Label<>("b")));
 	}
 
 	@Test

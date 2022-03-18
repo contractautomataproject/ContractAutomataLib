@@ -13,7 +13,7 @@ import org.junit.Test;
 
 
 public class CAStateTestIT {
-	private  CAState test;
+	private  CAState<String> test;
 	
 	@Before
 	public void setup() {		
@@ -21,11 +21,11 @@ public class CAStateTestIT {
 		BasicState<String> bs1 = new BasicState<String>("1",true,false);
 		BasicState<String> bs2 = new BasicState<String>("2",true,false);
 		
-		List<CAState> l = new ArrayList<>();
-		l.add(new CAState(Arrays.asList(bs0,bs1))); 
-		l.add(new CAState(Arrays.asList(bs2)));
+		List<CAState<String>> l = new ArrayList<>();
+		l.add(new CAState<>(Arrays.asList(bs0,bs1))); 
+		l.add(new CAState<>(Arrays.asList(bs2)));
 		
-		test = new CAState(l);
+		test = CAState.createStateByFlattening(l);
 	}
 
 	@Test

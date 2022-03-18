@@ -56,7 +56,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	}
 
 
-	private static boolean isUncontrollableOrchestration(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tra,Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> str, Set<CAState> badStates)
+	private static boolean isUncontrollableOrchestration(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> tra,Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> str, Set<CAState<String>> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal

@@ -39,12 +39,22 @@ public class CALabelTest {
 	public void testConstructor1OfferEquals() {
 		assertEquals(new CALabel(3,1,CALabel.OFFER+"a"),offer);
 	}
+	
+	@Test
+	public void testConstructor1EqualsActionLength() {
+		assertEquals(new CALabel(3,1,CALabel.OFFER+"test"),new CALabel(3,1,CALabel.OFFER+"test"));
+	}
 
 	@Test
 	public void testConstructor1RequestEquals() {
 		assertEquals(new CALabel(3,1,CALabel.REQUEST+"a"),request);
 	}
 
+	@Test
+	public void testConstructor2EqualsActionLength() {
+		assertEquals(new CALabel(3,1,2,CALabel.OFFER+"test", CALabel.REQUEST+"test"),new CALabel(3,1,2,CALabel.OFFER+"test", CALabel.REQUEST+"test"));
+	}
+	
 	@Test
 	public void testConstructor2MatchEquals() {
 		assertEquals(new CALabel(3,1,2,CALabel.OFFER+"a", CALabel.REQUEST+"a"),match);
@@ -54,6 +64,13 @@ public class CALabelTest {
 	public void testConstructor2MatchEquals2() {
 		assertEquals(new CALabel(3,2,1,CALabel.REQUEST+"a", CALabel.OFFER+"a"),match);
 	}
+	
+	@Test
+	public void testConstructor3EqualsActionLength() {
+		assertEquals(new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"test", CALabel.IDLE)),
+				new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"test", CALabel.IDLE)));
+	}
+	
 	
 	@Test
 	public void testConstructor3OfferEquals() {
@@ -70,6 +87,14 @@ public class CALabelTest {
 		assertEquals(new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"a", CALabel.REQUEST+"a")),match);
 	}
 
+	@Test
+	public void testConstructor4EqualsActionLength() {
+		CALabel test = new CALabel(List.of(CALabel.IDLE, CALabel.IDLE, CALabel.OFFER+"test", CALabel.REQUEST+"test"));
+		CALabel test2 =  new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"test", CALabel.REQUEST+"test"));
+		assertEquals(test, new CALabel(test2,4,1));
+
+	}
+	
 	@Test
 	public void testConstructor4OfferEquals() {
 		CALabel test = new CALabel(List.of(CALabel.IDLE, CALabel.IDLE, CALabel.OFFER+"a", CALabel.IDLE, CALabel.IDLE));

@@ -56,15 +56,15 @@ public class AutomatonTestIT {
 		BasicState<String> bs2 = new BasicState<String>("2",true,false);
 		BasicState<String> bs3 = new BasicState<String>("3",true,false);
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0,bs1,bs2)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(new CAState<String>(Arrays.asList(bs0,bs1,bs2)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs0,bs1,bs3)),
+				new CAState<String>(Arrays.asList(bs0,bs1,bs3)),
 				Modality.PERMITTED));
-		CAState cs = new CAState(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
+		CAState<String> cs = new CAState<String>(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
 				);
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(cs,
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(cs,
 				new CALabel(lab2),
 				cs,
 				Modality.PERMITTED));
@@ -83,11 +83,11 @@ public class AutomatonTestIT {
 		BasicState<String> bs1 = new BasicState<String>("1",false,true);
 
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(new CAState<String>(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1)),
+				new CAState<String>(Arrays.asList(bs1)),
 				Modality.PERMITTED));
 
 		Assert.assertThrows("Not Exactly one Initial State found!", 
@@ -105,11 +105,11 @@ public class AutomatonTestIT {
 		BasicState<String> bs1 = new BasicState<String>("1",false,false);
 
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs0)//,0,0
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(new CAState<String>(Arrays.asList(bs0)//,0,0
 				),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs1)),
+				new CAState<String>(Arrays.asList(bs1)),
 				Modality.PERMITTED));
 
 		Assert.assertThrows("No Final States!", 

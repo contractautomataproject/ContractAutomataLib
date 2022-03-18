@@ -1,4 +1,4 @@
-package io.github.davidebasile.examplesTest;
+package io.github.contractautomataproject.e2e;
 
 import java.io.File;
 import java.util.ArrayList;

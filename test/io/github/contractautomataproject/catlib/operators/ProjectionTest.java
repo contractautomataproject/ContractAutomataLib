@@ -53,7 +53,7 @@ public class ProjectionTest {
 		boolean bc = closed_aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
 						.satisfiesBranchingCondition(t,aut.getTransition(), 
-								new HashSet<CAState>()));
+								new HashSet<CAState<String>>()));
 		Assert.assertFalse(bc);	
 	}
 	
@@ -75,7 +75,7 @@ public class ProjectionTest {
 //		boolean bc = closed_aut.getTransition().stream()
 //				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
 //						.satisfiesBranchingCondition(t,aut.getTransition(), 
-//								new HashSet<CAState>()));
+//								new HashSet<CAState<String>>()));
 //		assertEquals(bc,false);	
 		
 		assertTrue(ModalAutomatonTest.autEquals(closed_aut, test));

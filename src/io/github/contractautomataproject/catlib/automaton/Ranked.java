@@ -7,5 +7,5 @@ package io.github.contractautomataproject.catlib.automaton;
  *
  */
 public interface Ranked {
-	public default Integer getRank() { return 1;}
+	public Integer getRank();
 }

@@ -47,36 +47,36 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 		if (aut.parallelStream()
 		.map(ModalAutomaton<CALabel>::getStates)
 		.flatMap(Set::stream)
-		.map(CAState::getState)
+		.map(CAState<String>::getState)
 		.flatMap(List::stream)
 		.map(BasicState<String>::getState)
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> uniontr= new HashSet<>(aut.stream()
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> uniontr= new HashSet<>(aut.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+aut.size());  //Initialized to the total number of transitions
 		
 		//storing initial states of aut
-		List<CAState> initialStates = aut.stream()
+		List<CAState<String>> initialStates = aut.stream()
 				.map(ModalAutomaton::getInitial)
 				.collect(Collectors.toList());
 		
 		//relabeling, removing initial states
-		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> relabeled=IntStream.range(0, aut.size())
+		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
 		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalstate)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
 		//new initial state
-		CAState newinitial = new CAState(IntStream.range(0,rank)
+		CAState<String> newinitial = new CAState<String>(IntStream.range(0,rank)
 				.mapToObj(i->new BasicState<String>("0",true,false))
 				.collect(Collectors.toList()));
 
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(
+				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(
 						newinitial,new CALabel(rank, 0, "!dummy"),
 						relabeled.get(i).parallelStream()
 						.flatMap(t->Stream.of(t.getSource(),t.getTarget()))

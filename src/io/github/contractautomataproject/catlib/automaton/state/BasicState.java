@@ -1,5 +1,7 @@
 package io.github.contractautomataproject.catlib.automaton.state;
 
+import java.util.List;
+
 /**
  * class encoding a state
  * 
@@ -15,8 +17,15 @@ public class BasicState<T> extends State<T>{
 	
 	public BasicState(T label, Boolean init, Boolean fin) {
 		super(label);
+		if (label instanceof List<?>)
+			throw new UnsupportedOperationException();
 		this.init=init;
 		this.fin=fin;
+	}
+	
+	@Override
+	public Integer getRank() {
+		return 1;
 	}
 	
 	@Override

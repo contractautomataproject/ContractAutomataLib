@@ -25,9 +25,19 @@ public class AutomatonTest {
 	@Mock BasicState<String> s2mock;
 	@Mock Transition<String,String,BasicState<String>,Label<String>> t1mock;
 	@Mock Transition<String,String,BasicState<String>,Label<String>> t2mock;
+	@Mock Transition<String,String,BasicState<String>,Label<String>> t3mock;
 	@Mock Label<String> lab;
-	
+
 	Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>> prop;
+//
+//	@Mock BasicState<List<BasicState<String>>> s3mock;
+//	@Mock BasicState<List<BasicState<String>>> s4mock;	
+//	@Mock Label<List<Label<String>>> lab2;
+//	@Mock Transition<List<BasicState<String>>,List<Label<String>>,BasicState<List<BasicState<String>>>,Label<List<String>>> t4mock;
+//	
+//
+//	Automaton<List<String>,List<String>,BasicState<List<String>>,Transition<List<String>,List<String>,BasicState<List<String>>,Label<List<String>>>> prop2;
+	
 	
 	@Before
 	public void setup() {
@@ -43,6 +53,8 @@ public class AutomatonTest {
 		when(s2mock.isFinalstate()).thenReturn(true);
 		when(s2mock.getState()).thenReturn("2");
 
+		when(lab.toString()).thenReturn("m");
+		
 		when(t1mock.getSource()).thenReturn(s0mock);
 		when(t1mock.getTarget()).thenReturn(s1mock);
 		when(t1mock.getLabel()).thenReturn(lab);
@@ -53,9 +65,31 @@ public class AutomatonTest {
 		when(t2mock.getLabel()).thenReturn(lab);
 		when(t2mock.getRank()).thenReturn(1);	
 		
-		when(lab.toString()).thenReturn("m");
+
+		when(t3mock.getSource()).thenReturn(s1mock);
+		when(t3mock.getTarget()).thenReturn(s2mock);
+		when(t3mock.getRank()).thenReturn(1);	
+		
+
+//		when(s3mock.isInitial()).thenReturn(true);
+//		when(s3mock.isFinalstate()).thenReturn(false);
+//		when(s3mock.getState()).thenReturn(List.of("0","0"));
+//		
+//		when(s4mock.isInitial()).thenReturn(false);
+//		when(s4mock.isFinalstate()).thenReturn(true);
+//		when(s4mock.getState()).thenReturn(List.of("1","1"));
+//	
+//		when(lab2.toString()).thenReturn(List.of("m","m").toString());
+//
+//		
+//		when(t4mock.getSource()).thenReturn(s3mock);
+//		when(t4mock.getTarget()).thenReturn(s4mock);
+//		when(t4mock.getLabel()).thenReturn(lab2);
+//		when(t4mock.getRank()).thenReturn(2);
+		
 
 		prop = new Automaton<>(Set.of(t1mock,t2mock));
+//		prop2 = new Automaton<>(Set.of(t4mock));
 	}
 
 	@Test
@@ -70,7 +104,21 @@ public class AutomatonTest {
 	}
 	
 	@Test
+	public void testStringRank2() {
+		when(t1mock.getRank()).thenReturn(2);
+		prop = new Automaton<>(Set.of(t1mock));
+		String test = "Rank: 2"+System.lineSeparator() + 
+				"Initial state: 0"+System.lineSeparator() + 
+				"Final states: [[1][1]]"+System.lineSeparator() + 
+				"Transitions: "+System.lineSeparator() + 
+				"(0,m,1)"+System.lineSeparator();
+		System.out.println(prop.toString());
+		assertEquals(prop.toString(),test);
+	}
+	
+	@Test
 	public void testGetForwardStar() {
+		prop = new Automaton<>(Set.of(t1mock,t2mock,t3mock));
 		assertEquals(Set.of(t1mock,t2mock), prop.getForwardStar(s0mock));
 	}
 	

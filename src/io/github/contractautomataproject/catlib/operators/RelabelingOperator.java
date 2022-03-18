@@ -19,7 +19,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class RelabelingOperator<L extends Label<List<String>>> implements Function<ModalAutomaton<L>, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>>> {
+public class RelabelingOperator<L extends Label<List<String>>> implements Function<ModalAutomaton<L>, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L>>> {
 	private final UnaryOperator<String> relabel;
 	private final Function<List<String>,L> createLabel;
 	private final Predicate<BasicState<String>> initialStatePred;
@@ -35,7 +35,7 @@ public class RelabelingOperator<L extends Label<List<String>>> implements Functi
 
 	
 	@Override
-	public Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> apply(ModalAutomaton<L> aut)
+	public Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L>> apply(ModalAutomaton<L> aut)
 	{	
 		if (aut.getTransition().isEmpty())
 			throw new IllegalArgumentException();
@@ -47,15 +47,14 @@ public class RelabelingOperator<L extends Label<List<String>>> implements Functi
 						s->new BasicState<String>(relabel.apply(s.getState()),
 								initialStatePred.test(s),finalStatePred.test(s))));
 
-		Map<CAState,CAState> clonedcastates  = aut.getStates().stream()
+		Map<CAState<String>,CAState<String>> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
-						x->new CAState(x.getState().stream()
+						x->new CAState<String>(x.getState().stream()
 								.map(clonedstate::get)
-								.collect(Collectors.toList())
-								)));
+								.collect(Collectors.toList()))));
 
 		return aut.getTransition().stream()
-				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState,L>(clonedcastates.get(t.getSource()),
+				.map(t->new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L>(clonedcastates.get(t.getSource()),
 						createLabel.apply(t.getLabel().getAction()),
 						clonedcastates.get(t.getTarget()),
 						t.getModality()))

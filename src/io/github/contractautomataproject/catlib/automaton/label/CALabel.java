@@ -31,7 +31,9 @@ public class CALabel extends Label<List<String>> {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal)?action:IDLE)
 				.collect(Collectors.toList()));
-		if (action==null||rank<=0||action.length()<=1||principal>=rank)
+		if (action==null||rank<=0||
+				action.length()<=1||
+				principal>=rank)
 			throw new IllegalArgumentException();
 
 		if (!action.startsWith(OFFER)&&!action.startsWith(REQUEST))
@@ -97,7 +99,6 @@ public class CALabel extends Label<List<String>> {
 		if (rank==null||rank<=0||lab==null||shift==null||shift<0||lab.getRank()+shift>rank)
 			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
 					+ "or out of rank");
-		System.out.println(lab.getRank() + " "+lab);
 
 		List<String> l = new ArrayList<>(rank);
 		l.addAll(Stream.generate(()->CALabel.IDLE).limit(shift).collect(Collectors.toList()));

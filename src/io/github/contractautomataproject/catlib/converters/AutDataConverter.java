@@ -60,7 +60,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 		String safefilename = path.toString();
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,L>> tr;
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), StandardCharsets.UTF_8)))
@@ -69,7 +69,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
 			tr = new HashSet<>();
-			Set<CAState> states = new HashSet<>();
+			Set<CAState<String>> states = new HashSet<>();
 			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
 
 			String strLine;
@@ -138,7 +138,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 		return new ModalAutomaton<>(tr);
 	}
 
-	private ModalTransition<List<BasicState<String>>,List<String>,CAState,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -154,8 +154,8 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 		if (tr[0].length!=rank || tr[1].length!=rank || tr[2].length!=rank)
 			throw new IOException("Ill-formed transitions, different ranks");
 
-		CAState source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
-		CAState target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
+		CAState<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
+		CAState<String> target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
 		return new ModalTransition<>(source,createLabel(tr),target,type); 
 	}
 
@@ -166,14 +166,14 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 			return createLabel.apply(Arrays.asList(tr[1]));
 	}
 
-	private CAState createOrLoadState(Set<CAState> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
+	private CAState<String> createOrLoadState(Set<CAState<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
 						.allMatch(i->cs.getState().get(i).getState().equals(state[i]))) 
 				.findAny()
 				.orElseGet(()->{
-					CAState temp= new CAState(
+					CAState<String> temp= new CAState<>(
 							IntStream.range(0, state.length) //creating the list of basic states using mapBasicStates
 							.mapToObj(i->{
 								Set<BasicState<String>> l = mapBasicStates.get(i);

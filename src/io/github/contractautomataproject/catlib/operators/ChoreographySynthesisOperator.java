@@ -27,7 +27,7 @@ import io.github.contractautomataproject.catlib.transition.Transition;
 public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperator {
 
 	private Predicate<CALabel> req;
-	private Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> choice=Stream::findAny;
+	private Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>,Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>> choice=Stream::findAny;
 
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<List<String>>> reqmc, 
@@ -44,8 +44,8 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
-			Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>,
-				Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>>> choice){
+			Function<Stream<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>,
+				Optional<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>> choice){
 		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
 		this.req=req;
 		this.choice=choice;
@@ -70,14 +70,14 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 		final Set<String> violatingbc = new HashSet<>();
 		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
 		
-		ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> toRemove=null; 
+		ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> toRemove=null; 
 		ModalAutomaton<CALabel> chor;
 		do 
 		{ 
 			chor = super.apply(aut);
 			if (chor==null)
 				break;
-			final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trf = chor.getTransition();
+			final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> trf = chor.getTransition();
 			toRemove=choice.apply(chor.getTransition().parallelStream()
 					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
@@ -85,7 +85,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 		return chor;
 	}
 
-	private static boolean  isUncontrollableChoreography(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tra, Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> str, Set<CAState> badStates)
+	private static boolean  isUncontrollableChoreography(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> tra, Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> str, Set<CAState<String>> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
@@ -99,9 +99,9 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	 * @param bad  the set of bad (dangling) states to check
 	 * @return true if the set of transitions and bad states violate the branching condition
 	 */
-	public boolean satisfiesBranchingCondition(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tra, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> trans, Set<CAState> bad) 
+	public boolean satisfiesBranchingCondition(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> tra, Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> trans, Set<CAState<String>> bad) 
 	{
-		final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> ftr = trans.parallelStream()
+		final Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> ftr = trans.parallelStream()
 				.filter(x->req.test(x.getLabel())&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 

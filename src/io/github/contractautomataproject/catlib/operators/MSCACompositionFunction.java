@@ -18,17 +18,17 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  */
 
-public class MSCACompositionFunction extends CompositionFunction<List<BasicState<String>>,List<String>,CAState,CALabel,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalAutomaton<CALabel>> {
+public class MSCACompositionFunction extends CompositionFunction<List<BasicState<String>>,List<String>,CAState<String>,CALabel,ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>,ModalAutomaton<CALabel>> {
 
 	public MSCACompositionFunction(List<ModalAutomaton<CALabel>> aut,Predicate<CALabel> pruningPred)
 	{
 		super(aut, MSCACompositionFunction::computeRank,(l1,l2)->l1.match(l2),
-				CAState::new,ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>::new, 
+				CAState::createStateByFlattening,ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>::new, 
 				(e, ee,rank) -> MSCACompositionFunction.createLabel(e, ee, rank, aut), 
 				CALabel::new, ModalAutomaton<CALabel>::new, pruningPred);
 	}
 
-	private static Integer computeSumPrincipal(ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> etra, Integer eind, List<ModalAutomaton<CALabel>> aut)
+	private static Integer computeSumPrincipal(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> etra, Integer eind, List<ModalAutomaton<CALabel>> aut)
 	{
 		return IntStream.range(0, eind)
 				.map(i->aut.get(i).getRank())

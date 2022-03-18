@@ -29,18 +29,18 @@ public class ModalTransitionTest {
 	@Mock Label<String> lab;
 	@Mock BasicState<String> bs1;
 
-	@Mock CAState cs1;
+	@Mock CAState<String> cs1;
 	@Mock CALabel calab;
 	
 	ModalTransition<String,String,BasicState<String>,Label<String>> tu;
 	ModalTransition<String,String,BasicState<String>,Label<String>> tl;
 	ModalTransition<String,String,BasicState<String>,Label<String>> tp;
 	
-	ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel> tr1;
+	ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> tr1;
 	
-	Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr;
-	Set<CAState> badStates;
-	BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>,ModalTransition<String,String,BasicState<String>,Label<String>>> controllabilityPred;
+	Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr;
+	Set<CAState<String>> badStates;
+	BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>,ModalTransition<String,String,BasicState<String>,Label<String>>> controllabilityPred;
 	
 	@Before
 	public void setup()

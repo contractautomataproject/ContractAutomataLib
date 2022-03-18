@@ -10,27 +10,12 @@ import java.util.stream.Collectors;
  * @author Davide Basile
  * 
  */
-public class CAState extends State<List<BasicState<String>>> {
+public class CAState<T> extends State<List<BasicState<T>>> {
 
-	/**
-	 * Construct a new CAState from
-	 * - a list of BasicStates
-	 * - a list of CAStates by flattening them into  a list of basic states
-	 * @param lstate states the list of castates or basicstates
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends State<?>> CAState(List<T> lstate)
-	{
-		super((lstate.get(0) instanceof CAState)?
-				lstate.stream()
-				.map(CAState.class::cast)
-				.map(CAState::getState)
-				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;})
-				:(lstate.get(0) instanceof BasicState<?>) && (lstate.get(0).getState() instanceof String)?
-						lstate.stream()
-						.map(s-> (BasicState<String>)s)
-						.collect(Collectors.toList())
-						:null);
+	public CAState(List<BasicState<T>> lstate){
+		super(lstate.stream()
+					.map(s->(BasicState<T>)s)
+					.collect(Collectors.toList()));
 	}
 
 	@Override
@@ -40,16 +25,16 @@ public class CAState extends State<List<BasicState<String>>> {
 
 	@Override
 	public boolean isInitial() {
-		return this.getState().stream().allMatch(BasicState<String>::isInitial);
+		return this.getState().stream().allMatch(BasicState<T>::isInitial);
 	}
 
 	@Override
 	public boolean isFinalstate() {
-		return this.getState().stream().allMatch(BasicState<String>::isFinalstate);
+		return this.getState().stream().allMatch(BasicState<T>::isFinalstate);
 	}
 
 	@Override
-	public  List<BasicState<String>> getState() {
+	public  List<BasicState<T>> getState() {
 		return new ArrayList<>(super.getState());
 	}
 
@@ -57,6 +42,13 @@ public class CAState extends State<List<BasicState<String>>> {
 	public String toString()
 	{
 		return this.getState().toString();
+	}
+	
+
+	public static <T> CAState<T> createStateByFlattening(List<CAState<T>> lstate){
+		return new CAState<T>(lstate.stream()
+				.map(CAState::getState)
+				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;}));
 	}
 
 	// equals could cause errors of duplication of states in transitions to go undetected. 	

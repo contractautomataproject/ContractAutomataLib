@@ -31,15 +31,15 @@ public class ModalAutomatonTestIT {
 		BasicState<String> bs1 = new BasicState<String>("0",true,false);
 		BasicState<String> bs2 = new BasicState<String>("0",false,true);
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs1)),
+		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr = new HashSet<>();
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(new CAState<String>(Arrays.asList(bs1)),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2)),
+				new CAState<String>(Arrays.asList(bs2)),
 				Modality.PERMITTED));
 
-		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState,CALabel>(new CAState(Arrays.asList(bs2)),
+		tr.add(new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(new CAState<String>(Arrays.asList(bs2)),
 				new CALabel(lab),
-				new CAState(Arrays.asList(bs2)),
+				new CAState<String>(Arrays.asList(bs2)),
 				Modality.PERMITTED));
 		Assert.assertThrows("Transitions have ambiguous states (different objects for the same state).", 
 				IllegalArgumentException.class,
