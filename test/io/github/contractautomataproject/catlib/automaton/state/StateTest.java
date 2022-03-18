@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -18,9 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class CAStateTest {
-	private static CAState<String> test;
-	
+public class StateTest {
+	private static State<String> test;
 
 	@Mock BasicState<String> bs0; 
 	@Mock BasicState<String> bs1;
@@ -31,22 +28,13 @@ public class CAStateTest {
 	
 	@Before
 	public void setup() {		
-		
-		when(bs0.getState()).thenReturn("0");
 		when(bs0.isInitial()).thenReturn(true);
-
-		when(bs1.getState()).thenReturn("1");
+		when(bs0.getState()).thenReturn("0");
 		when(bs1.isInitial()).thenReturn(true);
-		
+		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
-
 		
-		List<CAState<String>> l = new ArrayList<>();
-		l.add(new CAState<String>(Arrays.asList(bs0,bs1,bs2))); 
-		l.add(new CAState<String>(Arrays.asList(bs2,bs0)));
-		l.add(new CAState<String>(Arrays.asList(bs1)));
-		
-		test = CAState.createStateByFlattening(l);
+		test = new State<String>(List.of(bs0,bs1,bs2,bs2,bs0,bs1));
 	}
 	
 	@Test
@@ -88,7 +76,7 @@ public class CAStateTest {
 	@Test
 	public void testGetStateNewList() {
 		List<BasicState<String>> list = List.of(bs0,bs1);
-		assertTrue(list!=new CAState<String>(list).getState());
+		assertTrue(list!=new State<String>(list).getState());
 	}
 	
 	
@@ -101,36 +89,41 @@ public class CAStateTest {
 	
 	@Test
 	public void toStringFinalTest() {
-		when(bs4.getState()).thenReturn("5");
 		when(bs4.toString()).thenReturn("label=5,final=true");
 		List<BasicState<String>> l = List.of(bs4,bs4);
 		
-		CAState<String> test2=new CAState<String>(l);
+		State<String> test2=new State<String>(l);
 		
 		assertEquals("[label=5,final=true, label=5,final=true]", test2.toString());
 	}
 	
+	
+
+	@Test
+	public void testPrint() {	
+		assertEquals("[0, 1, 2, 2, 0, 1]",test.print().toString());
+	}
 
 	//********************** testing exceptions *********************
 	
 	@Test
 	public void testConstructorException_empty() {
-		Assert.assertThrows(ArrayIndexOutOfBoundsException.class, () -> new CAState<String>(List.of()));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of()));
 	}
 	
 	@Test
 	public void testConstructorException_null() {
-		Assert.assertThrows(NullPointerException.class, () -> new CAState<String>(null));
+		Assert.assertThrows(NullPointerException.class, () -> new State<String>(null));
 	}
 	
 	@Test
 	public void testConstructorException_nullelement() {
-		Assert.assertThrows(NullPointerException.class, () -> new CAState<String>(List.of(bs0,null)));
+		Assert.assertThrows(NullPointerException.class, () -> new State<String>(List.of(bs0,null)));
 	}
 	
 //	@Test
 //	public void testConstructorException_notStringState() {
-//		Assert.assertThrows(IllegalArgumentException.class, () -> new CAState<String>(List.of(bs3)));
+//		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of(bs3)));
 //	}
 //	
 //	@Test
@@ -149,11 +142,11 @@ public class CAStateTest {
 //
 //			@Override
 //			public Integer getRank() {
-//				// TODO Auto-generated method stub
+//				// Auto-generated method stub
 //				return null;
 //			}
 //		};
-//		Assert.assertThrows(IllegalArgumentException.class, () -> new CAState<String>(List.of(temp)));
+//		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of(temp)));
 //	}
 }
 

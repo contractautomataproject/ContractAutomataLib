@@ -1,8 +1,8 @@
 package io.github.contractautomataproject.catlib.family.converters;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,16 +10,15 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.family.FMCA;
 import io.github.contractautomataproject.catlib.family.Family;
 import io.github.contractautomataproject.catlib.family.PartialProductGenerator;
 import io.github.contractautomataproject.catlib.family.Product;
-import io.github.contractautomataproject.catlib.family.converters.DimacFamilyConverter;
-import io.github.contractautomataproject.catlib.family.converters.FamilyConverter;
-import io.github.contractautomataproject.catlib.family.converters.FeatureIDEfamilyConverter;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class DimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -33,7 +32,7 @@ public class DimacConverterTest {
 	public void testImport() throws Exception
 	{
 		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
-		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 //		Set<Feature> actions = aut.getUnsignedActions().stream()
 //				.map(Feature::new)

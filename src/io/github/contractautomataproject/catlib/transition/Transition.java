@@ -15,7 +15,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
  * @param <S> generic type of the state
  * @param <L> generic type of the label 
  */
-public class Transition<U,V, S extends State<U>,L extends Label<V>> { 
+public class Transition<S1,L1, S extends State<S1>,L extends Label<L1>> { 
 	private final S source;
 	private final S target;
 	private final L label;
@@ -75,6 +75,12 @@ public class Transition<U,V, S extends State<U>,L extends Label<V>> {
 	@Override
 	public String toString() {
 		return "("+source+","+label+","+target+")";
+	}
+	
+
+	public String print()
+	{
+		return "("+this.getSource().print()+","+this.getLabel().toString()+","+this.getTarget().print()+")";
 	}
 }
 

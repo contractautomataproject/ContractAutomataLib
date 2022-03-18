@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 import io.github.contractautomataproject.catlib.transition.Transition;
@@ -23,45 +23,45 @@ public class ModalTransitionTestIT {
 	private final BasicState<String> bs1 = new BasicState<String>("1",true,false);
 	private final BasicState<String> bs2 = new BasicState<String>("2",true,false);
 	private final BasicState<String> bs3 = new BasicState<String>("3",false,false);
-	private final List<CAState<String>> l = new ArrayList<>();
+	private final List<State<String>> l = new ArrayList<>();
 	private final List<String> lab = new ArrayList<>();
 	private CALabel calab;
-	private CAState<String> source;
-	private CAState<String> target;
-	private ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t1;
+	private State<String> source;
+	private State<String> target;
+	private ModalTransition<String,String,State<String>,CALabel> t1;
 	
 	@Before
 	public void setup()
 	{
-		l.add(new CAState<String>(Arrays.asList(bs0,bs1,bs2))); 
-		l.add(new CAState<String>(Arrays.asList(bs0,bs1,bs3)));
+		l.add(new State<String>(Arrays.asList(bs0,bs1,bs2))); 
+		l.add(new State<String>(Arrays.asList(bs0,bs1,bs3)));
 		
 		lab.add(CALabel.IDLE);
 		lab.add(CALabel.OFFER+"a");
 		lab.add(CALabel.REQUEST+"a");
 		calab= new CALabel(lab);
 
-		source = new CAState<String>(Arrays.asList(bs0,bs1,bs2));
-		target = new CAState<String>(Arrays.asList(bs0,bs1,bs3));
-		t1 = new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab,target,Modality.PERMITTED);
+		source = new State<String>(Arrays.asList(bs0,bs1,bs2));
+		target = new State<String>(Arrays.asList(bs0,bs1,bs3));
+		t1 = new ModalTransition<String,String,State<String>,CALabel>(source,calab,target,Modality.PERMITTED);
 
 	}
 	
 	@Test
 	public void coverbranchingConditionException() {
-		CAState<String> source = l.get(0);
-		CAState<String> target = l.get(1);
-		Assert.assertThrows(RuntimeException.class, () -> new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab,target,null));
+		State<String> source = l.get(0);
+		State<String> target = l.get(1);
+		Assert.assertThrows(RuntimeException.class, () -> new ModalTransition<String,String,State<String>,CALabel>(source,calab,target,null));
 	}
 	
 	@Test
 	public void coverConstructorException() {
-		Assert.assertThrows(IllegalArgumentException.class, () -> new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(null,null,null,null));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new ModalTransition<String,String,State<String>,CALabel>(null,null,null,null));
 	}
 	
 	@Test
 	public void coverModNullException() {	
-		Assert.assertThrows(RuntimeException.class, () -> new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab,target,null));
+		Assert.assertThrows(RuntimeException.class, () -> new ModalTransition<String,String,State<String>,CALabel>(source,calab,target,null));
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class ModalTransitionTestIT {
 
 		Assert.assertThrows("source, label or target with different ranks", 
 				IllegalArgumentException.class,
-				() -> new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab2,target,Modality.PERMITTED));
+				() -> new ModalTransition<String,String,State<String>,CALabel>(source,calab2,target,Modality.PERMITTED));
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class ModalTransitionTestIT {
 		lab2.add(CALabel.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2 = new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab2,target,Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<String,String,State<String>,CALabel>(source,calab2,target,Modality.PERMITTED);
 
 		assertEquals(t1,t2);
 	}
@@ -105,14 +105,14 @@ public class ModalTransitionTestIT {
 		lab2.add(CALabel.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2 = new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(target,calab2,target,Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<String,String,State<String>,CALabel>(target,calab2,target,Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}
 
 	@Test
 	public void testEquals4() {
-		Transition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2 = new Transition<>(source,calab,target);
+		Transition<String,String,State<String>,CALabel> t2 = new Transition<>(source,calab,target);
 		
 		Assert.assertNotEquals(t1,t2);
 	}	
@@ -120,7 +120,7 @@ public class ModalTransitionTestIT {
 	
 	@Test
 	public void testEquals5() {
-		ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2 = new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab,target,Modality.URGENT);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<String,String,State<String>,CALabel>(source,calab,target,Modality.URGENT);
 		
 		Assert.assertNotEquals(t1,t2);
 	}
@@ -138,7 +138,7 @@ public class ModalTransitionTestIT {
 		lab2.add(CALabel.REQUEST+"b");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> t2 = new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(source,calab2,target,Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<String,String,State<String>,CALabel>(source,calab2,target,Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}

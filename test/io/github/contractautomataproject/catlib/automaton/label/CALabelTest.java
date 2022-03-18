@@ -461,7 +461,7 @@ public class CALabelTest {
 	
 	@Test
 	public void testMatchException() {
-		Label<List<String>> l  = new Label<>(List.of("ei"));
+		Label<String> l  = new Label<>(List.of("ei"));
 		CALabel ca = new CALabel(1,0,CALabel.OFFER+"a");
 		Assert.assertThrows(IllegalArgumentException.class, ()->ca.match(l));
 	}

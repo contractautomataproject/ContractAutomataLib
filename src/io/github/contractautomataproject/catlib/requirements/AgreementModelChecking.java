@@ -1,6 +1,5 @@
 package io.github.contractautomataproject.catlib.requirements;
 
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -13,7 +12,7 @@ import io.github.contractautomataproject.catlib.automaton.label.Label;
  * @author Davide Basile
  *
  */
-public class AgreementModelChecking<T extends Label<List<String>>> implements Predicate<T>{
+public class AgreementModelChecking<T extends Label<String>> implements Predicate<T>{
 
 	@Override
 	public boolean test(T l) {

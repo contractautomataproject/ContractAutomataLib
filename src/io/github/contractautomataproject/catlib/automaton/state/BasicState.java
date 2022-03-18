@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <T> generic type of the instance variable of the state
  */
-public class BasicState<T> extends State<T>{
+public class BasicState<T> extends AbstractState<T>{
 	
 	private final boolean init;
 	private final boolean fin;
@@ -17,7 +17,7 @@ public class BasicState<T> extends State<T>{
 	
 	public BasicState(T label, Boolean init, Boolean fin) {
 		super(label);
-		if (label instanceof List<?>)
+		if (label instanceof List<?> && ((List<?>)label).get(0) instanceof AbstractState)
 			throw new UnsupportedOperationException();
 		this.init=init;
 		this.fin=fin;

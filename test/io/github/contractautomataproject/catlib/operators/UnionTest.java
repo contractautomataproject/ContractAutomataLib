@@ -1,6 +1,6 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import static io.github.contractautomataproject.catlib.automaton.ModalAutomatonTest.autEquals;
+import static io.github.contractautomataproject.catlib.automaton.AutomatonTestIT.autEquals;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
@@ -10,32 +10,33 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
-import io.github.contractautomataproject.catlib.operators.UnionFunction;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);	
 	@Test
 	public void unionTest() throws Exception {
-		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
-		ModalAutomaton<CALabel> union = new UnionFunction().apply(aut);
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"union_BusinessClient_EconomyClient_Hotel.data");
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> union = new UnionFunction().apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"union_BusinessClient_EconomyClient_Hotel.data");
 		Assert.assertTrue(autEquals(union,test));
 	}
 	
 	@Test
 	public void union_statelabelsnotnumbers() throws Exception {
-		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);
 		aut.add(bdc.importMSCA(dir+"testgraph_testunion.data"));
 		aut.add(bdc.importMSCA(dir+"testgraph_testunion.data"));
-		ModalAutomaton<CALabel> union = new UnionFunction().apply(aut);
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> union = new UnionFunction().apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");
 		Assert.assertTrue(autEquals(union,test));
 	}
 
@@ -44,7 +45,7 @@ public class UnionTest {
 	public void union_empty() 
 	{
 		UnionFunction uf = new UnionFunction();
-		List<ModalAutomaton<CALabel>> arg = new ArrayList<>();
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> arg = new ArrayList<>();
 		assertThatThrownBy(()->uf.apply(arg))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
@@ -52,7 +53,7 @@ public class UnionTest {
 
 	@Test
 	public void union_differentrank_exception() throws Exception {
-		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
@@ -63,8 +64,8 @@ public class UnionTest {
 
 	@Test
 	public void union_illegalcharacter() throws Exception {
-		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");		
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"union_testgraph_testgraph.data");		
 		aut.add(test);
 		aut.add(test);
 
@@ -76,7 +77,7 @@ public class UnionTest {
 
 	@Test
 	public void union_nullElement() throws Exception {
-		List<ModalAutomaton<CALabel>> aut = new ArrayList<>(2);	
+		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);	
 		aut.add(null);
 		aut.add(null);
 

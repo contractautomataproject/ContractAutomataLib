@@ -2,8 +2,9 @@ package io.github.contractautomataproject.catlib.automaton.state;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Assert;
+import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +38,16 @@ public class BasicStateTest {
 	}
 	
 	@Test
+	public void testGetRankEquals() {
+		assertEquals(1,b1.getRank().intValue());
+	}
+	
+	@Test
+	public void testGetRankNotEquals() {
+		Assert.assertNotEquals(2,b1.getRank().intValue());
+	}
+	
+	@Test
 	public void testToString() {
 		assertEquals("label=3", b3.toString());
 	}
@@ -62,7 +73,18 @@ public class BasicStateTest {
 	}
 	
 	@Test
-	public void testExceptionConstructor() {
+	public void testExceptionConstructorNull() {
 		Assert.assertThrows(IllegalArgumentException.class, ()->new BasicState<String>(null,true,false));
+	}
+	
+	@Test
+	public void testExceptionConstructorListBasicState() {
+		Assert.assertThrows(UnsupportedOperationException.class, ()->new BasicState<List<BasicState<String>>>(List.of(b1),true,false));
+	}
+	
+	@Test
+	public void testExceptionConstructorListString() {
+		
+		Assert.assertEquals(1,new BasicState<List<String>>(List.of("test","test"),true,false).getRank().intValue());
 	}
 }

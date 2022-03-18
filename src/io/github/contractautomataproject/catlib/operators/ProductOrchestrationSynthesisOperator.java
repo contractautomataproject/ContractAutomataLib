@@ -2,9 +2,11 @@ package io.github.contractautomataproject.catlib.operators;
 
 import java.util.function.Predicate;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.family.Product;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
  * Class implenenting the orchestration synthesis for a specific product
@@ -30,9 +32,9 @@ public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthes
 	 * @return the synthesised orchestration of product p
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut)
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut)
 	{
-		ModalAutomaton<CALabel> a= super.apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> a= super.apply(aut);
 
 		if (a!=null&&!p.checkRequired(a.getTransition()))
 			return null;

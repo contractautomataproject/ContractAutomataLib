@@ -27,11 +27,10 @@ import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
@@ -40,7 +39,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class AutDataConverter<L extends Label<List<String>>>  implements AutConverter<ModalAutomaton<L>,Automaton<?,?,?,?>> {
+public class AutDataConverter<L extends Label<String>>  implements AutConverter<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>>,Automaton<?,?,?,?>> {
 	private final Function<List<String>,L> createLabel;
 	private static final String SUFFIX = ".data";
 	private static final String EMPTYMSG = "Empty file name";
@@ -50,7 +49,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 		this.createLabel = createLabel;
 	}
 
-	public ModalAutomaton<L> importMSCA(String filename) throws IOException {
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>> importMSCA(String filename) throws IOException {
 		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
@@ -60,7 +59,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 		String safefilename = path.toString();
 
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L>> tr;
+		Set<ModalTransition<String,String,State<String>,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), StandardCharsets.UTF_8)))
@@ -69,7 +68,7 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
 			tr = new HashSet<>();
-			Set<CAState<String>> states = new HashSet<>();
+			Set<State<String>> states = new HashSet<>();
 			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
 
 			String strLine;
@@ -135,10 +134,10 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 
 		}
 
-		return new ModalAutomaton<>(tr);
+		return new Automaton<>(tr);
 	}
 
-	private ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<CAState<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<String,String,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -154,8 +153,8 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 		if (tr[0].length!=rank || tr[1].length!=rank || tr[2].length!=rank)
 			throw new IOException("Ill-formed transitions, different ranks");
 
-		CAState<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
-		CAState<String> target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
+		State<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
+		State<String> target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
 		return new ModalTransition<>(source,createLabel(tr),target,type); 
 	}
 
@@ -166,14 +165,14 @@ public class AutDataConverter<L extends Label<List<String>>>  implements AutConv
 			return createLabel.apply(Arrays.asList(tr[1]));
 	}
 
-	private CAState<String> createOrLoadState(Set<CAState<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
+	private State<String> createOrLoadState(Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
 						.allMatch(i->cs.getState().get(i).getState().equals(state[i]))) 
 				.findAny()
 				.orElseGet(()->{
-					CAState<String> temp= new CAState<>(
+					State<String> temp= new State<>(
 							IntStream.range(0, state.length) //creating the list of basic states using mapBasicStates
 							.mapToObj(i->{
 								Set<BasicState<String>> l = mapBasicStates.get(i);

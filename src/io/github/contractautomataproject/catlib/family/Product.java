@@ -2,15 +2,13 @@ package io.github.contractautomataproject.catlib.family;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 /**
  * A configuration/product of a product line/family, identified as set of required and forbidden features
@@ -98,7 +96,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr)
+	public boolean checkRequired(Set<? extends ModalTransition<String,String,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -112,7 +110,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr)
+	public boolean checkForbidden(Set<? extends ModalTransition<String,String,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -128,7 +126,7 @@ public class Product {
 		return this.getForbidden().contains(f);
 	}
 
-	public boolean isValid(ModalAutomaton<CALabel> aut)
+	public boolean isValid(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
 	}

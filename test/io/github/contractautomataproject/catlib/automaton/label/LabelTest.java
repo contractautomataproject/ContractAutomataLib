@@ -12,30 +12,30 @@ public class LabelTest {
 	
 	@Before
 	public void setup() {
-		lab = new Label<>("a");
+		lab = new Label<>(List.of("a"));
 	}
 	
 	
 	@Test
 	public void testGetAction() {
-		Assert.assertEquals("a", lab.getAction());
+		Assert.assertEquals(List.of("a"), lab.getAction());
 	}
 	
 	@Test
 	public void testMatchTrue() {
-		Assert.assertTrue(lab.match(new Label<>("a")));
+		Assert.assertTrue(lab.match(new Label<>(List.of("a"))));
 	}
 	
 
 	@Test
 	public void testMatchFalse() {
-		Assert.assertFalse(lab.match(new Label<>("b")));
+		Assert.assertFalse(lab.match(new Label<>(List.of("b"))));
 	}
 
 	@Test
 	public void testHashcode() {
 
-		Assert.assertEquals(lab.hashCode(),new Label<String>("a").hashCode());
+		Assert.assertEquals(lab.hashCode(),new Label<String>(List.of("a")).hashCode());
 	}
 
 	@Test
@@ -45,13 +45,13 @@ public class LabelTest {
 
 	@Test
 	public void testGetRank2() {
-		Label<List<String>> l = new Label<>(List.of("a","b"));	
+		Label<String> l = new Label<>(List.of("a","b"));	
 		Assert.assertEquals(2, l.getRank().intValue());
 	}
 	
 	@Test
 	public void testToString() {
-		Assert.assertEquals("a", lab.toString());
+		Assert.assertEquals(List.of("a").toString(), lab.toString());
 	}
 	
 	@Test
@@ -62,7 +62,7 @@ public class LabelTest {
 	@Test
 	public void equalsTwoInstancesTrue() {
 
-		Assert.assertEquals(lab,new Label<String>("a"));
+		Assert.assertEquals(lab,new Label<String>(List.of("a")));
 	}
 	
 	@Test
@@ -72,16 +72,21 @@ public class LabelTest {
 	
 	@Test
 	public void equalsClassFalse() {
-		Assert.assertNotEquals(lab,"b");
+		Assert.assertNotEquals(lab,List.of("b"));
 	}
 	
 	@Test
 	public void equalsFalse() {
-		Assert.assertNotEquals(lab,new Label<String>("b"));
+		Assert.assertNotEquals(lab,new Label<String>(List.of("b")));
 	}
 	
 	@Test
-	public void constructorException1() {
+	public void constructorExceptionNull() {
 		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(null));
+	}
+	
+	@Test
+	public void constructorExceptionEmpty() {
+		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(List.of()));
 	}
 }

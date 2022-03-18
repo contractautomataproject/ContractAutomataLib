@@ -1,7 +1,6 @@
 package io.github.contractautomataproject.catlib.family;
 
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,10 +8,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.operators.ProductOrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.operators.UnionFunction;
@@ -27,10 +25,10 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  */
 public class FMCA {
 	
-	private final ModalAutomaton<CALabel> aut;
+	private final Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut;
 	private final Family family;
 
-	public FMCA(ModalAutomaton<CALabel> aut, Family family)
+	public FMCA(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut, Family family)
 	{
 		if (aut==null||family==null)
 			throw new IllegalArgumentException();
@@ -48,7 +46,7 @@ public class FMCA {
 	 * @param aut the automaton
 	 * @param products the set of products
 	 */
-	public FMCA(ModalAutomaton<CALabel> aut, Set<Product> products)
+	public FMCA(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut, Set<Product> products)
 	{
 		if (products==null||aut==null)
 			throw new IllegalArgumentException();
@@ -58,7 +56,7 @@ public class FMCA {
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 		
-		ModalAutomaton<CALabel> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
 		Set<Feature> availableFeatures = orc.
 				getTransition().parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -78,7 +76,7 @@ public class FMCA {
 				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
 	}
 	
-	public ModalAutomaton<CALabel> getAut() {
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> getAut() {
 		return aut;
 	}
 	
@@ -87,10 +85,10 @@ public class FMCA {
 		return family;
 	}
 		
-	public Map<Product,ModalAutomaton<CALabel>> getCanonicalProducts()
+	public Map<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> getCanonicalProducts()
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
-				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>::getLabel)
+				.map(ModalTransition<String,String,State<String>,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 
@@ -98,9 +96,9 @@ public class FMCA {
 				.map(t->t.getLabel().getUnsignedAction())
 				.collect(Collectors.toSet()); 
 		
-		Map<Set<Feature>, Map<Product,ModalAutomaton<CALabel>>>  quotientClasses = 
+		Map<Set<Feature>, Map<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
-				.map(p->new AbstractMap.SimpleEntry<Product,ModalAutomaton<CALabel>>(p,
+				.map(p->new AbstractMap.SimpleEntry<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>(p,
 						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
@@ -120,7 +118,7 @@ public class FMCA {
 	 * 
 	 * @return computes the orchestration of the family as the union of orchestrations of total products
 	 */
-	public ModalAutomaton<CALabel> getOrchestrationOfFamilyEnumerative()
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> getOrchestrationOfFamilyEnumerative()
 	{
 		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().entrySet()
 					.stream()
@@ -132,7 +130,7 @@ public class FMCA {
 	 * 
 	 * @return computes the orchestration of the family by only considering canonical products
 	 */
-	public ModalAutomaton<CALabel> getOrchestrationOfFamily()
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> getOrchestrationOfFamily()
 	{
 		return new UnionFunction().apply(this.getCanonicalProducts()
 		.values()
@@ -140,13 +138,13 @@ public class FMCA {
 		.collect(Collectors.toList()));
 	}
 
-	public Map<Product,ModalAutomaton<CALabel>> getTotalProductsWithNonemptyOrchestration()
+	public Map<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> getTotalProductsWithNonemptyOrchestration()
 	{
 		return this.family.getPo().entrySet()
 				.parallelStream()
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
-				.map(p->new AbstractMap.SimpleEntry<Product, ModalAutomaton<CALabel>>(p,
+				.map(p->new AbstractMap.SimpleEntry<Product, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>(p,
 						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
@@ -163,7 +161,7 @@ public class FMCA {
 		return productsRespectingValidity(aut);
 	}
 	
-	private Set<Product> productsRespectingValidity(ModalAutomaton<CALabel> a)
+	private Set<Product> productsRespectingValidity(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> a)
 	{
 		return selectProductsSatisfyingPredicateUsingPO(a, p->p.isValid(a));
 	}
@@ -173,17 +171,17 @@ public class FMCA {
 		return this.productsWithNonEmptyOrchestration(aut);
 	}
 	
-	private Set<Product> productsWithNonEmptyOrchestration(ModalAutomaton<CALabel> aut)
+	private Set<Product> productsWithNonEmptyOrchestration(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut)
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
 		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)!=null);
 	}
 	
-	private Set<Product> selectProductsSatisfyingPredicateUsingPO(ModalAutomaton<CALabel> a,Predicate<Product> pred)
+	private Set<Product> selectProductsSatisfyingPredicateUsingPO(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> a,Predicate<Product> pred)
 	{
 		if (a.getForwardStar(a.getInitial()).stream()
-				.map(ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>::getLabel)
+				.map(ModalTransition<String,String,State<String>,CALabel>::getLabel)
 				.anyMatch(l->l.getUnsignedAction().equals("dummy")))
 			throw new UnsupportedOperationException();
 

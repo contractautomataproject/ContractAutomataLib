@@ -1,6 +1,7 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import io.github.contractautomataproject.catlib.automaton.Ranked;
@@ -16,18 +17,18 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	/**
 	 * the action performed by the label
 	 */
-	private final T action;
+	private final List<T> action;
 
-	public Label(T action) {
+	public Label(List<T> action) {
 		super();
-		if (action==null)
+		if (action==null || action.isEmpty())
 			throw new IllegalArgumentException();
 		this.action = action;
 	}
 	
 
-	public T getAction() {
-		return action;
+	public List<T> getAction() {
+		return new ArrayList<T>(action);
 	}
 	
 	@Override
@@ -56,9 +57,6 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	
 	@Override
 	public Integer getRank() {
-		if (action instanceof Collection<?>) {
-			return ((Collection<?>)action).size();
-		}
-		return 1;
+		return action.size();
 	}
 }

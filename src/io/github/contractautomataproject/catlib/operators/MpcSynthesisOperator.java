@@ -1,13 +1,11 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
@@ -32,8 +30,8 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @param req the invariant requirement (e.g. agreement)
 	 * @param prop the property to enforce expressed as an automaton
 	 */
-	public MpcSynthesisOperator(Predicate<CALabel> req, Predicate<Label<List<String>>> reqmc,	 
-			Automaton<String,String,BasicState<String>,ModalTransition<String,String,BasicState<String>,Label<String>>>  prop)
+	public MpcSynthesisOperator(Predicate<CALabel> req, Predicate<Label<String>> reqmc,	 
+			Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,Label<String>>> prop)
 	{
 		super((x,t,bad) -> x.isUrgent(), req, reqmc, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}	
@@ -45,7 +43,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @return the synthesised most permissive controller
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(ModalAutomaton<CALabel> aut) {
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut) {
 
 		if (aut.getTransition().parallelStream()
 				.anyMatch(ModalTransition::isLazy))

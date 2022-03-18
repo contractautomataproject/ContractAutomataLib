@@ -4,16 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class CAStateTestIT {
-	private  CAState<String> test;
+public class StateTestIT {
+	private  State<String> test;
 	
 	@Before
 	public void setup() {		
@@ -21,11 +19,7 @@ public class CAStateTestIT {
 		BasicState<String> bs1 = new BasicState<String>("1",true,false);
 		BasicState<String> bs2 = new BasicState<String>("2",true,false);
 		
-		List<CAState<String>> l = new ArrayList<>();
-		l.add(new CAState<>(Arrays.asList(bs0,bs1))); 
-		l.add(new CAState<>(Arrays.asList(bs2)));
-		
-		test = CAState.createStateByFlattening(l);
+		test = new State<String>(List.of(bs0,bs1,bs2));
 	}
 
 	@Test

@@ -30,6 +30,8 @@ import java.util.stream.Stream;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.Ranked;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.state.AbstractState;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
@@ -43,7 +45,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
 public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>,A extends Automaton<S1,L1,S,T>>  implements IntFunction<A>{
 
 	private final BiPredicate<L,L> match;
-	private final Function<List<S>,S> createState;
+	private final Function<List<BasicState<S1>>,S> createState;
 	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
 	private final TriFunction<TIndex,TIndex,Integer,L> createLabel;
 	private final TriFunction<L,Integer,Integer, L> shiftLabel;
@@ -87,7 +89,8 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 	 */
 	public CompositionFunction(List<A> aut,  
 			ToIntFunction<List<? extends Ranked>> computeRank,
-			BiPredicate<L,L> match, Function<List<S>,S> createState, 
+			BiPredicate<L,L> match, 
+			Function<List<BasicState<S1>>,S> createState, 
 			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
 			TriFunction<TIndex,TIndex,Integer,L> createLabel,
 			TriFunction<L,Integer,Integer, L> shiftLabel, 
@@ -101,10 +104,10 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 
 		this.initial = aut.stream()  
 				.flatMap(a -> a.getStates().stream())
-				.filter(State::isInitial)
+				.filter(AbstractState::isInitial)
 				.collect(Collectors.toList());
 
-		this.initialstate = createState.apply(initial);
+		this.initialstate = createState.apply(flattenState(initial));
 		this.toVisit = new ConcurrentLinkedQueue<>(Arrays.asList(new AbstractMap.SimpleEntry<>(initial, 0)));
 		this.frontier = new ConcurrentLinkedQueue<>();
 		this.operandstat2compstat = new ConcurrentHashMap<>();
@@ -166,7 +169,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 				//if source state is bad then don't visit target states
 				boolean badsourcestate = pruningPred!=null && trmap.parallelStream()
 						.anyMatch(x->pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent());
-				
+
 				if (badsourcestate && sourcestate.equals(initialstate))
 					return null;
 				else if (!badsourcestate) {//adding transitions, updating states
@@ -197,15 +200,15 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 		//in case of pruning if no final states are reachable return null
 		if (pruningPred!=null&& tr.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
-				.distinct().noneMatch(State::isFinalstate))
+				.distinct().noneMatch(AbstractState::isFinalstate))
 			return null;
 		else
 			return this.createAutomaton.apply(tr);
 	}
-	
+
 	private Set<SimpleEntry<T,List<S>>> computeComposedForwardStar(List<TIndex> trans2index,List<S> source, S sourcestate){
 		List<S> emptyList = new ArrayList<>();
-		
+
 		//firstly match transitions are generated
 		Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
 				trans2index.parallelStream()
@@ -218,7 +221,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 
 							T tradd=createTransition.apply(sourcestate,	
 									this.createLabel.apply(e, ee, rank),
-									operandstat2compstat.computeIfAbsent(targetlist, createState::apply), 
+									operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))), 
 									e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
 							return Stream.of(new AbstractMap.SimpleEntry<>(e.tra, 
@@ -241,7 +244,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 								IntStream.range(0, e.ind)
 								.map(i->aut.get(i).getRank())
 								.sum()),//shifting positions of label
-						operandstat2compstat.computeIfAbsent(targetlist, createState::apply),
+						operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))),
 						e.tra.getModality()),
 						targetlist);},
 						toSet()));
@@ -249,7 +252,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 				.flatMap(List::parallelStream)
 				.filter(e->(!e.getValue().isEmpty())) //no duplicates
 				.collect(toSet()));
-		
+
 		return trmap;
 	}
 
@@ -261,6 +264,11 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 		return pruningPred;
 	}
 
+	public List<BasicState<S1>> flattenState(List<S> lstate){
+		return lstate.stream()
+				.map(State::getState)
+				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;});
+	}
 
 
 }

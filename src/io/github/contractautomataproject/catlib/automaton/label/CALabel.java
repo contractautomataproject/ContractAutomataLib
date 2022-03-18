@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * @author Davide Basile
  *
  */
-public class CALabel extends Label<List<String>> {
+public class CALabel extends Label<String> {
 
 	public static final String IDLE="-";
 	public static final String OFFER="!";
@@ -31,15 +31,13 @@ public class CALabel extends Label<List<String>> {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal)?action:IDLE)
 				.collect(Collectors.toList()));
-		if (action==null||rank<=0||
-				action.length()<=1||
+		if (action==null||action.length()<=1||
 				principal>=rank)
 			throw new IllegalArgumentException();
 
 		if (!action.startsWith(OFFER)&&!action.startsWith(REQUEST))
 			throw new IllegalArgumentException("The action is not a request nor an offer");
 	}
-
 
 	/**
 	 * Constructor for a match transition
@@ -54,7 +52,7 @@ public class CALabel extends Label<List<String>> {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:IDLE)
 				.collect(Collectors.toList()));
-		if (action1==null||action2==null||rank<=0||action1.length()<=1||action2.length()<=1||principal1>=rank||principal2>=rank)
+		if (action1==null||action2==null||action1.length()<=1||action2.length()<=1||principal1>=rank||principal2>=rank)
 			throw new IllegalArgumentException();
 
 		if ((action1.startsWith(OFFER)&&!action2.startsWith(REQUEST))||
@@ -70,9 +68,6 @@ public class CALabel extends Label<List<String>> {
 	public CALabel(List<String> label)
 	{		
 		super(label);
-
-		if (label.isEmpty())
-			throw new IllegalArgumentException();
 		
 		if (label.stream()
 				.anyMatch(Objects::isNull))
@@ -149,8 +144,6 @@ public class CALabel extends Label<List<String>> {
 	{
 		return getOffererIfAny().intValue() == -1;
 	}
-
-
 	
 	/**
 	 * @return the index of the offerer or requester, does not support match transitions
@@ -192,7 +185,7 @@ public class CALabel extends Label<List<String>> {
 	}
 
 	@Override
-	public boolean match(Label<List<String>> label)
+	public boolean match(Label<String> label)
 	{
 		if (label instanceof CALabel)
 		{
@@ -222,9 +215,6 @@ public class CALabel extends Label<List<String>> {
 		return act.substring(1);
 	}
 
-	@Override
-	public String toString() {
-		return this.getAction().toString();
-	}
+	
 
 }

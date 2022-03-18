@@ -12,11 +12,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomatonTest;
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.converters.AutDataConverter;
+import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class AutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<CALabel>(CALabel::new);
@@ -25,17 +26,17 @@ public class AutDataConverterTest {
 	@Test
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
-		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.data",aut);
-		ModalAutomaton<CALabel> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
-		Assert.assertTrue(ModalAutomatonTest.autEquals(aut,test));
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Assert.assertTrue(AutomatonTestIT.autEquals(aut,test));
 	}
 	
 	@Test
 	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
 		
-		ModalAutomaton<CALabel> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 
 		Assert.assertFalse(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()

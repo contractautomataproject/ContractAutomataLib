@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import io.github.contractautomataproject.catlib.automaton.ModalAutomaton;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 /**
@@ -21,7 +21,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  * @author Davide Basile
  *
  */
-public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,ModalAutomaton<CALabel>>{
+public class UnionFunction implements Function<List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>{
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 	 * @return compute the union of the FMCA in aut
 	 */
 	@Override
-	public ModalAutomaton<CALabel> apply(List<ModalAutomaton<CALabel>> aut)
+	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut)
 	{
 		if (aut==null||aut.isEmpty())
 			throw new IllegalArgumentException();
@@ -40,43 +40,43 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 
 		int rank=aut.get(0).getRank(); 
 		if (aut.stream()
-				.map(ModalAutomaton<CALabel>::getRank)
+				.map(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>::getRank)
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
 		if (aut.parallelStream()
-		.map(ModalAutomaton<CALabel>::getStates)
+		.map(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>::getStates)
 		.flatMap(Set::stream)
-		.map(CAState<String>::getState)
+		.map(State<String>::getState)
 		.flatMap(List::stream)
 		.map(BasicState<String>::getState)
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
-		Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> uniontr= new HashSet<>(aut.stream()
+		Set<ModalTransition<String,String,State<String>,CALabel>> uniontr= new HashSet<>(aut.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+aut.size());  //Initialized to the total number of transitions
 		
 		//storing initial states of aut
-		List<CAState<String>> initialStates = aut.stream()
-				.map(ModalAutomaton::getInitial)
+		List<State<String>> initialStates = aut.stream()
+				.map(Automaton::getInitial)
 				.collect(Collectors.toList());
 		
 		//relabeling, removing initial states
-		List<Set<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
+		List<Set<ModalTransition<String,String,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
 		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalstate)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
 		//new initial state
-		CAState<String> newinitial = new CAState<String>(IntStream.range(0,rank)
+		State<String> newinitial = new State<String>(IntStream.range(0,rank)
 				.mapToObj(i->new BasicState<String>("0",true,false))
 				.collect(Collectors.toList()));
 
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>(
+				.mapToObj(i->new ModalTransition<String,String,State<String>,CALabel>(
 						newinitial,new CALabel(rank, 0, "!dummy"),
 						relabeled.get(i).parallelStream()
 						.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
@@ -91,7 +91,7 @@ public class UnionFunction implements Function<List<ModalAutomaton<CALabel>>,Mod
 				.flatMap(Set::stream)
 				.collect(Collectors.toSet())); //adding all other transitions
 
-		return new ModalAutomaton<>(uniontr);
+		return new Automaton<>(uniontr);
 	}
 
 }

@@ -19,7 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.CAState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,47 +29,50 @@ public class ModalTransitionTest {
 	@Mock Label<String> lab;
 	@Mock BasicState<String> bs1;
 
-	@Mock CAState<String> cs1;
+
+	@Mock State<String> cs0;
+	@Mock State<String> cs1;
+	@Mock State<String> cs2;
 	@Mock CALabel calab;
 	
-	ModalTransition<String,String,BasicState<String>,Label<String>> tu;
-	ModalTransition<String,String,BasicState<String>,Label<String>> tl;
-	ModalTransition<String,String,BasicState<String>,Label<String>> tp;
+	ModalTransition<String,String,State<String>,Label<String>> tu;
+	ModalTransition<String,String,State<String>,Label<String>> tl;
+	ModalTransition<String,String,State<String>,Label<String>> tp;
 	
-	ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel> tr1;
+	ModalTransition<String,String,State<String>,CALabel> catl;
 	
-	Set<? extends ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>> tr;
-	Set<CAState<String>> badStates;
-	BiPredicate<ModalTransition<List<BasicState<String>>,List<String>,CAState<String>,CALabel>,ModalTransition<String,String,BasicState<String>,Label<String>>> controllabilityPred;
+	Set<ModalTransition<String,String,State<String>,CALabel>> setTr;
+	Set<State<String>> badStates;
+	BiPredicate<ModalTransition<String,String,State<String>,CALabel>,ModalTransition<String,String,State<String>,Label<String>>> controllabilityPred;
 	
 	@Before
 	public void setup()
 	{	
-		when(bs0.toString()).thenReturn("0");
-		when(bs1.toString()).thenReturn("1");
-		when(lab.toString()).thenReturn("!test");
-		
-		
-		when(bs0.getRank()).thenReturn(1);
-		when(bs1.getRank()).thenReturn(1);
+		when(cs0.getRank()).thenReturn(1);
+		when(cs0.toString()).thenReturn("[0]");
+		when(cs0.print()).thenReturn(List.of("0"));
+		when(cs1.getRank()).thenReturn(1);
+		when(cs1.toString()).thenReturn("[1]");
+		when(cs1.print()).thenReturn(List.of("1"));
 		when(lab.getRank()).thenReturn(1);
-		
+		when(lab.toString()).thenReturn("[!test]");
+		when(calab.getRank()).thenReturn(1);
 		when(calab.isMatch()).thenReturn(false);
 		
-		tu = new ModalTransition<>(bs0,lab,bs1,Modality.URGENT);
-		tl = new ModalTransition<>(bs0,lab,bs1,Modality.LAZY);
-		tp = new ModalTransition<>(bs0,lab,bs1,Modality.PERMITTED);
+		tu = new ModalTransition<>(cs0,lab,cs1,Modality.URGENT);
+		tl = new ModalTransition<>(cs0,lab,cs1,Modality.LAZY);
+		tp = new ModalTransition<>(cs0,lab,cs1,Modality.PERMITTED);
 	
-		tr1 = new ModalTransition<>(cs1,calab,cs1,Modality.LAZY);
+		catl = new ModalTransition<>(cs1,calab,cs1,Modality.LAZY);
 		badStates = new HashSet<>();
-		tr = Set.of(tr1);
+		setTr = Set.of(catl);
 	}
 		
 	
 	@Test
 	public void testConstructorNullMod() {	
 		Assert.assertThrows(IllegalArgumentException.class, 
-				() -> new ModalTransition<String,String,BasicState<String>,Label<String>>(bs0,lab,bs1,null));
+				() -> new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,null));
 	}
 	
 	@Test
@@ -124,22 +127,37 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testToStringUrgent() {
-		assertEquals("!U(0,!test,1)",tu.toString());
+		assertEquals("!U([0],[!test],[1])",tu.toString());
 	}
 	
 	@Test
 	public void testToStringLazy() {
-		assertEquals("!L(0,!test,1)",tl.toString());
+		assertEquals("!L([0],[!test],[1])",tl.toString());
 	}
 
 	@Test
 	public void testToStringPermitted() {
-		assertEquals("(0,!test,1)",tp.toString());
+		assertEquals("([0],[!test],[1])",tp.toString());
+	}
+	
+	@Test
+	public void testPrintUrgent() {
+		assertEquals("!U([0],[!test],[1])",tu.print());
+	}
+	
+	@Test
+	public void testPrintLazy() {
+		assertEquals("!L([0],[!test],[1])",tl.print());
+	}
+
+	@Test
+	public void testPrintPermitted() {
+		assertEquals("([0],[!test],[1])",tp.print());
 	}
 	
 	@Test
 	public void testHashCodeEquals() {
-		assertEquals(tu.hashCode(),  new ModalTransition<String,String,BasicState<String>,Label<String>>(bs0,lab,bs1,Modality.URGENT).hashCode());
+		assertEquals(tu.hashCode(),  new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,Modality.URGENT).hashCode());
 	}
 	
 	@Test
@@ -150,7 +168,7 @@ public class ModalTransitionTest {
 
 	@Test
 	public void testEquals() {
-		assertEquals(tu,  new ModalTransition<String,String,BasicState<String>,Label<String>>(bs0,lab,bs1,Modality.URGENT));
+		assertEquals(tu,  new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,Modality.URGENT));
 	}
 	
 	@Test
@@ -160,23 +178,23 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testNotEqualsSuper() {
-		Assert.assertNotEquals(tu, new ModalTransition<String,String,BasicState<String>,Label<String>>(bs0,lab,bs0,Modality.URGENT));
+		Assert.assertNotEquals(tu, new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs0,Modality.URGENT));
 	}
 	
 	@Test
-	public void testIsUncontrollableUrgent() {
-		Assert.assertTrue(tu.isUncontrollable(tr, badStates, controllabilityPred));
+	public void testIsUncontrollableUrgentTrue() {
+		Assert.assertTrue(tu.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 
 	@Test
-	public void testIsUncontrollablePermitted() {
-		Assert.assertFalse(tp.isUncontrollable(tr, badStates, controllabilityPred));
+	public void testIsUncontrollablePermittedFalse() {
+		Assert.assertFalse(tp.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	@Test
 	public void testIsUncontrollableLazyTrueNoMatch() {
-		Assert.assertTrue(tl.isUncontrollable(tr, badStates, controllabilityPred));
+		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	
@@ -184,23 +202,36 @@ public class ModalTransitionTest {
 	public void testIsUncontrollableLazyTrueNoBadStateSource() {
 		when(calab.isMatch()).thenReturn(true);
 		badStates = Set.of(cs1);
-		Assert.assertTrue(tl.isUncontrollable(tr, badStates, controllabilityPred));
+		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	@Test
 	public void testIsUncontrollableLazyTrueFalsePred() {
 		when(calab.isMatch()).thenReturn(true);
 		controllabilityPred = (a1,a2)->false;
-		Assert.assertTrue(tl.isUncontrollable(tr, badStates, controllabilityPred));
+		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	@Test
 	public void testIsUncontrollableLazyFalseTruePred() {
 		when(calab.isMatch()).thenReturn(true);
-		controllabilityPred = (a1,a2)->true;
-		Assert.assertFalse(tl.isUncontrollable(tr, badStates, controllabilityPred));
+
+		ModalTransition<String,String,State<String>,CALabel> catl2 = 
+				new ModalTransition<>(cs1,calab,cs0,Modality.LAZY);
+		setTr = Set.of(catl,catl2);
+		controllabilityPred = (a1,a2)->a1.getTarget().equals(cs0);
+		Assert.assertFalse(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	
+	@Test
+	public void testIsUncontrollableLazyFalseNoneMatchWithTwoTransitions() {
+		when(calab.isMatch()).thenReturn(true);
+		ModalTransition<String,String,State<String>,CALabel> catl2 = 
+				new ModalTransition<>(cs1,calab,cs0,Modality.LAZY);
+		setTr = Set.of(catl,catl2);
+		controllabilityPred = (a1,a2)->a1.getSource().equals(cs0);
+		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
+	}	
 	
 }
