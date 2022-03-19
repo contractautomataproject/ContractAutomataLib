@@ -1,13 +1,6 @@
 package io.github.contractautomataproject.catlib.converters;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -204,7 +197,7 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 		Path path = FileSystems.getDefault().getPath(filename+ext);
 		String safefilename = 	path.toString();
 
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(safefilename), StandardCharsets.UTF_8)))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), StandardCharsets.UTF_8)))
 		{
 			pr.print(aut.toString());
 		}
