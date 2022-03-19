@@ -21,10 +21,10 @@ public class MSCACompositionFunction extends CompositionFunction<String,String,S
 
 	public MSCACompositionFunction(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut,Predicate<CALabel> pruningPred)
 	{
-		super(aut, MSCACompositionFunction::computeRank,(l1,l2)->l1.match(l2),
-				State::new,ModalTransition<String,String,State<String>,CALabel>::new, 
+		super(aut, MSCACompositionFunction::computeRank, CALabel::match,
+				State::new, ModalTransition::new,
 				(e, ee,rank) -> MSCACompositionFunction.createLabel(e, ee, rank, aut), 
-				CALabel::new, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>::new, pruningPred);
+				CALabel::new, Automaton::new, pruningPred);
 	}
 
 	private static Integer computeSumPrincipal(ModalTransition<String,String,State<String>,CALabel> etra, Integer eind, List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut)
@@ -36,8 +36,7 @@ public class MSCACompositionFunction extends CompositionFunction<String,String,S
 	
 	public static Integer computeRank(List<? extends Ranked> aut) {
 		return aut.stream()
-				.map(Ranked::getRank)
-				.collect(Collectors.summingInt(Integer::intValue));
+				.map(Ranked::getRank).mapToInt(Integer::intValue).sum();
 	}
 	
 	public static CALabel createLabel(TIndex e, TIndex ee, Integer rank,List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut) {

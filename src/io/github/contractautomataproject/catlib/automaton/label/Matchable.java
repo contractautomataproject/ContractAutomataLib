@@ -8,5 +8,5 @@ package io.github.contractautomataproject.catlib.automaton.label;
  * @param <T> the type of the object to match with
  */
 public interface Matchable<T> {
-	public boolean match(T arg);
+	boolean match(T arg);
 }

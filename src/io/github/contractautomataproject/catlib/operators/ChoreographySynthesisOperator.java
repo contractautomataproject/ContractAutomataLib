@@ -23,7 +23,7 @@ import io.github.contractautomataproject.catlib.transition.Transition;
  */
 public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperator {
 
-	private Predicate<CALabel> req;
+	private final Predicate<CALabel> req;
 	private Function<Stream<ModalTransition<String,String,State<String>,CALabel>>,Optional<ModalTransition<String,String,State<String>,CALabel>>> choice=Stream::findAny;
 
 	
@@ -67,7 +67,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 		final Set<String> violatingbc = new HashSet<>();
 		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
 		
-		ModalTransition<String,String,State<String>,CALabel> toRemove=null; 
+		ModalTransition<String,String,State<String>,CALabel> toRemove;
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> chor;
 		do 
 		{ 

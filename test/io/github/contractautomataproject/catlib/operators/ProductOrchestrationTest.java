@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
+import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
@@ -25,7 +25,7 @@ public class ProductOrchestrationTest {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
-		Assert.assertTrue(AutomatonTestIT.autEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),test));
+		Assert.assertTrue(ITAutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),test));
 	}
 
 

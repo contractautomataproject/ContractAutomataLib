@@ -72,7 +72,6 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 
 	/** 
 	 * invokes the synthesis
-	 * @param arg1 the plant automaton to which the synthesis is performed
 	 * @return the synthesised automaton
 	 * 
 	 */
@@ -80,8 +79,8 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	public A apply(A aut) {
 		
 		class Pair{
-			Set<T> tr; 
-			Set<S> s;
+			final Set<T> tr;
+			final Set<S> s;
 			public Pair(Set<T> tr, Set<S> s) {
 				this.tr = tr; this.s = s;
 			}
@@ -114,7 +113,7 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 				.reduce((first,second)->new Pair(second.tr,second.s))
 				.orElse(seed);
 
-		if (fixpoint==null || fixpoint.s.contains(init)||fixpoint.tr.isEmpty())
+		if (fixpoint.s.contains(init)||fixpoint.tr.isEmpty())
 			return null;
 
 		//remove dangling transitions
@@ -142,7 +141,7 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 
 		//set successful
 		states.forEach(x-> {
-			if (x.isFinalstate()&& Boolean.TRUE.equals(this.reachable.get(x)))
+			if (x.isFinalState()&& Boolean.TRUE.equals(this.reachable.get(x)))
 				backwardVisit(tr,x);});  
 
 		return states.parallelStream()

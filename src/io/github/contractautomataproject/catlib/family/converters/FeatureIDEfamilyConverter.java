@@ -48,10 +48,9 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	{	
 		Set<String> features=parseFeatures(filename);
 		String[][] eq = detectDuplicates(filename);
-		for (int i=0;i<eq.length;i++)
-		{
-			if (features.contains(eq[i][0])&&features.contains(eq[i][1]))
-				features.remove(eq[i][1]);
+		for (String[] strings : eq) {
+			if (features.contains(strings[0]))
+				features.remove(strings[1]);
 		}
 
 		String safefilename=getSafeFileName(filename);
@@ -81,9 +80,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 					try {
 						return Files.readAllLines(Paths.get(s), StandardCharsets.UTF_8);//required features
 					} catch (IOException e) {
-						IllegalArgumentException iae = new IllegalArgumentException();
-						iae.initCause(e);
-						throw iae;
+						throw new IllegalArgumentException(e);
 					}
 				})
 				.map(l->new Product(features.parallelStream()
@@ -160,15 +157,13 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	}
 
 	private String getSafeFileName(String filename) {
-		Path path = FileSystems.getDefault().getPath(filename);	
-		if (path==null)
-			throw new IllegalArgumentException("Empty file name");
+		Path path = FileSystems.getDefault().getPath(filename);
 		return path.toString();
 	}
 
 
 	@Override
-	public void exportFamily(String filename, Family fam) throws IOException {
+	public void exportFamily(String filename, Family fam) {
 		throw new UnsupportedOperationException();
 	}
 

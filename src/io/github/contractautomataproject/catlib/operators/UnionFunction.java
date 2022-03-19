@@ -40,14 +40,14 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 
 		int rank=aut.get(0).getRank(); 
 		if (aut.stream()
-				.map(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>::getRank)
+				.map(Automaton::getRank)
 				.anyMatch(x->x!=rank))
 			throw new IllegalArgumentException("Automata with different ranks!"); 
 
 		if (aut.parallelStream()
-		.map(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>::getStates)
+		.map(Automaton::getStates)
 		.flatMap(Set::stream)
-		.map(State<String>::getState)
+		.map(State::getState)
 		.flatMap(List::stream)
 		.map(BasicState<String>::getState)
 		.anyMatch(s->s.contains("_")))
@@ -65,7 +65,7 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 		
 		//relabeling, removing initial states
 		List<Set<ModalTransition<String,String,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalstate)
+		.mapToObj(id ->new RelabelingOperator<>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
@@ -76,7 +76,7 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(i->new ModalTransition<String,String,State<String>,CALabel>(
+				.mapToObj(i->new ModalTransition<>(
 						newinitial,new CALabel(rank, 0, "!dummy"),
 						relabeled.get(i).parallelStream()
 						.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
@@ -86,10 +86,9 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 						ModalTransition.Modality.PERMITTED))
 				.collect(Collectors.toSet())); //adding transition from new initial state to previous initial states
 
-		uniontr.addAll(IntStream.range(0, relabeled.size())
-				.mapToObj(relabeled::get)
+		uniontr.addAll(relabeled.stream()
 				.flatMap(Set::stream)
-				.collect(Collectors.toSet())); //adding all other transitions
+				.collect(Collectors.toSet())); //adding all the other transitions
 
 		return new Automaton<>(uniontr);
 	}

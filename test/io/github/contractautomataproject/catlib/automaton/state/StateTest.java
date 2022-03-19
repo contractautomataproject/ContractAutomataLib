@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -23,8 +24,7 @@ public class StateTest {
 	@Mock BasicState<String> bs1;
 	@Mock BasicState<String> bs2;
 	@Mock BasicState<String> bs4;
-	
-	@Mock BasicState<Integer> bs3;
+
 	
 	@Before
 	public void setup() {		
@@ -34,7 +34,7 @@ public class StateTest {
 		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
 		
-		test = new State<String>(List.of(bs0,bs1,bs2,bs2,bs0,bs1));
+		test = new State<>(List.of(bs0,bs1,bs2,bs2,bs0,bs1));
 	}
 	
 	@Test
@@ -51,16 +51,16 @@ public class StateTest {
 
 	@Test
 	public void testIsFinalStateTrue() {
-		when(bs0.isFinalstate()).thenReturn(true);
-		when(bs1.isFinalstate()).thenReturn(true);
-		when(bs2.isFinalstate()).thenReturn(true);
-		assertTrue(test.isFinalstate());
+		when(bs0.isFinalState()).thenReturn(true);
+		when(bs1.isFinalState()).thenReturn(true);
+		when(bs2.isFinalState()).thenReturn(true);
+		assertTrue(test.isFinalState());
 	}
 	
 	
 	@Test
 	public void testIsFinalStateFalse() {
-		assertFalse(test.isFinalstate());
+		assertFalse(test.isFinalState());
 	}
 	
 	@Test
@@ -76,15 +76,15 @@ public class StateTest {
 	@Test
 	public void testGetStateNewList() {
 		List<BasicState<String>> list = List.of(bs0,bs1);
-		Assert.assertNotSame(list,new State<String>(list).getState());
+		Assert.assertNotSame(list,new State<>(list).getState());
 	}
 	
 	
 	@Test
 	public void toStringInitialTest() {
-		String test = "[label=0,initial=true, label=1,initial=true, label=2, label=2, label=0,initial=true, label=1,initial=true]";
+		String testString = "[label=0,initial=true, label=1,initial=true, label=2, label=2, label=0,initial=true, label=1,initial=true]";
 
-		assertEquals(test, test.toString());
+		assertEquals(testString, test.toString());
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ public class StateTest {
 		when(bs4.toString()).thenReturn("label=5,final=true");
 		List<BasicState<String>> l = List.of(bs4,bs4);
 		
-		State<String> test2=new State<String>(l);
+		State<String> test2=new State<>(l);
 		
 		assertEquals("[label=5,final=true, label=5,final=true]", test2.toString());
 	}
@@ -108,47 +108,19 @@ public class StateTest {
 	
 	@Test
 	public void testConstructorException_empty() {
-		List<BasicState<String>> list = List.of(bs1);
-		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(list));
+		List<BasicState<String>> list = List.of();
+		Assert.assertThrows(IllegalArgumentException.class, () -> new State<>(list));
 	}
 	
 	@Test
 	public void testConstructorException_null() {
-		Assert.assertThrows(NullPointerException.class, () -> new State<String>(null));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new State<>(null));
 	}
 	
 	@Test
-	public void testConstructorException_nullelement() {
-		List<BasicState<String>> list = List.of(bs0,null);
-		Assert.assertThrows(NullPointerException.class, () -> new State<String>(list));
+	public void testConstructorException_nullElement() {
+		List<BasicState<String>> list = Arrays.asList(bs0, null);
+		Assert.assertThrows(NullPointerException.class, () -> new State<>(list));
 	}
-	
-//	@Test
-//	public void testConstructorException_notStringState() {
-//		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of(bs3)));
-//	}
-//	
-//	@Test
-//	public void testConstructorException_notBasicState() {
-//			
-//		State<String> temp = new State<String>("test") {
-//			@Override
-//			public boolean isFinalstate() {
-//				throw new RuntimeException();
-//			}
-//
-//			@Override
-//			public boolean isInitial() {
-//				throw new RuntimeException();
-//			}
-//
-//			@Override
-//			public Integer getRank() {
-//				// Auto-generated method stub
-//				return null;
-//			}
-//		};
-//		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of(temp)));
-//	}
 }
 

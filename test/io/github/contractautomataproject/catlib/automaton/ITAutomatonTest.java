@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.github.contractautomataproject.catlib.transition.Transition;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 
-public class AutomatonTestIT {
+public class ITAutomatonTest {
 
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -44,7 +45,7 @@ public class AutomatonTestIT {
 //	}
 	
 	@Test
-	public void constructor_Exception_differentRank() throws Exception {
+	public void constructor_Exception_differentRank() {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.IDLE);
 		lab.add(CALabel.OFFER+"a");
@@ -57,94 +58,91 @@ public class AutomatonTestIT {
 		lab2.add(CALabel.REQUEST+"a");
 
 
-		BasicState<String> bs0 = new BasicState<String>("0",true,false);
-		BasicState<String> bs1 = new BasicState<String>("1",true,false);
-		BasicState<String> bs2 = new BasicState<String>("2",true,false);
-		BasicState<String> bs3 = new BasicState<String>("3",true,false);
+		BasicState<String> bs0 = new BasicState<>("0", true, false);
+		BasicState<String> bs1 = new BasicState<>("1", true, false);
+		BasicState<String> bs2 = new BasicState<>("2", true, false);
+		BasicState<String> bs3 = new BasicState<>("3", true, false);
 
 		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(new State<String>(Arrays.asList(bs0,bs1,bs2)//,0,0
-				),
+		tr.add(new ModalTransition<>(new State<>(Arrays.asList(bs0, bs1, bs2)//,0,0
+		),
 				new CALabel(lab),
-				new State<String>(Arrays.asList(bs0,bs1,bs3)),
+				new State<>(Arrays.asList(bs0, bs1, bs3)),
 				Modality.PERMITTED));
-		State<String> cs = new State<String>(Arrays.asList(bs0,bs1,bs2,bs3)//,0,0
-				);
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(cs,
+		State<String> cs = new State<>(Arrays.asList(bs0, bs1, bs2, bs3)//,0,0
+		);
+		tr.add(new ModalTransition<>(cs,
 				new CALabel(lab2),
 				cs,
 				Modality.PERMITTED));
 
-		Assert.assertThrows("Transitions with different rank", IllegalArgumentException.class, () -> new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(tr));
+		Assert.assertThrows("Transitions with different rank", IllegalArgumentException.class, () -> new Automaton<>(tr));
 	}
 
 
 	@Test
-	public void noInitialState_exception() throws Exception
-	{
+	public void noInitialState_exception() {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.OFFER+"a");
 
-		BasicState<String> bs0 = new BasicState<String>("0",false,true);
-		BasicState<String> bs1 = new BasicState<String>("1",false,true);
+		BasicState<String> bs0 = new BasicState<>("0", false, true);
+		BasicState<String> bs1 = new BasicState<>("1", false, true);
 
 
 		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(new State<String>(Arrays.asList(bs0)//,0,0
-				),
+		tr.add(new ModalTransition<>(new State<>(List.of(bs0)//,0,0
+		),
 				new CALabel(lab),
-				new State<String>(Arrays.asList(bs1)),
+				new State<>(List.of(bs1)),
 				Modality.PERMITTED));
 
 		Assert.assertThrows("Not Exactly one Initial State found!", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(tr));
+				() -> new Automaton<>(tr));
 	}
 
 	@Test
-	public void noFinalStatesInTransitions_exception() throws Exception
-	{
+	public void noFinalStatesInTransitions_exception() {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.OFFER+"a");
 
-		BasicState<String> bs0 = new BasicState<String>("0",true,false);
-		BasicState<String> bs1 = new BasicState<String>("1",false,false);
+		BasicState<String> bs0 = new BasicState<>("0", true, false);
+		BasicState<String> bs1 = new BasicState<>("1", false, false);
 
 
 		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(new State<String>(Arrays.asList(bs0)//,0,0
-				),
+		tr.add(new ModalTransition<>(new State<>(List.of(bs0)//,0,0
+		),
 				new CALabel(lab),
-				new State<String>(Arrays.asList(bs1)),
+				new State<>(List.of(bs1)),
 				Modality.PERMITTED));
 
 		Assert.assertThrows("No Final States!", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(tr));
+				() -> new Automaton<>(tr));
 	}
 	
 	@Test
-	public void ambiguousStates_exception() throws Exception
-	{
+	public void ambiguousStates_exception() {
 		List<String> lab = new ArrayList<>();
 		lab.add(CALabel.OFFER+"a");
 
-		BasicState<String> bs1 = new BasicState<String>("0",true,false);
-		BasicState<String> bs2 = new BasicState<String>("0",false,true);
+		BasicState<String> bs1 = new BasicState<>("0", true, false);
+		BasicState<String> bs2 = new BasicState<>("0", false, true);
 
 		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(new State<String>(Arrays.asList(bs1)),
+		tr.add(new ModalTransition<>(new State<>(List.of(bs1)),
 				new CALabel(lab),
-				new State<String>(Arrays.asList(bs2)),
+				new State<>(List.of(bs2)),
 				Modality.PERMITTED));
 
-		tr.add(new ModalTransition<String,String,State<String>,CALabel>(new State<String>(Arrays.asList(bs2)),
+		tr.add(new ModalTransition<>(new State<>(List.of(bs2)),
 				new CALabel(lab),
-				new State<String>(Arrays.asList(bs2)),
+				new State<>(List.of(bs2)),
 				Modality.PERMITTED));
 		Assert.assertThrows("Transitions have ambiguous states (different objects for the same state).", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(tr));
+				() -> new Automaton<>(tr));
 	}
 
 	
@@ -177,16 +175,16 @@ public class AutomatonTestIT {
 
 	public static boolean autEquals(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
 		Set<String> autTr=aut.getTransition().parallelStream()
-				.map(t->t.toString())
+				.map(Transition::toString)
 				.collect(Collectors.toSet());
 		Set<String> testTr=test.getTransition().parallelStream()
-				.map(t->t.toString())
+				.map(Transition::toString)
 				.collect(Collectors.toSet());
 
 		return autTr.parallelStream()
-				.allMatch(t->testTr.contains(t))
+				.allMatch(testTr::contains)
 				&&
 				testTr.parallelStream()
-				.allMatch(t->autTr.contains(t));
+				.allMatch(autTr::contains);
 	}
 }

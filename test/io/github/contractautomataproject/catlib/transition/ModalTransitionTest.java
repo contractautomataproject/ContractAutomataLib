@@ -24,8 +24,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition.Modal
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModalTransitionTest {
-	
-	@Mock BasicState<String> bs0;
+
 	@Mock Label<String> lab;
 	@Mock BasicState<String> bs1;
 
@@ -72,7 +71,7 @@ public class ModalTransitionTest {
 	@Test
 	public void testConstructorNullMod() {	
 		Assert.assertThrows(IllegalArgumentException.class, 
-				() -> new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,null));
+				() -> new ModalTransition<>(cs0, lab, cs1, null));
 	}
 	
 	@Test
@@ -157,7 +156,7 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testHashCodeEquals() {
-		assertEquals(tu.hashCode(),  new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,Modality.URGENT).hashCode());
+		assertEquals(tu.hashCode(), new ModalTransition<>(cs0, lab, cs1, Modality.URGENT).hashCode());
 	}
 	
 	@Test
@@ -168,7 +167,7 @@ public class ModalTransitionTest {
 
 	@Test
 	public void testEquals() {
-		assertEquals(tu,  new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs1,Modality.URGENT));
+		assertEquals(tu, new ModalTransition<>(cs0, lab, cs1, Modality.URGENT));
 	}
 	
 	@Test
@@ -178,7 +177,7 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testNotEqualsSuper() {
-		Assert.assertNotEquals(tu, new ModalTransition<String,String,State<String>,Label<String>>(cs0,lab,cs0,Modality.URGENT));
+		Assert.assertNotEquals(tu, new ModalTransition<>(cs0, lab, cs0, Modality.URGENT));
 	}
 	
 	@Test

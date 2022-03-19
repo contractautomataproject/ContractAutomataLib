@@ -14,14 +14,12 @@ import org.junit.Test;
 
 public class CALabelTest {
 
-	List<String> lab;
 	CALabel match;
 	CALabel offer;
 	CALabel request;
 	
 	@Before
 	public void setup() {
-		lab = new ArrayList<>();
 		match= new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"a", CALabel.REQUEST+"a"));
 		offer= new CALabel(List.of(CALabel.IDLE, CALabel.OFFER+"a", CALabel.IDLE));
 		request= new CALabel(List.of(CALabel.IDLE, CALabel.REQUEST+"a", CALabel.IDLE));
@@ -29,7 +27,6 @@ public class CALabelTest {
 	
 	@After
 	public void teardown() {
-		lab = null;
 		match = null;
 		offer = null;
 		request = null;
@@ -349,41 +346,41 @@ public class CALabelTest {
 	
 	@Test
 	public void testConstructor3Exception_Empty() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 
 	@Test
 	public void testConstructor3Exception_emptyLabel() {
-		List<String> arg = new ArrayList<String>();
+		List<String> arg = new ArrayList<>();
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(arg));
 	}
 	
 	@Test
 	public void testConstructor3Exception_nullReferencesLabel() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(null);
 		Assert.assertThrows("Label contains null references", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 
 	@Test
 	public void testConstructor3Exception_notWellFormedLabel() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add("aaa");
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 		
 	@Test
 	public void testConstructor3Exception_notWellFormedIdleLabel() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(CALabel.IDLE);
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
 	public void testConstructor3Exception_notWellFormedOffersLabel() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(CALabel.OFFER+"a");
 		l.add(CALabel.OFFER+"a");
 		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
@@ -445,13 +442,13 @@ public class CALabelTest {
 	@Test
 	public void testGetOffererException() {
 		CALabel cl = new CALabel(1,0,CALabel.REQUEST+"a");		
-		Assert.assertThrows(UnsupportedOperationException.class, ()->cl.getOfferer());
+		Assert.assertThrows(UnsupportedOperationException.class, cl::getOfferer);
 	}
 	
 	@Test
 	public void testGetRequesterException() {
 		CALabel cl = new CALabel(1,0,CALabel.OFFER+"a");
-		Assert.assertThrows(UnsupportedOperationException.class, ()->cl.getRequester());
+		Assert.assertThrows(UnsupportedOperationException.class, cl::getRequester);
 	}
 	
 	@Test

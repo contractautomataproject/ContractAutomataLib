@@ -16,10 +16,10 @@ public class BasicStateTest {
 	
 	@Before
 	public void setup() {
-		b0 = new BasicState<String>("0",true,false);
-		b1 = new BasicState<String>("1",false,true);
-		b2 = new BasicState<String>("2",true,true);
-		b3 = new BasicState<String>("3",false,false);
+		b0 = new BasicState<>("0", true, false);
+		b1 = new BasicState<>("1", false, true);
+		b2 = new BasicState<>("2", true, true);
+		b3 = new BasicState<>("3", false, false);
 	}
 	
 	@Test
@@ -60,12 +60,12 @@ public class BasicStateTest {
 	@Test
 	public void testExceptionConstructorListBasicState() {
 		List<BasicState<String>> list = List.of(b1);
-		Assert.assertThrows(UnsupportedOperationException.class, ()->new BasicState<List<BasicState<String>>>(list,true,false));
+		Assert.assertThrows(UnsupportedOperationException.class, ()-> new BasicState<>(list, true, false));
 	}
 	
 	@Test
 	public void testExceptionConstructorListString() {
 		
-		Assert.assertEquals(1,new BasicState<List<String>>(List.of("test","test"),true,false).getRank().intValue());
+		Assert.assertEquals(1, new BasicState<>(List.of("test", "test"), true, false).getRank().intValue());
 	}
 }

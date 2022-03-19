@@ -9,6 +9,6 @@ package io.github.contractautomataproject.catlib.operators;
  * @param <V> generic type of the third argument
  */
 public interface TriPredicate<T,U,V> {
-	public boolean test(T arg1, U arg2, V arg3);
+	boolean test(T arg1, U arg2, V arg3);
 }
 

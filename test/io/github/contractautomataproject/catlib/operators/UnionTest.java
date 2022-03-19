@@ -1,6 +1,6 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import static io.github.contractautomataproject.catlib.automaton.AutomatonTestIT.autEquals;
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.autEquals;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-	AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);	
+	final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	@Test
 	public void unionTest() throws Exception {
 		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);
@@ -76,7 +76,7 @@ public class UnionTest {
 	}
 
 	@Test
-	public void union_nullElement() throws Exception {
+	public void union_nullElement() {
 		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut = new ArrayList<>(2);	
 		aut.add(null);
 		aut.add(null);

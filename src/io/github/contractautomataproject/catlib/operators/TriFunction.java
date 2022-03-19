@@ -11,5 +11,5 @@ package io.github.contractautomataproject.catlib.operators;
  * @param <Z> returned class
  */
 public interface TriFunction<T,U,V,Z> {
-	public Z apply(T arg1, U arg2, V arg3);
+	Z apply(T arg1, U arg2, V arg3);
 }

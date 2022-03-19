@@ -23,7 +23,7 @@ public abstract class AbstractState<T> implements Ranked {
 		return label;
 	}
 	
-	public abstract boolean isFinalstate();
+	public abstract boolean isFinalState();
 	
 	public abstract boolean isInitial();
 }

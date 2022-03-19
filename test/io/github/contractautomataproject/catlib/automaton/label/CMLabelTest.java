@@ -128,6 +128,7 @@ public class CMLabelTest {
 		assertEquals(cm_of.hashCode(),equal.hashCode());
 	}
 	
+	@Test
 	public void testHashCodeNotEquals() {
 		CMLabel equal = new CMLabel("Carol","Bob","!apple");
 		Assert.assertNotEquals(cm_of.hashCode(),equal.hashCode());
@@ -145,7 +146,7 @@ public class CMLabelTest {
 	
 	@Test
 	public void testMatchException() {
-		CALabel test = new CALabel(Arrays.asList("?a"));
+		CALabel test = new CALabel(List.of("?a"));
 		Assert.assertThrows(IllegalArgumentException.class, ()->cm_of.match(test));
 	}
 	

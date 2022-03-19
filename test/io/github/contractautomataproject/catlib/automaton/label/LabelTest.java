@@ -35,7 +35,7 @@ public class LabelTest {
 	@Test
 	public void testHashcode() {
 
-		Assert.assertEquals(lab.hashCode(),new Label<String>(List.of("a")).hashCode());
+		Assert.assertEquals(lab.hashCode(), new Label<>(List.of("a")).hashCode());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class LabelTest {
 	@Test
 	public void equalsTwoInstancesTrue() {
 
-		Assert.assertEquals(lab,new Label<String>(List.of("a")));
+		Assert.assertEquals(lab, new Label<>(List.of("a")));
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class LabelTest {
 	
 	@Test
 	public void equalsFalse() {
-		Assert.assertNotEquals(lab,new Label<String>(List.of("b")));
+		Assert.assertNotEquals(lab, new Label<>(List.of("b")));
 	}
 	
 	@Test
@@ -88,6 +88,6 @@ public class LabelTest {
 	@Test
 	public void constructorExceptionEmpty() {
 		List<String> list = List.of();
-		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(list));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<>(list));
 	}
 }

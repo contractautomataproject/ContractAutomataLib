@@ -98,8 +98,8 @@ public class FMCA {
 		
 		Map<Set<Feature>, Map<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>>  quotientClasses = 
 				this.family.getMaximalProducts().parallelStream()
-				.map(p->new AbstractMap.SimpleEntry<Product,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>(p,
-						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
+				.map(p-> new AbstractMap.SimpleEntry<>(p,
+						new ProductOrchestrationSynthesisOperator(new Agreement(), p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
 					e.getKey().getForbidden().stream()
@@ -120,9 +120,8 @@ public class FMCA {
 	 */
 	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> getOrchestrationOfFamilyEnumerative()
 	{
-		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().entrySet()
+		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().values()
 					.stream()
-					.map(Entry::getValue)
 					.collect(Collectors.toList()));	
 	}
 	
@@ -144,8 +143,8 @@ public class FMCA {
 				.parallelStream()
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
-				.map(p->new AbstractMap.SimpleEntry<Product, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>(p,
-						new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)))
+				.map(p-> new AbstractMap.SimpleEntry<>(p,
+						new ProductOrchestrationSynthesisOperator(new Agreement(), p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}

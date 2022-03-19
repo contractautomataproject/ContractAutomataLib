@@ -19,6 +19,6 @@ import io.github.contractautomataproject.catlib.family.Product;
  *
  */
 public interface FamilyConverter {
-	public Set<Product> importProducts(String filename) throws IOException, ParserConfigurationException, SAXException, ParseFormatException, ContradictionException, TimeoutException;
-	public void exportFamily(String filename, Family fam) throws IOException;
+	Set<Product> importProducts(String filename) throws IOException, ParserConfigurationException, SAXException, ParseFormatException, ContradictionException, TimeoutException;
+	void exportFamily(String filename, Family fam) throws IOException;
 }

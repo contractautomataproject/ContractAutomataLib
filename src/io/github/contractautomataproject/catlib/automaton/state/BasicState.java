@@ -29,7 +29,7 @@ public class BasicState<T> extends AbstractState<T>{
 	}
 	
 	@Override
-	public boolean isFinalstate() {
+	public boolean isFinalState() {
 		return fin;
 	}
 	
@@ -44,7 +44,7 @@ public class BasicState<T> extends AbstractState<T>{
 	 */
 	@Override
 	public String toString() {
-		String finalstate= (this.isFinalstate())?",final=true":"";
+		String finalstate= (this.isFinalState())?",final=true":"";
 		String initial= (this.isInitial())?",initial=true":"";
 		return "label="+this.getState()+finalstate+initial;
 	}

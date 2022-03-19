@@ -81,32 +81,32 @@ public class TransitionTest {
 	
 	@Test
 	public void testHashCodeEquals() {
-		assertEquals(t1.hashCode(),new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs1).hashCode());
+		assertEquals(t1.hashCode(), new Transition<>(bs0, lab, bs1).hashCode());
 	}
 	
 	@Test
 	public void testHashCodeNotEquals() {
-		Assert.assertNotEquals(t1.hashCode(),new Transition<String,String,State<String>,Label<String>>(bs1,lab,bs0).hashCode());
+		Assert.assertNotEquals(t1.hashCode(), new Transition<>(bs1, lab, bs0).hashCode());
 	}
 	
 	@Test
 	public void testEquals() {
-		assertEquals(t1,new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs1));
+		assertEquals(t1, new Transition<>(bs0, lab, bs1));
 	}
 	
 	@Test
 	public void testNotEqualsSource() {
-		Assert.assertNotEquals(t1, new Transition<String,String,State<String>,Label<String>>(bs1,lab,bs1));
+		Assert.assertNotEquals(t1, new Transition<>(bs1, lab, bs1));
 	}
 	
 	@Test
 	public void testNotEqualsLabel() {
-		Assert.assertNotEquals(t1, new Transition<String,String,State<String>,Label<String>>(bs0,lab2,bs1));
+		Assert.assertNotEquals(t1, new Transition<>(bs0, lab2, bs1));
 	}
 	
 	@Test
 	public void testNotEqualsTarget() {
-		Assert.assertNotEquals(t1, new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs0));
+		Assert.assertNotEquals(t1, new Transition<>(bs0, lab, bs0));
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class TransitionTest {
 	
 	@Test
 	public void testConstructorExceptionTargetNull() {
-		assertThrows("source, label or target null", IllegalArgumentException.class, ()->new Transition<String,String,State<String>,Label<String>>(bs0,lab,null));
+		assertThrows("source, label or target null", IllegalArgumentException.class, ()-> new Transition<>(bs0, lab, null));
 		
 	}
 	
@@ -139,24 +139,24 @@ public class TransitionTest {
 	
 	@Test
 	public void testConstructorExceptionSourceNull() {
-		assertThrows("source, label or target null", IllegalArgumentException.class, ()->new Transition<String,String,State<String>,Label<String>>(null,lab,bs0));
+		assertThrows("source, label or target null", IllegalArgumentException.class, ()-> new Transition<>(null, lab, bs0));
 	}
 	
 	@Test
 	public void testConstructorExceptionSourceRank() {
 		when(bs0.getRank()).thenReturn(3);
-		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()->new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs1));
+		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()-> new Transition<>(bs0, lab, bs1));
 	}
 	
 	@Test
 	public void testConstructorExceptionLabelRank() {
 		when(lab.getRank()).thenReturn(3);
-		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()->new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs1));
+		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()-> new Transition<>(bs0, lab, bs1));
 	}
 	
 	@Test
 	public void testConstructorExceptionTargetRank() {
 		when(bs1.getRank()).thenReturn(3);
-		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()->new Transition<String,String,State<String>,Label<String>>(bs0,lab,bs1));
+		assertThrows("source, label or target with different ranks", IllegalArgumentException.class, ()-> new Transition<>(bs0, lab, bs1));
 	}
 }

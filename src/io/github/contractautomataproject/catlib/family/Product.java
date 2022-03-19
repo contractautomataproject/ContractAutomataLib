@@ -117,7 +117,7 @@ public class Product {
 				.collect(Collectors.toSet());
 		return forbidden.stream()
 				.map(Feature::getName)
-				.allMatch(s->!act.contains(s));
+				.noneMatch(s-> act.contains(s));
 	}
 
 	public boolean isForbidden(CALabel l)

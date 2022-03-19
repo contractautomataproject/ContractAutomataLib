@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
+import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
@@ -30,15 +30,15 @@ public class OrchestrationTest {
 	
 	@Before
 	public void setup() {
-		BasicState<String> s0 = new BasicState<String>("0",true,false);
-		BasicState<String> s1 = new BasicState<String>("1",false,false);
-		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		BasicState<String> s0 = new BasicState<>("0", true, false);
+		BasicState<String> s1 = new BasicState<>("1", false, false);
+		BasicState<String> s2 = new BasicState<>("2", false, true);
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));
-		ModalTransition<String,String,State<String>,Label<String>> t1 = new ModalTransition<>(cs0, new Label<String>(List.of("blueberry")), cs1, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,State<String>,Label<String>> t2 = new ModalTransition<>(cs1, new Label<String>(List.of("ananas")), cs2, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,State<String>,Label<String>> t3 = new ModalTransition<>(cs0, new Label<String>(List.of("cherry")), cs2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,Label<String>> t1 = new ModalTransition<>(cs0, new Label<>(List.of("blueberry")), cs1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,Label<String>> t2 = new ModalTransition<>(cs1, new Label<>(List.of("ananas")), cs2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,Label<String>> t3 = new ModalTransition<>(cs0, new Label<>(List.of("cherry")), cs2, ModalTransition.Modality.PERMITTED);
 		prop = new Automaton<>(Set.of(t1,t2,t3));
 	}
 
@@ -48,7 +48,7 @@ public class OrchestrationTest {
 	{
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertTrue(AutomatonTestIT.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}	
 	
 	@Test
@@ -56,7 +56,7 @@ public class OrchestrationTest {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> comp = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_BusinessClientxHotel.data");
-		assertTrue(AutomatonTestIT.autEquals(orc,test));
+		assertTrue(ITAutomatonTest.autEquals(orc,test));
 	}
 	
 	@Test
@@ -64,7 +64,7 @@ public class OrchestrationTest {
 	{
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
-		assertTrue(AutomatonTestIT.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
 	}
 	
 	@Test
@@ -94,7 +94,7 @@ public class OrchestrationTest {
 	{
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"test_lazy_loop.data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc =  new OrchestrationSynthesisOperator(new Agreement()).apply(test);
-		assertTrue(AutomatonTestIT.autEquals(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
+		assertTrue(ITAutomatonTest.autEquals(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
 	}
 
 	//----with MC
@@ -102,34 +102,34 @@ public class OrchestrationTest {
 	@Test
 	public void testForte2021synth() throws IOException {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<String>>(),prop).apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
-		assertTrue(AutomatonTestIT.autEquals(synth, test));
+		assertTrue(ITAutomatonTest.autEquals(synth, test));
 	}
 	
 	@Test
 	public void testLazyLoopSynth() throws IOException {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<String>>(),prop).apply(aut);	
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir + "test_lazy_loop_prop_synth.data");
-		assertTrue(AutomatonTestIT.autEquals(synth, test));	
+		assertTrue(ITAutomatonTest.autEquals(synth, test));
 	}
 
 	@Test
 	public void testModelCheckingLoopSynt() throws IOException {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<String>>(),prop).apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
-		assertTrue(AutomatonTestIT.autEquals(orc, test));
+		assertTrue(ITAutomatonTest.autEquals(orc, test));
 
 	}
 	
 	@Test
 	public void testOrcSynthesis2021() throws IOException {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");	
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(),new StrongAgreementModelChecking<Label<String>>(),prop).apply(aut);
+		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
-		assertTrue(AutomatonTestIT.autEquals(orc, test));
+		assertTrue(ITAutomatonTest.autEquals(orc, test));
 	}
 	
 	//---------------------------

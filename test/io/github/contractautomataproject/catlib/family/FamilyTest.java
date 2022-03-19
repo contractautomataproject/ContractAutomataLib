@@ -25,9 +25,6 @@ public class FamilyTest {
 	{
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=  new Family(dfc.importProducts(fileName));
-		//		Set<Product> mp = Arrays.stream(fam.getMaximalProducts())
-		//				.mapToObj(i->fam.getElements()[i])
-		//				.collect(Collectors.toSet());
 		Set<Product> mp= fam.getMaximalProducts();
 		Set<Product> test = dfc.importProducts(dir +"maximalProductsTest.prod");
 
@@ -54,10 +51,6 @@ public class FamilyTest {
 		List<Product> ar = new ArrayList<>(pr);
 
 		int pindex=100;
-		//		int[] subind = fam.getSuperProductsofProduct(pindex);
-		//		Set<Product> products=Arrays.stream(subind)
-		//				.mapToObj(i->pr[i])
-		//				.collect(Collectors.toSet());
 
 		Set<Product> products = fam.getSuperProductsofProduct(ar.get(pindex));
 		//Family.writeFile(dir +"superProductsOfProduct_test", products);
@@ -87,7 +80,7 @@ public class FamilyTest {
 	public void constructorException()
 	{
 		Set<Product> pr = null;
-		assertThatThrownBy(() -> new Family(pr))
+		assertThatThrownBy(() -> new Family(null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 	
@@ -95,31 +88,31 @@ public class FamilyTest {
 	public void constructorException2()
 	{
 		Set<Product> pr = null;
-		assertThatThrownBy(() -> new Family(pr,null,null))
+		assertThatThrownBy(() -> new Family(null,null,null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
-	public void testEquals1() throws Exception {
+	public void testEquals1() {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		assertEquals(fam,fam);
 	}
 	
 	@Test
-	public void testEquals2() throws Exception {
+	public void testEquals2() {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		Assert.assertNotNull(fam);
 	}
 
 	@Test
-	public void testToString() throws Exception {
+	public void testToString() {
 		String ln = System.lineSeparator();
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		assertEquals(fam.toString(),"Family [products=[R:[apple];"+ln+"F:[];"+ln+"]]");
 	}
 	
 	@Test
-	public void testHashCode() throws Exception {
+	public void testHashCode() {
 		Family fam = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		Family fam2 = new Family(Set.of(new Product(new String[] {"apple"},new String[] {})));
 		

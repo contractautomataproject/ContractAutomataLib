@@ -10,16 +10,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class StateTestIT {
+public class ITStateTest {
 	private  State<String> test;
 	
 	@Before
 	public void setup() {		
-		BasicState<String> bs0 = new BasicState<String>("0",true,false);
-		BasicState<String> bs1 = new BasicState<String>("1",true,false);
-		BasicState<String> bs2 = new BasicState<String>("2",true,false);
+		BasicState<String> bs0 = new BasicState<>("0",true,false);
+		BasicState<String> bs1 = new BasicState<>("1",true,false);
+		BasicState<String> bs2 = new BasicState<>("2",true,false);
 		
-		test = new State<String>(List.of(bs0,bs1,bs2));
+		test = new State<>(List.of(bs0,bs1,bs2));
 	}
 
 	@Test
@@ -28,7 +28,7 @@ public class StateTestIT {
 	}
 	@Test
 	public void testIsFinal() {
-		assertFalse(test.isFinalstate());
+		assertFalse(test.isFinalState());
 	}
 	
 	

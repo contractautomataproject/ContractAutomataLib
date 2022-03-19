@@ -2,6 +2,7 @@ package io.github.contractautomataproject.catlib.operators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -24,7 +25,7 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  *
  */
 public class ProjectionFunction implements TriFunction<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>,Integer,ToIntFunction<ModalTransition<String,String,State<String>,CALabel>>,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> {
-	BiFunction<ModalTransition<String,String,State<String>,CALabel>,Integer,CALabel> createLabel;
+	final BiFunction<ModalTransition<String,String,State<String>,CALabel>,Integer,CALabel> createLabel;
 
 	/**
 	 * 
@@ -59,7 +60,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
 				.map(s->s.getState().get(indexprincipal))
 				.distinct()
-				.collect(Collectors.toMap(Function.identity(), bs->new State<String>(new ArrayList<>(Arrays.asList(bs)))));
+				.collect(Collectors.toMap(Function.identity(), bs-> new State<>(new ArrayList<>(List.of(bs)))));
 
 		//associating each castate of the composition with the castate of the principal
 		Map<State<String>,State<String>> map2princst = 
@@ -73,12 +74,12 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 				.filter(t-> t.getLabel().isMatch()
 						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
 								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
-				.map(t-> new ModalTransition<String,String,State<String>,CALabel>(map2princst.get(t.getSource()),
-						createLabel.apply(t,indexprincipal),
+				.map(t-> new ModalTransition<>(map2princst.get(t.getSource()),
+						createLabel.apply(t, indexprincipal),
 						map2princst.get(t.getTarget()),
-						(t.isPermitted()||(t.getLabel().isMatch()&&getNecessaryPrincipal.applyAsInt(t)!=indexprincipal))
-						?ModalTransition.Modality.PERMITTED
-								:t.isLazy()?ModalTransition.Modality.LAZY:ModalTransition.Modality.URGENT))
+						(t.isPermitted() || (t.getLabel().isMatch() && getNecessaryPrincipal.applyAsInt(t) != indexprincipal))
+								? ModalTransition.Modality.PERMITTED
+								: t.isLazy() ? ModalTransition.Modality.LAZY : ModalTransition.Modality.URGENT))
 				.collect(Collectors.toSet()));
 	}
 

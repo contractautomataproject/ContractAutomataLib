@@ -35,9 +35,7 @@ public class ProdFamilyConverter implements FamilyConverter {
 	
 	@Override
 	public Set<Product> importProducts(String filename) throws IOException {
-		Path path = FileSystems.getDefault().getPath(filename);	
-		if (path==null)
-			throw new IllegalArgumentException(EMPTYMSG);
+		Path path = FileSystems.getDefault().getPath(filename);
 		File f = new File(path.toString());
 		
 		List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
@@ -67,11 +65,9 @@ public class ProdFamilyConverter implements FamilyConverter {
 
 		String suffix = (filename.endsWith(".prod"))?"":".prod";
 		List<Product> ar = new ArrayList<>(fam.getProducts());
-		Path path = FileSystems.getDefault().getPath(filename+suffix);	
-		if (path==null)
-			throw new IllegalArgumentException(EMPTYMSG);
-		
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), StandardCharsets.UTF_8)))
+		Path path = FileSystems.getDefault().getPath(filename+suffix);
+
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path.toString()), StandardCharsets.UTF_8)))
 		{
 			pr.print(IntStream.range(0, ar.size())
 					.mapToObj(i->ar.get(i).toStringFile(i))

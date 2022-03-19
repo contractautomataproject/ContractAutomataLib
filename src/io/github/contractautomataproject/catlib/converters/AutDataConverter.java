@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -54,15 +53,12 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
 
-		if (path==null)
-			throw new IllegalArgumentException(EMPTYMSG);
-
 		String safefilename = path.toString();
 
 		Set<ModalTransition<String,String,State<String>,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(safefilename)), StandardCharsets.UTF_8)))
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(safefilename), StandardCharsets.UTF_8)))
 		{
 			int rank=0;
 			String[] initial = new String[1];
@@ -116,7 +112,7 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 					case "!": //a must transition
 					{
 						String stype= strLine.substring(1,2);
-						ModalTransition.Modality type=null;
+						ModalTransition.Modality type;
 						if ("U".equals(stype))
 							type=ModalTransition.Modality.URGENT;
 						else if ("L".equals(stype))
@@ -176,13 +172,13 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 							IntStream.range(0, state.length) //creating the list of basic states using mapBasicStates
 							.mapToObj(i->{
 								Set<BasicState<String>> l = mapBasicStates.get(i);
-								if (l==null || l.stream().allMatch(bs->!bs.getState().equals(state[i])))
+								if (l==null || l.stream().noneMatch(bs-> bs.getState().equals(state[i])))
 								{
 									BasicState<String> bs=new BasicState<>(state[i]+"",
 											state[i].equals(initial[i]),
 											Arrays.stream(fin[i]).anyMatch(id->id.equals(state[i])));
 									if (l==null)
-										mapBasicStates.put(i, new HashSet<>(Arrays.asList(bs)));
+										mapBasicStates.put(i, new HashSet<>(List.of(bs)));
 									else
 										l.add(bs);
 									return bs;
@@ -199,20 +195,17 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 	 * Export the textual description of the automaton in a .data file
 	 * 
 	 * @throws FileNotFoundException in case filename is not found
-	 * @throws UnsupportedEncodingException 
 	 */
 	@Override
-	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException, UnsupportedEncodingException {
+	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException {
 		if (filename.isEmpty())
 			throw new IllegalArgumentException(EMPTYMSG);
 
 		String ext=(filename.endsWith(SUFFIX))?"":SUFFIX;
 		Path path = FileSystems.getDefault().getPath(filename+ext);
-		if (path==null)
-			throw new IllegalArgumentException(EMPTYMSG);
 		String safefilename = 	path.toString();
 
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), StandardCharsets.UTF_8)))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(safefilename), StandardCharsets.UTF_8)))
 		{
 			pr.print(aut.toString());
 		}

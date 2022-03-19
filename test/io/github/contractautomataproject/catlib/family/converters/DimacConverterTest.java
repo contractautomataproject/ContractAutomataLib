@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 import org.junit.Test;
@@ -34,13 +33,6 @@ public class DimacConverterTest {
 		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
-//		Set<Feature> actions = aut.getUnsignedActions().stream()
-//				.map(Feature::new)
-//				.collect(Collectors.toSet());
-//		Set<Product> refinedProducts = prod.parallelStream()
-//				.map(p->p.retainFeatures(actions))
-//				.collect(Collectors.toSet());
-				
 		FMCA fmca = new FMCA(aut,prod);
 		
 		
@@ -59,33 +51,8 @@ public class DimacConverterTest {
 		assertEquals(prod,max);
 	
 	}
-	
-//	@Test
-//	public void stressPrimeImplicant() throws Exception
-//	{
-//
-//		Instant start = Instant.now();
-//
-//		Set<Product> prod = dfc_pi.importProducts(dir+"dimacs_benchmark"+File.separator+"uClinux.dimacs");
-//		
-//		Instant stop = Instant.now();
-//		System.out.println(Duration.between(start, stop).toMillis());
-//		
-//		start = Instant.now();
-//		
-//		Set<Product> prodall = dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"uClinux.dimacs");
-//		PartialProductGenerator pg = new PartialProductGenerator();
-//		Family f2 = new Family(pg.apply(prodall));
-//		Set<Product> max = f2.getMaximalProducts();
-//		
-//		stop = Instant.now();
-//		System.out.println(Duration.between(start, stop).toMillis());
-//		
-//		assertTrue(prod.equals(max));
-//	
-//	}
-	
-	
+
+
 	@Test
 	public void testUnsat() throws Exception
 	{
@@ -94,8 +61,7 @@ public class DimacConverterTest {
 	}
 	
 	@Test
-	public void testExport() throws IOException
-	{
+	public void testExport() {
 		assertThatThrownBy(()->dfc.exportFamily(null, null))
 		.isInstanceOf(UnsupportedOperationException.class);
 		//just for coverage

@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
+import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
@@ -30,10 +30,8 @@ public class ProjectionTest {
 	public void projectionTestSCP2020_BusinessClient() throws Exception{
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test= bdc.importMSCA(dir+"BusinessClient.data");
-		aut=new ProjectionFunction(new Label<String>(List.of("dum"))).apply(aut,0, t->t.getLabel().getRequester());
-		//		System.out.println(aut);
-		//		System.out.println(test);
-		Assert.assertTrue(AutomatonTestIT.autEquals(aut,test));
+		aut=new ProjectionFunction(new Label<>(List.of("dum"))).apply(aut,0, t->t.getLabel().getRequester());
+		Assert.assertTrue(ITAutomatonTest.autEquals(aut,test));
 
 	}
 
@@ -41,7 +39,7 @@ public class ProjectionTest {
 	public void choreoConcur2021projectAndComposeTest() throws Exception {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction(new Label<String>(List.of("dumb"))).apply(aut,i, t->t.getLabel().getOfferer()))
+				.mapToObj(i->new ProjectionFunction(new Label<>(List.of("dumb"))).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> closed_aut = new MSCACompositionFunction(principals,new StrongAgreement().negate()).apply(100);
@@ -50,8 +48,8 @@ public class ProjectionTest {
 
 		boolean bc = closed_aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
-						.satisfiesBranchingCondition(t,aut.getTransition(), 
-								new HashSet<State<String>>()));
+						.satisfiesBranchingCondition(t,aut.getTransition(),
+                                new HashSet<>()));
 		Assert.assertFalse(bc);	
 	}
 	
@@ -70,13 +68,7 @@ public class ProjectionTest {
 		//bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCM_new.data", closed_aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 
-//		boolean bc = closed_aut.getTransition().stream()
-//				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement())
-//						.satisfiesBranchingCondition(t,aut.getTransition(), 
-//								new HashSet<State<String>>()));
-//		assertEquals(bc,false);	
-		
-		assertTrue(AutomatonTestIT.autEquals(closed_aut, test));
+		assertTrue(ITAutomatonTest.autEquals(closed_aut, test));
 	}
 	
 	@Test
@@ -88,7 +80,7 @@ public class ProjectionTest {
 		
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CMLabel>> test = cmdc.importMSCA(dir+"cm_concur21.data");
 		
-		assertTrue(AutomatonTestIT.autEquals(cm, test));
+		assertTrue(ITAutomatonTest.autEquals(cm, test));
 
 	}
 
@@ -98,7 +90,7 @@ public class ProjectionTest {
 	@Test
 	public void projectionException1() throws Exception {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
-		ProjectionFunction pj = new ProjectionFunction(new Label<String>(List.of("dumb")));
+		ProjectionFunction pj = new ProjectionFunction(new Label<>(List.of("dumb")));
 		assertThatThrownBy(() -> pj.apply(aut,-1, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");
@@ -107,7 +99,7 @@ public class ProjectionTest {
 	@Test
 	public void projectionException2() throws Exception {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
-		ProjectionFunction pj = new ProjectionFunction(new Label<String>(List.of("dumb")));
+		ProjectionFunction pj = new ProjectionFunction(new Label<>(List.of("dumb")));
 		assertThatThrownBy(() -> pj.apply(aut,2, null))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("Index out of rank");

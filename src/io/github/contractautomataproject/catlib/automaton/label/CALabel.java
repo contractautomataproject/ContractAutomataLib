@@ -119,30 +119,30 @@ public class CALabel extends Label<String> {
 
 	public Integer getOfferer() {
 		Integer offerer = getOffererIfAny();
-		if (offerer.intValue()==-1) throw new UnsupportedOperationException();
+		if (offerer ==-1) throw new UnsupportedOperationException();
 		else return offerer;
 
 	}
 
 	public Integer getRequester() {
 		Integer requester = getRequesterIfAny();
-		if (requester.intValue()==-1) throw new UnsupportedOperationException();
+		if (requester ==-1) throw new UnsupportedOperationException();
 		else return requester;
 	}
 
 	public boolean isMatch()
 	{
-		return getOffererIfAny().intValue() != -1 && getRequesterIfAny().intValue() != -1;
+		return getOffererIfAny() != -1 && getRequesterIfAny() != -1;
 	}
 
 	public boolean isOffer()
 	{
-		return getRequesterIfAny().intValue() == -1;
+		return getRequesterIfAny() == -1;
 	}
 
 	public boolean isRequest()
 	{
-		return getOffererIfAny().intValue() == -1;
+		return getOffererIfAny() == -1;
 	}
 	
 	/**
@@ -180,8 +180,8 @@ public class CALabel extends Label<String> {
 	{	
 		String action = this.getPrincipalAction();
 		if (action.startsWith(OFFER))
-			return REQUEST+action.substring(1,action.length());
-		else return OFFER+action.substring(1,action.length());
+			return REQUEST+action.substring(1);
+		else return OFFER+action.substring(1);
 	}
 
 	@Override

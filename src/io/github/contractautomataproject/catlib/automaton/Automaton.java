@@ -1,11 +1,6 @@
 package io.github.contractautomataproject.catlib.automaton;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,13 +55,12 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 			throw new IllegalArgumentException("Not Exactly one Initial State found! ");
 
 		if (states.parallelStream()
-				.noneMatch(AbstractState::isFinalstate))
+				.noneMatch(AbstractState::isFinalState))
 			throw new IllegalArgumentException("No Final States!");
 		
 		if(this.getStates().stream()
 				.anyMatch(x-> states.stream()
-						.filter(y->x!=y && x.getState().equals(y.getState()))
-						.count()!=0))
+						.anyMatch(y->x!=y && x.getState().equals(y.getState()))))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
 
 	}
@@ -95,7 +89,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 
 		return this.getStates().stream()
 				.flatMap(cs->cs.getState().stream()
-						.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState<S1>>(cs.getState().indexOf(bs),bs)))
+						.map(bs-> new AbstractMap.SimpleEntry<>(cs.getState().indexOf(bs), bs)))
 				.collect(Collectors.groupingBy(Entry::getKey, Collectors.mapping(Entry::getValue, Collectors.toSet())));
 
 	}
@@ -135,21 +129,21 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 	public String toString() {
 		StringBuilder pr = new StringBuilder();
 		int rank = this.getRank();
-		pr.append("Rank: "+rank+System.lineSeparator());
-		pr.append("Initial state: " +this.getInitial().print()+System.lineSeparator());
+		pr.append("Rank: ").append(rank).append(System.lineSeparator());
+		pr.append("Initial state: ").append(this.getInitial().print()).append(System.lineSeparator());
 		pr.append("Final states: ["); 
 		for (int i=0;i<this.getRank();i++) 
 			pr.append(Arrays.toString(
 					this.getBasicStates().get(i).stream()
-					.filter(BasicState<S1>::isFinalstate)
-					.map(BasicState<S1>::getState)
+					.filter(BasicState::isFinalState)
+					.map(BasicState::getState)
 					.sorted()
 					.toArray()));
-		pr.append("]"+System.lineSeparator());
-		pr.append("Transitions: "+System.lineSeparator());
+		pr.append("]").append(System.lineSeparator());
+		pr.append("Transitions: ").append(System.lineSeparator());
 		this.getTransition().stream()
-		.sorted((t1,t2)->t1.toString().compareTo(t2.toString()))
-		.forEach(t->pr.append(t.print()+System.lineSeparator()));
+				.sorted(Comparator.comparing(T::toString))
+				.forEach(t-> pr.append(t.print()).append(System.lineSeparator()));
 		return pr.toString();
 	}
 }

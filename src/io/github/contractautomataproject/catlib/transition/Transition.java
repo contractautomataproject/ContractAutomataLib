@@ -11,7 +11,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
  * 
  * @author Davide Basile
  *
- * @param <U> generic type of the instance variable of S
+ * @param <L1> generic type of the instance variable of L
  * @param <S> generic type of the state
  * @param <L> generic type of the label 
  */

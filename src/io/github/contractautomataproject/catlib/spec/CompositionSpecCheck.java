@@ -42,7 +42,7 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,S
 
 	private boolean finalStates(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> comp) 
 	{
-		return compareStatesPred(State<String>::isFinalstate,comp,aut);
+		return compareStatesPred(State::isFinalState,comp,aut);
 	}
 
 	private boolean compareStatesPred(Predicate<State<String>> pred, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> comp, List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut) {
@@ -85,11 +85,6 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,S
 	/**
 	 * predicates for match transitions
 	 * 
-	 * @param aut
-	 * @param comp
-	 * @param sourcestatepred
-	 * @param autTr
-	 * @return
 	 */
 	private Predicate<ModalTransition<String,String,State<String>,CALabel>> predMatch(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> comp, 
 			TriPredicate<ModalTransition<String,String,State<String>,CALabel>,Integer,State<String>> sourcestatepred, 
@@ -134,12 +129,7 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,S
 
 	/**
 	 * predicates for interleaving transitions 
-	 * 
-	 * @param aut
-	 * @param comp
-	 * @param sourcestatepred
-	 * @param autTr
-	 * @return
+	 *
 	 */
 	private Predicate<ModalTransition<String,String,State<String>,CALabel>> predIntrleav(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut, Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> comp, 
 			TriPredicate<ModalTransition<String,String,State<String>,CALabel>,Integer,State<String>> sourcestatepred, 
@@ -176,5 +166,5 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,S
 
 
 interface PentaPredicate<T,U,V,Z,Q> {
-	public boolean test(T arg1, U arg2, V arg3, Z arg4, Q arg5);
+	boolean test(T arg1, U arg2, V arg3, Z arg4, Q arg5);
 }

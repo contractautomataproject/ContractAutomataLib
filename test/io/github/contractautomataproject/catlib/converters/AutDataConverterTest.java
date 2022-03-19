@@ -6,21 +6,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
+import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.transition.ModalTransition;
 
 public class AutDataConverterTest {
-	private final AutDataConverter<CALabel> bdc = new AutDataConverter<CALabel>(CALabel::new);
+	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 
 	@Test
@@ -29,7 +26,7 @@ public class AutDataConverterTest {
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.data",aut);
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
-		Assert.assertTrue(AutomatonTestIT.autEquals(aut,test));
+		Assert.assertTrue(ITAutomatonTest.autEquals(aut,test));
 	}
 	
 	@Test
@@ -40,25 +37,21 @@ public class AutDataConverterTest {
 
 		Assert.assertFalse(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
-				.map(bs->new AbstractMap.SimpleEntry<Integer,BasicState<String>>(cs.getState().indexOf(bs),bs)))
-		.anyMatch(e1->aut.getStates()
+				.map(bs-> new AbstractMap.SimpleEntry<>(cs.getState().indexOf(bs), bs)))
+		.anyMatch(e1-> aut.getStates()
 				.stream()
-				.map(cs->cs.getState().get(e1.getKey()))
-				.filter(bs->bs!=e1.getValue()&&bs.getState().equals(e1.getValue().getState()))
-				.count()>0));
+				.map(cs -> cs.getState().get(e1.getKey())).anyMatch(bs -> bs != e1.getValue() && bs.getState().equals(e1.getValue().getState()))));
 	}
 	
 	@Test
-	public void wrongFormatData_exception() throws IOException
-	{
+	public void wrongFormatData_exception() {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"BusinessClient.mxe"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Not a .data format");
 	}
 	
 	@Test
-	public void emptyFileName_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void emptyFileName_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.exportMSCA("",null))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Empty file name");
@@ -66,39 +59,34 @@ public class AutDataConverterTest {
 	
 	
 	@Test
-	public void loadIllActions_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void loadIllActions_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"illformed.data"))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
 	
 	@Test
-	public void loadIllRankStatesHigher_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void loadIllRankStatesHigher_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"illformed2.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed transitions, different ranks");
 	}
 	
 	@Test
-	public void loadIllRankStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void loadIllRankStatesLower_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"illformed3.data"))
 	    .isInstanceOf(IOException.class)
 	    .hasMessageContaining("Ill-formed transitions, different ranks");
 	}
 	
 	@Test
-	public void loadIllRankInitialStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void loadIllRankInitialStatesLower_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"illformed4.data"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Initial state with different rank");
 	}
 	
 	@Test
-	public void loadIllRankFinalStatesLower_exception() throws NumberFormatException, IOException, ParserConfigurationException, SAXException
-	{
+	public void loadIllRankFinalStatesLower_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> bdc.importMSCA(dir+"illformed5.data"))
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Final states with different rank");

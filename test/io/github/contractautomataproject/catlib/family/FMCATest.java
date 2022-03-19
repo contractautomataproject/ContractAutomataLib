@@ -18,7 +18,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.AutomatonTestIT;
+import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
@@ -33,12 +33,12 @@ import io.github.contractautomataproject.catlib.transition.ModalTransition;
  */
 public class FMCATest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;;
-	private final FamilyConverter dfc = new ProdFamilyConverter();
+	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+    private final FamilyConverter dfc = new ProdFamilyConverter();
 	
 	@Test
 	public void constructorTest_Exception_nullArgument() {
-		Family fam = new Family(new HashSet<Product>());
+		Family fam = new Family(new HashSet<>());
 		assertThatThrownBy(() -> new FMCA(null, fam))
 	    .isInstanceOf(IllegalArgumentException.class);
 	}
@@ -47,7 +47,7 @@ public class FMCATest {
 	public void getAut_test() throws Exception 
 	{
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
-		FMCA aut = new FMCA(a,new Family(new HashSet<Product>()));	
+		FMCA aut = new FMCA(a,new Family(new HashSet<>()));
 		assertEquals(aut.getAut(),a);
 	}
 	
@@ -58,9 +58,6 @@ public class FMCATest {
 		String fileName =dir+"ValidProducts.prod";
 		Family fam= new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
-//		Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
-//				.mapToObj(i->fam.getElements()[i])
-//				.collect(Collectors.toSet());
 		Set<Product> vp = aut.productsRespectingValidity();
 
 		Family test = new Family(dfc.importProducts(dir+"validProductsOrcTest.prod"));
@@ -106,7 +103,7 @@ public class FMCATest {
 
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> controller = faut.getOrchestrationOfFamily();		
 
-		assertTrue(AutomatonTestIT.autEquals(controller, test));
+		assertTrue(ITAutomatonTest.autEquals(controller, test));
 	}
 	@Test
 	public void testOrchestrationOfFamilyEnumerative() throws Exception
@@ -117,11 +114,8 @@ public class FMCATest {
 		
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> ofe =  aut.getOrchestrationOfFamilyEnumerative();
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
-					
-//		int[][] vpdummy = new int[1][];
-//		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = fam.getMPCofFamilyWithoutPO(aut,vpdummy);
-		
-		assertTrue(AutomatonTestIT.autEquals(ofe, test));
+
+		assertTrue(ITAutomatonTest.autEquals(ofe, test));
 	}
 
 	//exceptions
@@ -133,7 +127,7 @@ public class FMCATest {
 		Family fam=new Family(dfc.importProducts(fileName));
 		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 		FMCA fmca = new FMCA(aut,fam);
-		assertThatThrownBy(() ->fmca.getCanonicalProducts())
+		assertThatThrownBy(fmca::getCanonicalProducts)
 		.isInstanceOf(UnsupportedOperationException.class);	
 	}
 
@@ -144,7 +138,7 @@ public class FMCATest {
 		Family fam=new Family(dfc.importProducts(fileName));
 		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data"),fam);
 		
-		assertThatThrownBy(() ->aut.productsWithNonEmptyOrchestration())
+		assertThatThrownBy(aut::productsWithNonEmptyOrchestration)
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
 	
@@ -152,7 +146,7 @@ public class FMCATest {
 	public void constructorException2()
 	{
 		Set<Product> pr = null;
-		assertThatThrownBy(() -> new FMCA(null,pr))
+		assertThatThrownBy(() -> new FMCA(null, null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 }

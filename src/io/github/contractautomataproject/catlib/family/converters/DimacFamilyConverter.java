@@ -36,7 +36,7 @@ import io.github.contractautomataproject.catlib.family.Product;
  *
  */
 public class DimacFamilyConverter implements FamilyConverter {
-	private Function<IProblem,int[]> gen;
+	private final Function<IProblem,int[]> gen;
 
 	public DimacFamilyConverter(boolean allModels) {
 		if (allModels)
@@ -55,7 +55,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 		Reader reader = new DimacsReader(mi);
 		
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,StandardCharsets.UTF_8),true);)
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(baos,StandardCharsets.UTF_8),true))
 		{
 
 			IProblem problem =reader.parseInstance(filename);// CNF filename
@@ -91,12 +91,12 @@ public class DimacFamilyConverter implements FamilyConverter {
 				.stream()
 				.filter(s->s.startsWith("c")) //comment
 				.map(s->s.split(" "))
-				.map(ar->new AbstractMap.SimpleEntry<Integer, String>(Integer.parseInt(ar[1].replace("$","")),ar[2]))
+				.map(ar-> new AbstractMap.SimpleEntry<>(Integer.parseInt(ar[1].replace("$", "")), ar[2]))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));		
 	}
 
 	@Override
-	public void exportFamily(String filename, Family fam) throws IOException {
+	public void exportFamily(String filename, Family fam) {
 		throw new UnsupportedOperationException();
 	}
 }

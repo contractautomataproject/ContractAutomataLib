@@ -44,20 +44,20 @@ public class RelabelingOperator<L extends Label<String>> implements Function<Aut
 				.flatMap(x->x.getState().stream())
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), 
-						s->new BasicState<String>(relabel.apply(s.getState()),
-								initialStatePred.test(s),finalStatePred.test(s))));
+						s-> new BasicState<>(relabel.apply(s.getState()),
+                                initialStatePred.test(s), finalStatePred.test(s))));
 
 		Map<State<String>,State<String>> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
-						x->new State<String>(x.getState().stream()
-								.map(clonedstate::get)
-								.collect(Collectors.toList()))));
+						x-> new State<>(x.getState().stream()
+                                .map(clonedstate::get)
+                                .collect(Collectors.toList()))));
 
 		return aut.getTransition().stream()
-				.map(t->new ModalTransition<String,String,State<String>,L>(clonedcastates.get(t.getSource()),
-						createLabel.apply(t.getLabel().getAction()),
-						clonedcastates.get(t.getTarget()),
-						t.getModality()))
+				.map(t-> new ModalTransition<>(clonedcastates.get(t.getSource()),
+                        createLabel.apply(t.getLabel().getAction()),
+                        clonedcastates.get(t.getTarget()),
+                        t.getModality()))
 				.collect(Collectors.toSet());
 	}
 }

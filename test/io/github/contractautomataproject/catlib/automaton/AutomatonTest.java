@@ -1,9 +1,9 @@
 package io.github.contractautomataproject.catlib.automaton;
 
+import static java.util.Arrays.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,6 @@ public class AutomatonTest {
 	@Mock Transition<String,String,State<String>,Label<String>> t1mock;
 	@Mock Transition<String,String,State<String>,Label<String>> t2mock;
 	@Mock Transition<String,String,State<String>,Label<String>> t3mock;
-	@Mock Label<String> label;
 
 	Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>> prop;
 
@@ -49,7 +48,6 @@ public class AutomatonTest {
 	@Mock ModalTransition<String,String,State<String>,CALabel> t1;
 	@Mock ModalTransition<String,String,State<String>,CALabel> t2;
 	@Mock ModalTransition<String,String,State<String>,CALabel> t3;
-	@Mock CALabel lab;
 
 	Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut;
 	
@@ -59,26 +57,26 @@ public class AutomatonTest {
 
 	@Before
 	public void setup() {
-		when(s0mock.isFinalstate()).thenReturn(false);
+		when(s0mock.isFinalState()).thenReturn(false);
 		
-		when(s1mock.isFinalstate()).thenReturn(true);
+		when(s1mock.isFinalState()).thenReturn(true);
 		when(s1mock.getState()).thenReturn("1");
 		
-		when(s2mock.isFinalstate()).thenReturn(true);
+		when(s2mock.isFinalState()).thenReturn(true);
 		when(s2mock.getState()).thenReturn("2");
 		
 
 		when(cs0mock.isInitial()).thenReturn(true);
-		when(cs0mock.isFinalstate()).thenReturn(false);
+		when(cs0mock.isFinalState()).thenReturn(false);
 		when(cs0mock.getState()).thenReturn(List.of(s0mock));
 		when(cs0mock.print()).thenReturn(List.of("0"));
 		
 		when(cs1mock.isInitial()).thenReturn(false);
-		when(cs1mock.isFinalstate()).thenReturn(true);
+		when(cs1mock.isFinalState()).thenReturn(true);
 		when(cs1mock.getState()).thenReturn(List.of(s1mock));
 		
 		when(cs2mock.isInitial()).thenReturn(false);
-		when(cs2mock.isFinalstate()).thenReturn(true);
+		when(cs2mock.isFinalState()).thenReturn(true);
 		when(cs2mock.getState()).thenReturn(List.of(s2mock));
 		
 		when(t1mock.getSource()).thenReturn(cs0mock);
@@ -99,8 +97,8 @@ public class AutomatonTest {
 		
 		//////
 		
-		when(bs1.isFinalstate()).thenReturn(true);
-		when(bs2.isFinalstate()).thenReturn(true);
+		when(bs1.isFinalState()).thenReturn(true);
+		when(bs2.isFinalState()).thenReturn(true);
 
 		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
@@ -108,11 +106,11 @@ public class AutomatonTest {
 		
 		when(cs1.isInitial()).thenReturn(true);
 		when(cs1.print()).thenReturn(List.of("0","0"));
-		when(cs3.isFinalstate()).thenReturn(true);
+		when(cs3.isFinalState()).thenReturn(true);
 
-		when(cs1.getState()).thenReturn(Arrays.asList(bs0,bs0));
-		when(cs2.getState()).thenReturn(Arrays.asList(bs1,bs0));
-		when(cs3.getState()).thenReturn(Arrays.asList(bs1,bs2));
+		when(cs1.getState()).thenReturn(asList(bs0,bs0));
+		when(cs2.getState()).thenReturn(asList(bs1,bs0));
+		when(cs3.getState()).thenReturn(asList(bs1,bs2));
 
 		when(t1.getSource()).thenReturn(cs1);
 		when(t1.getTarget()).thenReturn(cs2);
@@ -131,7 +129,7 @@ public class AutomatonTest {
 		when(t3.print()).thenReturn("!L([1, 2],[!test,?test],[0, 0])");
 		
 		st = new HashSet<>(Set.of(t1,t2,t3));
-		aut = new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(st);
+		aut = new Automaton<>(st);
 		map = Map.of(0,Set.of(bs0,bs1),1, Set.of(bs0,bs2));		
 
 	}
@@ -187,48 +185,48 @@ public class AutomatonTest {
 		Set<Transition<String,String, State<String>,Label<String>>> s = new HashSet<>();
 		Assert.assertThrows("No transitions",
 				IllegalArgumentException.class ,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(s));
+				() -> new Automaton<>(s));
 
 	}
 
 	@Test
-	public void constructor_Exception_nullArgument() throws Exception {
+	public void constructor_Exception_nullArgument() {
 		Set<Transition<String,String, State<String>,Label<String>>> s = new HashSet<>();
 		s.add(null);
 		Assert.assertThrows("Null element", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(s));
+				() -> new Automaton<>(s));
 	}
 
 	@Test
-	public void constructor_Exception_differentRank() throws Exception {
+	public void constructor_Exception_differentRank() {
 		when(t2mock.getRank()).thenReturn(2);
 		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("Transitions with different rank", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
+				() -> new Automaton<>(set));
 	}
 
 	@Test
-	public void noInitialState_exception() throws Exception
+	public void noInitialState_exception()
 	{
 		when(cs1mock.isInitial()).thenReturn(true);
 
 		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("Not Exactly one Initial State found!", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
+				() -> new Automaton<>(set));
 	}
 
 	@Test
-	public void noFinalStatesInTransitions_exception() throws Exception
+	public void noFinalStatesInTransitions_exception()
 	{
-		when(cs1mock.isFinalstate()).thenReturn(false);
-		when(cs2mock.isFinalstate()).thenReturn(false);
+		when(cs1mock.isFinalState()).thenReturn(false);
+		when(cs2mock.isFinalState()).thenReturn(false);
 		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("No Final States!", 
 				IllegalArgumentException.class, 
-				()->new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
+				()->new Automaton<>(set));
 	}
 	
 	
@@ -243,10 +241,6 @@ public class AutomatonTest {
 
 	@Test
 	public void testPrintFinalStates() {
-//		Set<ModalTransition<List<BasicState<String>>,String,State<String>,CALabel>> spyst = Mockito.spy(st);
-//		Mockito.doReturn(Set.of(t1).iterator()).when(spyst).iterator();	
-//		aut = new ModalAutomaton<>(spyst);
-		
 		String test = "Rank: 2" + System.lineSeparator()+
 				"Initial state: [0, 0]" + System.lineSeparator()+ 
 				"Final states: [[1][2]]" + System.lineSeparator()+ 
@@ -258,17 +252,17 @@ public class AutomatonTest {
 	}
 
 	@Test
-	public void testAmbiguousStates_exception() throws Exception
+	public void testAmbiguousStates_exception()
 	{	
-		when(cs1.getState()).thenReturn(Arrays.asList(bs0));
-		when(cs2.getState()).thenReturn(Arrays.asList(bs1));
-		when(cs3.getState()).thenReturn(Arrays.asList(bs1));
+		when(cs1.getState()).thenReturn(List.of(bs0));
+		when(cs2.getState()).thenReturn(List.of(bs1));
+		when(cs3.getState()).thenReturn(List.of(bs1));
 
 
 		st = Set.of(t1,t2);
 		Assert.assertThrows("Transitions have ambiguous states (different objects for the same state).", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(st));
+				() -> new Automaton<>(st));
 	}
 
 

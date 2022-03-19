@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
  */
 public class State<T> extends AbstractState<List<BasicState<T>>> {
 
-	public State(List<BasicState<T>> lstate){
-		super(lstate);
-		if (lstate.isEmpty())
+	public State(List<BasicState<T>> listState){
+		super(listState);
+		if (listState.isEmpty())
 			throw new IllegalArgumentException();
 	}
 
@@ -25,12 +25,12 @@ public class State<T> extends AbstractState<List<BasicState<T>>> {
 
 	@Override
 	public boolean isInitial() {
-		return this.getState().stream().allMatch(BasicState<T>::isInitial);
+		return this.getState().stream().allMatch(BasicState::isInitial);
 	}
 
 	@Override
-	public boolean isFinalstate() {
-		return this.getState().stream().allMatch(BasicState<T>::isFinalstate);
+	public boolean isFinalState() {
+		return this.getState().stream().allMatch(BasicState::isFinalState);
 	}
 
 	@Override
