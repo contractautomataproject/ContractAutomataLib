@@ -79,7 +79,6 @@ public class FamilyTest {
 	@Test
 	public void constructorException()
 	{
-		Set<Product> pr = null;
 		assertThatThrownBy(() -> new Family(null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
@@ -87,7 +86,6 @@ public class FamilyTest {
 	@Test
 	public void constructorException2()
 	{
-		Set<Product> pr = null;
 		assertThatThrownBy(() -> new Family(null,null,null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}

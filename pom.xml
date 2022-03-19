@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- https://central.sonatype.org/publish/requirements/ -->
@@ -300,6 +300,10 @@
 							<param>io.github.contractautomataproject.catlib.state*</param>
 							<param>io.github.contractautomataproject.catlib.transition*</param>
 						</targetTests>
+						<outputFormats>
+							<!-- select the "enhanced" HTML reporter -->
+							<format>HTML2</format>
+						</outputFormats>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -342,6 +346,6 @@
 		</plugins>
 	</reporting>
 </project>
-<!-- for deploying to sonatype: clean source:jar javadoc:jar verify gpg:sign 
-	install:install deploy:deploy -DskipTests then login to https://s01.oss.sonatype.org/ 
-	and close the staging repository to release it to the central repository -->
+		<!-- for deploying to sonatype: clean source:jar javadoc:jar verify gpg:sign
+            install:install deploy:deploy -DskipTests then login to https://s01.oss.sonatype.org/
+            and close the staging repository to release it to the central repository -->

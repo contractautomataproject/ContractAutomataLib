@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.e2e;
+package io.github.contractautomataproject.catlib.e2e;
 
 import java.io.File;
 import java.util.ArrayList;

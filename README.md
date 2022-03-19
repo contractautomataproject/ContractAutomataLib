@@ -1,6 +1,7 @@
 ![CodeQL](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/codeql-analysis.yml/badge.svg)
 ![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 [![Code Quality Score](https://api.codiga.io/project/32018/score/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
 [![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -9,9 +10,6 @@
 [![javadoc](https://javadoc.io/badge2/io.github.davidebasile/ContractAutomataLib/javadoc.svg)](https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
 [![Mutation tested with PIT](https://img.shields.io/badge/-Mutation%20tested%20with%20PIT-blue.svg)](https://github.com/ContractAutomataProject/ContractAutomataLib/blob/main/.github/workflows/build.yml#L42)
-
-[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ContractAutomataProject_ContractAutomataLib)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 
 <h1 align=center>Contract Automata Lib </h1>

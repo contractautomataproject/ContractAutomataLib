@@ -55,7 +55,3 @@ ModalTransition<String,String,State<String>,Label<String>>,Automaton<String,Stri
 
 	}
 }
-
-interface PentaFunction<A,B,C,D,E,F>{
-	F apply(A arg1, B arg2, C arg3, D arg4, E arg5);
-}
