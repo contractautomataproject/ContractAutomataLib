@@ -23,7 +23,7 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 		super();
 		if (action==null || action.isEmpty())
 			throw new IllegalArgumentException();
-		this.action = action;
+		this.action = new ArrayList<>(action);
 	}
 	
 
