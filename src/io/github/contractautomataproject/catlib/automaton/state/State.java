@@ -2,6 +2,7 @@ package io.github.contractautomataproject.catlib.automaton.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +15,7 @@ public class State<T> extends AbstractState<List<BasicState<T>>> {
 
 	public State(List<BasicState<T>> listState){
 		super(listState);
-		if (listState.isEmpty())
+		if (listState.isEmpty() || listState.stream().anyMatch(Objects::isNull))
 			throw new IllegalArgumentException();
 	}
 

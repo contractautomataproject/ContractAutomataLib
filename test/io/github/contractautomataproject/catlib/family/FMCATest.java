@@ -145,8 +145,7 @@ public class FMCATest {
 	@Test
 	public void constructorException2()
 	{
-		Set<Product> pr = null;
-		assertThatThrownBy(() -> new FMCA(null, null))
+		assertThatThrownBy(() -> new FMCA(null, (Set<Product>) null))
 		.isInstanceOf(IllegalArgumentException.class);
 	}
 }

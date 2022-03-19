@@ -33,7 +33,10 @@ public class StateTest {
 		when(bs1.isInitial()).thenReturn(true);
 		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
-		
+		when(bs0.toString()).thenReturn("label=0,initial=true");
+		when(bs1.toString()).thenReturn("label=1,initial=true");
+		when(bs2.toString()).thenReturn("label=2");
+
 		test = new State<>(List.of(bs0,bs1,bs2,bs2,bs0,bs1));
 	}
 	
@@ -54,6 +57,7 @@ public class StateTest {
 		when(bs0.isFinalState()).thenReturn(true);
 		when(bs1.isFinalState()).thenReturn(true);
 		when(bs2.isFinalState()).thenReturn(true);
+
 		assertTrue(test.isFinalState());
 	}
 	
@@ -120,7 +124,7 @@ public class StateTest {
 	@Test
 	public void testConstructorException_nullElement() {
 		List<BasicState<String>> list = Arrays.asList(bs0, null);
-		Assert.assertThrows(NullPointerException.class, () -> new State<>(list));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new State<>(list));
 	}
 }
 
