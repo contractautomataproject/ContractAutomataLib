@@ -41,7 +41,7 @@ jobs:
         
       - name: 👓 Mutation Testing with Pit
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage site
+        run: mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage
 
       - name: 🐛 Analyze with SonarCloud and SpotBugs
         env:
