@@ -2,14 +2,13 @@ package io.github.contractautomataproject.catlib.operators;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.Ranked;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the composition of Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>

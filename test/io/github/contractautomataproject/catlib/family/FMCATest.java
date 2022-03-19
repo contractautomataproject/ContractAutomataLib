@@ -24,7 +24,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.family.converters.FamilyConverter;
 import io.github.contractautomataproject.catlib.family.converters.ProdFamilyConverter;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 /**
  * 

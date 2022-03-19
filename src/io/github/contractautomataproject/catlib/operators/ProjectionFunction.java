@@ -1,7 +1,6 @@
 package io.github.contractautomataproject.catlib.operators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -16,7 +15,7 @@ import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the projection function

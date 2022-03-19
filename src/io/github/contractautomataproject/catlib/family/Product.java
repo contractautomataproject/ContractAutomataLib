@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 /**
  * A configuration/product of a product line/family, identified as set of required and forbidden features
  * 

@@ -11,7 +11,7 @@ import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.operators.TriPredicate;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 /**
  * The specification of the composition in first-order logic (expressed through Java Streams)

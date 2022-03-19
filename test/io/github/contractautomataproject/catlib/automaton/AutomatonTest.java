@@ -1,14 +1,11 @@
 package io.github.contractautomataproject.catlib.automaton;
 
-import static java.util.Arrays.*;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.Transition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,14 +14,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
-import io.github.contractautomataproject.catlib.transition.Transition;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-@RunWith(MockitoJUnitRunner.class)
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.Strict.class)
 public class AutomatonTest {
 	
 	@Mock BasicState<String> s0mock;
@@ -253,8 +252,7 @@ public class AutomatonTest {
 
 	@Test
 	public void testAmbiguousStates_exception()
-	{	
-		when(cs1.getState()).thenReturn(List.of(bs0));
+	{
 		when(cs2.getState()).thenReturn(List.of(bs1));
 		when(cs3.getState()).thenReturn(List.of(bs1));
 

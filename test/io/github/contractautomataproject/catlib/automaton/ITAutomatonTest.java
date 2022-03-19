@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.contractautomataproject.catlib.transition.Transition;
+import io.github.contractautomataproject.catlib.automaton.transition.Transition;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
-import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition.Modality;
 
 public class ITAutomatonTest {
 

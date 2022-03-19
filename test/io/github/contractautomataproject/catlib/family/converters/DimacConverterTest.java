@@ -17,7 +17,7 @@ import io.github.contractautomataproject.catlib.family.FMCA;
 import io.github.contractautomataproject.catlib.family.Family;
 import io.github.contractautomataproject.catlib.family.PartialProductGenerator;
 import io.github.contractautomataproject.catlib.family.Product;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 public class DimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;

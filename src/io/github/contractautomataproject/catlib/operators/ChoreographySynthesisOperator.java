@@ -12,8 +12,8 @@ import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
-import io.github.contractautomataproject.catlib.transition.Transition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.Transition;
 
 /**
  * Class implementing the Choreography Synthesis

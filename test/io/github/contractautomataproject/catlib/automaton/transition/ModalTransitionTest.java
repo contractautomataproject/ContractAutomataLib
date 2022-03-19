@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.catlib.transition;
+package io.github.contractautomataproject.catlib.automaton.transition;
 
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +20,6 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModalTransitionTest {
@@ -58,11 +57,11 @@ public class ModalTransitionTest {
 		when(calab.getRank()).thenReturn(1);
 		when(calab.isMatch()).thenReturn(false);
 		
-		tu = new ModalTransition<>(cs0,lab,cs1,Modality.URGENT);
-		tl = new ModalTransition<>(cs0,lab,cs1,Modality.LAZY);
-		tp = new ModalTransition<>(cs0,lab,cs1,Modality.PERMITTED);
+		tu = new ModalTransition<>(cs0,lab,cs1, ModalTransition.Modality.URGENT);
+		tl = new ModalTransition<>(cs0,lab,cs1, ModalTransition.Modality.LAZY);
+		tp = new ModalTransition<>(cs0,lab,cs1, ModalTransition.Modality.PERMITTED);
 	
-		catl = new ModalTransition<>(cs1,calab,cs1,Modality.LAZY);
+		catl = new ModalTransition<>(cs1,calab,cs1, ModalTransition.Modality.LAZY);
 		badStates = new HashSet<>();
 		setTr = Set.of(catl);
 	}
@@ -121,7 +120,7 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testGetModality() {
-		assertEquals(Modality.URGENT,tu.getModality());
+		Assert.assertEquals(ModalTransition.Modality.URGENT,tu.getModality());
 	}
 	
 	@Test
@@ -156,7 +155,7 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testHashCodeEquals() {
-		assertEquals(tu.hashCode(), new ModalTransition<>(cs0, lab, cs1, Modality.URGENT).hashCode());
+		assertEquals(tu.hashCode(), new ModalTransition<>(cs0, lab, cs1, ModalTransition.Modality.URGENT).hashCode());
 	}
 	
 	@Test
@@ -167,7 +166,7 @@ public class ModalTransitionTest {
 
 	@Test
 	public void testEquals() {
-		assertEquals(tu, new ModalTransition<>(cs0, lab, cs1, Modality.URGENT));
+		assertEquals(tu, new ModalTransition<>(cs0, lab, cs1, ModalTransition.Modality.URGENT));
 	}
 	
 	@Test
@@ -177,7 +176,7 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testNotEqualsSuper() {
-		Assert.assertNotEquals(tu, new ModalTransition<>(cs0, lab, cs0, Modality.URGENT));
+		Assert.assertNotEquals(tu, new ModalTransition<>(cs0, lab, cs0, ModalTransition.Modality.URGENT));
 	}
 	
 	@Test
@@ -216,7 +215,7 @@ public class ModalTransitionTest {
 		when(calab.isMatch()).thenReturn(true);
 
 		ModalTransition<String,String,State<String>,CALabel> catl2 = 
-				new ModalTransition<>(cs1,calab,cs0,Modality.LAZY);
+				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
 		controllabilityPred = (a1,a2)->a1.getTarget().equals(cs0);
 		Assert.assertFalse(tl.isUncontrollable(setTr, badStates, controllabilityPred));
@@ -227,7 +226,7 @@ public class ModalTransitionTest {
 	public void testIsUncontrollableLazyFalseNoneMatchWithTwoTransitions() {
 		when(calab.isMatch()).thenReturn(true);
 		ModalTransition<String,String,State<String>,CALabel> catl2 = 
-				new ModalTransition<>(cs1,calab,cs0,Modality.LAZY);
+				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
 		controllabilityPred = (a1,a2)->a1.getSource().equals(cs0);
 		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));

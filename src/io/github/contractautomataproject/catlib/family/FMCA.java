@@ -15,7 +15,7 @@ import io.github.contractautomataproject.catlib.operators.OrchestrationSynthesis
 import io.github.contractautomataproject.catlib.operators.ProductOrchestrationSynthesisOperator;
 import io.github.contractautomataproject.catlib.operators.UnionFunction;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 /**
  * Class implementing a Featured Modal Contract Automata

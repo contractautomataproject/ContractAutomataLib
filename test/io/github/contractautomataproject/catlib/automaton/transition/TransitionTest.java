@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.catlib.transition;
+package io.github.contractautomataproject.catlib.automaton.transition;
 
 
 import static org.junit.Assert.assertEquals;

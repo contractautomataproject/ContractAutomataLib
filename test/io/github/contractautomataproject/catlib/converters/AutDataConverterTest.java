@@ -12,9 +12,8 @@ import org.junit.Test;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 public class AutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

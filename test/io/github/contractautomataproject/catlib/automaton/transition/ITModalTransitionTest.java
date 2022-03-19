@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.catlib.transition;
+package io.github.contractautomataproject.catlib.automaton.transition;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,7 +13,6 @@ import org.junit.Test;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.transition.ModalTransition.Modality;
 
 public class ITModalTransitionTest {
 	
@@ -41,7 +40,7 @@ public class ITModalTransitionTest {
 
 		source = new State<>(Arrays.asList(bs0, bs1, bs2));
 		target = new State<>(Arrays.asList(bs0, bs1, bs3));
-		t1 = new ModalTransition<>(source, calab, target, Modality.PERMITTED);
+		t1 = new ModalTransition<>(source, calab, target, ModalTransition.Modality.PERMITTED);
 
 	}
 	
@@ -73,7 +72,7 @@ public class ITModalTransitionTest {
 
 		Assert.assertThrows("source, label or target with different ranks", 
 				IllegalArgumentException.class,
-				() -> new ModalTransition<>(source, calab2, target, Modality.PERMITTED));
+				() -> new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED));
 	}
 	
 	@Test
@@ -84,7 +83,7 @@ public class ITModalTransitionTest {
 		lab2.add(CALabel.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		assertEquals(t1,t2);
 	}
@@ -103,7 +102,7 @@ public class ITModalTransitionTest {
 		lab2.add(CALabel.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(target, calab2, target, Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(target, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}
@@ -118,7 +117,7 @@ public class ITModalTransitionTest {
 	
 	@Test
 	public void testEquals5() {
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab, target, Modality.URGENT);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab, target, ModalTransition.Modality.URGENT);
 		
 		Assert.assertNotEquals(t1,t2);
 	}
@@ -136,7 +135,7 @@ public class ITModalTransitionTest {
 		lab2.add(CALabel.REQUEST+"b");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, Modality.PERMITTED);
+		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}

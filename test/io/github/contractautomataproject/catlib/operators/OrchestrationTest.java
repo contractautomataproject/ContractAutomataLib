@@ -21,7 +21,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.contractautomataproject.catlib.requirements.StrongAgreementModelChecking;
-import io.github.contractautomataproject.catlib.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 public class OrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
