@@ -55,6 +55,12 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/io.stryker-mutator/mutation-testing-elements -->
+		<dependency>
+			<groupId>io.stryker-mutator</groupId>
+			<artifactId>mutation-testing-elements</artifactId>
+			<version>1.7.10</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -286,7 +292,14 @@
 				<plugin>
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
-					<version>LATEST</version>
+					<version>1.4.10</version>
+					<dependencies>
+						<dependency>
+							<groupId>io.github.wmaarts</groupId>
+							<artifactId>pitest-mutation-testing-elements-plugin</artifactId>
+							<version>0.4.0</version>
+						</dependency>
+					</dependencies>
 					<configuration>
 						<targetClasses>
 							<param>io.github.contractautomataproject.catlib.automaton*</param>
@@ -301,7 +314,6 @@
 							<param>io.github.contractautomataproject.catlib.transition*</param>
 						</targetTests>
 						<outputFormats>
-							<!-- select the "enhanced" HTML reporter -->
 							<format>HTML2</format>
 						</outputFormats>
 					</configuration>

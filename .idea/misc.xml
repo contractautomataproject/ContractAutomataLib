@@ -6,7 +6,6 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../CAT_App/pom.xml" />
-        <option value="$PROJECT_DIR$/../OrchestrationEngine/pom.xml" />
       </list>
     </option>
   </component>
