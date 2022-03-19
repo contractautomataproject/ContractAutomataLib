@@ -70,8 +70,8 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 		.collect(Collectors.toList());
 
 		//new initial state
-		State<String> newinitial = new State<String>(IntStream.range(0,rank)
-				.mapToObj(i->new BasicState<String>("0",true,false))
+		State<String> newinitial = new State<>(IntStream.range(0,rank)
+				.mapToObj(i->new BasicState<>("0",true,false))
 				.collect(Collectors.toList()));
 
 

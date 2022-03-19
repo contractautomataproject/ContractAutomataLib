@@ -76,7 +76,7 @@ public class StateTest {
 	@Test
 	public void testGetStateNewList() {
 		List<BasicState<String>> list = List.of(bs0,bs1);
-		assertTrue(list!=new State<String>(list).getState());
+		Assert.assertNotSame(list,new State<String>(list).getState());
 	}
 	
 	
@@ -108,7 +108,8 @@ public class StateTest {
 	
 	@Test
 	public void testConstructorException_empty() {
-		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(List.of()));
+		List<BasicState<String>> list = List.of(bs1);
+		Assert.assertThrows(IllegalArgumentException.class, () -> new State<String>(list));
 	}
 	
 	@Test
@@ -118,7 +119,8 @@ public class StateTest {
 	
 	@Test
 	public void testConstructorException_nullelement() {
-		Assert.assertThrows(NullPointerException.class, () -> new State<String>(List.of(bs0,null)));
+		List<BasicState<String>> list = List.of(bs0,null);
+		Assert.assertThrows(NullPointerException.class, () -> new State<String>(list));
 	}
 	
 //	@Test

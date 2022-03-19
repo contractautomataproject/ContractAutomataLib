@@ -13,9 +13,7 @@ import java.util.stream.Collectors;
 public class State<T> extends AbstractState<List<BasicState<T>>> {
 
 	public State(List<BasicState<T>> lstate){
-		super(lstate.stream()
-					.map(s->(BasicState<T>)s)
-					.collect(Collectors.toList()));
+		super(lstate);
 		if (lstate.isEmpty())
 			throw new IllegalArgumentException();
 	}

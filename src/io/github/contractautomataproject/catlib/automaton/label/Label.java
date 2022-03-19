@@ -28,7 +28,7 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	
 
 	public List<T> getAction() {
-		return new ArrayList<T>(action);
+		return new ArrayList<>(action);
 	}
 	
 	@Override

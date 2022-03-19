@@ -59,7 +59,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
 				.map(s->s.getState().get(indexprincipal))
 				.distinct()
-				.collect(Collectors.toMap(Function.identity(), bs->new State<String>(new ArrayList<BasicState<String>>(Arrays.asList(bs)))));
+				.collect(Collectors.toMap(Function.identity(), bs->new State<String>(new ArrayList<>(Arrays.asList(bs)))));
 
 		//associating each castate of the composition with the castate of the principal
 		Map<State<String>,State<String>> map2princst = 

@@ -51,26 +51,6 @@ public class BasicStateTest {
 	public void testToString() {
 		assertEquals("label=3", b3.toString());
 	}
-
-	@Test
-	public void testReadCSVInitial() {
-		assertEquals(BasicState.readCSV(b0.toString()).toString(), b0.toString());
-	}
-	
-	@Test
-	public void testReadCSVFinal() {
-		assertEquals(BasicState.readCSV(b1.toString()).toString(), b1.toString());
-	}
-	
-	@Test
-	public void testReadCSVInitialFinal() {
-		assertEquals(BasicState.readCSV(b2.toString()).toString(), b2.toString());
-	}
-	
-	@Test
-	public void testReadCSV() {
-		assertEquals(BasicState.readCSV(b3.toString()).toString(), b3.toString());
-	}
 	
 	@Test
 	public void testExceptionConstructorNull() {
@@ -79,7 +59,8 @@ public class BasicStateTest {
 	
 	@Test
 	public void testExceptionConstructorListBasicState() {
-		Assert.assertThrows(UnsupportedOperationException.class, ()->new BasicState<List<BasicState<String>>>(List.of(b1),true,false));
+		List<BasicState<String>> list = List.of(b1);
+		Assert.assertThrows(UnsupportedOperationException.class, ()->new BasicState<List<BasicState<String>>>(list,true,false));
 	}
 	
 	@Test

@@ -38,7 +38,6 @@ public class BasicState<T> extends AbstractState<T>{
 		return init;
 	}
 	
-	
 	/**
 	 * 
 	 * @return a string encoding the object as comma separated values
@@ -48,28 +47,6 @@ public class BasicState<T> extends AbstractState<T>{
 		String finalstate= (this.isFinalstate())?",final=true":"";
 		String initial= (this.isInitial())?",initial=true":"";
 		return "label="+this.getState()+finalstate+initial;
-	}
-	
-	/**
-	 * 
-	 * @param s the encoding of the object as comma separated values
-	 * @return a new BasicState<String> object constructed from the parameter s
-	 */
-	public static BasicState<String> readCSV(String s) {
-		boolean initial=false; 
-		boolean	finalstate=false;
-		String label="";
-		String[] cs = s.split(",");
-		for (String keyval : cs)
-		{
-			String[] kv = keyval.split("=");
-			if(kv[0].equals("label"))
-				label=kv[1];
-			else if (kv[0].equals("initial"))
-				initial=true;
-			else finalstate=true;
-		}
-		return new BasicState<>(label,initial,finalstate);
 	}
 	
 	// equals could cause errors of duplication of states in transitions to go undetected. 	

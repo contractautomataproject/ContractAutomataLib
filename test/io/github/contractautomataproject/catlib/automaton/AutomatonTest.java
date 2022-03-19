@@ -203,18 +203,21 @@ public class AutomatonTest {
 	@Test
 	public void constructor_Exception_differentRank() throws Exception {
 		when(t2mock.getRank()).thenReturn(2);
+		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("Transitions with different rank", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(Set.of(t1mock,t2mock)));
+				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
 	}
 
 	@Test
 	public void noInitialState_exception() throws Exception
 	{
 		when(cs1mock.isInitial()).thenReturn(true);
+
+		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("Not Exactly one Initial State found!", 
 				IllegalArgumentException.class,
-				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(Set.of(t1mock,t2mock)));
+				() -> new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
 	}
 
 	@Test
@@ -222,9 +225,10 @@ public class AutomatonTest {
 	{
 		when(cs1mock.isFinalstate()).thenReturn(false);
 		when(cs2mock.isFinalstate()).thenReturn(false);
+		Set<Transition<String,String, State<String>,Label<String>>> set = Set.of(t1mock,t2mock);
 		Assert.assertThrows("No Final States!", 
 				IllegalArgumentException.class, 
-				()->new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(Set.of(t1mock,t2mock)));
+				()->new Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>>(set));
 	}
 	
 	

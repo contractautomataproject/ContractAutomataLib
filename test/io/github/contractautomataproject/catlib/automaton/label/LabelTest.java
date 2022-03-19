@@ -87,6 +87,7 @@ public class LabelTest {
 	
 	@Test
 	public void constructorExceptionEmpty() {
-		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(List.of()));
+		List<String> list = List.of();
+		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(list));
 	}
 }

@@ -9,7 +9,7 @@ import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 
 public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> extends Transition<S1,L1,S,L>  {
-	
+
 	/**
 	 * the modality of the transition
 	 */
@@ -27,7 +27,7 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		else		
 			this.mod=type;
 	}
-	
+
 	public boolean isUrgent()
 	{
 		return (this.mod==Modality.URGENT);
@@ -76,7 +76,7 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		ModalTransition<?,?,?,?> other = (ModalTransition<?,?,?,?>) obj;
 		return mod==other.mod;
 	}
-	
+
 	/**
 	 * 
 	 * @param tr the set of transitions to check
@@ -98,10 +98,11 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 				//  guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
 				.noneMatch(t->controllabilityPred.test(t,this));
 	}
-	
+
 	@Override
 	public String print()
-	{		if (this.getModality()==ModalTransition.Modality.URGENT)
+	{		
+		if (this.getModality()==ModalTransition.Modality.URGENT)
 			return "!U"+super.print();
 		else if (this.getModality()==ModalTransition.Modality.LAZY)	
 			return "!L"+super.print();
