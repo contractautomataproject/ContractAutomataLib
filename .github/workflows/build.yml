@@ -17,10 +17,14 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: $${ matrix.java }
+          java-version: ${ matrix.java }
 
       - name: Cache Maven packages
         uses: actions/cache@v1
@@ -29,15 +33,37 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Set up Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+          
       - name: 📦 Build with Maven 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B jacoco:prepare-agent verify jacoco:report
         
       - name: 🚀 Coveralls Coverage Report Submission
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
+        
+      - name: Analyze with SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib 
+
   
   analyze: 
     runs-on: ubuntu-latest
+    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     
     steps:
       - uses: actions/checkout@v2
@@ -59,21 +85,22 @@ jobs:
           distribution: 'adopt'
           cache: maven
         
-      - name: Set up Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: 🐛 Analyze with SpotBugs
         run: mvn -B spotbugs:check
-      
-      - name: 👓 Analyze with SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B compile org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib 
+
+        # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          java-version: 11
+          distribution: 'adopt'
+          cache: maven
+        
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+                
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
           
         
   mutationtesting: 
