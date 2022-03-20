@@ -41,9 +41,6 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
           
       - name: 📦 Build with Maven 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B jacoco:prepare-agent verify jacoco:report
         
       - name: 🚀 Coveralls Coverage Report Submission
@@ -84,9 +81,6 @@ jobs:
           java-version: 11
           distribution: 'adopt'
           cache: maven
-        
-      - name: 🐛 Analyze with SpotBugs
-        run: mvn -B spotbugs:check
 
         # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -98,6 +92,9 @@ jobs:
         
       - name: Autobuild
         uses: github/codeql-action/autobuild@v1
+      
+      - name: 🐛 Analyze with SpotBugs
+        run: mvn -B spotbugs:check
                 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
