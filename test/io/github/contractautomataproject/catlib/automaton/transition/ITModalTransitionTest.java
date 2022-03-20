@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +29,7 @@ public class ITModalTransitionTest {
 	private CALabel calab;
 	private State<String> source;
 	private State<String> target;
-	private ModalTransition<String,String,State<String>,CALabel> t1;
+	private ModalTransition<String, Action,State<String>,CALabel> t1;
 	
 	@Before
 	public void setup()
@@ -33,9 +37,9 @@ public class ITModalTransitionTest {
 		l.add(new State<>(Arrays.asList(bs0, bs1, bs2)));
 		l.add(new State<>(Arrays.asList(bs0, bs1, bs3)));
 		
-		lab.add(CALabel.IDLE);
-		lab.add(CALabel.OFFER+"a");
-		lab.add(CALabel.REQUEST+"a");
+		lab.add(IdleAction.IDLE);
+		lab.add(OfferAction.OFFER+"a");
+		lab.add(RequestAction.REQUEST+"a");
 		calab= new CALabel(lab);
 
 		source = new State<>(Arrays.asList(bs0, bs1, bs2));
@@ -53,7 +57,7 @@ public class ITModalTransitionTest {
 	
 	@Test
 	public void coverConstructorException() {
-		Assert.assertThrows(IllegalArgumentException.class, () -> new ModalTransition<String,String,State<String>,CALabel>(null,null,null,null));
+		Assert.assertThrows(IllegalArgumentException.class, () -> new ModalTransition<String,Action,State<String>,CALabel>(null,null,null,null));
 	}
 	
 	@Test
@@ -64,10 +68,10 @@ public class ITModalTransitionTest {
 	@Test
 	public void constructorRankException() {
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.OFFER+"a");
-		lab2.add(CALabel.REQUEST+"a");
+		lab2.add(IdleAction.IDLE);
+		lab2.add(IdleAction.IDLE);
+		lab2.add(OfferAction.OFFER+"a");
+		lab2.add(RequestAction.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 
 		Assert.assertThrows("source, label or target with different ranks", 
@@ -78,12 +82,12 @@ public class ITModalTransitionTest {
 	@Test
 	public void testEquals() {
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.OFFER+"a");
-		lab2.add(CALabel.REQUEST+"a");
+		lab2.add(IdleAction.IDLE);
+		lab2.add(OfferAction.OFFER+"a");
+		lab2.add(RequestAction.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,Action,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		assertEquals(t1,t2);
 	}
@@ -97,19 +101,19 @@ public class ITModalTransitionTest {
 	@Test
 	public void testEquals3() {
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.OFFER+"a");
-		lab2.add(CALabel.REQUEST+"a");
+		lab2.add(IdleAction.IDLE);
+		lab2.add(OfferAction.OFFER+"a");
+		lab2.add(RequestAction.REQUEST+"a");
 		CALabel calab2= new CALabel(lab2);
 		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(target, calab2, target, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,Action,State<String>,CALabel> t2 = new ModalTransition<>(target, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}
 
 	@Test
 	public void testEquals4() {
-		Transition<String,String,State<String>,CALabel> t2 = new Transition<>(source,calab,target);
+		Transition<String,Action,State<String>,CALabel> t2 = new Transition<>(source,calab,target);
 		
 		Assert.assertNotEquals(t1,t2);
 	}	
@@ -117,7 +121,7 @@ public class ITModalTransitionTest {
 	
 	@Test
 	public void testEquals5() {
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab, target, ModalTransition.Modality.URGENT);
+		ModalTransition<String,Action,State<String>,CALabel> t2 = new ModalTransition<>(source, calab, target, ModalTransition.Modality.URGENT);
 		
 		Assert.assertNotEquals(t1,t2);
 	}
@@ -130,12 +134,12 @@ public class ITModalTransitionTest {
 	@Test
 	public void testEquals7() {
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.OFFER+"b");
-		lab2.add(CALabel.REQUEST+"b");
+		lab2.add(IdleAction.IDLE);
+		lab2.add(OfferAction.OFFER+"b");
+		lab2.add(RequestAction.REQUEST+"b");
 		CALabel calab2= new CALabel(lab2);
-		
-		ModalTransition<String,String,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
+
+		ModalTransition<String,Action,State<String>,CALabel> t2 = new ModalTransition<>(source, calab2, target, ModalTransition.Modality.PERMITTED);
 
 		Assert.assertNotEquals(t1,t2);
 	}

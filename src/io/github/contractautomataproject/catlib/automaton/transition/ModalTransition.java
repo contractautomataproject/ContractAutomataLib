@@ -6,6 +6,7 @@ import java.util.function.BiPredicate;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 
 public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> extends Transition<S1,L1,S,L>  {
@@ -84,8 +85,8 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	 * @param controllabilityPred the controllability predicate
 	 * @return true if the transition is uncontrollable against the parameters
 	 */
-	public boolean isUncontrollable(Set<? extends ModalTransition<S1,String,S,CALabel>> tr, Set<State<String>> badStates,
-			BiPredicate<ModalTransition<S1,String,S,CALabel>,ModalTransition<S1,L1,S,L>> controllabilityPred)
+	public boolean isUncontrollable(Set<? extends ModalTransition<S1, Action,S,CALabel>> tr, Set<State<String>> badStates,
+									BiPredicate<ModalTransition<S1,Action,S,CALabel>,ModalTransition<S1,L1,S,L>> controllabilityPred)
 	{
 		if (this.isUrgent())
 			return true;

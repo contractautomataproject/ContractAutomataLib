@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +16,8 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 public class AutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -22,9 +25,9 @@ public class AutDataConverterTest {
 	@Test
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient.data",aut);
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		Assert.assertTrue(ITAutomatonTest.autEquals(aut,test));
 	}
 	
@@ -32,7 +35,7 @@ public class AutDataConverterTest {
 	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
 		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 
 		Assert.assertFalse(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
@@ -51,7 +54,13 @@ public class AutDataConverterTest {
 	
 	@Test
 	public void emptyFileName_exception() throws NumberFormatException {
-		assertThatThrownBy(() -> bdc.exportMSCA("",null))
+		assertThatThrownBy(() -> {
+			try {
+				bdc.exportMSCA("", null);
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+		})
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Empty file name");
 	}

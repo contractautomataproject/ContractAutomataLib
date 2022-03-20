@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,31 +31,31 @@ public class MpcSynthesisTest {
 	@Test
 	public void mpcEmptyTestLMCS2020() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
 		Assert.assertNull(mpc);
 	}
 
 	@Test
 	public void mpcEmptyTestNoDangling() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
 		Assert.assertNull(mpc);
 	}
 	
 	@Test
 	public void mpcTest_nonempty() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");
 		assertEquals(2, new MpcSynthesisOperator(new Agreement()).apply(aut).getNumStates());
 	}
 
 	@Test 
 	public void mpcTest2() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");		
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
 		assertTrue(ITAutomatonTest.autEquals(new MpcSynthesisOperator(new Agreement()).apply(aut),test));
 	}
 	
@@ -62,7 +63,7 @@ public class MpcSynthesisTest {
 	public void mpc_lazy_exception() throws Exception
 	{
 
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		MpcSynthesisOperator m = new MpcSynthesisOperator(new Agreement());
 		assertThatThrownBy(() -> m.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
@@ -80,14 +81,14 @@ public class MpcSynthesisTest {
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));
-		ModalTransition<String,String,State<String>,Label<String>> t1 = new ModalTransition<>(cs0, new Label<>(List.of("blueberry")), cs1, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,State<String>,Label<String>> t2 = new ModalTransition<>(cs1, new Label<>(List.of("ananas")), cs2, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,State<String>,Label<String>> t3 = new ModalTransition<>(cs0, new Label<>(List.of("cherry")), cs2, ModalTransition.Modality.PERMITTED);
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2,t3));
+		ModalTransition<String,Action,State<String>,Label<Action>> t1 = new ModalTransition<>(cs0, new Label<>(List.of(new Action("blueberry"))), cs1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,Action,State<String>,Label<Action>> t2 = new ModalTransition<>(cs1, new Label<>(List.of(new Action("ananas"))), cs2, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,Action,State<String>,Label<Action>> t3 = new ModalTransition<>(cs0, new Label<>(List.of(new Action("cherry"))), cs2, ModalTransition.Modality.PERMITTED);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop = new Automaton<>(Set.of(t1,t2,t3));
 		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Assert.assertNull(mpc);
 	}
 

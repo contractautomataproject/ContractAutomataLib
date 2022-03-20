@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 /**
@@ -96,7 +97,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends ModalTransition<String,String,State<String>,CALabel>> tr)
+	public boolean checkRequired(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -110,7 +111,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all forbidden actions are not available in the transitions t
 	 */
-	public boolean checkForbidden(Set<? extends ModalTransition<String,String,State<String>,CALabel>> tr)
+	public boolean checkForbidden(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getUnsignedAction())
@@ -126,7 +127,7 @@ public class Product {
 		return this.getForbidden().contains(f);
 	}
 
-	public boolean isValid(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut)
+	public boolean isValid(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut)
 	{
 		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
 	}

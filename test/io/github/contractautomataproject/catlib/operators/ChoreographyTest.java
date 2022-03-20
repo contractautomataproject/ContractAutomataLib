@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,8 +35,8 @@ public class ChoreographyTest {
 	@Test
 	public void chorTestLMCS2020Transitions() throws Exception {
 		// boolean check=false;
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
-		List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> tests = new ArrayList<>();
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
+		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> tests = new ArrayList<>();
 		tests.add(bdc.importMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data"));
 		int max=8;
 		//	while(true){
@@ -46,7 +47,7 @@ public class ChoreographyTest {
 
 		//			MSCA corsave;
 		//			do {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
 		boolean check = tests.stream()
 				.anyMatch(a->autEquals(cor,a));
 		//				corsave=cor;
@@ -60,13 +61,13 @@ public class ChoreographyTest {
 
 	@Test
 	public void chorTestLMCS2020TransitionsConstructorTwoArguments() throws Exception {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_5.data");
 
-		Function<Stream<ModalTransition<String,String,State<String>,CALabel>>,Optional<ModalTransition<String,String,State<String>,CALabel>>> choice = 
+		Function<Stream<ModalTransition<String,Action,State<String>,CALabel>>,Optional<ModalTransition<String,Action,State<String>,CALabel>>> choice =
 				s -> s.min(Comparator.comparing(ModalTransition::toString));
 				
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement(),choice).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement(),choice).apply(aut);
 	
 
 		assertTrue(autEquals(cor,test));
@@ -75,8 +76,8 @@ public class ChoreographyTest {
 	@Test
 	public void chorTestControllableLazyOfferTransitions() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_chor_controllablelazyoffer.data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Chor_(test_chor_controllablelazyoffer).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_chor_controllablelazyoffer.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Chor_(test_chor_controllablelazyoffer).data");
 		assertTrue(autEquals(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut),test));
 	}
 
@@ -84,21 +85,21 @@ public class ChoreographyTest {
 	@Test
 	public void chorTest_empty() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_lazy_empty_cor.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_lazy_empty_cor.data");
 		Assert.assertNull(new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut));
 	}
 
 	@Test
 	public void chorTest_urgent_empty() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_chor_urgentoffer.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_chor_urgentoffer.data");
 		Assert.assertNull( new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut));
 	}
 
 	@Test
 	public void chor_lazy_exception() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		ChoreographySynthesisOperator cso = new ChoreographySynthesisOperator(new StrongAgreement());
 		assertThatThrownBy(() -> cso.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
@@ -106,7 +107,7 @@ public class ChoreographyTest {
 
 	@Test
 	public void choreoConcur2021ex25() throws Exception {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example25.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example25.data");
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(t,aut.getTransition(),
 						new HashSet<>()));
@@ -115,7 +116,7 @@ public class ChoreographyTest {
 
 	@Test
 	public void choreoConcur2021ex34() throws Exception {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
 		boolean bc = aut.getTransition().stream()
 				.allMatch(t->new ChoreographySynthesisOperator(new StrongAgreement()).satisfiesBranchingCondition(t,aut.getTransition(),
 						new HashSet<>()));
@@ -125,9 +126,9 @@ public class ChoreographyTest {
 
 	@Test
 	public void branchingCondition() throws NumberFormatException, IOException {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"violatingbranchingcondition.data");
-		final Set<ModalTransition<String,String,State<String>,CALabel>> trf = aut.getTransition();
-		Set<ModalTransition<String,String,State<String>,CALabel>> violatingBC = aut.getTransition().stream()
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"violatingbranchingcondition.data");
+		final Set<ModalTransition<String,Action,State<String>,CALabel>> trf = aut.getTransition();
+		Set<ModalTransition<String,Action,State<String>,CALabel>> violatingBC = aut.getTransition().stream()
 				.filter(x->!new ChoreographySynthesisOperator(new StrongAgreement())
 						.satisfiesBranchingCondition(x,trf, new HashSet<>()))
 				.collect(Collectors.toSet());
@@ -146,14 +147,14 @@ public class ChoreographyTest {
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));
-		ModalTransition<String,String,State<String>,Label<String>> t1 = new ModalTransition<>(cs0, new Label<>(List.of("m")), cs1, ModalTransition.Modality.PERMITTED);
-		ModalTransition<String,String,State<String>,Label<String>> t2 = new ModalTransition<>(cs0, new Label<>(List.of("n")), cs2, ModalTransition.Modality.PERMITTED);
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,Label<String>>> prop  = new Automaton<>(Set.of(t1,t2));
+		ModalTransition<String,Action,State<String>,Label<Action>> t1 = new ModalTransition<>(cs0, new Label<>(List.of(new Action("m"))), cs1, ModalTransition.Modality.PERMITTED);
+		ModalTransition<String,Action,State<String>,Label<Action>> t2 = new ModalTransition<>(cs0, new Label<>(List.of(new Action("n"))), cs2, ModalTransition.Modality.PERMITTED);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop  = new Automaton<>(Set.of(t1,t2));
 		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement(), new StrongAgreementModelChecking<>(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 	
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");		
+		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
 		
 		assertTrue(ITAutomatonTest.autEquals(cor, test));
 	}

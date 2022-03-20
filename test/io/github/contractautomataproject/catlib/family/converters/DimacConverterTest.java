@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.Set;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
@@ -31,7 +32,7 @@ public class DimacConverterTest {
 	public void testImport() throws Exception
 	{
 		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 		FMCA fmca = new FMCA(aut,prod);
 		

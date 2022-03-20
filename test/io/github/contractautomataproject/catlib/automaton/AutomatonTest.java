@@ -2,6 +2,7 @@ package io.github.contractautomataproject.catlib.automaton;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -44,13 +45,13 @@ public class AutomatonTest {
 	@Mock State<String> cs1;
 	@Mock State<String> cs2;	
 	@Mock State<String> cs3;	
-	@Mock ModalTransition<String,String,State<String>,CALabel> t1;
-	@Mock ModalTransition<String,String,State<String>,CALabel> t2;
-	@Mock ModalTransition<String,String,State<String>,CALabel> t3;
+	@Mock ModalTransition<String,Action,State<String>,CALabel> t1;
+	@Mock ModalTransition<String,Action,State<String>,CALabel> t2;
+	@Mock ModalTransition<String,Action,State<String>,CALabel> t3;
 
-	Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut;
+	Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut;
 	
-	Set<ModalTransition<String,String,State<String>,CALabel>> st;
+	Set<ModalTransition<String,Action,State<String>,CALabel>> st;
 	
 	Map<Integer,Set<BasicState<String>>> map;
 

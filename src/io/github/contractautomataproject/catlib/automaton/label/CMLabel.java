@@ -1,5 +1,7 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -57,12 +59,12 @@ public class CMLabel extends CALabel {
 	}
 
 	@Override
-	public boolean match(Label<String> l2)
+	public boolean match(Label<Action> label)
 	{
-		if (l2 instanceof CMLabel)
+		if (label instanceof CMLabel)
 		{
-			CMLabel cl2 = (CMLabel) l2;
-			return super.match(l2)
+			CMLabel cl2 = (CMLabel) label;
+			return super.match(label)
 					&& partner.equals(cl2.getId())
 					&& id.equals(cl2.getPartner());
 		}

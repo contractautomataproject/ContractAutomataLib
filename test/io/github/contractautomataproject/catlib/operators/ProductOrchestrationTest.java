@@ -3,6 +3,7 @@ package io.github.contractautomataproject.catlib.operators;
 
 import java.io.File;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,8 +23,8 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions() throws Exception
 	{		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
 		Assert.assertTrue(ITAutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),test));
 	}
@@ -32,7 +33,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"dummy"}, new String[] {""});
 		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 	}
@@ -40,7 +41,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotelxEconomyClient_empty_transitions() throws Exception
 	{
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
 		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 	}	
@@ -48,7 +49,7 @@ public class ProductOrchestrationTest {
 	@Test
 	public void testForte2021() throws Exception {
 		
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
 		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
 		

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -19,13 +20,13 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class RelabelingOperator<L extends Label<String>> implements Function<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>>, Set<ModalTransition<String,String,State<String>,L>>> {
+public class RelabelingOperator<L extends Label<Action>> implements Function<Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,L>>, Set<ModalTransition<String,Action,State<String>,L>>> {
 	private final UnaryOperator<String> relabel;
-	private final Function<List<String>,L> createLabel;
+	private final Function<List<Action>,L> createLabel;
 	private final Predicate<BasicState<String>> initialStatePred;
 	private final Predicate<BasicState<String>> finalStatePred;
 
-	public RelabelingOperator(Function<List<String>,L> createLabel, UnaryOperator<String> relabel,Predicate<BasicState<String>> initialStatePred, 
+	public RelabelingOperator(Function<List<Action>,L> createLabel, UnaryOperator<String> relabel,Predicate<BasicState<String>> initialStatePred,
 			Predicate<BasicState<String>> finalStatePred) {
 		this.createLabel=createLabel;
 		this.relabel=relabel;
@@ -35,7 +36,7 @@ public class RelabelingOperator<L extends Label<String>> implements Function<Aut
 
 	
 	@Override
-	public Set<ModalTransition<String,String,State<String>,L>> apply(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>> aut)
+	public Set<ModalTransition<String,Action,State<String>,L>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,L>> aut)
 	{	
 		if (aut.getTransition().isEmpty())
 			throw new IllegalArgumentException();

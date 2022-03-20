@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -21,7 +22,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class UnionFunction implements Function<List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>>{
+public class UnionFunction implements Function<List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>{
 
 	/**
 	 * 
@@ -29,7 +30,7 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 	 * @return compute the union of the FMCA in aut
 	 */
 	@Override
-	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(List<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> aut)
+	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(List<Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>>> aut)
 	{
 		if (aut==null||aut.isEmpty())
 			throw new IllegalArgumentException();
@@ -53,7 +54,7 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 		.anyMatch(s->s.contains("_")))
 			throw new IllegalArgumentException("Illegal label containing _ in some basic state");
 	
-		Set<ModalTransition<String,String,State<String>,CALabel>> uniontr= new HashSet<>(aut.stream()
+		Set<ModalTransition<String,Action,State<String>,CALabel>> uniontr= new HashSet<>(aut.stream()
 				.map(x->x.getTransition().size())
 				.reduce(Integer::sum)
 				.orElse(0)+aut.size());  //Initialized to the total number of transitions
@@ -64,8 +65,8 @@ public class UnionFunction implements Function<List<Automaton<String,String,Stat
 				.collect(Collectors.toList());
 		
 		//relabeling, removing initial states
-		List<Set<ModalTransition<String,String,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
+		List<Set<ModalTransition<String,Action,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
+		.mapToObj(id ->new RelabelingOperator<>(l->new CALabel(l,null), s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 

@@ -13,6 +13,7 @@ import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -23,14 +24,14 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class ProjectionFunction implements TriFunction<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>,Integer,ToIntFunction<ModalTransition<String,String,State<String>,CALabel>>,Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>> {
-	final BiFunction<ModalTransition<String,String,State<String>,CALabel>,Integer,CALabel> createLabel;
+public class ProjectionFunction implements TriFunction<Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>>,Integer,ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> {
+	final BiFunction<ModalTransition<String,Action,State<String>,CALabel>,Integer,CALabel> createLabel;
 
 	/**
 	 * 
 	 * @param lab the label indicates whether CMs or CAs are to be projected
 	 */
-	public ProjectionFunction(Label<String> lab)
+	public ProjectionFunction(Label<Action> lab)
 	{
 		if (lab instanceof CMLabel)
 			this.createLabel = this::createLabelCM;
@@ -49,7 +50,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 	 * 
 	 */
 	@Override
-	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut, Integer indexprincipal, ToIntFunction<ModalTransition<String,String,State<String>,CALabel>> getNecessaryPrincipal)
+	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut, Integer indexprincipal, ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>> getNecessaryPrincipal)
 	{
 		if ((indexprincipal<0)||(indexprincipal>aut.getRank())) 
 			throw new IllegalArgumentException("Index out of rank");
@@ -82,7 +83,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 				.collect(Collectors.toSet()));
 	}
 
-	private CALabel createLabelCA(ModalTransition<String,String,State<String>,CALabel> t,Integer indexprincipal) {
+	private CALabel createLabelCA(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
 		return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
 				new CALabel(1,0,t.getLabel().getPrincipalAction())
 				:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getPrincipalAction()
@@ -90,7 +91,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,String,S
 
 	}
 
-	private CMLabel createLabelCM(ModalTransition<String,String,State<String>,CALabel> t,Integer indexprincipal) {
+	private CMLabel createLabelCM(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
 		if (!t.getLabel().isMatch())
 			throw new UnsupportedOperationException();
 		

@@ -1,5 +1,10 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,12 +19,7 @@ import java.util.stream.Stream;
  * @author Davide Basile
  *
  */
-public class CALabel extends Label<String> {
-
-	public static final String IDLE="-";
-	public static final String OFFER="!";
-	public static final String REQUEST="?";
-
+public class CALabel extends Label<Action> {
 
 	/**
 	 * Constructor only used for requests or offer actions, i.e., only one principal is moving
@@ -28,14 +28,17 @@ public class CALabel extends Label<String> {
 	 * @param action action of the label
 	 */
 	public CALabel(Integer rank, Integer principal, String action) {
+		this(rank,principal,parseAction(action));
+	}
+
+	public CALabel(Integer rank, Integer principal, Action action) {
 		super(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal)?action:IDLE)
+				.mapToObj(i->(i==principal)?action:new IdleAction())
 				.collect(Collectors.toList()));
-		if (action==null||action.length()<=1||
-				principal>=rank)
+		if (principal>=rank)
 			throw new IllegalArgumentException();
 
-		if (!action.startsWith(OFFER)&&!action.startsWith(REQUEST))
+		if (!(action instanceof OfferAction)&&!(action instanceof RequestAction))
 			throw new IllegalArgumentException("The action is not a request nor an offer");
 	}
 
@@ -49,14 +52,18 @@ public class CALabel extends Label<String> {
 	 * @param action2 action of the second principal
 	 */
 	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
+		this(rank,principal1,principal2,parseAction(action1),parseAction(action2));
+	}
+
+	public CALabel(Integer rank, Integer principal1, Integer principal2, Action action1, Action action2) {
 		super(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:IDLE)
+				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:new IdleAction())
 				.collect(Collectors.toList()));
-		if (action1==null||action2==null||action1.length()<=1||action2.length()<=1||principal1>=rank||principal2>=rank)
+		if (principal1>=rank||principal2>=rank)
 			throw new IllegalArgumentException();
 
-		if ((action1.startsWith(OFFER)&&!action2.startsWith(REQUEST))||
-				(action1.startsWith(REQUEST)&&!action2.startsWith(OFFER)))
+		if ((action1 instanceof OfferAction &&!(action2 instanceof RequestAction))||
+				(action1 instanceof RequestAction&&!(action2 instanceof OfferAction)))
 			throw new IllegalArgumentException("The action must be an offer and a request");
 	}
 
@@ -67,17 +74,18 @@ public class CALabel extends Label<String> {
 	 */
 	public CALabel(List<String> label)
 	{		
-		super(label);
-		
-		if (label.stream()
-				.anyMatch(Objects::isNull))
-			throw new IllegalArgumentException("Label contains null references");
+		this(label.stream().map(CALabel::parseAction).collect(Collectors.toList()),null);
+	}
 
-		 if (label.stream().anyMatch(l->!l.startsWith(OFFER)&&!l.startsWith(REQUEST)&&!l.equals(IDLE)) ||
-				 label.stream().allMatch(l->l.equals(IDLE)) ||
-				 label.stream().filter(l->l.startsWith(OFFER)).count()>1 || 
-				 label.stream().filter(l->l.startsWith(REQUEST)).count()>1)
-			 throw new IllegalArgumentException("The label is not well-formed");
+	public CALabel(List<Action> label, Object dummy)
+	{
+		super(label);
+
+		if (label.stream().anyMatch(l->!(l instanceof OfferAction)&&!(l instanceof RequestAction)&&!(l instanceof IdleAction)) ||
+				label.stream().allMatch(l -> l instanceof IdleAction) ||
+				label.stream().filter(l -> l instanceof  OfferAction).count()>1 ||
+				label.stream().filter(l -> l instanceof RequestAction).count()>1)
+			throw new IllegalArgumentException("The label is not well-formed ");
 	}
 
 	/**
@@ -90,30 +98,41 @@ public class CALabel extends Label<String> {
 		super(shift(lab,rank,shift));
 	}
 
-	private static List<String> shift(CALabel lab, Integer rank, Integer shift){
+	private static List<Action> shift(CALabel lab, Integer rank, Integer shift){
 		if (rank==null||rank<=0||lab==null||shift==null||shift<0||lab.getRank()+shift>rank)
 			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
 					+ "or out of rank");
 
-		List<String> l = new ArrayList<>(rank);
-		l.addAll(Stream.generate(()->CALabel.IDLE).limit(shift).collect(Collectors.toList()));
+		List<Action> l = new ArrayList<>(rank);
+		l.addAll(Stream.generate(IdleAction::new).limit(shift).collect(Collectors.toList()));
 		l.addAll(lab.getAction());
 		if (rank-l.size()>0)
-			l.addAll(Stream.generate(()->CALabel.IDLE).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
+			l.addAll(Stream.generate(IdleAction::new).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 		return l;
+	}
+
+	private static Action parseAction(String action) {
+		Objects.requireNonNull(action);
+		if (OfferAction.isOffer(action))
+			return new OfferAction(action.substring(1));
+		else if (RequestAction.isRequest(action))
+			return new RequestAction(action.substring(1));
+		else if (IdleAction.isIdle(action))
+			return new IdleAction();
+		else throw new IllegalArgumentException();
 	}
 	
 	private Integer getOffererIfAny() {
-		List<String> label = this.getAction();
+		List<Action> label = this.getAction();
 		return IntStream.range(0, label.size())
-				.filter(i->label.get(i).startsWith(OFFER))
+				.filter(i->label.get(i) instanceof  OfferAction)
 				.findAny().orElse(-1);
 	}
 	
 	private Integer getRequesterIfAny() {
-		List<String> label = this.getAction();
+		List<Action> label = this.getAction();
 		return IntStream.range(0, label.size())
-				.filter(i->label.get(i).startsWith(REQUEST))
+				.filter(i->label.get(i) instanceof RequestAction)
 				.findAny().orElse(-1);
 	}
 
@@ -161,14 +180,10 @@ public class CALabel extends Label<String> {
 	 * @return in case the calabel is a request it return the requests action, in case of offer or match returns the offer action
 	 */
 	public String getPrincipalAction() {
-		String act = this.getAction().stream()
-				.filter(s->!s.equals(CALabel.IDLE))
-				.findAny()
-				.orElseThrow(IllegalArgumentException::new);
 		if (this.isRequest())
-			return CALabel.REQUEST+act.substring(1);
+			return new RequestAction(this.getUnsignedAction()).toString();
 		else
-			return CALabel.OFFER+act.substring(1);
+			return new OfferAction(this.getUnsignedAction()).toString();
 		//in case of match, the action is always the offer
 	}
 
@@ -179,13 +194,13 @@ public class CALabel extends Label<String> {
 	public  String getCoAction()
 	{	
 		String action = this.getPrincipalAction();
-		if (action.startsWith(OFFER))
-			return REQUEST+action.substring(1);
-		else return OFFER+action.substring(1);
+		if (OfferAction.isOffer(action))
+			return new RequestAction(this.getUnsignedAction()).toString();
+		else return new OfferAction(this.getUnsignedAction()).toString();
 	}
 
 	@Override
-	public boolean match(Label<String> label)
+	public boolean match(Label<Action> label)
 	{
 		if (label instanceof CALabel)
 		{
@@ -209,10 +224,10 @@ public class CALabel extends Label<String> {
 	 */
 	public String getUnsignedAction()
 	{
-		String act = this.getAction().stream()
-				.filter(s->!s.equals(CALabel.IDLE))
+		Action act = this.getAction().stream()
+				.filter(s->!(s instanceof IdleAction))
 				.findAny().orElseThrow(IllegalArgumentException::new);
-		return act.substring(1);
+		return act.getLabel();
 	}
 
 	

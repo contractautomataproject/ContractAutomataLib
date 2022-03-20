@@ -20,9 +20,12 @@ import com.google.re2j.Pattern;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Import/Export textual DATA format
@@ -30,7 +33,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class AutDataConverter<L extends Label<String>>  implements AutConverter<Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>>,Automaton<?,?,?,?>> {
+public class AutDataConverter<L extends Label<Action>>  implements AutConverter<Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,L>>,Automaton<?,?,?,?>> {
 	private final Function<List<String>,L> createLabel;
 	private static final String SUFFIX = ".data";
 	private static final String EMPTYMSG = "Empty file name";
@@ -40,14 +43,14 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 		this.createLabel = createLabel;
 	}
 
-	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,L>> importMSCA(String filename) throws IOException {
+	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,L>> importMSCA(String filename) throws IOException {
 		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
 
 		String safefilename = path.toString();
 
-		Set<ModalTransition<String,String,State<String>,L>> tr;
+		Set<ModalTransition<String,Action,State<String>,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(safefilename), StandardCharsets.UTF_8)))
@@ -125,7 +128,7 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 		return new Automaton<>(tr);
 	}
 
-	private ModalTransition<String,String,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<String,Action,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
 	{
 		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -189,7 +192,7 @@ public class AutDataConverter<L extends Label<String>>  implements AutConverter<
 	 * @throws FileNotFoundException in case filename is not found
 	 */
 	@Override
-	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws FileNotFoundException {
+	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws ParserConfigurationException, IOException {
 		if (filename.isEmpty())
 			throw new IllegalArgumentException(EMPTYMSG);
 

@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
@@ -31,8 +32,8 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
-			Predicate<Label<String>> reqmc,
-			Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,Label<String>>> prop){
+			Predicate<Label<Action>> reqmc,
+			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop){
 		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, reqmc, prop, 
 				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}
@@ -43,7 +44,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @return the synthesised orchestration 
 	 */
 	@Override
-	public Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> apply(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut)
+	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isOffer()))
@@ -53,7 +54,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	}
 
 
-	private static boolean isUncontrollableOrchestration(ModalTransition<String,String,State<String>,CALabel> tra,Set<? extends ModalTransition<String,String,State<String>,CALabel>> str, Set<State<String>> badStates)
+	private static boolean isUncontrollableOrchestration(ModalTransition<String,Action,State<String>,CALabel> tra,Set<? extends ModalTransition<String,Action,State<String>,CALabel>> str, Set<State<String>> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal

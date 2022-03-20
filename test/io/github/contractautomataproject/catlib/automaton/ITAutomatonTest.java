@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomataproject.catlib.automaton.transition.Transition;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,15 +51,15 @@ public class ITAutomatonTest {
 	@Test
 	public void constructor_Exception_differentRank() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.IDLE);
-		lab.add(CALabel.OFFER+"a");
-		lab.add(CALabel.REQUEST+"a");
+		lab.add(IdleAction.IDLE);
+		lab.add(OfferAction.OFFER+"a");
+		lab.add(RequestAction.REQUEST+"a");
 
 		List<String> lab2 = new ArrayList<>();
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.IDLE);
-		lab2.add(CALabel.OFFER+"a");
-		lab2.add(CALabel.REQUEST+"a");
+		lab2.add(IdleAction.IDLE);
+		lab2.add(IdleAction.IDLE);
+		lab2.add(OfferAction.OFFER+"a");
+		lab2.add(RequestAction.REQUEST+"a");
 
 
 		BasicState<String> bs0 = new BasicState<>("0", true, false);
@@ -63,7 +67,7 @@ public class ITAutomatonTest {
 		BasicState<String> bs2 = new BasicState<>("2", true, false);
 		BasicState<String> bs3 = new BasicState<>("3", true, false);
 
-		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
+		Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
 		tr.add(new ModalTransition<>(new State<>(Arrays.asList(bs0, bs1, bs2)//,0,0
 		),
 				new CALabel(lab),
@@ -83,13 +87,13 @@ public class ITAutomatonTest {
 	@Test
 	public void noInitialState_exception() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.OFFER+"a");
+		lab.add(OfferAction.OFFER+"a");
 
 		BasicState<String> bs0 = new BasicState<>("0", false, true);
 		BasicState<String> bs1 = new BasicState<>("1", false, true);
 
 
-		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
+		Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
 		tr.add(new ModalTransition<>(new State<>(List.of(bs0)//,0,0
 		),
 				new CALabel(lab),
@@ -104,13 +108,13 @@ public class ITAutomatonTest {
 	@Test
 	public void noFinalStatesInTransitions_exception() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.OFFER+"a");
+		lab.add(OfferAction.OFFER+"a");
 
 		BasicState<String> bs0 = new BasicState<>("0", true, false);
 		BasicState<String> bs1 = new BasicState<>("1", false, false);
 
 
-		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
+		Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
 		tr.add(new ModalTransition<>(new State<>(List.of(bs0)//,0,0
 		),
 				new CALabel(lab),
@@ -125,12 +129,12 @@ public class ITAutomatonTest {
 	@Test
 	public void ambiguousStates_exception() {
 		List<String> lab = new ArrayList<>();
-		lab.add(CALabel.OFFER+"a");
+		lab.add(OfferAction.OFFER+"a");
 
 		BasicState<String> bs1 = new BasicState<>("0", true, false);
 		BasicState<String> bs2 = new BasicState<>("0", false, true);
 
-		Set<ModalTransition<String,String,State<String>,CALabel>> tr = new HashSet<>();
+		Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
 		tr.add(new ModalTransition<>(new State<>(List.of(bs1)),
 				new CALabel(lab),
 				new State<>(List.of(bs2)),
@@ -148,7 +152,7 @@ public class ITAutomatonTest {
 	
 	@Test
 	public void testToString() throws IOException {
-		Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>> aut= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		String test ="Rank: 3"+System.lineSeparator()+
 				"Initial state: [0, 0, 0]"+System.lineSeparator()+
 						"Final states: [[3][3][3]]"+System.lineSeparator()+

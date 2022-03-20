@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
 @RunWith(MockitoJUnitRunner.class)
 public class ModalTransitionTest {
 
-	@Mock Label<String> lab;
+	@Mock Label<Action> lab;
 	@Mock BasicState<String> bs1;
 
 
@@ -33,15 +34,15 @@ public class ModalTransitionTest {
 	@Mock State<String> cs2;
 	@Mock CALabel calab;
 	
-	ModalTransition<String,String,State<String>,Label<String>> tu;
-	ModalTransition<String,String,State<String>,Label<String>> tl;
-	ModalTransition<String,String,State<String>,Label<String>> tp;
+	ModalTransition<String,Action,State<String>,Label<Action>> tu;
+	ModalTransition<String,Action,State<String>,Label<Action>> tl;
+	ModalTransition<String,Action,State<String>,Label<Action>> tp;
 	
-	ModalTransition<String,String,State<String>,CALabel> catl;
+	ModalTransition<String,Action,State<String>,CALabel> catl;
 	
-	Set<ModalTransition<String,String,State<String>,CALabel>> setTr;
+	Set<ModalTransition<String,Action,State<String>,CALabel>> setTr;
 	Set<State<String>> badStates;
-	BiPredicate<ModalTransition<String,String,State<String>,CALabel>,ModalTransition<String,String,State<String>,Label<String>>> controllabilityPred;
+	BiPredicate<ModalTransition<String,Action,State<String>,CALabel>,ModalTransition<String,Action,State<String>,Label<Action>>> controllabilityPred;
 	
 	@Before
 	public void setup()
@@ -214,7 +215,7 @@ public class ModalTransitionTest {
 	public void testIsUncontrollableLazyFalseTruePred() {
 		when(calab.isMatch()).thenReturn(true);
 
-		ModalTransition<String,String,State<String>,CALabel> catl2 = 
+		ModalTransition<String,Action,State<String>,CALabel> catl2 =
 				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
 		controllabilityPred = (a1,a2)->a1.getTarget().equals(cs0);
@@ -225,7 +226,7 @@ public class ModalTransitionTest {
 	@Test
 	public void testIsUncontrollableLazyFalseNoneMatchWithTwoTransitions() {
 		when(calab.isMatch()).thenReturn(true);
-		ModalTransition<String,String,State<String>,CALabel> catl2 = 
+		ModalTransition<String,Action,State<String>,CALabel> catl2 =
 				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
 		controllabilityPred = (a1,a2)->a1.getSource().equals(cs0);

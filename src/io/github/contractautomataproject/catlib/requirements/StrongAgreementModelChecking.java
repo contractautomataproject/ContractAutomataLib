@@ -1,10 +1,13 @@
 package io.github.contractautomataproject.catlib.requirements;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
 
 /**
  * the model can only performs the action provided by the property
@@ -12,14 +15,17 @@ import io.github.contractautomataproject.catlib.automaton.label.Label;
  * @author Davide Basile
  *
  */
-public class StrongAgreementModelChecking<T extends Label<String>> implements Predicate<T>{
+public class StrongAgreementModelChecking<T extends Label<Action>> implements Predicate<T>{
 
 	@Override
 	public boolean test(T l) {
 		//only transitions where both aut and prop moves together are allowed
-		return l.getAction().get(l.getRank()-1).equals(CALabel.IDLE)||
-		IntStream.range(0, l.getRank()-1)
-		.allMatch(i->l.getAction().get(i).equals(CALabel.IDLE));	
+		List<Action> listAct = l.getAction();
+		return !(listAct.get(l.getRank()-1).getLabel().equals(IdleAction.IDLE)||
+				 IntStream.range(0, l.getRank()-1)
+						.mapToObj(listAct::get)
+						.map(Action::getLabel)
+						.allMatch(str->str.equals(IdleAction.IDLE)));
 	} 
 
 }

@@ -3,6 +3,8 @@ package io.github.contractautomataproject.catlib.family;
 import java.util.Objects;
 
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
 
 /**
  * Class implementing a feature
@@ -17,7 +19,7 @@ public class Feature {
 			throw new IllegalArgumentException();
 		
 		//features are unsigned actions of CALabel
-		this.name = (name.startsWith(CALabel.OFFER)||name.startsWith(CALabel.REQUEST))?
+		this.name = (name.startsWith(OfferAction.OFFER)||name.startsWith(RequestAction.REQUEST))?
 				new CALabel(1,0,name).getUnsignedAction()
 				:name;
 	}
