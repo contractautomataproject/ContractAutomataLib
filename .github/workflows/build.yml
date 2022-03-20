@@ -47,7 +47,8 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
         
-      - name: Analyze with SonarCloud
+      - name: 🔎 SonarCloud Scan
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -96,7 +97,7 @@ jobs:
       - name: 🐛 Analyze with SpotBugs
         run: mvn -B spotbugs:check
                 
-      - name: Perform CodeQL Analysis
+      - name: 🔎 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
           
         
@@ -124,7 +125,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
           
-      - name: 👓 Mutation Testing with Pitest
+      - name: 👽 Mutation Testing with Pitest
         run: mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage
         
       - name: 🚀 Upload Mutation Test Report to Stryker Dashboard
