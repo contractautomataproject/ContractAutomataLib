@@ -12,4 +12,9 @@ public class IdleAction extends Action{
         return action.equals(IDLE);
     }
 
+    public static Action parseAction(String act) {
+        if (isIdle(act))
+            return new IdleAction();
+        else throw new IllegalArgumentException();
+    }
 }

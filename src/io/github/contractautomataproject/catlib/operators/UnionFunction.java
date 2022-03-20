@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -66,7 +67,7 @@ public class UnionFunction implements Function<List<Automaton<String,Action,Stat
 		
 		//relabeling, removing initial states
 		List<Set<ModalTransition<String,Action,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<>(l->new CALabel(l,null), s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
+		.mapToObj(id ->new RelabelingOperator<>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 
@@ -78,7 +79,7 @@ public class UnionFunction implements Function<List<Automaton<String,Action,Stat
 
 		uniontr.addAll(IntStream.range(0, relabeled.size())
 				.mapToObj(i->new ModalTransition<>(
-						newinitial,new CALabel(rank, 0, "!dummy"),
+						newinitial,new CALabel(rank, 0, new OfferAction("dummy")),
 						relabeled.get(i).parallelStream()
 						.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
 						.filter(s->IntStream.range(0, s.getRank())

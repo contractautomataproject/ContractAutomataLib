@@ -50,16 +50,16 @@ public class ITAutomatonTest {
 	
 	@Test
 	public void constructor_Exception_differentRank() {
-		List<String> lab = new ArrayList<>();
-		lab.add(IdleAction.IDLE);
-		lab.add(OfferAction.OFFER+"a");
-		lab.add(RequestAction.REQUEST+"a");
+		List<Action> lab = new ArrayList<>();
+		lab.add(new IdleAction());
+		lab.add(new OfferAction("a"));
+		lab.add(new RequestAction("a"));
 
-		List<String> lab2 = new ArrayList<>();
-		lab2.add(IdleAction.IDLE);
-		lab2.add(IdleAction.IDLE);
-		lab2.add(OfferAction.OFFER+"a");
-		lab2.add(RequestAction.REQUEST+"a");
+		List<Action> lab2 = new ArrayList<>();
+		lab2.add(new IdleAction());
+		lab2.add(new IdleAction());
+		lab2.add(new OfferAction("a"));
+		lab2.add(new RequestAction("a"));
 
 
 		BasicState<String> bs0 = new BasicState<>("0", true, false);
@@ -86,8 +86,8 @@ public class ITAutomatonTest {
 
 	@Test
 	public void noInitialState_exception() {
-		List<String> lab = new ArrayList<>();
-		lab.add(OfferAction.OFFER+"a");
+		List<Action> lab = new ArrayList<>();
+		lab.add(new OfferAction("a"));
 
 		BasicState<String> bs0 = new BasicState<>("0", false, true);
 		BasicState<String> bs1 = new BasicState<>("1", false, true);
@@ -107,8 +107,8 @@ public class ITAutomatonTest {
 
 	@Test
 	public void noFinalStatesInTransitions_exception() {
-		List<String> lab = new ArrayList<>();
-		lab.add(OfferAction.OFFER+"a");
+		List<Action> lab = new ArrayList<>();
+		lab.add(new OfferAction("a"));
 
 		BasicState<String> bs0 = new BasicState<>("0", true, false);
 		BasicState<String> bs1 = new BasicState<>("1", false, false);
@@ -128,8 +128,8 @@ public class ITAutomatonTest {
 	
 	@Test
 	public void ambiguousStates_exception() {
-		List<String> lab = new ArrayList<>();
-		lab.add(OfferAction.OFFER+"a");
+		List<Action> lab = new ArrayList<>();
+		lab.add(new OfferAction("a"));
 
 		BasicState<String> bs1 = new BasicState<>("0", true, false);
 		BasicState<String> bs2 = new BasicState<>("0", false, true);
@@ -190,5 +190,26 @@ public class ITAutomatonTest {
 				&&
 				testTr.parallelStream()
 				.allMatch(autTr::contains);
+	}
+
+	public static String counterExample(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
+		Set<String> autTr=aut.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+		Set<String> testTr=test.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+
+		String ctx1 = autTr.parallelStream()
+				.filter(t->!testTr.contains(t))
+				.collect(Collectors.joining(System.lineSeparator()));
+
+		String ctx2 = testTr.parallelStream()
+				.filter(t->!autTr.contains(t))
+				.collect(Collectors.joining(System.lineSeparator()));
+
+			return "Transitions that should not be in SUT: "+ctx1+System.lineSeparator()+
+					"Transitions not contained in SUT:"+ctx2;
+
 	}
 }

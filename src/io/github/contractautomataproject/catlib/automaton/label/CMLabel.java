@@ -1,6 +1,10 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,35 +20,8 @@ public class CMLabel extends CALabel {
 	private final String id;
 	private final String partner;	
 
-	public static final String ID_SEPARATOR = "_";
-	public static final String ACTION_SEPARATOR = "@";
-
-
-	/**
-	 * Construct a CMLabel encoded in a string lab
-	 * 
-	 * @param lab the string must be in the format sender + id_separator + receiver + action_separator + action, 
-	 * 		  where either sender==this.id and action is an offer or receiver==this.id and action is a request. 
-	 */
-	public CMLabel(String lab) {
-		super(1,0,lab.split(ACTION_SEPARATOR)[1]);
-		String[] p = lab.split(ACTION_SEPARATOR)[0].split(ID_SEPARATOR);
-		if (p.length!=2)
-			throw new IllegalArgumentException();
-
-		this.id=this.isOffer()?p[0]:p[1];
-		this.partner=this.isOffer()?p[1]:p[0];
-		
-		if (this.id.isEmpty() 
-				|| this.partner.isEmpty())
-			throw new IllegalArgumentException();
-	}
-	
-	public CMLabel(List<String> lab) {
-		this(lab.get(0));
-		if (lab.size()!=1)
-			throw new IllegalArgumentException();
-	}
+	private static final String ID_SEPARATOR = "_";
+	private static final String ACTION_SEPARATOR = "@";
 
 	/**
 	 * 
@@ -52,10 +29,42 @@ public class CMLabel extends CALabel {
 	 * @param receiver the receiver in the label
 	 * @param action the action in the label
 	 */
-	public CMLabel(String sender, String receiver, String action)
+	public CMLabel(String sender, String receiver, Action action)
 	{
-		this(sender+ID_SEPARATOR+receiver+ACTION_SEPARATOR+action);
+		super(1,0,action);
+		this.id=this.isOffer()?sender:receiver;
+		this.partner=this.isOffer()?receiver:sender;
 
+		if (this.id.isEmpty()||this.partner.isEmpty())
+			throw new IllegalArgumentException();
+
+	}
+
+
+	/**
+	 * @param lab the string must be in the format sender + id_separator + receiver + action_separator + action,
+	 * 		  where either sender==this.id and action is an offer or receiver==this.id and action is a request.
+	 */
+	public static CMLabel parseCMLabel(String lab) {
+		String[] f = lab.split(ACTION_SEPARATOR);
+		if (f.length!=2)
+			throw new IllegalArgumentException();
+		Action act = AutDataConverter.parseAction(f[1]);
+		String[] p = f[0].split(ID_SEPARATOR);
+		if (p.length!=2)
+			throw new IllegalArgumentException();
+
+		return new CMLabel(p[0],p[1],act);
+	}
+
+	public static boolean isParsableCMLabel(String lab) {
+		String[] f = lab.split(ACTION_SEPARATOR);
+		if (f.length!=2)
+			return false;
+		if (!(OfferAction.isOffer(f[1])|| RequestAction.isRequest(f[1])|| IdleAction.isIdle(f[1])))
+			return false;
+		String[] p = f[0].split(ID_SEPARATOR);
+		return (p.length==2);
 	}
 
 	@Override
@@ -97,8 +106,8 @@ public class CMLabel extends CALabel {
 	@Override
 	public String toString() {
 		if (this.isOffer())
-			return "["+this.id+ID_SEPARATOR+this.partner+ACTION_SEPARATOR+super.getPrincipalAction()+"]";
+			return "["+this.id+ID_SEPARATOR+this.partner+ACTION_SEPARATOR+super.getPrincipalAction().toString()+"]";
 		else
-			return "["+this.partner+ID_SEPARATOR+this.id+ACTION_SEPARATOR+this.getPrincipalAction()+"]";
+			return "["+this.partner+ID_SEPARATOR+this.id+ACTION_SEPARATOR+this.getPrincipalAction().toString()+"]";
 	}	
 }

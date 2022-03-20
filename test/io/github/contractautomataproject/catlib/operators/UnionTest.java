@@ -1,6 +1,7 @@
 package io.github.contractautomataproject.catlib.operators;
 
 import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.autEquals;
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;

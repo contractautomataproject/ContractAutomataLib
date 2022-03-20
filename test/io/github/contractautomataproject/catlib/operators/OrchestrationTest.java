@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
@@ -112,6 +113,7 @@ public class OrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + "test_lazy_loop_prop_synth.data");
+
 		assertTrue(ITAutomatonTest.autEquals(synth, test));
 	}
 

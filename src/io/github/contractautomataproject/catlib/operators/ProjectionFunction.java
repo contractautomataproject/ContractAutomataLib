@@ -14,6 +14,8 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -97,6 +99,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,Action,S
 		
 		return new CMLabel(t.getLabel().getOfferer()+"",t.getLabel().getRequester()+"",
 				((t.getLabel().getOfferer().equals(indexprincipal))?
+					//	t.getLabel().getPrincipalAction().toString():t.getLabel().getCoAction().toString()));
 						t.getLabel().getPrincipalAction():t.getLabel().getCoAction()));
 
 	}

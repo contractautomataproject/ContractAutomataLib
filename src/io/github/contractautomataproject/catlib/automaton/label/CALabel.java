@@ -27,10 +27,6 @@ public class CALabel extends Label<Action> {
 	 * @param principal index of the principal
 	 * @param action action of the label
 	 */
-	public CALabel(Integer rank, Integer principal, String action) {
-		this(rank,principal,parseAction(action));
-	}
-
 	public CALabel(Integer rank, Integer principal, Action action) {
 		super(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal)?action:new IdleAction())
@@ -43,41 +39,11 @@ public class CALabel extends Label<Action> {
 	}
 
 	/**
-	 * Constructor for a match transition
-	 * 
-	 * @param rank rank of the label
-	 * @param principal1 index of first principal moving in the label
-	 * @param principal2 index of second principal moving in the label
-	 * @param action1 action of the first principal
-	 * @param action2 action of the second principal
-	 */
-	public CALabel(Integer rank, Integer principal1, Integer principal2, String action1, String action2) {
-		this(rank,principal1,principal2,parseAction(action1),parseAction(action2));
-	}
-
-	public CALabel(Integer rank, Integer principal1, Integer principal2, Action action1, Action action2) {
-		super(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:new IdleAction())
-				.collect(Collectors.toList()));
-		if (principal1>=rank||principal2>=rank)
-			throw new IllegalArgumentException();
-
-		if ((action1 instanceof OfferAction &&!(action2 instanceof RequestAction))||
-				(action1 instanceof RequestAction&&!(action2 instanceof OfferAction)))
-			throw new IllegalArgumentException("The action must be an offer and a request");
-	}
-
-	/**
 	 * Constructor using a list of strings. Each position in the list is an index  
 	 * in the CALabel and each string is the action of the principal at that position.
 	 * @param label the list of strings
 	 */
-	public CALabel(List<String> label)
-	{		
-		this(label.stream().map(CALabel::parseAction).collect(Collectors.toList()),null);
-	}
-
-	public CALabel(List<Action> label, Object dummy)
+	public CALabel(List<Action> label)
 	{
 		super(label);
 
@@ -85,33 +51,10 @@ public class CALabel extends Label<Action> {
 				label.stream().allMatch(l -> l instanceof IdleAction) ||
 				label.stream().filter(l -> l instanceof  OfferAction).count()>1 ||
 				label.stream().filter(l -> l instanceof RequestAction).count()>1)
-			throw new IllegalArgumentException("The label is not well-formed ");
+			throw new IllegalArgumentException("The label is not well-formed");
 	}
 
-	/**
-	 * Construct a CALabel by shifting of some positions the index of principals moving in the label
-	 * @param lab the object label to shift
-	 * @param rank the rank of the label to be created
-	 * @param shift the position to shift
-	 */
-	public CALabel(CALabel lab, Integer rank, Integer shift) {
-		super(shift(lab,rank,shift));
-	}
-
-	private static List<Action> shift(CALabel lab, Integer rank, Integer shift){
-		if (rank==null||rank<=0||lab==null||shift==null||shift<0||lab.getRank()+shift>rank)
-			throw new IllegalArgumentException("Null argument or shift="+shift+" is negative "
-					+ "or out of rank");
-
-		List<Action> l = new ArrayList<>(rank);
-		l.addAll(Stream.generate(IdleAction::new).limit(shift).collect(Collectors.toList()));
-		l.addAll(lab.getAction());
-		if (rank-l.size()>0)
-			l.addAll(Stream.generate(IdleAction::new).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
-		return l;
-	}
-
-	private static Action parseAction(String action) {
+	public static Action parseAction(String action) {
 		Objects.requireNonNull(action);
 		if (OfferAction.isOffer(action))
 			return new OfferAction(action.substring(1));
@@ -179,24 +122,30 @@ public class CALabel extends Label<Action> {
 	/**
 	 * @return in case the calabel is a request it return the requests action, in case of offer or match returns the offer action
 	 */
-	public String getPrincipalAction() {
+	public Action getPrincipalAction() {
+		Action act = findAnyAction();
 		if (this.isRequest())
-			return new RequestAction(this.getUnsignedAction()).toString();
+			return new RequestAction(act.getLabel());
 		else
-			return new OfferAction(this.getUnsignedAction()).toString();
+			return new OfferAction(act.getLabel());
 		//in case of match, the action is always the offer
 	}
-
 
 	/**
 	 * @return in case the calabel is a request it return the offer action, in case of offer or match returns the request action
 	 */
-	public  String getCoAction()
-	{	
-		String action = this.getPrincipalAction();
-		if (OfferAction.isOffer(action))
-			return new RequestAction(this.getUnsignedAction()).toString();
-		else return new OfferAction(this.getUnsignedAction()).toString();
+	public Action getCoAction()
+	{
+		Action action = findAnyAction();
+		if (!this.isRequest())
+			return new RequestAction(action.getLabel());
+		else return new OfferAction(action.getLabel());
+	}
+
+	private Action findAnyAction() {
+		return this.getAction().stream()
+				.filter(s->!(s instanceof IdleAction))
+				.findAny().orElseThrow(IllegalArgumentException::new);
 	}
 
 	@Override
@@ -207,8 +156,8 @@ public class CALabel extends Label<Action> {
 			CALabel l2 = (CALabel) label;
 			if (this.isOffer()&&l2.isRequest()||this.isRequest()&&l2.isOffer())
 			{
-				String la1 = this.getUnsignedAction();
-				String la2 = l2.getUnsignedAction();
+				String la1 = this.getPrincipalAction().getLabel();
+				String la2 = l2.getPrincipalAction().getLabel();
 				return la1.equals(la2);			
 			}
 			else
@@ -217,19 +166,4 @@ public class CALabel extends Label<Action> {
 		else 
 			throw new IllegalArgumentException();
 	}
-
-	/**
-	 * 
-	 * @return a string containing the action without request/offer sign
-	 */
-	public String getUnsignedAction()
-	{
-		Action act = this.getAction().stream()
-				.filter(s->!(s instanceof IdleAction))
-				.findAny().orElseThrow(IllegalArgumentException::new);
-		return act.getLabel();
-	}
-
-	
-
 }

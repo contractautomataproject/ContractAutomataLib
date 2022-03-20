@@ -38,7 +38,7 @@ ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Acti
 				.collect(Collectors.toSet())),
 				prop),
 				MSCACompositionFunction::computeRank,
-				(l1,l2)->new CALabel(l1.getAction(),null).getUnsignedAction().equals(l2.getAction().get(0).getLabel()), //match
+				(l1,l2)->new CALabel(l1.getAction()).getPrincipalAction().getLabel().equals(l2.getAction().get(0).getLabel()), //match
 				State::new, 
 				ModalTransition::new, 
 				(e, ee,rank) -> new Label<>(Stream.concat(e.tra.getLabel().getAction().stream(),

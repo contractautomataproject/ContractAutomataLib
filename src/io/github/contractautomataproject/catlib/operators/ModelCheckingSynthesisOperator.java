@@ -85,13 +85,13 @@ SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Ac
 				return null;
 
 			//the following steps are necessary to reuse the synthesis of MSCA
-			//firstly silencing the prop action and treat lazy transitions satisfying the pruningPredicate: 
+			//silencing the prop action and treat lazy transitions satisfying the pruningPredicate:
 			//they must be detectable as "bad" also after reverting to an MSCA  
 			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> deletingPropAction = new Automaton<>(comp.getTransition()
 					.parallelStream().map(t->{
 						List<Action> li = new ArrayList<>(t.getLabel().getAction());
 						li.set(t.getRank()-1, new IdleAction()); //removing the move of prop to have a CALabel
-						CALabel lab = new CALabel(li,null);
+						CALabel lab = new CALabel(li);
 						if (mcf.getPruningPred().test(t.getLabel())&&t.isLazy()&&this.getReq().test(lab)) //the transition was bad lazy, but after removing 
 							//the prop move is lazy good: it must be changed.
 							lab=changeLabel.apply(lab); //change either to request or offer

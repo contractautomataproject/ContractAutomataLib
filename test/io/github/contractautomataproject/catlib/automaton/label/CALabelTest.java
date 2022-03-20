@@ -24,9 +24,9 @@ public class CALabelTest {
 	
 	@Before
 	public void setup() {
-		match= new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"a", RequestAction.REQUEST+"a"));
-		offer= new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"a", IdleAction.IDLE));
-		request= new CALabel(List.of(IdleAction.IDLE, RequestAction.REQUEST+"a", IdleAction.IDLE));
+		match= new CALabel(List.of(new IdleAction(), new OfferAction("a"), new RequestAction("a")));
+		offer= new CALabel(List.of(new IdleAction(), new OfferAction("a"), new IdleAction()));
+		request= new CALabel(List.of(new IdleAction(), new RequestAction("a"), new IdleAction()));
 	}
 	
 	@After
@@ -38,101 +38,101 @@ public class CALabelTest {
 
 	@Test
 	public void testConstructor1OfferEquals() {
-		assertEquals(new CALabel(3,1,OfferAction.OFFER+"a"),offer);
+		assertEquals(new CALabel(3,1,new OfferAction("a")),offer);
 	}
 	
 	@Test
 	public void testConstructor1EqualsActionLength() {
-		assertEquals(new CALabel(3,1,OfferAction.OFFER+"test"),new CALabel(3,1,OfferAction.OFFER+"test"));
+		assertEquals(new CALabel(3,1,new OfferAction("test")),new CALabel(3,1,new OfferAction("test")));
 	}
 
 	@Test
 	public void testConstructor1RequestEquals() {
-		assertEquals(new CALabel(3,1,RequestAction.REQUEST+"a"),request);
+		assertEquals(new CALabel(3,1,new RequestAction("a")),request);
 	}
-
-	@Test
-	public void testConstructor2EqualsActionLength() {
-		assertEquals(new CALabel(3,1,2,OfferAction.OFFER+"test", RequestAction.REQUEST+"test"),new CALabel(3,1,2,OfferAction.OFFER+"test", RequestAction.REQUEST+"test"));
-	}
-	
-	@Test
-	public void testConstructor2MatchEquals() {
-		assertEquals(new CALabel(3,1,2,OfferAction.OFFER+"a", RequestAction.REQUEST+"a"),match);
-	}
-	
-	@Test
-	public void testConstructor2MatchEquals2() {
-		assertEquals(new CALabel(3,2,1,RequestAction.REQUEST+"a", OfferAction.OFFER+"a"),match);
-	}
+//
+//	@Test
+//	public void testConstructor2EqualsActionLength() {
+//		assertEquals(new CALabel(3,1,2,new OfferAction("test"), new RequestAction("test")),new CALabel(3,1,2,new OfferAction("test"), new RequestAction("test")));
+//	}
+//
+//	@Test
+//	public void testConstructor2MatchEquals() {
+//		assertEquals(new CALabel(3,1,2,new OfferAction("a"), new RequestAction("a")),match);
+//	}
+//
+//	@Test
+//	public void testConstructor2MatchEquals2() {
+//		assertEquals(new CALabel(3,2,1,new RequestAction("a"), new OfferAction("a")),match);
+//	}
 	
 	@Test
 	public void testConstructor3EqualsActionLength() {
-		assertEquals(new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"test", IdleAction.IDLE)),
-				new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"test", IdleAction.IDLE)));
+		assertEquals(new CALabel(List.of(new IdleAction(), new OfferAction("test"), new IdleAction())),
+				new CALabel(List.of(new IdleAction(), new OfferAction("test"), new IdleAction())));
 	}
 	
 	
 	@Test
 	public void testConstructor3OfferEquals() {
-		assertEquals(new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"a", IdleAction.IDLE)),offer);
+		assertEquals(new CALabel(List.of(new IdleAction(), new OfferAction("a"), new IdleAction())),offer);
 	}
 
 	@Test
 	public void testConstructor3RequestEquals() {
-		assertEquals(new CALabel(List.of(IdleAction.IDLE, RequestAction.REQUEST+"a", IdleAction.IDLE)),request);
+		assertEquals(new CALabel(List.of(new IdleAction(), new RequestAction("a"), new IdleAction())),request);
 	}
 
 	@Test
 	public void testConstructor3MatchEquals() {
-		assertEquals(new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"a", RequestAction.REQUEST+"a")),match);
+		assertEquals(new CALabel(List.of(new IdleAction(), new OfferAction("a"), new RequestAction("a"))),match);
 	}
 
-	@Test
-	public void testConstructor4EqualsActionLength() {
-		CALabel test = new CALabel(List.of(IdleAction.IDLE, IdleAction.IDLE, OfferAction.OFFER+"test", RequestAction.REQUEST+"test"));
-		CALabel test2 =  new CALabel(List.of(IdleAction.IDLE, OfferAction.OFFER+"test", RequestAction.REQUEST+"test"));
-		assertEquals(test, new CALabel(test2,4,1));
-
-	}
-	
-	@Test
-	public void testConstructor4OfferEquals() {
-		CALabel test = new CALabel(List.of(IdleAction.IDLE, IdleAction.IDLE, OfferAction.OFFER+"a", IdleAction.IDLE, IdleAction.IDLE));
-		assertEquals(test, new CALabel(offer,5,1));
-	}
-	
-	@Test
-	public void testConstructor4RequestEquals() {
-		CALabel test = new CALabel(List.of(IdleAction.IDLE, IdleAction.IDLE, RequestAction.REQUEST+"a", IdleAction.IDLE, IdleAction.IDLE));
-		assertEquals(test, new CALabel(request,5,1));
-	}
-	
-	@Test
-	public void testConstructor4MatchEquals() {
-		CALabel test = new CALabel(List.of(IdleAction.IDLE, IdleAction.IDLE, OfferAction.OFFER+"a", RequestAction.REQUEST+"a", IdleAction.IDLE));
-		assertEquals(test, new CALabel(match,5,1));
-	}
-	
-	@Test
-	public void testConstructor4MatchEquals2() {
-		CALabel test = new CALabel(List.of(IdleAction.IDLE, IdleAction.IDLE, OfferAction.OFFER+"a", RequestAction.REQUEST+"a"));
-		assertEquals(test, new CALabel(match,4,1));
-	}
+//	@Test
+//	public void testConstructor4EqualsActionLength() {
+//		CALabel test = new CALabel(List.of(new IdleAction(), new IdleAction(), new OfferAction("test"), new RequestAction("test")));
+//		CALabel test2 =  new CALabel(List.of(new IdleAction(), new OfferAction("test"), new RequestAction("test")));
+//		assertEquals(test, new CALabel(test2,4,1));
+//
+//	}
+//
+//	@Test
+//	public void testConstructor4OfferEquals() {
+//		CALabel test = new CALabel(List.of(new IdleAction(), new IdleAction(), new OfferAction("a"), new IdleAction(), new IdleAction()));
+//		assertEquals(test, new CALabel(offer,5,1));
+//	}
+//
+//	@Test
+//	public void testConstructor4RequestEquals() {
+//		CALabel test = new CALabel(List.of(new IdleAction(), new IdleAction(), new RequestAction("a"), new IdleAction(), new IdleAction()));
+//		assertEquals(test, new CALabel(request,5,1));
+//	}
+//
+//	@Test
+//	public void testConstructor4MatchEquals() {
+//		CALabel test = new CALabel(List.of(new IdleAction(), new IdleAction(), new OfferAction("a"), new RequestAction("a"), new IdleAction()));
+//		assertEquals(test, new CALabel(match,5,1));
+//	}
+//
+//	@Test
+//	public void testConstructor4MatchEquals2() {
+//		CALabel test = new CALabel(List.of(new IdleAction(), new IdleAction(), new OfferAction("a"), new RequestAction("a")));
+//		assertEquals(test, new CALabel(match,4,1));
+//	}
 	
 	@Test
 	public void testGetActionOffer() {
-		assertTrue(offer.getPrincipalAction().startsWith(OfferAction.OFFER));
+		assertTrue(offer.getPrincipalAction() instanceof OfferAction);
 	}
 	
 	@Test
 	public void testGetActionRequest() {
-		assertTrue(request.getPrincipalAction().startsWith(RequestAction.REQUEST));
+		assertTrue(request.getPrincipalAction() instanceof RequestAction);
 	}
 	
 	@Test
 	public void testGetActionMatch() {
-		assertTrue(match.getPrincipalAction().startsWith(OfferAction.OFFER));
+		assertTrue(match.getPrincipalAction() instanceof OfferAction);
 	}
 	
 	@Test
@@ -162,17 +162,17 @@ public class CALabelTest {
 	
 	@Test
 	public void testGetCoActionOffer() {
-		assertEquals(RequestAction.REQUEST+"a",offer.getCoAction());
+		assertEquals(new RequestAction("a"),offer.getCoAction());
 	}
 	
 	@Test
 	public void testGetCoActionRequest() {
-		assertEquals(OfferAction.OFFER+"a",request.getCoAction());
+		assertEquals(new OfferAction("a"),request.getCoAction());
 	}
 	
 	@Test
 	public void testGetCoActionMatch() {
-		assertEquals(RequestAction.REQUEST+"a",match.getCoAction());
+		assertEquals(new RequestAction("a"),match.getCoAction());
 	}
 
 	@Test
@@ -244,15 +244,11 @@ public class CALabelTest {
 	public void testMatchFalse3() {
 		assertFalse(offer.match(offer));
 	}
-	
-	@Test 
-	public void testGetUnsignedAction() {
-		assertEquals("a",match.getUnsignedAction());
-	}
+
 	
 	@Test
 	public void testHashCode() {
-		assertEquals(new CALabel(3,1,OfferAction.OFFER+"a").hashCode(),offer.hashCode());
+		assertEquals(new CALabel(3,1,new OfferAction("a")).hashCode(),offer.hashCode());
 	}
 	
 	@Test
@@ -280,183 +276,183 @@ public class CALabelTest {
 	
 	@Test
 	public void testConstructor1_Exception_nullArgument() {
-		Assert.assertThrows(NullPointerException.class, ()->new CALabel(1,0,(String)null));
+		Assert.assertThrows(NullPointerException.class, ()->new CALabel(1,0,new OfferAction(null)));
 	}
 	
 	@Test
 	public void testConstructor1Exception_rankZero() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0, OfferAction.OFFER+"a"));
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0, new OfferAction("a")));
 	}
 	
 	@Test
 	public void testConstructor1Exception_actionLength() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,"a"));
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,new Action("a")));
 	}
 	
 	@Test
 	public void testConstructor1Exception_principalGreaterOrEqualRank() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,1,OfferAction.OFFER+"a"));
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,1,new OfferAction("a")));
 	}
 	
 	@Test
 	public void testConstructor1Exception_notRequestNorOffer() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,"aa"));
+		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(1,0,new Action("aa")));
 	}
 
 	@Test
 	public void testConstructor1Exception_notRequestNorOffer2() {
-		Assert.assertThrows("The action is not a request nor an offer",IllegalArgumentException.class, ()->new CALabel(1,0, IdleAction.IDLE));
+		Assert.assertThrows("The action is not a request nor an offer",IllegalArgumentException.class, ()->new CALabel(1,0, new IdleAction()));
 	}
 
-	@Test
-	public void testConstructor2Exception_nullArgument1() {
-		Assert.assertThrows(NullPointerException.class, ()->new CALabel(2,0,1,null, OfferAction.OFFER+"a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_nullArgument2() {
-		Assert.assertThrows(NullPointerException.class, ()->new CALabel(2,0,1,OfferAction.OFFER+"a",null));
-	}
-	
-	@Test
-	public void testConstructor2Exception_rankZero() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0,1,OfferAction.OFFER+"a",RequestAction.REQUEST+"a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_actionLength1() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,"a",RequestAction.REQUEST+"a"));
-	}
-
-	@Test
-	public void testConstructor2Exception_actionLength2() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,RequestAction.REQUEST+"a","a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_twoOffers() {
-		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,OfferAction.OFFER+"a",OfferAction.OFFER+"a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_twoRequests() {
-		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,RequestAction.REQUEST+"a",RequestAction.REQUEST+"a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_principal1GreaterOrEqualRank() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,2,1,OfferAction.OFFER+"a",RequestAction.REQUEST+"a"));
-	}
-	
-	@Test
-	public void testConstructor2Exception_principal2GreaterOrEqualRank() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,2,OfferAction.OFFER+"a",RequestAction.REQUEST+"a"));
-	}
+//	@Test
+//	public void testConstructor2Exception_nullArgument1() {
+//		Assert.assertThrows(NullPointerException.class, ()->new CALabel(2,0,1,null, new OfferAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_nullArgument2() {
+//		Assert.assertThrows(NullPointerException.class, ()->new CALabel(2,0,1,new OfferAction("a"),null));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_rankZero() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(0,0,1,new OfferAction("a"),new RequestAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_actionLength1() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,new Action("a"),new RequestAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_actionLength2() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,1,new RequestAction("a"),new Action("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_twoOffers() {
+//		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,new OfferAction("a"),new OfferAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_twoRequests() {
+//		Assert.assertThrows("The action must be an offer and a request", IllegalArgumentException.class, ()->new CALabel(2,0,1,new RequestAction("a"),new RequestAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_principal1GreaterOrEqualRank() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,2,1,new OfferAction("a"),new RequestAction("a")));
+//	}
+//
+//	@Test
+//	public void testConstructor2Exception_principal2GreaterOrEqualRank() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(2,0,2,new OfferAction("a"),new RequestAction("a")));
+//	}
 	
 	@Test
 	public void testConstructor3Exception_Empty() {
-		List<String> l = new ArrayList<>();
+		List<Action> l = new ArrayList<>();
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 
 	@Test
 	public void testConstructor3Exception_emptyLabel() {
-		List<String> arg = new ArrayList<>();
+		List<Action> arg = new ArrayList<>();
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(arg));
 	}
 	
 	@Test
 	public void testConstructor3Exception_nullReferencesLabel() {
-		List<String> l = new ArrayList<>();
+		List<Action> l = new ArrayList<>();
 		l.add(null);
-		Assert.assertThrows(NullPointerException.class, ()->new CALabel(l));
+		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 
 	@Test
 	public void testConstructor3Exception_notWellFormedLabel() {
-		List<String> l = new ArrayList<>();
-		l.add("aaa");
+		List<Action> l = new ArrayList<>();
+		l.add(new Action("aaa"));
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 		
 	@Test
 	public void testConstructor3Exception_notWellFormedIdleLabel() {
-		List<String> l = new ArrayList<>();
-		l.add(IdleAction.IDLE);
+		List<Action> l = new ArrayList<>();
+		l.add(new IdleAction());
 		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
 	public void testConstructor3Exception_notWellFormedOffersLabel() {
-		List<String> l = new ArrayList<>();
-		l.add(OfferAction.OFFER+"a");
-		l.add(OfferAction.OFFER+"a");
+		List<Action> l = new ArrayList<>();
+		l.add(new OfferAction("a"));
+		l.add(new OfferAction("a"));
 		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
 	@Test
 	public void testConstructor3Exception_notWellFormedRequestsLabel() {
-		List<String> l = List.of(RequestAction.REQUEST+"a",RequestAction.REQUEST+"a");
+		List<Action> l = List.of(new RequestAction("a"),new RequestAction("a"));
 		Assert.assertThrows("The label is not well-formed", IllegalArgumentException.class, ()->new CALabel(l));
 	}
 	
-	@Test
-	public void testConstructor4ExceptionNullShift() {
-		CALabel ca = new CALabel(1,0,OfferAction.OFFER+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,null));
-	}
-	
-	
-	@Test
-	public void testConstructor4ExceptionNullRank() {
-		CALabel ca = new CALabel(1,0,OfferAction.OFFER+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,null,1));
-	}
-	
-	@Test
-	public void testConstructor4ExceptionNullLabel() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(null,2,1));
-	}
-	
-	@Test
-	public void testConstructor4ExceptionNegativeRank() {
-		CALabel ca = new CALabel(1,0,OfferAction.OFFER+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,-1,1));
-	}
-	
-
-	@Test
-	public void testConstructor4ExceptionNegativeShift() {
-		CALabel ca = new CALabel(1,0,OfferAction.OFFER+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,-2));
-
-	}
-	
-	@Test
-	public void testConstructor4ExceptionOffererShiftGreaterRank() {
-		CALabel ca = new CALabel(2,1,OfferAction.OFFER+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
-	}
-	
-	@Test
-	public void testConstructor4ExceptionRequestShiftGreaterRank() {
-		CALabel ca = new CALabel(2,1,RequestAction.REQUEST+"a");
-		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
-	}
+//	@Test
+//	public void testConstructor4ExceptionNullShift() {
+//		CALabel ca = new CALabel(1,0,new OfferAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,null));
+//	}
+//
+//
+//	@Test
+//	public void testConstructor4ExceptionNullRank() {
+//		CALabel ca = new CALabel(1,0,new OfferAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,null,1));
+//	}
+//
+//	@Test
+//	public void testConstructor4ExceptionNullLabel() {
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(null,2,1));
+//	}
+//
+//	@Test
+//	public void testConstructor4ExceptionNegativeRank() {
+//		CALabel ca = new CALabel(1,0,new OfferAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,-1,1));
+//	}
+//
+//
+//	@Test
+//	public void testConstructor4ExceptionNegativeShift() {
+//		CALabel ca = new CALabel(1,0,new OfferAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,2,-2));
+//
+//	}
+//
+//	@Test
+//	public void testConstructor4ExceptionOffererShiftGreaterRank() {
+//		CALabel ca = new CALabel(2,1,new OfferAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
+//	}
+//
+//	@Test
+//	public void testConstructor4ExceptionRequestShiftGreaterRank() {
+//		CALabel ca = new CALabel(2,1,new RequestAction("a"));
+//		Assert.assertThrows(IllegalArgumentException.class, ()->new CALabel(ca,3,2));
+//	}
 	
 	/// ----------------------------
 	
 	
 	@Test
 	public void testGetOffererException() {
-		CALabel cl = new CALabel(1,0,RequestAction.REQUEST+"a");		
+		CALabel cl = new CALabel(1,0,new RequestAction("a"));		
 		Assert.assertThrows(UnsupportedOperationException.class, cl::getOfferer);
 	}
 	
 	@Test
 	public void testGetRequesterException() {
-		CALabel cl = new CALabel(1,0,OfferAction.OFFER+"a");
+		CALabel cl = new CALabel(1,0,new OfferAction("a"));
 		Assert.assertThrows(UnsupportedOperationException.class, cl::getRequester);
 	}
 	
@@ -468,7 +464,7 @@ public class CALabelTest {
 	@Test
 	public void testMatchException() {
 		Label<Action> l  = new Label<>(List.of(new Action("ei")));
-		CALabel ca = new CALabel(1,0,OfferAction.OFFER+"a");
+		CALabel ca = new CALabel(1,0,new OfferAction("a"));
 		Assert.assertThrows(IllegalArgumentException.class, ()->ca.match(l));
 	}
 	

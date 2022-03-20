@@ -1,5 +1,6 @@
 package io.github.contractautomataproject.catlib.operators;
 
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +63,7 @@ public class ProjectionTest {
 
 		
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> principals = IntStream.range(0,aut.getRank())
-				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"","!dummy")).apply(aut,i, t->t.getLabel().getOfferer()))
+				.mapToObj(i->new ProjectionFunction(new CMLabel(1+"",2+"",new OfferAction("dummy"))).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 				
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> closed_aut = new MSCACompositionFunction(principals,new StrongAgreement().negate()).apply(100);
@@ -74,13 +76,13 @@ public class ProjectionTest {
 	
 	@Test
 	public void projectOnMachineAndImport() throws Exception {
-		AutDataConverter<CMLabel> cmdc = new AutDataConverter<>(CMLabel::new);
-		
+		AutDataConverter<CMLabel> cmdc = new AutDataConverter<>(list->CMLabel.parseCMLabel(list.get(0).getLabel()));
+
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"testcor_concur21_Example34.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cm = new ProjectionFunction(new CMLabel("1","2","!dummy")).apply(aut,0, t->t.getLabel().getOfferer());
-		
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cm = new ProjectionFunction(new CMLabel("1","2",new OfferAction("dummy"))).apply(aut,0, t->t.getLabel().getOfferer());
+
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CMLabel>> test = cmdc.importMSCA(dir+"cm_concur21.data");
-		
+
 		assertTrue(ITAutomatonTest.autEquals(cm, test));
 
 	}
@@ -109,7 +111,7 @@ public class ProjectionTest {
 	@Test
 	public void projectionException3() throws Exception {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
-		ProjectionFunction pj = new ProjectionFunction(new CMLabel(1+"",2+"","!dum"));
+		ProjectionFunction pj = new ProjectionFunction(new CMLabel(1+"",2+"",new OfferAction("dummy")));
 		assertThatThrownBy(() -> pj.apply(aut,0, t->t.getLabel().getOfferer()))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}

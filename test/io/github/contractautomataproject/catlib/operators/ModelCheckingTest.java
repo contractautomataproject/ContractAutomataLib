@@ -1,5 +1,6 @@
 package io.github.contractautomataproject.catlib.operators;
 
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -26,7 +27,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
 public class ModelCheckingTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
-	private final AutDataConverter<Label<Action>> adc = new AutDataConverter<>(l->new Label<>(l.stream().map(Action::new).collect(Collectors.toList())));
+	private final AutDataConverter<Label<Action>> adc = new AutDataConverter<>(l->new Label<>(l));
 	public static Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop ;
 	
 	@Before
@@ -48,7 +49,6 @@ public class ModelCheckingTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> comp = new ModelCheckingFunction(aut, prop, new StrongAgreementModelChecking<>().negate()).apply(Integer.MAX_VALUE);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> test = adc.importMSCA(dir + "modelchecking_loop_mc.data");
-		
 		assertTrue(ITAutomatonTest.autEquals(comp, test));
 	}
 	

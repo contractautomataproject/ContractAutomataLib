@@ -100,7 +100,7 @@ public class Product {
 	public boolean checkRequired(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
-				.map(t->t.getLabel().getUnsignedAction())
+				.map(t->t.getLabel().getPrincipalAction().getLabel())
 				.collect(Collectors.toSet());
 		return required.stream()
 				.map(Feature::getName)
@@ -114,7 +114,7 @@ public class Product {
 	public boolean checkForbidden(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
-				.map(t->t.getLabel().getUnsignedAction())
+				.map(t->t.getLabel().getPrincipalAction().getLabel())
 				.collect(Collectors.toSet());
 		return forbidden.stream()
 				.map(Feature::getName)
@@ -123,7 +123,7 @@ public class Product {
 
 	public boolean isForbidden(CALabel l)
 	{
-		Feature f = new Feature(l.getUnsignedAction());
+		Feature f = new Feature(l.getPrincipalAction().getLabel());
 		return this.getForbidden().contains(f);
 	}
 
