@@ -6,7 +6,19 @@ name: GitHub CI
 on: [push]
 
 jobs:
+  
+  spot-bugs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: 🐛 Analyze with SpotBugs
+        run: mvn -B spotbugs:check
+        
   build:
+    needs: spot-bugs
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -55,7 +67,9 @@ jobs:
         run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib 
 
   
+
   analyze: 
+    needs: build
     runs-on: ubuntu-latest
     
     permissions:
@@ -89,15 +103,13 @@ jobs:
         
       - name: Autobuild
         uses: github/codeql-action/autobuild@v1
-      
-      - name: 🐛 Analyze with SpotBugs
-        run: mvn -B spotbugs:check
                 
       - name: 🔎 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
           
         
   mutationtesting: 
+    needs: spot-bugs
     runs-on: ubuntu-latest
     
     steps:
