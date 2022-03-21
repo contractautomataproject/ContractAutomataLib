@@ -24,8 +24,6 @@ They are used for specifying services' interface, called behavioral contracts,
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA).
 
-The source code has been redesigned and refactored using the new functionalities introduced with Java 8 (streams, lambda).
-
 <h2>Getting Started</h2>
 
 
@@ -60,10 +58,11 @@ Davide Basile - davide.basile@isti.cnr.it.
 
 
 <h2>Legacy</h2> 
- 
+
+The source code has been redesigned and refactored during 2020, using the new functionalities introduced with Java 8 (streams, lambda).
 If you are reaching this repository from some previous paper on contract automata (e.g., <tt>JSCP2020</tt>, <tt>LMCS2020</tt>), you may be interested in checking an old version of the repository, before its refactoring. 
 The latest version of this repository before its refactoring started is available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
 The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
-The branch <tt>old-backup</tt> pointing to that old version has been removed. 
+An earlier branch <tt>old-backup</tt> pointing to that old version has been removed. 
 
 <img src="https://raw.githubusercontent.com/ContractAutomataProject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>

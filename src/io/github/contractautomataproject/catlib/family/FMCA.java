@@ -53,14 +53,14 @@ public class FMCA {
 			throw new IllegalArgumentException();
 		
 		Set<Feature> actions = aut.getTransition().parallelStream()
-				.map(t->t.getLabel().getPrincipalAction().getLabel())
+				.map(t->t.getLabel().getAction().getLabel())
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
 		Set<Feature> availableFeatures = orc.
 				getTransition().parallelStream()
-				.map(t->t.getLabel().getPrincipalAction().getLabel())
+				.map(t->t.getLabel().getAction().getLabel())
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 
@@ -90,11 +90,11 @@ public class FMCA {
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
 				.map(ModalTransition<String,Action,State<String>,CALabel>::getLabel)
-				.anyMatch(l->l.getPrincipalAction().getLabel().equals("dummy")))
+				.anyMatch(l->l.getAction().getLabel().equals("dummy")))
 			throw new UnsupportedOperationException();
 
 		Set<String> act=aut.getTransition().parallelStream()
-				.map(t->t.getLabel().getPrincipalAction().getLabel())
+				.map(t->t.getLabel().getAction().getLabel())
 				.collect(Collectors.toSet()); 
 		
 		Map<Set<Feature>, Map<Product,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>>  quotientClasses =
@@ -182,7 +182,7 @@ public class FMCA {
 	{
 		if (a.getForwardStar(a.getInitial()).stream()
 				.map(ModalTransition<String,Action,State<String>,CALabel>::getLabel)
-				.anyMatch(l->l.getPrincipalAction().getLabel().equals("dummy")))
+				.anyMatch(l->l.getAction().getLabel().equals("dummy")))
 			throw new UnsupportedOperationException();
 
 		return Stream.iterate(this.family.getMaximalProducts().parallelStream()

@@ -13,13 +13,8 @@ import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.label.action.Action;
-import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.*;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -150,16 +145,20 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	public L createLabel(String[][] tr) {
-		if (tr[1].length==1 && CMLabel.isParsableCMLabel(tr[1][0]))
-			return createLabel.apply(List.of(new Action(tr[1][0])));
+//		if (tr[1].length==1 && CMLabel.isParsableCMLabel(tr[1][0]))
+//			return createLabel.apply(List.of(new Action(tr[1][0])));
 
 		if (Arrays.stream(tr[1])
 				.allMatch(a->OfferAction.isOffer(a)
 						|| RequestAction.isRequest(a)
-						|| IdleAction.isIdle(a)))
+						|| IdleAction.isIdle(a)
+						|| AddressedOfferAction.isOffer(a)
+						|| AddressedRequestAction.isRequest(a)))
 			return createLabel.apply(Arrays.stream(tr[1]).map(AutDataConverter::parseAction).collect(Collectors.toList()));
 		else
-			return createLabel.apply(Arrays.stream(tr[1]).map(Action::new).collect(Collectors.toList()));
+			return createLabel.apply(Arrays.stream(tr[1])
+					.map(s-> new Action(s))
+					.collect(Collectors.toList()));
 	}
 
 	public static Action parseAction(String action) {
@@ -170,6 +169,10 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			return RequestAction.parseAction(action);
 		else if (IdleAction.isIdle(action))
 			return IdleAction.parseAction(action);
+		else if (AddressedOfferAction.isOffer(action))
+			return AddressedOfferAction.parseAction(action);
+		else if (AddressedRequestAction.isRequest(action))
+			return AddressedRequestAction.parseAction(action);
 		else throw new IllegalArgumentException();
 	}
 

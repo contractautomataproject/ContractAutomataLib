@@ -18,7 +18,7 @@ public class LabelTest {
 	
 	@Test
 	public void testGetAction() {
-		Assert.assertEquals(List.of("a"), lab.getAction());
+		Assert.assertEquals(List.of("a"), lab.getLabel());
 	}
 	
 	@Test

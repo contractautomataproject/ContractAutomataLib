@@ -11,11 +11,7 @@ import java.util.stream.Stream;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.CMLabel;
-import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.label.action.Action;
-import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.*;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
@@ -27,19 +23,16 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  *
  */
 public class ProjectionFunction implements TriFunction<Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>>,Integer,ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> {
-	final BiFunction<ModalTransition<String,Action,State<String>,CALabel>,Integer,CALabel> createLabel;
+	private final  boolean createAddress;
 
-	/**
-	 * 
-	 * @param lab the label indicates whether CMs or CAs are to be projected
-	 */
-	public ProjectionFunction(Label<Action> lab)
+	public ProjectionFunction(boolean createAddress)
 	{
-		if (lab instanceof CMLabel)
-			this.createLabel = this::createLabelCM;
-		else
-			this.createLabel = this::createLabelCA;
+		this.createAddress=createAddress;
+	}
 
+	public ProjectionFunction()
+	{
+		this.createAddress=false;
 	}
 
 	/**
@@ -77,7 +70,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,Action,S
 						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
 								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
 				.map(t-> new ModalTransition<>(map2princst.get(t.getSource()),
-						createLabel.apply(t, indexprincipal),
+						createLabel(t, indexprincipal),
 						map2princst.get(t.getTarget()),
 						(t.isPermitted() || (t.getLabel().isMatch() && getNecessaryPrincipal.applyAsInt(t) != indexprincipal))
 								? ModalTransition.Modality.PERMITTED
@@ -85,22 +78,23 @@ public class ProjectionFunction implements TriFunction<Automaton<String,Action,S
 				.collect(Collectors.toSet()));
 	}
 
-	private CALabel createLabelCA(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
-		return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
-				new CALabel(1,0,t.getLabel().getPrincipalAction())
-				:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getPrincipalAction()
-						:t.getLabel().getCoAction());
+	private CALabel createLabel(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
+		if (!createAddress)
+			return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
+					new CALabel(1,0,t.getLabel().getAction())
+					:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getAction()
+					:t.getLabel().getCoAction());
+		else
+		{
+			if (!t.getLabel().isMatch() || t.getLabel().getAction() instanceof AddressedAction)
+				throw new UnsupportedOperationException();
 
-	}
-
-	private CMLabel createLabelCM(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
-		if (!t.getLabel().isMatch())
-			throw new UnsupportedOperationException();
-		
-		return new CMLabel(t.getLabel().getOfferer()+"",t.getLabel().getRequester()+"",
-				((t.getLabel().getOfferer().equals(indexprincipal))?
-					//	t.getLabel().getPrincipalAction().toString():t.getLabel().getCoAction().toString()));
-						t.getLabel().getPrincipalAction():t.getLabel().getCoAction()));
-
+			if (t.getLabel().getOfferer().equals(indexprincipal))
+				return new CALabel(1,0,new AddressedOfferAction(t.getLabel().getAction().getLabel(),
+						new Address(indexprincipal+"",t.getLabel().getRequester()+"")));
+			else
+				return new CALabel(1,0,new AddressedRequestAction(t.getLabel().getAction().getLabel(),
+						new Address(t.getLabel().getOfferer()+"",indexprincipal+"")));
+		}
 	}
 }

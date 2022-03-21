@@ -17,28 +17,28 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	/**
 	 * the action performed by the label
 	 */
-	private final List<T> action;
+	private final List<T> label;
 
-	public Label(List<T> action) {
+	public Label(List<T> label) {
 		super();
-		if (action==null || action.isEmpty())
+		if (label==null || label.isEmpty())
 			throw new IllegalArgumentException();
-		this.action = new ArrayList<>(action);
+		this.label = new ArrayList<>(label);
 	}
 	
 
-	public List<T> getAction() {
-		return new ArrayList<>(action);
+	public List<T> getLabel() {
+		return new ArrayList<>(label);
 	}
 	
 	@Override
 	public boolean match(Label<T> arg) {
-		return this.action.equals(arg.action);
+		return this.label.equals(arg.label);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(action);
+		return Objects.hash(label);
 	}
 
 	@Override
@@ -47,16 +47,16 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 			return true;
 		if (obj == null ||getClass() != obj.getClass())
 			return false;
-		return Objects.equals(action, ((Label<?>) obj).action);
+		return Objects.equals(label, ((Label<?>) obj).label);
 	}
 
 	@Override
 	public String toString() {
-		return action.toString();
+		return label.toString();
 	}	
 	
 	@Override
 	public Integer getRank() {
-		return action.size();
+		return label.size();
 	}
 }

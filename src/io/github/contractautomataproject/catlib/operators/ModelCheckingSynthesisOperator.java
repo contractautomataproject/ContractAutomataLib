@@ -89,7 +89,7 @@ SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Ac
 			//they must be detectable as "bad" also after reverting to an MSCA  
 			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> deletingPropAction = new Automaton<>(comp.getTransition()
 					.parallelStream().map(t->{
-						List<Action> li = new ArrayList<>(t.getLabel().getAction());
+						List<Action> li = new ArrayList<>(t.getLabel().getLabel());
 						li.set(t.getRank()-1, new IdleAction()); //removing the move of prop to have a CALabel
 						CALabel lab = new CALabel(li);
 						if (mcf.getPruningPred().test(t.getLabel())&&t.isLazy()&&this.getReq().test(lab)) //the transition was bad lazy, but after removing 

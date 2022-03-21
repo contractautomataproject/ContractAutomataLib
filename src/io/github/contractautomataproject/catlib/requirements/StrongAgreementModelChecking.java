@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
@@ -20,12 +19,12 @@ public class StrongAgreementModelChecking<T extends Label<Action>> implements Pr
 	@Override
 	public boolean test(T l) {
 		//only transitions where both aut and prop moves together are allowed
-		List<Action> listAct = l.getAction();
-		return !(listAct.get(l.getRank()-1).getLabel().equals(IdleAction.IDLE)||
+		List<Action> listAct = l.getLabel();
+		return !(IdleAction.isIdle(listAct.get(l.getRank()-1).getLabel())||
 				 IntStream.range(0, l.getRank()-1)
 						.mapToObj(listAct::get)
 						.map(Action::getLabel)
-						.allMatch(str->str.equals(IdleAction.IDLE)));
+						.allMatch(IdleAction::isIdle));
 	} 
 
 }

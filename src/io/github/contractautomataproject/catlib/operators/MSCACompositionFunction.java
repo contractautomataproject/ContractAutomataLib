@@ -5,8 +5,6 @@ import io.github.contractautomataproject.catlib.automaton.Ranked;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
@@ -49,8 +47,8 @@ public class MSCACompositionFunction extends CompositionFunction<String,Action,S
 	private static CALabel createLabel(TIndex e, TIndex ee, Integer rank,List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut) {
 		Integer principal1 = computeSumPrincipal(e.tra,e.ind,aut);//index of principal in e
 		Integer principal2 = computeSumPrincipal(ee.tra,ee.ind,aut);//index of principal in ee
-		Action action1 = e.tra.getLabel().getPrincipalAction();
-		Action action2 = ee.tra.getLabel().getPrincipalAction();
+		Action action1 = e.tra.getLabel().getAction();
+		Action action2 = ee.tra.getLabel().getAction();
 		return 	new CALabel(IntStream.range(0, rank)
 				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:new IdleAction())
 				.collect(Collectors.toList()));
@@ -70,7 +68,7 @@ public class MSCACompositionFunction extends CompositionFunction<String,Action,S
 
 		List<Action> l = new ArrayList<>(rank);
 		l.addAll(Stream.generate(IdleAction::new).limit(shift).collect(Collectors.toList()));
-		l.addAll(lab.getAction());
+		l.addAll(lab.getLabel());
 		if (rank-l.size()>0)
 			l.addAll(Stream.generate(IdleAction::new).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 		return l;

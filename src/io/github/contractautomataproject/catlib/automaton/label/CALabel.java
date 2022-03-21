@@ -1,16 +1,10 @@
 package io.github.contractautomataproject.catlib.automaton.label;
 
-import io.github.contractautomataproject.catlib.automaton.label.action.Action;
-import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomataproject.catlib.automaton.label.action.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * 
@@ -53,27 +47,16 @@ public class CALabel extends Label<Action> {
 				label.stream().filter(l -> l instanceof RequestAction).count()>1)
 			throw new IllegalArgumentException("The label is not well-formed");
 	}
-
-	public static Action parseAction(String action) {
-		Objects.requireNonNull(action);
-		if (OfferAction.isOffer(action))
-			return new OfferAction(action.substring(1));
-		else if (RequestAction.isRequest(action))
-			return new RequestAction(action.substring(1));
-		else if (IdleAction.isIdle(action))
-			return new IdleAction();
-		else throw new IllegalArgumentException();
-	}
 	
 	private Integer getOffererIfAny() {
-		List<Action> label = this.getAction();
+		List<Action> label = this.getLabel();
 		return IntStream.range(0, label.size())
 				.filter(i->label.get(i) instanceof  OfferAction)
 				.findAny().orElse(-1);
 	}
 	
 	private Integer getRequesterIfAny() {
-		List<Action> label = this.getAction();
+		List<Action> label = this.getLabel();
 		return IntStream.range(0, label.size())
 				.filter(i->label.get(i) instanceof RequestAction)
 				.findAny().orElse(-1);
@@ -122,12 +105,19 @@ public class CALabel extends Label<Action> {
 	/**
 	 * @return in case the calabel is a request it return the requests action, in case of offer or match returns the offer action
 	 */
-	public Action getPrincipalAction() {
-		Action act = findAnyAction();
+	public Action getAction() {
 		if (this.isRequest())
-			return new RequestAction(act.getLabel());
+			return this.getLabel()
+					.stream()
+					.filter(a->a instanceof RequestAction)
+					.findAny()
+					.orElseThrow(RuntimeException::new);
 		else
-			return new OfferAction(act.getLabel());
+			return this.getLabel()
+					.stream()
+					.filter(a->a instanceof OfferAction)
+					.findAny()
+					.orElseThrow(RuntimeException::new);
 		//in case of match, the action is always the offer
 	}
 
@@ -136,16 +126,22 @@ public class CALabel extends Label<Action> {
 	 */
 	public Action getCoAction()
 	{
-		Action action = findAnyAction();
-		if (!this.isRequest())
-			return new RequestAction(action.getLabel());
-		else return new OfferAction(action.getLabel());
-	}
-
-	private Action findAnyAction() {
-		return this.getAction().stream()
+		Action action =  this.getLabel().stream()
 				.filter(s->!(s instanceof IdleAction))
 				.findAny().orElseThrow(IllegalArgumentException::new);
+
+		if (!this.isRequest()) {
+			if (action instanceof AddressedAction)
+				return new AddressedRequestAction(action.getLabel(),((AddressedAction) action).getAddress());
+			else
+				return new RequestAction(action.getLabel());
+		}
+		else {
+			if (action instanceof AddressedAction)
+				return new AddressedOfferAction(action.getLabel(),((AddressedAction) action).getAddress());
+			else
+				return new OfferAction(action.getLabel());
+		}
 	}
 
 	@Override
@@ -154,16 +150,19 @@ public class CALabel extends Label<Action> {
 		if (label instanceof CALabel)
 		{
 			CALabel l2 = (CALabel) label;
-			if (this.isOffer()&&l2.isRequest()||this.isRequest()&&l2.isOffer())
-			{
-				String la1 = this.getPrincipalAction().getLabel();
-				String la2 = l2.getPrincipalAction().getLabel();
-				return la1.equals(la2);			
-			}
-			else
+
+			if (this.isMatch() || l2.isMatch())
 				return false;
+
+			Action act1 = this.getAction();
+			Action act2 = l2.getAction();
+			return (act1 instanceof OfferAction && act2 instanceof RequestAction &&
+					((OfferAction) act1).match((RequestAction) act2))
+					||
+					(act1 instanceof RequestAction && act2 instanceof OfferAction &&
+				    ((RequestAction) act1).match((OfferAction) act2));
 		}
-		else 
+		else
 			throw new IllegalArgumentException();
 	}
 }

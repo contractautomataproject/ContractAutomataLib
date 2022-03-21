@@ -60,7 +60,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
 				&&(t.getSource().getState().get(t.getLabel().getRequester())
 						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state					
-				&&(tt.getLabel().isRequest()&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getCoAction())|| 
-						tt.getLabel().isMatch()&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getPrincipalAction())));//doing the same request
+				&&(tt.getLabel().isRequest()&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
+						tt.getLabel().isMatch()&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
 	}
 }

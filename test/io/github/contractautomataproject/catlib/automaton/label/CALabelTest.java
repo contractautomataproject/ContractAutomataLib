@@ -122,17 +122,17 @@ public class CALabelTest {
 	
 	@Test
 	public void testGetActionOffer() {
-		assertTrue(offer.getPrincipalAction() instanceof OfferAction);
+		assertTrue(offer.getAction() instanceof OfferAction);
 	}
 	
 	@Test
 	public void testGetActionRequest() {
-		assertTrue(request.getPrincipalAction() instanceof RequestAction);
+		assertTrue(request.getAction() instanceof RequestAction);
 	}
 	
 	@Test
 	public void testGetActionMatch() {
-		assertTrue(match.getPrincipalAction() instanceof OfferAction);
+		assertTrue(match.getAction() instanceof OfferAction);
 	}
 	
 	@Test

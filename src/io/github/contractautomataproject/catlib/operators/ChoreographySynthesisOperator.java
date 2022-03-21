@@ -31,7 +31,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<Action>> reqmc,
 			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>  prop){
 		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,reqmc, prop, 
-				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getPrincipalAction()));//offers are necessary
+				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getAction()));//offers are necessary
 		this.req=req;
 	}
 	
@@ -87,7 +87,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
-				&&t.getLabel().getPrincipalAction().equals(tt.getLabel().getPrincipalAction()) //the same offer 
+				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer
 				&&t.getSource().equals(tt.getSource()));//the same global source state
 	}
 

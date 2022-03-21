@@ -18,11 +18,11 @@ public class AgreementModelChecking<T extends Label<Action>> implements Predicat
 
 	@Override
 	public boolean test(T l) {
-		List<Action> listAct = l.getAction();
+		List<Action> listAct = l.getLabel();
 		return !(IntStream.range(0, l.getRank()-1)
 				.mapToObj(listAct::get)
 				.map(Action::getLabel)
-				.allMatch(str->str.equals(IdleAction.IDLE)));
+				.allMatch(IdleAction::isIdle));
 	} 
 
 }

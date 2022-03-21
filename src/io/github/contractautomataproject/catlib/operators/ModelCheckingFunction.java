@@ -38,16 +38,16 @@ ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Acti
 				.collect(Collectors.toSet())),
 				prop),
 				MSCACompositionFunction::computeRank,
-				(l1,l2)->new CALabel(l1.getAction()).getPrincipalAction().getLabel().equals(l2.getAction().get(0).getLabel()), //match
+				(l1,l2)->new CALabel(l1.getLabel()).getAction().getLabel().equals(l2.getLabel().get(0).getLabel()), //match
 				State::new, 
 				ModalTransition::new, 
-				(e, ee,rank) -> new Label<>(Stream.concat(e.tra.getLabel().getAction().stream(),
-                                ee.tra.getLabel().getAction().stream())
+				(e, ee,rank) -> new Label<>(Stream.concat(e.tra.getLabel().getLabel().stream(),
+                                ee.tra.getLabel().getLabel().stream())
                         .collect(Collectors.toList())),
 				(lab, rank, shift) ->{ 
 					List<Action> l = new ArrayList<>(rank);
 					l.addAll(Stream.generate(IdleAction::new).limit(shift).collect(Collectors.toList()));
-					l.addAll(lab.getAction());
+					l.addAll(lab.getLabel());
 					if (rank-l.size()>0)
 						l.addAll(Stream.generate(IdleAction::new).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
 					return new Label<>(l);
