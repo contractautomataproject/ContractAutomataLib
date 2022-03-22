@@ -145,7 +145,6 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	public L createLabel(String[][] tr) {
-		L lab;
 		try { return createLabel.apply(Arrays.stream(tr[1]).map(this::parseAction).collect(Collectors.toList()));}
 		catch (IllegalArgumentException e) {
 			//parsing failed
