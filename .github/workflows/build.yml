@@ -19,14 +19,15 @@ jobs:
         
   build:
     needs: spot-bugs
+    
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        #os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         java: [11]
       fail-fast: true
         
-    runs-on: ${ matrix.os }
+    runs-on: ubunt-latest
+    #${ matrix.os }
     
     steps:
       - uses: actions/checkout@v2
@@ -57,11 +58,11 @@ jobs:
         run: mvn -B jacoco:prepare-agent verify jacoco:report
         
       - name: 🚀 Coveralls Coverage Report Submission
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+       # if: ${{ matrix.os == 'ubuntu-latest' }}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
         
       - name: 🔎 SonarCloud Scan
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+       # if: ${{ matrix.os == 'ubuntu-latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
