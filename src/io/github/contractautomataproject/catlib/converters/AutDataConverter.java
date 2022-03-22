@@ -145,35 +145,15 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	public L createLabel(String[][] tr) {
-//		if (tr[1].length==1 && CMLabel.isParsableCMLabel(tr[1][0]))
-//			return createLabel.apply(List.of(new Action(tr[1][0])));
-
-		if (Arrays.stream(tr[1])
-				.allMatch(a->OfferAction.isOffer(a)
-						|| RequestAction.isRequest(a)
-						|| IdleAction.isIdle(a)
-						|| AddressedOfferAction.isOffer(a)
-						|| AddressedRequestAction.isRequest(a)))
-			return createLabel.apply(Arrays.stream(tr[1]).map(AutDataConverter::parseAction).collect(Collectors.toList()));
-		else
+		L lab;
+		try { return createLabel.apply(Arrays.stream(tr[1]).map(this::parseAction).collect(Collectors.toList()));}
+		catch (IllegalArgumentException e) {
+			//parsing failed
 			return createLabel.apply(Arrays.stream(tr[1])
-					.map(s-> new Action(s))
+					.map(Action::new)
 					.collect(Collectors.toList()));
-	}
+		}
 
-	public static Action parseAction(String action) {
-		Objects.requireNonNull(action);
-		if (OfferAction.isOffer(action))
-			return OfferAction.parseAction(action);
-		else if (RequestAction.isRequest(action))
-			return RequestAction.parseAction(action);
-		else if (IdleAction.isIdle(action))
-			return IdleAction.parseAction(action);
-		else if (AddressedOfferAction.isOffer(action))
-			return AddressedOfferAction.parseAction(action);
-		else if (AddressedRequestAction.isRequest(action))
-			return AddressedRequestAction.parseAction(action);
-		else throw new IllegalArgumentException();
 	}
 
 	private State<String> createOrLoadState(Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {

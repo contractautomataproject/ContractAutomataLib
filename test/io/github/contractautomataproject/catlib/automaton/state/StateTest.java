@@ -82,30 +82,22 @@ public class StateTest {
 		List<BasicState<String>> list = List.of(bs0,bs1);
 		Assert.assertNotSame(list,new State<>(list).getState());
 	}
-	
-	
-	@Test
-	public void toStringInitialTest() {
-		String testString = "[label=0,initial=true, label=1,initial=true, label=2, label=2, label=0,initial=true, label=1,initial=true]";
 
-		assertEquals(testString, test.toString());
-	}
-	
 	@Test
 	public void toStringFinalTest() {
-		when(bs4.toString()).thenReturn("label=5,final=true");
+		when(bs4.getState()).thenReturn("5");
 		List<BasicState<String>> l = List.of(bs4,bs4);
 		
 		State<String> test2=new State<>(l);
 		
-		assertEquals("[label=5,final=true, label=5,final=true]", test2.toString());
+		assertEquals("[5, 5]", test2.toString());
 	}
 	
 	
 
 	@Test
-	public void testPrint() {	
-		assertEquals("[0, 1, 2, 2, 0, 1]",test.print().toString());
+	public void testToString() {
+		assertEquals("[0, 1, 2, 1, 0, 1]",test.toString());
 	}
 
 	//********************** testing exceptions *********************

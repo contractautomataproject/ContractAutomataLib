@@ -20,11 +20,10 @@ public class StrongAgreementModelChecking<T extends Label<Action>> implements Pr
 	public boolean test(T l) {
 		//only transitions where both aut and prop moves together are allowed
 		List<Action> listAct = l.getLabel();
-		return !(IdleAction.isIdle(listAct.get(l.getRank()-1).getLabel())||
+		return !((listAct.get(l.getRank()-1) instanceof IdleAction)||
 				 IntStream.range(0, l.getRank()-1)
 						.mapToObj(listAct::get)
-						.map(Action::getLabel)
-						.allMatch(IdleAction::isIdle));
+						 .allMatch(a->a instanceof IdleAction));
 	} 
 
 }

@@ -8,8 +8,8 @@ public class Address implements Matchable<Address> {
 
     private final String sender;
     private final String receiver;
-    private static final String ID_SEPARATOR = "_";
-    private static final String ACTION_SEPARATOR = "@";
+    public static final String ID_SEPARATOR = "_";
+    public static final String ACTION_SEPARATOR = "@";
 
     public Address(String sender, String receiver) {
         Objects.requireNonNull(sender);
@@ -52,24 +52,4 @@ public class Address implements Matchable<Address> {
     public boolean match(Address arg) {
         return sender.equals(arg.sender)&&receiver.equals(arg.receiver);
     }
-
-
-    public static boolean isParsable(String lab) {
-        String[] f = lab.split(ACTION_SEPARATOR);
-        String[] p = f[0].split(ID_SEPARATOR);
-        return (p.length==2 && f.length>=1);
-    }
-
-    public static Address parseAddress(String lab) {
-        String[] f = lab.split(ACTION_SEPARATOR);
-        String[] p = f[0].split(ID_SEPARATOR);
-        if (p.length!=2 || f.length<1)
-            throw new IllegalArgumentException();
-        return new Address(p[0],p[1]);
-    }
-
-    public static String removeAddress(String lab){
-        return lab.substring(lab.indexOf(ACTION_SEPARATOR)+1,lab.length());
-    }
-
 }

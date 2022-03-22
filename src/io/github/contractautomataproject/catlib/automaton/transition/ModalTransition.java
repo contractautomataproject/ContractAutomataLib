@@ -54,16 +54,6 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		return this.mod;
 	}
 
-	@Override
-	public String toString()
-	{
-		if (this.mod==Modality.URGENT)
-			return "!U" + super.toString();
-		else if (this.mod==Modality.LAZY)	
-			return "!L"+super.toString();
-		else 
-			return super.toString();
-	}
 
 	@Override
 	public int hashCode() {
@@ -76,6 +66,18 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 			return false;
 		ModalTransition<?,?,?,?> other = (ModalTransition<?,?,?,?>) obj;
 		return mod==other.mod;
+	}
+
+
+	@Override
+	public String toString()
+	{
+		if (this.mod==Modality.URGENT)
+			return "!U" + super.toString();
+		else if (this.mod==Modality.LAZY)
+			return "!L"+super.toString();
+		else
+			return super.toString();
 	}
 
 	/**
@@ -99,16 +101,4 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 				//  guaranteed to hold if the pruning predicate has bad.contains(x.getTarget())
 				.noneMatch(t->controllabilityPred.test(t,this));
 	}
-
-	@Override
-	public String print()
-	{		
-		if (this.getModality()==ModalTransition.Modality.URGENT)
-			return "!U"+super.print();
-		else if (this.getModality()==ModalTransition.Modality.LAZY)	
-			return "!L"+super.print();
-		else
-			return super.print();
-	}
-
 }

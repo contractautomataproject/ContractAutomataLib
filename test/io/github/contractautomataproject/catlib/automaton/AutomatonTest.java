@@ -69,7 +69,7 @@ public class AutomatonTest {
 		when(cs0mock.isInitial()).thenReturn(true);
 		when(cs0mock.isFinalState()).thenReturn(false);
 		when(cs0mock.getState()).thenReturn(List.of(s0mock));
-		when(cs0mock.print()).thenReturn(List.of("0"));
+		when(cs0mock.toString()).thenReturn(List.of("0").toString());
 		
 		when(cs1mock.isInitial()).thenReturn(false);
 		when(cs1mock.isFinalState()).thenReturn(true);
@@ -82,12 +82,12 @@ public class AutomatonTest {
 		when(t1mock.getSource()).thenReturn(cs0mock);
 		when(t1mock.getTarget()).thenReturn(cs1mock);
 		when(t1mock.getRank()).thenReturn(1);
-		when(t1mock.print()).thenReturn("([0],[m],[1])");
+		when(t1mock.toString()).thenReturn("([0],[m],[1])");
 		
 		when(t2mock.getSource()).thenReturn(cs0mock);
 		when(t2mock.getTarget()).thenReturn(cs2mock);
 		when(t2mock.getRank()).thenReturn(1);	
-		when(t2mock.print()).thenReturn("([0],[m],[2])");
+		when(t2mock.toString()).thenReturn("([0],[m],[2])");
 
 		when(t3mock.getSource()).thenReturn(cs1mock);
 		when(t3mock.getTarget()).thenReturn(cs2mock);
@@ -105,7 +105,7 @@ public class AutomatonTest {
 		
 		
 		when(cs1.isInitial()).thenReturn(true);
-		when(cs1.print()).thenReturn(List.of("0","0"));
+		when(cs1.toString()).thenReturn(List.of("0","0").toString());
 		when(cs3.isFinalState()).thenReturn(true);
 
 		when(cs1.getState()).thenReturn(asList(bs0,bs0));
@@ -115,18 +115,18 @@ public class AutomatonTest {
 		when(t1.getSource()).thenReturn(cs1);
 		when(t1.getTarget()).thenReturn(cs2);
 		when(t1.getRank()).thenReturn(2);
-		when(t1.print()).thenReturn("!U([0, 0],[!test,?test],[1, 0])");
+		when(t1.toString()).thenReturn("!U([0, 0],[!test,?test],[1, 0])");
 		
 		when(t2.getSource()).thenReturn(cs2);
 		when(t2.getTarget()).thenReturn(cs3);
 		when(t2.getRank()).thenReturn(2);
-		when(t2.print()).thenReturn("([1, 0],[!test,?test],[1, 2])");
+		when(t2.toString()).thenReturn("([1, 0],[!test,?test],[1, 2])");
 		
 
 		when(t3.getSource()).thenReturn(cs3);
 		when(t3.getTarget()).thenReturn(cs1);
 		when(t3.getRank()).thenReturn(2);
-		when(t3.print()).thenReturn("!L([1, 2],[!test,?test],[0, 0])");
+		when(t3.toString()).thenReturn("!L([1, 2],[!test,?test],[0, 0])");
 		
 		st = new HashSet<>(Set.of(t1,t2,t3));
 		aut = new Automaton<>(st);
@@ -245,9 +245,9 @@ public class AutomatonTest {
 				"Initial state: [0, 0]" + System.lineSeparator()+ 
 				"Final states: [[1][2]]" + System.lineSeparator()+ 
 				"Transitions: " + System.lineSeparator()+
+				"!L([1, 2],[!test,?test],[0, 0])" + System.lineSeparator()+
 				"!U([0, 0],[!test,?test],[1, 0])" + System.lineSeparator()+
-				"([1, 0],[!test,?test],[1, 2])"  + System.lineSeparator()+ 
-				"!L([1, 2],[!test,?test],[0, 0])" + System.lineSeparator();
+				"([1, 0],[!test,?test],[1, 2])"  + System.lineSeparator();
 		Assert.assertEquals(test, aut.toString());
 	}
 

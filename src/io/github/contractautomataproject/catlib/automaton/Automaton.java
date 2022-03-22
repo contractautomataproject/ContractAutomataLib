@@ -130,7 +130,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 		StringBuilder pr = new StringBuilder();
 		int rank = this.getRank();
 		pr.append("Rank: ").append(rank).append(System.lineSeparator());
-		pr.append("Initial state: ").append(this.getInitial().print()).append(System.lineSeparator());
+		pr.append("Initial state: ").append(this.getInitial().toString()).append(System.lineSeparator());
 		pr.append("Final states: ["); 
 		for (int i=0;i<this.getRank();i++) 
 			pr.append(Arrays.toString(
@@ -143,7 +143,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 		pr.append("Transitions: ").append(System.lineSeparator());
 		this.getTransition().stream()
 				.sorted(Comparator.comparing(T::toString))
-				.forEach(t-> pr.append(t.print()).append(System.lineSeparator()));
+				.forEach(t-> pr.append(t.toString()).append(System.lineSeparator()));
 		return pr.toString();
 	}
 }

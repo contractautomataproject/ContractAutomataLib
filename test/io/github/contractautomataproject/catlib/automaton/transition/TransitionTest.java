@@ -35,8 +35,8 @@ public class TransitionTest {
 		when(bs1.toString()).thenReturn("[1]");
 		when(lab.toString()).thenReturn("[!test]");
 		
-		when(bs0.print()).thenReturn(List.of("0"));
-		when(bs1.print()).thenReturn(List.of("1"));
+		when(bs0.toString()).thenReturn(List.of("0").toString());
+		when(bs1.toString()).thenReturn(List.of("1").toString());
 		
 		
 		
@@ -75,7 +75,7 @@ public class TransitionTest {
 	
 	@Test
 	public void testPrint() {
-		assertEquals("([0],[!test],[1])",t1.print());
+		assertEquals("([0],[!test],[1])",t1.toString());
 	}
 	
 	

@@ -21,8 +21,7 @@ public class AgreementModelChecking<T extends Label<Action>> implements Predicat
 		List<Action> listAct = l.getLabel();
 		return !(IntStream.range(0, l.getRank()-1)
 				.mapToObj(listAct::get)
-				.map(Action::getLabel)
-				.allMatch(IdleAction::isIdle));
+				.allMatch(a-> a instanceof IdleAction));
 	} 
 
 }

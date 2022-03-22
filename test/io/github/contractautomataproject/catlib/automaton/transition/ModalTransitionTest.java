@@ -49,10 +49,10 @@ public class ModalTransitionTest {
 	{	
 		when(cs0.getRank()).thenReturn(1);
 		when(cs0.toString()).thenReturn("[0]");
-		when(cs0.print()).thenReturn(List.of("0"));
+		when(cs0.toString()).thenReturn(List.of("0").toString());
 		when(cs1.getRank()).thenReturn(1);
 		when(cs1.toString()).thenReturn("[1]");
-		when(cs1.print()).thenReturn(List.of("1"));
+		when(cs1.toString()).thenReturn(List.of("1").toString());
 		when(lab.getRank()).thenReturn(1);
 		when(lab.toString()).thenReturn("[!test]");
 		when(calab.getRank()).thenReturn(1);
@@ -141,17 +141,17 @@ public class ModalTransitionTest {
 	
 	@Test
 	public void testPrintUrgent() {
-		assertEquals("!U([0],[!test],[1])",tu.print());
+		assertEquals("!U([0],[!test],[1])",tu.toString());
 	}
 	
 	@Test
 	public void testPrintLazy() {
-		assertEquals("!L([0],[!test],[1])",tl.print());
+		assertEquals("!L([0],[!test],[1])",tl.toString());
 	}
 
 	@Test
 	public void testPrintPermitted() {
-		assertEquals("([0],[!test],[1])",tp.print());
+		assertEquals("([0],[!test],[1])",tp.toString());
 	}
 	
 	@Test

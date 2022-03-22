@@ -15,7 +15,7 @@ public class FeatureTest {
 	@Test
 	public void constructorTestAction() {
 		Feature f = new Feature("!a");
-		assertEquals("a",f.getName());
+		Assert.assertNotEquals("a",f.getName());
 	}
 	
 

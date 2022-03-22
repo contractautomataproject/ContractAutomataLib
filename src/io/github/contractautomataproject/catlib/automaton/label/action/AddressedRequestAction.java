@@ -27,19 +27,6 @@ public class AddressedRequestAction extends RequestAction implements AddressedAc
         return address.toString()+super.toString();
     }
 
-    public static Action parseAction(String act) {
-        if (Address.isParsable(act)){
-            String subAct = Address.removeAddress(act);
-            if (RequestAction.isRequest(subAct))
-                return new AddressedRequestAction(subAct.substring(1),Address.parseAddress(act));
-        }
-        throw new IllegalArgumentException();
-    }
-
-    public static boolean isRequest(String action) {
-            return (Address.isParsable(action)) && RequestAction.isRequest(Address.removeAddress(action));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

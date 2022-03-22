@@ -18,9 +18,7 @@ public class Feature {
 		if (name==null)
 			throw new IllegalArgumentException();
 		
-		//features are unsigned actions of CALabel
-		this.name = (OfferAction.isOffer(name))?OfferAction.parseAction(name).getLabel():
-				(RequestAction.isRequest(name))?RequestAction.parseAction(name).getLabel():name;
+		this.name = name;
 	}
 
 	public String getName() {

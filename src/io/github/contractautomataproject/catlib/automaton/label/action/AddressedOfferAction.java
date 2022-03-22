@@ -27,18 +27,6 @@ public class AddressedOfferAction extends OfferAction implements AddressedAction
         return address.toString()+super.toString();
     }
 
-    public static Action parseAction(String act) {
-        if (Address.isParsable(act)){
-            String subAct = Address.removeAddress(act);
-            if (OfferAction.isOffer(subAct))
-                return new AddressedOfferAction(subAct.substring(1),Address.parseAddress(act));
-        }
-        throw new IllegalArgumentException();
-    }
-
-    public static boolean isOffer(String action) {
-        return (Address.isParsable(action)) && OfferAction.isOffer(Address.removeAddress(action));
-    }
 
     @Override
     public boolean equals(Object o) {

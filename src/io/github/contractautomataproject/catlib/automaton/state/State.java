@@ -40,15 +40,10 @@ public class State<T> extends AbstractState<List<BasicState<T>>> {
 	}
 
 	@Override
-	public String toString()
-	{
-		return this.getState().toString();
-	}
-	
-	public List<T> print() {
+	public String toString() {
 		return this.getState().stream()
 				.map(BasicState<T>::getState)
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()).toString();
 	}
 
 	// equals could cause errors of duplication of states in transitions to go undetected. 	

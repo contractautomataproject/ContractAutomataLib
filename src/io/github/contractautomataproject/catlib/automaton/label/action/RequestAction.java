@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class RequestAction extends Action {
 
-    private static final String REQUEST="?";
+    public static final String REQUEST="?";
 
     public RequestAction(String label) {
         super(label);
@@ -20,17 +20,6 @@ public class RequestAction extends Action {
     @Override
     public boolean match(Action arg) {
         return arg instanceof OfferAction && super.match(arg);
-    }
-
-    public static Action parseAction(String act) {
-        if (isRequest(act))
-            return new RequestAction(act.substring(1));
-
-        throw new IllegalArgumentException();
-    }
-
-    public static boolean isRequest(String action) {
-        return action.startsWith(REQUEST) && action.length()>1;
     }
 
     @Override

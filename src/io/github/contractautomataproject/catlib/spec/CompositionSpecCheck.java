@@ -101,11 +101,11 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,A
 		ModalTransition<String,Action,State<String>,CALabel>,Integer,Integer> labelmatchpred = (t,ti,tj,i,j)->
 		t.getLabel().getLabel().size()==comp.getRank() &&
 		IntStream.range(0,t.getLabel().getLabel().size()).allMatch(li->
-		(li<shift(aut,i))?IdleAction.isIdle(t.getLabel().getLabel().get(li).getLabel())
+		(li<shift(aut,i))?t.getLabel().getLabel().get(li) instanceof IdleAction
 				:(li<shift(aut,i+1))?t.getLabel().getLabel().get(li).equals(ti.getLabel().getLabel().get(li-shift(aut,i)))
-						:(li<shift(aut,j))?IdleAction.isIdle(t.getLabel().getLabel().get(li).getLabel())
+						:(li<shift(aut,j))?t.getLabel().getLabel().get(li) instanceof IdleAction
 								:(li<shift(aut,j+1))?t.getLabel().getLabel().get(li).equals(tj.getLabel().getLabel().get(li-shift(aut,j)))
-										:IdleAction.isIdle(t.getLabel().getLabel().get(li).getLabel())) ;
+										:t.getLabel().getLabel().get(li) instanceof IdleAction);
 
 		PentaPredicate<ModalTransition<String,Action,State<String>,CALabel>,ModalTransition<String,Action,State<String>,CALabel>,
 		ModalTransition<String,Action,State<String>,CALabel>,Integer,Integer> targetmatchpred = (t,ti,tj,i,j)->
@@ -143,9 +143,9 @@ public class CompositionSpecCheck implements BiPredicate<List<Automaton<String,A
 		TriPredicate<ModalTransition<String,Action,State<String>,CALabel>, ModalTransition<String,Action,State<String>,CALabel>, Integer> labelintrleavpred = (t,ti,i)->
 		t.getLabel().getLabel().size()==comp.getRank() &&
 		IntStream.range(0,t.getLabel().getLabel().size()).allMatch(li->
-		(li<shift(aut,i))?IdleAction.isIdle(t.getLabel().getLabel().get(li).getLabel())
+		(li<shift(aut,i))?t.getLabel().getLabel().get(li) instanceof IdleAction
 				:(li<shift(aut,i+1))?t.getLabel().getLabel().get(li).equals(ti.getLabel().getLabel().get(li-shift(aut,i)))
-						:IdleAction.isIdle(t.getLabel().getLabel().get(li).getLabel()));
+						:t.getLabel().getLabel().get(li) instanceof IdleAction);
 
 		TriPredicate<ModalTransition<String,Action,State<String>,CALabel>, ModalTransition<String,Action,State<String>,CALabel>, Integer> targetstateintrleavpred = (t,ti,i)->
 		t.getTarget().getState().size()==comp.getRank() &&

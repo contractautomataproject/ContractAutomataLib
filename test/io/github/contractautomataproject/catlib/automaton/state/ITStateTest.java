@@ -34,7 +34,7 @@ public class ITStateTest {
 	
 	@Test
 	public void testToString() {
-		assertEquals("[label=0,initial=true, label=1,initial=true, label=2,initial=true]", test.toString());
+		assertEquals("[0, 1, 2]", test.toString());
 	}
 	
 }

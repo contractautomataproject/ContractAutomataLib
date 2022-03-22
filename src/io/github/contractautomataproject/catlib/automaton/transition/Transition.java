@@ -76,12 +76,7 @@ public class Transition<S1,L1, S extends State<S1>,L extends Label<L1>> {
 	public String toString() {
 		return "("+source+","+label+","+target+")";
 	}
-	
 
-	public String print()
-	{
-		return "("+this.getSource().print()+","+this.getLabel().toString()+","+this.getTarget().print()+")";
-	}
 }
 
 
