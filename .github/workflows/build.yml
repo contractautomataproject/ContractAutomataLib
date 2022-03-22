@@ -22,8 +22,8 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        java: [11. 17]
-      fail-fast: false
+        java: [11]
+      fail-fast: true
         
     runs-on: ${ matrix.os }
     
