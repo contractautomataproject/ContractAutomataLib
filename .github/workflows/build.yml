@@ -21,7 +21,8 @@ jobs:
     needs: spot-bugs
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
+        #os: [macos-latest, windows-latest, ubuntu-latest]
         java: [11]
       fail-fast: true
         
