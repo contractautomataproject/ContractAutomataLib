@@ -21,10 +21,10 @@ jobs:
     needs: spot-bugs
     
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         java: [11, 17]
-        fail-fast: false
         
     #runs-on: ubuntu-latest 
     runs-on: ${{ matrix.os }}
