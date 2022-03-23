@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
@@ -29,24 +30,25 @@ public class ITAutomatonTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	
-//	@Test
-//	public void testString() {
-//		BasicState<String> s0 = new BasicState<String>("0",true,false);
-//		BasicState<String> s1 = new BasicState<String>("1",false,true);
-//		BasicState<String> s2 = new BasicState<String>("2",false,true);
-//		Transition<String,String,BasicState<String>,Label<String>> t1 = new Transition<>(s0, new Label<String>("m"), s1);
-//		Transition<String,String,BasicState<String>,Label<String>> t2 = new Transition<>(s0, new Label<String>("m"), s2);
-//		
-//		Automaton<String,String, BasicState<String>,Transition<String,String, BasicState<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2));
-//		
-//		String test = "Rank: 1"+System.lineSeparator() + 
-//				"Initial state: 0"+System.lineSeparator() + 
-//				"Final states: [[1, 2]]"+System.lineSeparator() + 
-//				"Transitions: "+System.lineSeparator() + 
-//				"(0,m,1)"+System.lineSeparator() + 
-//				"(0,m,2)"+System.lineSeparator();
-//		Assert.assertEquals(prop.toString(),test);
-//	}
+	@Test
+	public void testString() {
+		BasicState<String> s0 = new BasicState<String>("0",true,false);
+		BasicState<String> s1 = new BasicState<String>("1",false,true);
+		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		State<String> cs0 = new State<>(List.of(s0));
+		Transition<String,String,State<String>, Label<String>> t1 = new Transition<>(cs0, new Label<String>(List.of("m")), new State<>(List.of(s1)));
+		Transition<String,String,State<String>, Label<String>> t2 = new Transition<>(cs0, new Label<String>(List.of("m")), new State(List.of(s2)));
+
+		Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2));
+
+		String test = "Rank: 1"+System.lineSeparator() +
+				"Initial state: [0]"+System.lineSeparator() +
+				"Final states: [[1, 2]]"+System.lineSeparator() +
+				"Transitions: "+System.lineSeparator() +
+				"([0],[m],[1])"+System.lineSeparator() +
+				"([0],[m],[2])"+System.lineSeparator();
+		Assert.assertEquals(prop.toString(),test);
+	}
 	
 	@Test
 	public void constructor_Exception_differentRank() {

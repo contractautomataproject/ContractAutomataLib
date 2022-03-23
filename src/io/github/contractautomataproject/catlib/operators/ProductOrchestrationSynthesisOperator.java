@@ -15,7 +15,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthesisOperator {
+public class ProductOrchestrationSynthesisOperator<S1>  extends OrchestrationSynthesisOperator<S1> {
 	private final Product p;
 	
 	/**
@@ -33,9 +33,9 @@ public class ProductOrchestrationSynthesisOperator  extends OrchestrationSynthes
 	 * @return the synthesised orchestration of product p
 	 */
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut)
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut)
 	{
-		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a= super.apply(aut);
+		Automaton<S1, Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> a= super.apply(aut);
 
 		if (a!=null&&!p.checkRequired(a.getTransition()))
 			return null;

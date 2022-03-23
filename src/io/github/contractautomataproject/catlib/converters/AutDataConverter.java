@@ -191,13 +191,13 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	 * @throws FileNotFoundException in case filename is not found
 	 */
 	@Override
-	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws ParserConfigurationException, IOException {
+	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws IOException {
 		if (filename.isEmpty())
 			throw new IllegalArgumentException(EMPTYMSG);
 
 		String ext=(filename.endsWith(SUFFIX))?"":SUFFIX;
 		Path path = FileSystems.getDefault().getPath(filename+ext);
-		String safefilename = 	path.toString();
+		String safefilename = path.toString();
 
 		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), StandardCharsets.UTF_8)))
 		{

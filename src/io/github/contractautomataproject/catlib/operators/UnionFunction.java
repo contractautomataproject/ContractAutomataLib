@@ -25,6 +25,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  */
 public class UnionFunction implements Function<List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>{
 
+
 	/**
 	 * 
 	 * @param aut list of operands automata
@@ -67,7 +68,7 @@ public class UnionFunction implements Function<List<Automaton<String,Action,Stat
 		
 		//relabeling, removing initial states
 		List<Set<ModalTransition<String,Action,State<String>,CALabel>>> relabeled=IntStream.range(0, aut.size())
-		.mapToObj(id ->new RelabelingOperator<>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
+		.mapToObj(id ->new RelabelingOperator<String,CALabel>(CALabel::new, s->s.contains("_")?s:(id+"_"+s),s->false,BasicState::isFinalState)
 				.apply(aut.get(id)))
 		.collect(Collectors.toList());
 

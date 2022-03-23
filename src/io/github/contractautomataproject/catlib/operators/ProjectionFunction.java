@@ -1,14 +1,5 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.action.*;
@@ -16,13 +7,21 @@ import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Class implementing the projection function
  * 
  * @author Davide Basile
  *
  */
-public class ProjectionFunction implements TriFunction<Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>>,Integer,ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> {
+public class ProjectionFunction<S1> implements TriFunction<Automaton<S1,Action,State<S1>,ModalTransition<S1, Action,State<S1>,CALabel>>,Integer,ToIntFunction<ModalTransition<S1,Action,State<S1>,CALabel>>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> {
 	private final  boolean createAddress;
 
 	public ProjectionFunction(boolean createAddress)
@@ -45,20 +44,21 @@ public class ProjectionFunction implements TriFunction<Automaton<String,Action,S
 	 * 
 	 */
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut, Integer indexprincipal, ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>> getNecessaryPrincipal)
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut, Integer indexprincipal,
+																							 ToIntFunction<ModalTransition<S1,Action,State<S1>,CALabel>> getNecessaryPrincipal)
 	{
 		if ((indexprincipal<0)||(indexprincipal>aut.getRank())) 
 			throw new IllegalArgumentException("Index out of rank");
 
 		//extracting the basicstates of the principal and creating the castates of the projection
-		Map<BasicState<String>,State<String>> bs2cs = aut.getTransition().parallelStream()
+		Map<BasicState<S1>,State<S1>> bs2cs = aut.getTransition().parallelStream()
 				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
 				.map(s->s.getState().get(indexprincipal))
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), bs-> new State<>(new ArrayList<>(List.of(bs)))));
 
 		//associating each castate of the composition with the castate of the principal
-		Map<State<String>,State<String>> map2princst = 
+		Map<State<S1>,State<S1>> map2princst =
 				aut.getTransition().parallelStream()
 				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
 				.distinct()
@@ -78,7 +78,7 @@ public class ProjectionFunction implements TriFunction<Automaton<String,Action,S
 				.collect(Collectors.toSet()));
 	}
 
-	private CALabel createLabel(ModalTransition<String,Action,State<String>,CALabel> t,Integer indexprincipal) {
+	private CALabel createLabel(ModalTransition<S1,Action,State<S1>,CALabel> t,Integer indexprincipal) {
 		if (!createAddress)
 			return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
 					new CALabel(1,0,t.getLabel().getAction())

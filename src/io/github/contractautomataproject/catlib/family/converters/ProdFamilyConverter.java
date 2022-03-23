@@ -67,7 +67,7 @@ public class ProdFamilyConverter implements FamilyConverter {
 		List<Product> ar = new ArrayList<>(fam.getProducts());
 		Path path = FileSystems.getDefault().getPath(filename+suffix);
 
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path.toString())), StandardCharsets.UTF_8)))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path.toString()), StandardCharsets.UTF_8)))
 		{
 			pr.print(IntStream.range(0, ar.size())
 					.mapToObj(i->ar.get(i).toStringFile(i))

@@ -50,7 +50,9 @@ public class CALabelTest {
 	public void testConstructor1RequestEquals() {
 		assertEquals(new CALabel(3,1,new RequestAction("a")),request);
 	}
-//
+
+
+	//this constructor has been moved to a private method of composition function
 //	@Test
 //	public void testConstructor2EqualsActionLength() {
 //		assertEquals(new CALabel(3,1,2,new OfferAction("test"), new RequestAction("test")),new CALabel(3,1,2,new OfferAction("test"), new RequestAction("test")));

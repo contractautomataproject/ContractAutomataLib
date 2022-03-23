@@ -14,7 +14,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
+public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1>
 {
 
 	/**
@@ -32,7 +32,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @param prop the property to enforce expressed as an automaton
 	 */
 	public MpcSynthesisOperator(Predicate<CALabel> req, Predicate<Label<Action>> reqmc,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop)
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> prop)
 	{
 		super((x,t,bad) -> x.isUrgent(), req, reqmc, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}	
@@ -44,7 +44,7 @@ public class MpcSynthesisOperator extends ModelCheckingSynthesisOperator
 	 * @return the synthesised most permissive controller
 	 */
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut) {
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut) {
 
 		if (aut.getTransition().parallelStream()
 				.anyMatch(ModalTransition::isLazy))

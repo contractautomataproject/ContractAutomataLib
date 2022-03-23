@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
@@ -49,13 +48,13 @@ public class OrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut),test));
 	}	
 	
 	@Test
 	public void orcTestSCP2020_BusinessClientxHotel_transitions() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_BusinessClientxHotel.data");
 		assertTrue(ITAutomatonTest.autEquals(orc,test));
 	}
@@ -65,21 +64,21 @@ public class OrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
-		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut),test));
 	}
 	
 	@Test
 	public void orcEmptyTestNoDangling() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_orc_nodangling.data");
-		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(aut));
+		Assert.assertNull(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut));
 	}
 		
 	@Test
 	public void orcTest_empty() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc.data");
-		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(orc));
+		Assert.assertNull(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(orc));
 	}
 
 	@Test
@@ -87,14 +86,14 @@ public class OrchestrationTest {
 	{
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(orc));
+		Assert.assertNull(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(orc));
 	}
 	
 	@Test
 	public void orcTest_lazyloop() throws Exception 
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"test_lazy_loop.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc =  new OrchestrationSynthesisOperator(new Agreement()).apply(test);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc =  new OrchestrationSynthesisOperator<String>(new Agreement()).apply(test);
 		assertTrue(ITAutomatonTest.autEquals(orc, bdc.importMSCA(dir+"test_lazy_loop_orc.data")));
 	}
 
@@ -103,7 +102,7 @@ public class OrchestrationTest {
 	@Test
 	public void testForte2021synth() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + "(AlicexBob)_forte2021_synth.data");
 		assertTrue(ITAutomatonTest.autEquals(synth, test));
 	}
@@ -111,7 +110,7 @@ public class OrchestrationTest {
 	@Test
 	public void testLazyLoopSynth() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "test_lazy_loop_prop.data");		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> synth = new OrchestrationSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + "test_lazy_loop_prop_synth.data");
 
 		assertTrue(ITAutomatonTest.autEquals(synth, test));
@@ -120,7 +119,7 @@ public class OrchestrationTest {
 	@Test
 	public void testModelCheckingLoopSynt() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "modelchecking_loop.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + "modelchecking_loop_synth.data");
 		assertTrue(ITAutomatonTest.autEquals(orc, test));
 
@@ -129,7 +128,7 @@ public class OrchestrationTest {
 	@Test
 	public void testOrcSynthesis2021() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "(AlicexBob)_forte2021.data");	
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_(AlicexBob)_forte2021.data");
 		assertTrue(ITAutomatonTest.autEquals(orc, test));
 	}
@@ -140,7 +139,7 @@ public class OrchestrationTest {
 	public void orc_necessaryoffer_exception() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
-		OrchestrationSynthesisOperator os = new OrchestrationSynthesisOperator(new Agreement());
+		OrchestrationSynthesisOperator<String> os = new OrchestrationSynthesisOperator<>(new Agreement());
 		assertThatThrownBy(() -> os.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
@@ -154,7 +153,7 @@ public class OrchestrationTest {
 //{
 //
 //	MSCA orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-//	assertEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(orc),null);
+//	assertEquals(new OrchestrationSynthesisOperator<>(new Agreement()).apply(orc),null);
 //}
 
 //@Test
@@ -162,6 +161,6 @@ public class OrchestrationTest {
 //{
 //	MSCA aut = bmc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
 //	MSCA test = bmc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
-//	assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator(new Agreement()).apply(aut),test),true);
+//	assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator<>(new Agreement()).apply(aut),test),true);
 //}
 //

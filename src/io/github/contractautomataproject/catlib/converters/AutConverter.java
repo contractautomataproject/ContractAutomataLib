@@ -10,7 +10,6 @@ import io.github.contractautomataproject.catlib.automaton.label.action.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 /**
@@ -23,7 +22,7 @@ public interface AutConverter<A1 extends Automaton<?,?,?,?>,A2 extends Automaton
 	void  exportMSCA(String filename, A2 aut) throws ParserConfigurationException, IOException, TransformerException;
 
 
-	public default Action parseAction(String action) {
+	default Action parseAction(String action) {
 		Objects.requireNonNull(action);
 
 		BiPredicate<String,String> isAction = (s,a)->s.startsWith(a) && s.length()>1;
@@ -38,8 +37,8 @@ public interface AutConverter<A1 extends Automaton<?,?,?,?>,A2 extends Automaton
 		String[] f = action.split(Address.ACTION_SEPARATOR);
 		String[] p = f[0].split(Address.ID_SEPARATOR);
 
-		if (p.length==2 && f.length>=1) {
-			String subAct = action.substring(action.indexOf(Address.ACTION_SEPARATOR)+1,action.length());
+		if (p.length==2 && f.length>=2) {
+			String subAct = action.substring(action.indexOf(Address.ACTION_SEPARATOR)+1);
 			if (isAction.test(subAct,OfferAction.OFFER))
 				return new AddressedOfferAction(subAct.substring(1), new Address(p[0],p[1]));
 			else if (isAction.test(subAct,RequestAction.REQUEST))

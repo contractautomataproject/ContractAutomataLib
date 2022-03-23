@@ -1,22 +1,20 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.autEquals;
-import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.counterExample;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.contractautomataproject.catlib.automaton.label.action.Action;
-import org.junit.Assert;
-import org.junit.Test;
-
-import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.converters.AutDataConverter;
-import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import static io.github.contractautomataproject.catlib.automaton.ITAutomatonTest.autEquals;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;

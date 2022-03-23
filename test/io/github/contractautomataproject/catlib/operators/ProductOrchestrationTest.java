@@ -26,7 +26,7 @@ public class ProductOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
-		Assert.assertTrue(ITAutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut),test));
+		Assert.assertTrue(ITAutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut),test));
 	}
 
 
@@ -35,7 +35,7 @@ public class ProductOrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"dummy"}, new String[] {""});
-		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class ProductOrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");		
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut));
 	}	
 	
 	@Test
@@ -51,7 +51,7 @@ public class ProductOrchestrationTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut= bdc.importMSCA(dir+"(AlicexBob)_forte2021.data");		
 		Product p = new Product(new String[] {"cherry"}, new String[] {"blueberry"});
-		Assert.assertNull(new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut));
+		Assert.assertNull(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut));
 		
 	}
 

@@ -34,7 +34,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		assertTrue(new CompositionSpecCheck().test(aut,new MSCACompositionFunction(aut,null).apply(100)));
+		assertTrue(new CompositionSpecCheck().test(aut, new MSCACompositionFunction<>(aut, null).apply(100)));
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"PriviledgedHotel.data"));
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp =new MSCACompositionFunction(aut,null).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		
 		assertTrue(new CompositionSpecCheck().test(aut,comp));
 	}
@@ -62,7 +62,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		aut.add(bdc.importMSCA(dir+"HotelLMCS.data"));
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp =new MSCACompositionFunction(aut,null).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		
 		assertTrue(new CompositionSpecCheck().test(aut,comp));
 	}
@@ -77,7 +77,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut,null).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
 		assertTrue(ITAutomatonTest.autEquals(comp,test));
 	}
@@ -89,8 +89,8 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut,null).apply(100);
-		Assert.assertNull(new OrchestrationSynthesisOperator(new Agreement()).apply(comp));
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, null).apply(100);
+		Assert.assertNull(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp));
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut, CALabel::isRequest).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, CALabel::isRequest).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotel_closed.data");
 		assertTrue(ITAutomatonTest.autEquals(comp,test));
 	}
@@ -114,7 +114,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction(aut,null).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
 		assertTrue(ITAutomatonTest.autEquals(comp,test));
 	}
@@ -127,10 +127,10 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut, CALabel::isRequest).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, CALabel::isRequest).apply(100);
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator(new Agreement()).apply(comp),test));
+		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp),test));
 	}	
 
 	///////////////
@@ -143,7 +143,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"A.data"));
 		aut.add(bdc.importMSCA(dir+"B.data"));
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut,null).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"(AxB).data");
 
 		assertTrue(ITAutomatonTest.autEquals(comp,test));
@@ -158,7 +158,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp=new MSCACompositionFunction(aut, CALabel::isRequest).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, CALabel::isRequest).apply(100);
 
 		Assert.assertNull(comp);
 	}
@@ -171,7 +171,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
-		MSCACompositionFunction mcf = new MSCACompositionFunction(aut,null);
+		MSCACompositionFunction<String> mcf = new MSCACompositionFunction<>(aut, null);
 		assertThatThrownBy(() -> mcf.apply(0))
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("No transitions");

@@ -123,14 +123,5 @@ public class ProductTest {
 		.isInstanceOf(IllegalArgumentException.class)
 		.hasMessageContaining("A feature is both required and forbidden");
 	}
-	
-//	@Test 
-//	public void testCompareToException()
-//	{
-//		assertThatThrownBy(() -> new Product(new String[] {"pippo"}, new String[] {"pluto"})
-//		.compareTo(new Product(new String[] {"ananas"}, new String[] {"banana"})))
-//		.isInstanceOf(UnsupportedOperationException.class)
-//		.hasMessageContaining("Products are not comparable");
-//		
-//	}
+
 }

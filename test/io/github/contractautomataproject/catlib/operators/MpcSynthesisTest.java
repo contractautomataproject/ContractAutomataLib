@@ -32,7 +32,7 @@ public class MpcSynthesisTest {
 	public void mpcEmptyTestLMCS2020() throws Exception
 	{
 		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedUrgentHotel).data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<String>(new Agreement()).apply(aut);
 		Assert.assertNull(mpc);
 	}
 
@@ -40,7 +40,7 @@ public class MpcSynthesisTest {
 	public void mpcEmptyTestNoDangling() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<String>(new Agreement()).apply(aut);
 		Assert.assertNull(mpc);
 	}
 	
@@ -48,7 +48,7 @@ public class MpcSynthesisTest {
 	public void mpcTest_nonempty() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");
-		assertEquals(2, new MpcSynthesisOperator(new Agreement()).apply(aut).getNumStates());
+		assertEquals(2, new MpcSynthesisOperator<String>(new Agreement()).apply(aut).getNumStates());
 	}
 
 	@Test 
@@ -56,7 +56,7 @@ public class MpcSynthesisTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
-		assertTrue(ITAutomatonTest.autEquals(new MpcSynthesisOperator(new Agreement()).apply(aut),test));
+		assertTrue(ITAutomatonTest.autEquals(new MpcSynthesisOperator<String>(new Agreement()).apply(aut),test));
 	}
 	
 	@Test
@@ -64,7 +64,7 @@ public class MpcSynthesisTest {
 	{
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-		MpcSynthesisOperator m = new MpcSynthesisOperator(new Agreement());
+		MpcSynthesisOperator<String> m = new MpcSynthesisOperator<>(new Agreement());
 		assertThatThrownBy(() -> m.apply(orc))
 		.isInstanceOf(UnsupportedOperationException.class);
 	}
@@ -88,7 +88,7 @@ public class MpcSynthesisTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
 		Assert.assertNull(mpc);
 	}
 

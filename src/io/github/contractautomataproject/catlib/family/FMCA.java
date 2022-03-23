@@ -1,6 +1,7 @@
 package io.github.contractautomataproject.catlib.family;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class FMCA {
 				.map(Feature::new)
 				.collect(Collectors.toSet());
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
 		Set<Feature> availableFeatures = orc.
 				getTransition().parallelStream()
 				.map(t->t.getLabel().getAction().getLabel())
@@ -100,7 +101,7 @@ public class FMCA {
 		Map<Set<Feature>, Map<Product,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>>>  quotientClasses =
 				this.family.getMaximalProducts().parallelStream()
 				.map(p-> new AbstractMap.SimpleEntry<>(p,
-						new ProductOrchestrationSynthesisOperator(new Agreement(), p).apply(aut)))
+						new ProductOrchestrationSynthesisOperator<String>(new Agreement(), p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.groupingBy(e->
 					e.getKey().getForbidden().stream()
@@ -121,9 +122,7 @@ public class FMCA {
 	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> getOrchestrationOfFamilyEnumerative()
 	{
-		 return new UnionFunction().apply(this.getTotalProductsWithNonemptyOrchestration().values()
-					.stream()
-					.collect(Collectors.toList()));	
+		 return new UnionFunction().apply(new ArrayList<>(this.getTotalProductsWithNonemptyOrchestration().values()));
 	}
 	
 	/**
@@ -132,10 +131,8 @@ public class FMCA {
 	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> getOrchestrationOfFamily()
 	{
-		return new UnionFunction().apply(this.getCanonicalProducts()
-		.values()
-		.stream()
-		.collect(Collectors.toList()));
+		return new UnionFunction().apply(new ArrayList<>(this.getCanonicalProducts()
+				.values()));
 	}
 
 	public Map<Product,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> getTotalProductsWithNonemptyOrchestration()
@@ -145,7 +142,7 @@ public class FMCA {
 				.filter(e->e.getValue().get(false).isEmpty())
 				.map(Entry::getKey)
 				.map(p-> new AbstractMap.SimpleEntry<>(p,
-						new ProductOrchestrationSynthesisOperator(new Agreement(), p).apply(aut)))
+						new ProductOrchestrationSynthesisOperator<String>(new Agreement(), p).apply(aut)))
 				.filter(e->e.getValue()!=null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
@@ -175,7 +172,7 @@ public class FMCA {
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
-		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut)!=null);
+		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut)!=null);
 	}
 	
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a,Predicate<Product> pred)

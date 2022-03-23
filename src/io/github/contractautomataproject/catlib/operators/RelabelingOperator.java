@@ -20,14 +20,18 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class RelabelingOperator<L extends Label<Action>> implements Function<Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,L>>, Set<ModalTransition<String,Action,State<String>,L>>> {
-	private final UnaryOperator<String> relabel;
-	private final Function<List<Action>,L> createLabel;
-	private final Predicate<BasicState<String>> initialStatePred;
-	private final Predicate<BasicState<String>> finalStatePred;
+public class RelabelingOperator<S1, L extends Label<Action>> implements
+		Function<Automaton<S1, Action,State<S1>,ModalTransition<S1,Action,State<S1>,L>>,
+				Set<ModalTransition<S1, Action, State<S1>, L>>> {
 
-	public RelabelingOperator(Function<List<Action>,L> createLabel, UnaryOperator<String> relabel,Predicate<BasicState<String>> initialStatePred,
-			Predicate<BasicState<String>> finalStatePred) {
+
+	private final UnaryOperator<S1> relabel;
+	private final Function<List<Action>,L> createLabel;
+	private final Predicate<BasicState<S1>> initialStatePred;
+	private final Predicate<BasicState<S1>> finalStatePred;
+
+	public RelabelingOperator(Function<List<Action>,L> createLabel, UnaryOperator<S1> relabel,Predicate<BasicState<S1>> initialStatePred,
+			Predicate<BasicState<S1>> finalStatePred) {
 		this.createLabel=createLabel;
 		this.relabel=relabel;
 		this.initialStatePred= initialStatePred;
@@ -36,29 +40,30 @@ public class RelabelingOperator<L extends Label<Action>> implements Function<Aut
 
 	
 	@Override
-	public Set<ModalTransition<String,Action,State<String>,L>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,L>> aut)
+	public Set<ModalTransition<S1, Action, State<S1>, L>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,L>> aut)
 	{	
 		if (aut.getTransition().isEmpty())
 			throw new IllegalArgumentException();
 
-		Map<BasicState<String>,BasicState<String>> clonedstate = aut.getStates().stream()
+		Map<BasicState<S1>,BasicState<S1>> clonedstate = aut.getStates().stream()
 				.flatMap(x->x.getState().stream())
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), 
 						s-> new BasicState<>(relabel.apply(s.getState()),
                                 initialStatePred.test(s), finalStatePred.test(s))));
 
-		Map<State<String>,State<String>> clonedcastates  = aut.getStates().stream()
+		Map<State<S1>,State<S1>> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 
 						x-> new State<>(x.getState().stream()
                                 .map(clonedstate::get)
                                 .collect(Collectors.toList()))));
 
-		return aut.getTransition().stream()
+		return  aut.getTransition().stream()
 				.map(t-> new ModalTransition<>(clonedcastates.get(t.getSource()),
-                        createLabel.apply(t.getLabel().getLabel()),
-                        clonedcastates.get(t.getTarget()),
-                        t.getModality()))
+						createLabel.apply(t.getLabel().getLabel()),
+						clonedcastates.get(t.getTarget()),
+						t.getModality()))
 				.collect(Collectors.toSet());
+
 	}
 }

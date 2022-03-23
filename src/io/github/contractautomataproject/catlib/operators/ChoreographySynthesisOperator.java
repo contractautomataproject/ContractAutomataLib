@@ -22,15 +22,15 @@ import io.github.contractautomataproject.catlib.automaton.transition.Transition;
  * @author Davide Basile
  *
  */
-public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperator {
+public class ChoreographySynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1> {
 
 	private final Predicate<CALabel> req;
-	private Function<Stream<ModalTransition<String,Action,State<String>,CALabel>>,Optional<ModalTransition<String,Action,State<String>,CALabel>>> choice=Stream::findAny;
+	private Function<Stream<ModalTransition<S1,Action,State<S1>,CALabel>>,Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice=Stream::findAny;
 
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<Action>> reqmc,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>  prop){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,reqmc, prop, 
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop){
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,reqmc, prop,
 				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getAction()));//offers are necessary
 		this.req=req;
 	}
@@ -42,8 +42,8 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
-			Function<Stream<ModalTransition<String,Action,State<String>,CALabel>>,
-				Optional<ModalTransition<String,Action,State<String>,CALabel>>> choice){
+			Function<Stream<ModalTransition<S1,Action,State<S1>,CALabel>>,
+				Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice){
 		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
 		this.req=req;
 		this.choice=choice;
@@ -59,7 +59,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	 * 
 	 */
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut)
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
@@ -68,14 +68,14 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 		final Set<String> violatingbc = new HashSet<>();
 		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
 		
-		ModalTransition<String,Action,State<String>,CALabel> toRemove;
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> chor;
+		ModalTransition<S1,Action,State<S1>,CALabel> toRemove;
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> chor;
 		do 
 		{ 
 			chor = super.apply(aut);
 			if (chor==null)
 				break;
-			final Set<ModalTransition<String,Action,State<String>,CALabel>> trf = chor.getTransition();
+			final Set<ModalTransition<S1,Action,State<S1>,CALabel>> trf = chor.getTransition();
 			toRemove=choice.apply(chor.getTransition().parallelStream()
 					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
@@ -83,7 +83,7 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 		return chor;
 	}
 
-	private static boolean  isUncontrollableChoreography(ModalTransition<String,Action,State<String>,CALabel> tra, Set<? extends ModalTransition<String,Action,State<String>,CALabel>> str, Set<State<String>> badStates)
+	private static <S1> boolean isUncontrollableChoreography(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
@@ -97,9 +97,9 @@ public class ChoreographySynthesisOperator extends ModelCheckingSynthesisOperato
 	 * @param bad  the set of bad (dangling) states to check
 	 * @return true if the set of transitions and bad states violate the branching condition
 	 */
-	public boolean satisfiesBranchingCondition(ModalTransition<String,Action,State<String>,CALabel> tra, Set<ModalTransition<String,Action,State<String>,CALabel>> trans, Set<State<String>> bad)
+	public boolean satisfiesBranchingCondition(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<ModalTransition<S1,Action,State<S1>,CALabel>> trans, Set<State<S1>> bad)
 	{
-		final Set<ModalTransition<String,Action,State<String>,CALabel>> ftr = trans.parallelStream()
+		final Set<ModalTransition<S1,Action,State<S1>,CALabel>> ftr = trans.parallelStream()
 				.filter(x->req.test(x.getLabel())&&!bad.contains(x.getSource())&&!bad.contains(x.getTarget()))
 				.collect(Collectors.toSet()); //only valid candidates
 

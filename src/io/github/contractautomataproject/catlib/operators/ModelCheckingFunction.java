@@ -23,15 +23,15 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction extends CompositionFunction<String,Action,State<String>,Label<Action>,
-ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>>
+public class ModelCheckingFunction<S1> extends CompositionFunction<S1,Action,State<S1>,Label<Action>,
+ModalTransition<S1,Action,State<S1>,Label<Action>>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 
 {
 
-	public ModelCheckingFunction(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop,
+	public ModelCheckingFunction(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut,
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> prop,
 			Predicate<Label<Action>> pruningPred) {
-		super(Arrays.asList(new Automaton<>(aut.getTransition() //converting labels to Label<String>
+		super(Arrays.asList(new Automaton<>(aut.getTransition() //converting labels to Label<S1>
 				.parallelStream()
 				.map(t->{Label<Action> lab = t.getLabel();
 					return new ModalTransition<>(t.getSource(),lab,t.getTarget(),t.getModality());})

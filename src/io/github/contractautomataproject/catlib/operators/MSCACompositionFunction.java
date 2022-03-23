@@ -21,37 +21,35 @@ import java.util.stream.Stream;
  * @author Davide Basile
  */
 
-public class MSCACompositionFunction extends CompositionFunction<String,Action,State<String>,CALabel,ModalTransition<String,Action,State<String>,CALabel>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> {
+public class MSCACompositionFunction<S1> extends CompositionFunction<S1,Action,State<S1>,CALabel,ModalTransition<S1,Action,State<S1>,CALabel>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> {
 
-	public MSCACompositionFunction(List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut,Predicate<CALabel> pruningPred)
+	public MSCACompositionFunction(List<Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> aut, Predicate<CALabel> pruningPred)
 	{
 		super(aut, MSCACompositionFunction::computeRank, CALabel::match,
 				State::new, ModalTransition::new,
-				(e, ee,rank) -> MSCACompositionFunction.createLabel(e, ee, rank, aut), 
+				(e, ee,rank) -> {  //createLabel
+					Integer principal1 = computeSumPrincipal(e.tra,e.ind,aut);//index of principal in e
+					Integer principal2 = computeSumPrincipal(ee.tra,ee.ind,aut);//index of principal in ee
+					Action action1 = e.tra.getLabel().getAction();
+					Action action2 = ee.tra.getLabel().getAction();
+					return 	new CALabel(IntStream.range(0, rank)
+							.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:new IdleAction())
+							.collect(Collectors.toList()));
+				},
 				(lab, rank, shift)->new CALabel(shift(lab,rank,shift)),
 				Automaton::new, pruningPred);
 	}
 
-	private static Integer computeSumPrincipal(ModalTransition<String,Action,State<String>,CALabel> etra, Integer eind, List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut)
+	private static <T> Integer computeSumPrincipal(ModalTransition<T,Action,State<T>,CALabel> etra, Integer eind, List<Automaton<T,Action,State<T>,ModalTransition<T,Action,State<T>,CALabel>>> aut)
 	{
 		return IntStream.range(0, eind)
 				.map(i->aut.get(i).getRank())
 				.sum()+etra.getLabel().getOffererOrRequester();
 	}
-	
+
 	public static Integer computeRank(List<? extends Ranked> aut) {
 		return aut.stream()
 				.map(Ranked::getRank).mapToInt(Integer::intValue).sum();
-	}
-	
-	private static CALabel createLabel(TIndex e, TIndex ee, Integer rank,List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut) {
-		Integer principal1 = computeSumPrincipal(e.tra,e.ind,aut);//index of principal in e
-		Integer principal2 = computeSumPrincipal(ee.tra,ee.ind,aut);//index of principal in ee
-		Action action1 = e.tra.getLabel().getAction();
-		Action action2 = ee.tra.getLabel().getAction();
-		return 	new CALabel(IntStream.range(0, rank)
-				.mapToObj(i->(i==principal1)?action1:(i==principal2)?action2:new IdleAction())
-				.collect(Collectors.toList()));
 	}
 
 

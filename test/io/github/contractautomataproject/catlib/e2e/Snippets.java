@@ -26,8 +26,6 @@ import io.github.contractautomataproject.catlib.requirements.Agreement;
 import io.github.contractautomataproject.catlib.requirements.StrongAgreement;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 public class Snippets {
 	final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	
@@ -38,15 +36,15 @@ public class Snippets {
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut = new ArrayList<>(2);
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));//loading textual .data description of a CA
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction(aut,new Agreement().negate()).apply(100);
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator(new Agreement()).apply(comp);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<String>(aut,new Agreement().negate()).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 	}
 	
 	public void snippet2() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator(new StrongAgreement()).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator<String>(new StrongAgreement()).apply(aut);
 		bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 
 	}
@@ -58,7 +56,7 @@ public class Snippets {
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut);
 	}
 	
 
@@ -85,7 +83,7 @@ public class Snippets {
 
 		//selecting a product of first FMCA and computing its orchestration
 		Product p = faut.getFamily().getProducts().iterator().next(); 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(faut.getAut());
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 	}
 	
 	@SuppressWarnings("unused")
@@ -106,7 +104,7 @@ public class Snippets {
 	
 		//selecting a product of the family and computing its orchestration
 		Product p = faut.getFamily().getProducts().iterator().next(); 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator(new Agreement(),p).apply(faut.getAut());
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 
 	}
 	

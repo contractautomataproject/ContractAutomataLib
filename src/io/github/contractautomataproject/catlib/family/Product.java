@@ -97,7 +97,7 @@ public class Product {
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
-	public boolean checkRequired(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
+	public <S1> boolean checkRequired(Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> tr)
 	{
 		Set<String> act=tr.parallelStream()
 				.map(t->t.getLabel().getAction().getLabel())

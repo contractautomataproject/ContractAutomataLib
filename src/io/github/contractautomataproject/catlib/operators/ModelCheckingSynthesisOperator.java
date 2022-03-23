@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
  * @author Davide Basile
  *
  */
-public class ModelCheckingSynthesisOperator extends 
-SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Action,State<String>,CALabel>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> {
+public class ModelCheckingSynthesisOperator<S1> extends 
+SynthesisOperator<S1,Action,State<S1>,CALabel,ModalTransition<S1, Action,State<S1>,CALabel>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> {
 
-	private final Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>  prop;
+	private final Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop;
 	private final Function<CALabel,CALabel> changeLabel;
 	private final Predicate<Label<Action>> reqmc;
 
@@ -36,15 +36,15 @@ SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Ac
 	 * @param prop another property to enforce expressed by an automaton
 	 */
 	public ModelCheckingSynthesisOperator(
-			TriPredicate<ModalTransition<String,Action,State<String>,CALabel>,
-			Set<ModalTransition<String,Action,State<String>,CALabel>>,
-			Set<State<String>>> pruningPredicate,
-			TriPredicate<ModalTransition<String,Action,State<String>,CALabel>,
-			Set<ModalTransition<String,Action,State<String>,CALabel>>,
-			Set<State<String>>> forbiddenPredicate,
+			TriPredicate<ModalTransition<S1,Action,State<S1>,CALabel>,
+			Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
+			Set<State<S1>>> pruningPredicate,
+			TriPredicate<ModalTransition<S1,Action,State<S1>,CALabel>,
+			Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
+			Set<State<S1>>> forbiddenPredicate,
 			Predicate<CALabel> req,
 			Predicate<Label<Action>> reqmc,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>  prop,
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop,
 			UnaryOperator<CALabel> changeLabel) 
 	{
 		super(pruningPredicate,forbiddenPredicate,req,Automaton::new);
@@ -61,25 +61,25 @@ SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Ac
 	 * @param prop another property to enforce expressed by an automaton
 	 */
 	public ModelCheckingSynthesisOperator(
-			TriPredicate<ModalTransition<String,Action,State<String>,CALabel>,
-			Set<ModalTransition<String,Action,State<String>,CALabel>>,
-			Set<State<String>>> forbiddenPredicate,
+			TriPredicate<ModalTransition<S1,Action,State<S1>,CALabel>,
+			Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
+			Set<State<S1>>> forbiddenPredicate,
 			Predicate<CALabel> req,
 			Predicate<Label<Action>> reqmc,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop,
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> prop,
 			UnaryOperator<CALabel> changeLabel) 
 	{
 		this((x,t,bad) -> false, forbiddenPredicate,req,reqmc,prop,changeLabel);
 	}
 
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> arg1) {
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> arg1) {
 		if (prop==null)
 			return super.apply(arg1);
 		else
 		{
-			ModelCheckingFunction mcf = new ModelCheckingFunction(new Automaton<>(arg1.getTransition()),prop,reqmc);
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> comp=mcf.apply(Integer.MAX_VALUE);
+			ModelCheckingFunction<S1> mcf = new ModelCheckingFunction<>(new Automaton<>(arg1.getTransition()),prop,reqmc);
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> comp=mcf.apply(Integer.MAX_VALUE);
 
 			if (comp==null)
 				return null;
@@ -87,7 +87,7 @@ SynthesisOperator<String,Action,State<String>,CALabel,ModalTransition<String, Ac
 			//the following steps are necessary to reuse the synthesis of MSCA
 			//silencing the prop action and treat lazy transitions satisfying the pruningPredicate:
 			//they must be detectable as "bad" also after reverting to an MSCA  
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> deletingPropAction = new Automaton<>(comp.getTransition()
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> deletingPropAction = new Automaton<>(comp.getTransition()
 					.parallelStream().map(t->{
 						List<Action> li = new ArrayList<>(t.getLabel().getLabel());
 						li.set(t.getRank()-1, new IdleAction()); //removing the move of prop to have a CALabel

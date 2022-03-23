@@ -157,10 +157,10 @@ public class CALabel extends Label<Action> {
 			Action act1 = this.getAction();
 			Action act2 = l2.getAction();
 			return (act1 instanceof OfferAction && act2 instanceof RequestAction &&
-					((OfferAction) act1).match((RequestAction) act2))
+					act1.match(act2))
 					||
 					(act1 instanceof RequestAction && act2 instanceof OfferAction &&
-				    ((RequestAction) act1).match((OfferAction) act2));
+				    act1.match(act2));
 		}
 		else
 			throw new IllegalArgumentException();

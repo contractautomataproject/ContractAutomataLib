@@ -143,7 +143,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 		pr.append("Transitions: ").append(System.lineSeparator());
 		this.getTransition().stream()
 				.sorted(Comparator.comparing(T::toString))
-				.forEach(t-> pr.append(t.toString()).append(System.lineSeparator()));
+				.forEach(t-> pr.append(t).append(System.lineSeparator()));
 		return pr.toString();
 	}
 }

@@ -1,7 +1,5 @@
 package io.github.contractautomataproject.catlib.automaton.label.action;
 
-import io.github.contractautomataproject.catlib.automaton.label.Matchable;
-
 import java.util.Objects;
 
 public class OfferAction extends Action  {

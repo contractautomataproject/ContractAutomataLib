@@ -16,7 +16,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperator {
+public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1> {
 
 	/**
 	 * 
@@ -33,7 +33,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
 			Predicate<Label<Action>> reqmc,
-			Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop){
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> prop){
 		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, reqmc, prop, 
 				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
 	}
@@ -44,7 +44,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	 * @return the synthesised orchestration 
 	 */
 	@Override
-	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> apply(Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut)
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1, Action,State<S1>,CALabel>> aut)
 	{
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isOffer()))
@@ -54,7 +54,7 @@ public class OrchestrationSynthesisOperator extends ModelCheckingSynthesisOperat
 	}
 
 
-	private static boolean isUncontrollableOrchestration(ModalTransition<String,Action,State<String>,CALabel> tra,Set<? extends ModalTransition<String,Action,State<String>,CALabel>> str, Set<State<String>> badStates)
+	private static <S1> boolean isUncontrollableOrchestration(ModalTransition<S1,Action,State<S1>,CALabel> tra,Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
 	{
 		return 	tra.isUncontrollable(str,badStates, 
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal

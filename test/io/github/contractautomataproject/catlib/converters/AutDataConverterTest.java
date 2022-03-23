@@ -55,12 +55,8 @@ public class AutDataConverterTest {
 	@Test
 	public void emptyFileName_exception() throws NumberFormatException {
 		assertThatThrownBy(() -> {
-			try {
-				bdc.exportMSCA("", null);
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			}
-		})
+            bdc.exportMSCA("", null);
+        })
 	    .isInstanceOf(IllegalArgumentException.class)
 	    .hasMessageContaining("Empty file name");
 	}

@@ -22,14 +22,6 @@ public class Address implements Matchable<Address> {
             throw new IllegalArgumentException();
     }
 
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

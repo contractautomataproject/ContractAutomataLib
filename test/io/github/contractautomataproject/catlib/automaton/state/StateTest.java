@@ -33,9 +33,6 @@ public class StateTest {
 		when(bs1.isInitial()).thenReturn(true);
 		when(bs1.getState()).thenReturn("1");
 		when(bs2.getState()).thenReturn("2");
-		when(bs0.toString()).thenReturn("label=0,initial=true");
-		when(bs1.toString()).thenReturn("label=1,initial=true");
-		when(bs2.toString()).thenReturn("label=2");
 
 		test = new State<>(List.of(bs0,bs1,bs2,bs2,bs0,bs1));
 	}
@@ -97,7 +94,7 @@ public class StateTest {
 
 	@Test
 	public void testToString() {
-		assertEquals("[0, 1, 2, 1, 0, 1]",test.toString());
+		assertEquals("[0, 1, 2, 2, 0, 1]",test.toString());
 	}
 
 	//********************** testing exceptions *********************

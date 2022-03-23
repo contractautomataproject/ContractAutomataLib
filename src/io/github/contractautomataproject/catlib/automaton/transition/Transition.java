@@ -1,10 +1,10 @@
 package io.github.contractautomataproject.catlib.automaton.transition;
 
-import java.util.Objects;
-
 import io.github.contractautomataproject.catlib.automaton.Ranked;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.State;
+
+import java.util.Objects;
 
 /**
  * Transition of a Contract Automaton
@@ -15,7 +15,7 @@ import io.github.contractautomataproject.catlib.automaton.state.State;
  * @param <S> generic type of the state
  * @param <L> generic type of the label 
  */
-public class Transition<S1,L1, S extends State<S1>,L extends Label<L1>> { 
+public class Transition<S1,L1, S extends State<S1>,L extends Label<L1>> {
 	private final S source;
 	private final S target;
 	private final L label;

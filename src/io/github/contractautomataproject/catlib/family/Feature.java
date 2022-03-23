@@ -2,10 +2,6 @@ package io.github.contractautomataproject.catlib.family;
 
 import java.util.Objects;
 
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
-import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
-import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
-
 /**
  * Class implementing a feature
  * @author Davide Basile

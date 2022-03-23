@@ -87,7 +87,7 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	 * @param controllabilityPred the controllability predicate
 	 * @return true if the transition is uncontrollable against the parameters
 	 */
-	public boolean isUncontrollable(Set<? extends ModalTransition<S1, Action,S,CALabel>> tr, Set<State<String>> badStates,
+	public boolean isUncontrollable(Set<? extends ModalTransition<S1, Action,S,CALabel>> tr, Set<State<S1>> badStates,
 									BiPredicate<ModalTransition<S1,Action,S,CALabel>,ModalTransition<S1,L1,S,L>> controllabilityPred)
 	{
 		if (this.isUrgent())
