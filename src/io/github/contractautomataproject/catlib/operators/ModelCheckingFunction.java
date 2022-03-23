@@ -23,7 +23,7 @@ import io.github.contractautomataproject.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction<S1> extends CompositionFunction<S1,Action,State<S1>,Label<Action>,
+public class ModelCheckingFunction<S1> extends CompositionFunction<S1,State<S1>,Label<Action>,
 ModalTransition<S1,Action,State<S1>,Label<Action>>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 
 {
@@ -31,29 +31,13 @@ ModalTransition<S1,Action,State<S1>,Label<Action>>,Automaton<S1,Action,State<S1>
 	public ModelCheckingFunction(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut,
 			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>> prop,
 			Predicate<Label<Action>> pruningPred) {
-		super(Arrays.asList(new Automaton<>(aut.getTransition() //converting labels to Label<S1>
+		super(Arrays.asList(new Automaton<>(aut.getTransition() //converting calabels to Label<S1>
 				.parallelStream()
 				.map(t->{Label<Action> lab = t.getLabel();
 					return new ModalTransition<>(t.getSource(),lab,t.getTarget(),t.getModality());})
-				.collect(Collectors.toSet())),
-				prop),
-				MSCACompositionFunction::computeRank,
+				.collect(Collectors.toSet())),prop),
 				(l1,l2)->new CALabel(l1.getLabel()).getAction().getLabel().equals(l2.getLabel().get(0).getLabel()), //match
-				State::new, 
-				ModalTransition::new, 
-				(e, ee,rank) -> new Label<>(Stream.concat(e.tra.getLabel().getLabel().stream(),
-                                ee.tra.getLabel().getLabel().stream())
-                        .collect(Collectors.toList())),
-				(lab, rank, shift) ->{ 
-					List<Action> l = new ArrayList<>(rank);
-					l.addAll(Stream.generate(IdleAction::new).limit(shift).collect(Collectors.toList()));
-					l.addAll(lab.getLabel());
-					if (rank-l.size()>0)
-						l.addAll(Stream.generate(IdleAction::new).limit(rank.longValue()-l.size()).collect(Collectors.toList()));
-					return new Label<>(l);
-				}, 
-				Automaton::new,
-				pruningPred);
+				State::new, ModalTransition::new, Label::new,Automaton::new,pruningPred);
 
 	}
 }

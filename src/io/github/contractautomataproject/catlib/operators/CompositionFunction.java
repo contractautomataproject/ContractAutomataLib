@@ -1,19 +1,19 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import static java.util.stream.Collectors.groupingByConcurrent;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+import io.github.contractautomataproject.catlib.automaton.Ranked;
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomataproject.catlib.automaton.state.AbstractState;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
-import java.util.AbstractMap;
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -21,33 +21,25 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.Ranked;
-import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.state.AbstractState;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import static java.util.stream.Collectors.*;
 
 /**
  * Class implementing the generic composition
- * 
+ *
  * @author Davide Basile
  */
 
 
-public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>,A extends Automaton<S1,L1,S,T>>  implements IntFunction<A>{
+public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,T extends ModalTransition<S1,Action,S,L>,A extends Automaton<S1,Action,S,T>>  implements IntFunction<A>{
 
 	private final BiPredicate<L,L> match;
 	private final Function<List<BasicState<S1>>,S> createState;
 	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
-	private final TriFunction<TIndex,TIndex,Integer,L> createLabel;
-	private final TriFunction<L,Integer,Integer, L> shiftLabel;
+	private final Function<List<Action>,L> createLabel;
 	private final Function<Set<T>,A> createAutomaton;
 
 
@@ -61,7 +53,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 		}
 	}
 
-	private final List<? extends Automaton<S1,L1,S,T>> aut;
+	private final List<? extends Automaton<S1,Action,S,T>> aut;
 	private final int rank;
 	private final S initialState;
 	private final Queue<Entry<List<S>,Integer>> toVisit;
@@ -73,32 +65,27 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 	private final Predicate<L> pruningPred;
 
 	/**
-	 * 
+	 *
 	 * @param aut the list of the automata to compose
-	 * @param computeRank a function taking a list of ranked elements (operands) and returning the rank of the composition
 	 * @param match a function taking two operands labels L and returning true if there is a match
 	 * @param createState	a function with argument the list of operands state, and as result the composed state
 	 * @param createTransition	a function taking as arguments the composed source state, composed label, composed target state and composed modality, and returns the created transition 
 	 * @param createLabel a function taking as arguments two operands transitions (with corresponding indexes of the operands), the rank of the composed automaton, and returns the composed label
-	 * @param shiftLabel when interleaving a transition of an operand, it could be necessary in the composed label to shift the position of such interleaved label. shiftLabel is 
-	 *        a function taking as arguments the label to shift of one operand, the rank of the composed automaton, the positions to shift (positive is to the right), and returns the shifted label
 	 * @param createAutomaton a function taking as argument the set of transitions of the composition, and returns the composed automaton
-	 * 
+	 *
 	 */
-	public CompositionFunction(List<A> aut,  
-			ToIntFunction<List<? extends Ranked>> computeRank,
-			BiPredicate<L,L> match, 
-			Function<List<BasicState<S1>>,S> createState, 
-			TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition, 
-			TriFunction<TIndex,TIndex,Integer,L> createLabel,
-			TriFunction<L,Integer,Integer, L> shiftLabel, 
-			Function<Set<T>,A> createAutomaton,
-			Predicate<L> pruningPred)
+	public CompositionFunction(List<A> aut,
+							   BiPredicate<L,L> match,
+							   Function<List<BasicState<S1>>,S> createState,
+							   TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition,
+							   Function<List<Action>,L> createLabel,
+							   Function<Set<T>,A> createAutomaton,
+							   Predicate<L> pruningPred)
 	{
 		this.aut= new ArrayList<>(aut);
-		this.rank=computeRank.applyAsInt(aut.stream()
-				.map(Ranked.class::cast)
-				.collect(Collectors.toList()));
+		this.rank= aut.stream()
+				.map(Ranked::getRank)
+				.mapToInt(Integer::intValue).sum();
 
 		List<S> initial = aut.stream()
 				.flatMap(a -> a.getStates().stream())
@@ -117,7 +104,6 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 		this.createState=createState;
 		this.createLabel=createLabel;
 		this.createTransition=createTransition;
-		this.shiftLabel=shiftLabel;
 		this.createAutomaton=createAutomaton;
 		this.pruningPred=pruningPred;
 	}
@@ -209,25 +195,25 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 		//firstly match transitions are generated
 		Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
 				trans2index.parallelStream()
-				.flatMap(e -> trans2index.parallelStream()
-						.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
-						.flatMap(ee->{ 
-							List<S> targetlist =  new ArrayList<>(source);
-							targetlist.set(e.ind, e.tra.getTarget());
-							targetlist.set(ee.ind, ee.tra.getTarget());
+						.flatMap(e -> trans2index.parallelStream()
+								.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
+								.flatMap(ee->{
+									List<S> targetlist =  new ArrayList<>(source);
+									targetlist.set(e.ind, e.tra.getTarget());
+									targetlist.set(ee.ind, ee.tra.getTarget());
 
-							T tradd=createTransition.apply(sourcestate,	
-									this.createLabel.apply(e, ee, rank),
-									operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))), 
-									e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
+									T tradd=createTransition.apply(sourcestate,
+											this.createLabel(e, ee),
+											operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))),
+											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
 
-							return Stream.of(new AbstractMap.SimpleEntry<>(e.tra, 
-									new AbstractMap.SimpleEntry<>(tradd,targetlist)),
-									new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
-											new AbstractMap.SimpleEntry<>(tradd, emptyList)));
-						}))
-				.collect(groupingByConcurrent(Entry::getKey, 
-						mapping(Entry::getValue,toList())));//each principal transition can have more matches
+									return Stream.of(new AbstractMap.SimpleEntry<>(e.tra,
+													new AbstractMap.SimpleEntry<>(tradd,targetlist)),
+											new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
+													new AbstractMap.SimpleEntry<>(tradd, emptyList)));
+								}))
+						.collect(groupingByConcurrent(Entry::getKey,
+								mapping(Entry::getValue,toList())));//each principal transition can have more matches
 
 
 		//collecting match transitions and adding unmatched transitions
@@ -238,7 +224,7 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 					targetlist.set(e.ind, e.tra.getTarget());
 					return new SimpleEntry<>
 							(createTransition.apply(sourcestate,
-									shiftLabel.apply(e.tra.getLabel(), rank, //change here if you would like to preserve the CM constraints
+									this.shiftLabel(e.tra.getLabel(), rank, //change here if you would like to preserve the CM constraints
 											IntStream.range(0, e.ind)
 													.map(i -> aut.get(i).getRank())
 													.sum()),//shifting positions of label
@@ -268,6 +254,26 @@ public class CompositionFunction<S1,L1,S extends State<S1>,L extends Label<L1>,T
 				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;});
 	}
 
+	private L createLabel(TIndex e1, TIndex e2){
+		List<Action> li = IntStream.range(0, aut.size())
+				.mapToObj(i->{
+					if (i==e1.ind) return e1.tra.getLabel().getLabel();
+					else if (i==e2.ind) return e2.tra.getLabel().getLabel();
+					else return Collections.nCopies(aut.get(i).getRank(),new IdleAction());
+				})
+				.flatMap(List::stream)
+				.collect(toList());
+		return createLabel.apply(li);
+	}
+
+	private L shiftLabel(L lab, Integer rank, Integer shift){
+		List<Action> l = new ArrayList<>(rank);
+		l.addAll(Collections.nCopies(shift,new IdleAction()));
+		l.addAll(lab.getLabel());
+		if (rank-l.size()>0)
+			l.addAll(Collections.nCopies((int)rank.longValue()-l.size(), new IdleAction()));
+		return createLabel.apply(l);
+	}
 
 }
 

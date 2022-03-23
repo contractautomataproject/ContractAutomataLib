@@ -17,7 +17,7 @@ import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.requirements.Agreement;
-import io.github.contractautomataproject.catlib.spec.CompositionSpecCheck;
+import io.github.contractautomataproject.catlib.spec.CompositionSpecValidation;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 
 public class MSCACompositionTest {
@@ -34,7 +34,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
-		assertTrue(new CompositionSpecCheck().test(aut, new MSCACompositionFunction<>(aut, null).apply(100)));
+		assertTrue(new CompositionSpecValidation<String>().test(aut, new MSCACompositionFunction<>(aut, null).apply(100)));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class MSCACompositionTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		
-		assertTrue(new CompositionSpecCheck().test(aut,comp));
+		assertTrue(new CompositionSpecValidation<String>().test(aut,comp));
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class MSCACompositionTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		
-		assertTrue(new CompositionSpecCheck().test(aut,comp));
+		assertTrue(new CompositionSpecValidation<String>().test(aut,comp));
 	}
 	
 	//**********************************SCICO2020 case study*******************************************************************
