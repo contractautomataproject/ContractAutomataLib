@@ -60,11 +60,11 @@ jobs:
         run: mvn -B jacoco:prepare-agent verify jacoco:report
         
       - name: 🚀 Coveralls Coverage Report Submission
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java='11'}}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java =='11'}}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
         
       - name: 🔎 SonarCloud Scan
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java='11'}}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java =='11'}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
