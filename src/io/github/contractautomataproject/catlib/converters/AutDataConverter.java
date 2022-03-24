@@ -57,7 +57,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			String strLine;
 			while ((strLine = br.readLine()) != null)
 			{
-				if (strLine.length()>0)//ignore empty lines
+				if (strLine.length()>0 && !strLine.startsWith("Transition"))
 				{
 					String subStrLine=strLine.substring(0,1);
 					switch(subStrLine)
