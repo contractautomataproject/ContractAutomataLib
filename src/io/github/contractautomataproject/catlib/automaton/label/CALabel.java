@@ -42,9 +42,9 @@ public class CALabel extends Label<Action> {
 		super(label);
 
 		if (label.stream().anyMatch(l->!(l instanceof OfferAction)&&!(l instanceof RequestAction)&&!(l instanceof IdleAction)) ||
-				label.stream().allMatch(l -> l instanceof IdleAction) ||
-				label.stream().filter(l -> l instanceof  OfferAction).count()>1 ||
-				label.stream().filter(l -> l instanceof RequestAction).count()>1)
+				label.stream().allMatch(IdleAction.class::isInstance) ||
+				label.stream().filter(OfferAction.class::isInstance).count()>1 ||
+				label.stream().filter(RequestAction.class::isInstance).count()>1)
 			throw new IllegalArgumentException("The label is not well-formed");
 	}
 	
@@ -109,13 +109,13 @@ public class CALabel extends Label<Action> {
 		if (this.isRequest())
 			return this.getLabel()
 					.stream()
-					.filter(a->a instanceof RequestAction)
+					.filter(RequestAction.class::isInstance)
 					.findAny()
 					.orElseThrow(RuntimeException::new);
 		else
 			return this.getLabel()
 					.stream()
-					.filter(a->a instanceof OfferAction)
+					.filter(OfferAction.class::isInstance)
 					.findAny()
 					.orElseThrow(RuntimeException::new);
 		//in case of match, the action is always the offer

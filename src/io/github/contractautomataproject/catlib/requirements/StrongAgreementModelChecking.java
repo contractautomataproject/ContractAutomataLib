@@ -14,16 +14,16 @@ import io.github.contractautomataproject.catlib.automaton.label.action.IdleActio
  * @author Davide Basile
  *
  */
-public class StrongAgreementModelChecking<T extends Label<Action>> implements Predicate<T>{
+public class StrongAgreementModelChecking<L extends Label<Action>> implements Predicate<L>{
 
 	@Override
-	public boolean test(T l) {
+	public boolean test(L l) {
 		//only transitions where both aut and prop moves together are allowed
 		List<Action> listAct = l.getLabel();
 		return !((listAct.get(l.getRank()-1) instanceof IdleAction)||
 				 IntStream.range(0, l.getRank()-1)
 						.mapToObj(listAct::get)
-						 .allMatch(a->a instanceof IdleAction));
+						 .allMatch(IdleAction.class::isInstance));
 	} 
 
 }

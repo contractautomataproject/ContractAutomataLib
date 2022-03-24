@@ -14,14 +14,14 @@ import java.util.stream.IntStream;
  * @author Davide Basile
  *
  */
-public class AgreementModelChecking<T extends Label<Action>> implements Predicate<T>{
+public class AgreementModelChecking<L extends Label<Action>> implements Predicate<L>{
 
 	@Override
-	public boolean test(T l) {
+	public boolean test(L l) {
 		List<Action> listAct = l.getLabel();
 		return !(IntStream.range(0, l.getRank()-1)
 				.mapToObj(listAct::get)
-				.allMatch(a-> a instanceof IdleAction));
+				.allMatch(IdleAction.class::isInstance));
 	} 
 
 }

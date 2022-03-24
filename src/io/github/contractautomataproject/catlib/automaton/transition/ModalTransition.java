@@ -18,6 +18,10 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 		PERMITTED,URGENT,LAZY
 	}
 
+	public static final String URGENT = "U";
+	public static final String LAZY = "L";
+	public static final String NECESSARY = "!";
+
 	private final Modality mod;
 
 	public ModalTransition(S source, L label, S target, Modality type)
@@ -73,9 +77,9 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	public String toString()
 	{
 		if (this.mod==Modality.URGENT)
-			return "!U" + super.toString();
+			return NECESSARY+URGENT+ super.toString();
 		else if (this.mod==Modality.LAZY)
-			return "!L"+super.toString();
+			return NECESSARY+LAZY+super.toString();
 		else
 			return super.toString();
 	}

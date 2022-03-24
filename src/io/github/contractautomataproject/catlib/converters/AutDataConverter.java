@@ -1,5 +1,14 @@
 package io.github.contractautomataproject.catlib.converters;
 
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
+import io.github.contractautomataproject.catlib.automaton.Automaton;
+import io.github.contractautomataproject.catlib.automaton.label.Label;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
+import io.github.contractautomataproject.catlib.automaton.state.BasicState;
+import io.github.contractautomataproject.catlib.automaton.state.State;
+import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -8,18 +17,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import com.google.re2j.Matcher;
-import com.google.re2j.Pattern;
-
-import io.github.contractautomataproject.catlib.automaton.Automaton;
-import io.github.contractautomataproject.catlib.automaton.label.Label;
-import io.github.contractautomataproject.catlib.automaton.label.action.*;
-import io.github.contractautomataproject.catlib.automaton.state.BasicState;
-import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Import/Export textual DATA format
@@ -43,12 +40,12 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			throw new IllegalArgumentException("Not a .data format");
 		Path path = FileSystems.getDefault().getPath(filename);
 
-		String safefilename = path.toString();
+		String safeFileName = path.toString();
 
 		Set<ModalTransition<String,Action,State<String>,L>> tr;
 
 		//https://github.com/find-sec-bugs/find-sec-bugs/issues/241
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(safefilename), StandardCharsets.UTF_8)))
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(safeFileName), StandardCharsets.UTF_8)))
 		{
 			int rank=0;
 			String[] initial = new String[1];
@@ -60,60 +57,37 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			String strLine;
 			while ((strLine = br.readLine()) != null)
 			{
-				if (strLine.length()>0)
+				if (strLine.length()>0)//ignore empty lines
 				{
 					String subStrLine=strLine.substring(0,1);
 					switch(subStrLine)
 					{
 						case "R":  //Rank Line
 						{
-							rank = Integer.parseInt(strLine.substring(6));
+							rank=Integer.parseInt(strLine.substring(6));
 							break;
 						}
 						case "I": //Initial state
 						{
-							initial=Arrays.stream(strLine.split("[\\[\\],]"))
-									.filter(s->!s.contains("Initial state"))
-									.map(String::trim)
-									.toArray(String[]::new);
-							if (initial.length!=rank)
-								throw new IllegalArgumentException("Initial state with different rank");
+							initial=readInitialState(strLine,rank);
 							break;
 						}
 						case "F": //Final state
 						{
-							fin=Arrays.stream(strLine.split("]"))
-									.map(sar->Arrays.stream(sar.split("[,|\\[]"))
-											.filter(s->!s.contains("Final states"))
-											.map(String::trim)
-											.filter(s->!s.isEmpty())
-											.toArray(String[]::new))
-									.toArray(String[][]::new);
-							if (fin.length!=rank)
-								throw new IllegalArgumentException("Final states with different rank");
-
+							fin=readFinalState(strLine,rank);
 							break;
 						}
-						case "(": //a may transition
+						case "(": //a permitted transition
 						{
 							tr.add(loadTransition(strLine,rank, ModalTransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
 							break;
 						}
-						case "!": //a must transition
+						case ModalTransition.NECESSARY: //a necessary transition
 						{
-							String stype= strLine.substring(1,2);
-							ModalTransition.Modality type;
-							if ("U".equals(stype))
-								type=ModalTransition.Modality.URGENT;
-							else if ("L".equals(stype))
-								type=ModalTransition.Modality.LAZY;
-							else
-								throw new IllegalArgumentException("Invalid modality");
-
-							tr.add(loadTransition(strLine,rank,type,states,mapBasicStates,initial,fin));
+							tr.add(loadTransition(strLine,rank,readModality(strLine),states,mapBasicStates,initial,fin));
 							break;
 						}
-						default :
+						default : throw new IllegalArgumentException();
 					}
 				}
 			}
@@ -121,6 +95,40 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 		}
 
 		return new Automaton<>(tr);
+	}
+
+	private String[] readInitialState(String strLine, int rank){
+		String[] initial=Arrays.stream(strLine.split("[\\[\\],]"))
+				.filter(s->!s.contains("Initial state"))
+				.map(String::trim)
+				.toArray(String[]::new);
+		if (initial.length!=rank)
+			throw new IllegalArgumentException("Initial state with different rank");
+		return initial;
+	}
+
+	private String[][] readFinalState(String strLine, int rank){
+		String[][] fin=Arrays.stream(strLine.split("]"))
+				.map(sar->Arrays.stream(sar.split("[,|\\[]"))
+						.filter(s->!s.contains("Final states"))
+						.map(String::trim)
+						.filter(s->!s.isEmpty())
+						.toArray(String[]::new))
+				.toArray(String[][]::new);
+		if (fin.length!=rank)
+			throw new IllegalArgumentException("Final states with different rank");
+		return fin;
+	}
+
+	private ModalTransition.Modality readModality(String strLine) {
+		String stype= strLine.substring(1,2);
+		ModalTransition.Modality type;
+		if (ModalTransition.URGENT.equals(stype))
+			return ModalTransition.Modality.URGENT;
+		else if (ModalTransition.LAZY.equals(stype))
+			return ModalTransition.Modality.LAZY;
+		else
+			throw new IllegalArgumentException("Invalid modality");
 	}
 
 	private ModalTransition<String,Action,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
@@ -144,7 +152,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 		return new ModalTransition<>(source,createLabel(tr),target,type);
 	}
 
-	public L createLabel(String[][] tr) {
+	private L createLabel(String[][] tr) {
 		try { return createLabel.apply(Arrays.stream(tr[1]).map(this::parseAction).collect(Collectors.toList()));}
 		catch (IllegalArgumentException e) {
 			//parsing failed
@@ -197,9 +205,9 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 
 		String ext=(filename.endsWith(SUFFIX))?"":SUFFIX;
 		Path path = FileSystems.getDefault().getPath(filename+ext);
-		String safefilename = path.toString();
+		String safeFileName = path.toString();
 
-		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safefilename)), StandardCharsets.UTF_8)))
+		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(safeFileName)), StandardCharsets.UTF_8)))
 		{
 			pr.print(aut.toString());
 		}
