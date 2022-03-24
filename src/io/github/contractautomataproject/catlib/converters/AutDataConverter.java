@@ -57,7 +57,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			String strLine;
 			while ((strLine = br.readLine()) != null)
 			{
-				if (strLine.length()>0 && !strLine.startsWith("Transition"))
+				if (strLine.length()>0)
 				{
 					String subStrLine=strLine.substring(0,1);
 					switch(subStrLine)
@@ -87,7 +87,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 							tr.add(loadTransition(strLine,rank,readModality(strLine),states,mapBasicStates,initial,fin));
 							break;
 						}
-						default : throw new IllegalArgumentException();
+						default :
 					}
 				}
 			}
