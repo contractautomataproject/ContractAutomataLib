@@ -24,7 +24,7 @@ public class Action implements Matchable<Action> {
 
     @Override
     public boolean match(Action arg) {
-        return label.equals(arg.label);
+        return label.equals(arg.getLabel());
     }
 
     @Override

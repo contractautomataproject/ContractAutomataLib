@@ -303,15 +303,17 @@
 					<configuration>
 						<targetClasses>
 							<param>io.github.contractautomataproject.catlib.automaton*</param>
-							<param>io.github.contractautomataproject.catlib.label*</param>
-							<param>io.github.contractautomataproject.catlib.state*</param>
-							<param>io.github.contractautomataproject.catlib.transition*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.label*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.label.action*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.state*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.transition*</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.contractautomataproject.catlib.automaton*</param>
-							<param>io.github.contractautomataproject.catlib.label*</param>
-							<param>io.github.contractautomataproject.catlib.state*</param>
-							<param>io.github.contractautomataproject.catlib.transition*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.label*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.label.action*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.state*</param>
+							<param>io.github.contractautomataproject.catlib.automaton.transition*</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

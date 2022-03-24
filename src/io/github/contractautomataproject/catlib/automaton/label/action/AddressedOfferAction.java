@@ -19,7 +19,9 @@ public class AddressedOfferAction extends OfferAction implements AddressedAction
 
     @Override
     public boolean match(Action arg) {
-        return  (arg instanceof AddressedAction) && address.match(((AddressedAction)arg).getAddress()) && super.match(arg);
+        return  (arg instanceof AddressedAction) && 
+        		address.match(((AddressedAction)arg).getAddress()) && 
+        		super.match(arg);
     }
 
     @Override
