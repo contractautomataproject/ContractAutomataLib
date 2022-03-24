@@ -1,19 +1,15 @@
 package io.github.contractautomataproject.catlib.operators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
-import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+
+import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Class implementing the model checking function. 

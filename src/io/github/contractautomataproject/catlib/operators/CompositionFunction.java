@@ -193,7 +193,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		List<S> emptyList = new ArrayList<>();
 
 		//firstly match transitions are generated
-		Map<T, List<SimpleEntry<T,List<S>>>> matchtransitions=
+		Map<T, List<SimpleEntry<T,List<S>>>> matchTransitions=
 				trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
 								.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
@@ -209,7 +209,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 
 									return Stream.of(new AbstractMap.SimpleEntry<>(e.tra,
 													new AbstractMap.SimpleEntry<>(tradd,targetlist)),
-											new AbstractMap.SimpleEntry<>(ee.tra, //dummy, ee.tra is matched
+											new AbstractMap.SimpleEntry<>(ee.tra, //dummy, the match transition is already stored by e.tra
 													new AbstractMap.SimpleEntry<>(tradd, emptyList)));
 								}))
 						.collect(groupingByConcurrent(Entry::getKey,
@@ -218,13 +218,13 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 
 		//collecting match transitions and adding unmatched transitions
 		Set<SimpleEntry<T,List<S>>> trmap = trans2index.parallelStream()
-				.filter(e -> !matchtransitions.containsKey(e.tra))
+				.filter(e -> !matchTransitions.containsKey(e.tra))
 				.map(e -> {
 					List<S> targetlist = new ArrayList<>(source);
 					targetlist.set(e.ind, e.tra.getTarget());
 					return new SimpleEntry<>
 							(createTransition.apply(sourcestate,
-									this.shiftLabel(e.tra.getLabel(), rank, //change here if you would like to preserve the CM constraints
+									this.shiftLabel(e.tra.getLabel(), rank,
 											IntStream.range(0, e.ind)
 													.map(i -> aut.get(i).getRank())
 													.sum()),//shifting positions of label
@@ -232,7 +232,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 									e.tra.getModality()),
 									targetlist);
 				}).collect(toSet());
-		trmap.addAll(matchtransitions.values().parallelStream()//matched transitions
+		trmap.addAll(matchTransitions.values().parallelStream()//matched transitions
 				.flatMap(List::parallelStream)
 				.filter(e->(!e.getValue().isEmpty())) //no duplicates
 				.collect(toSet()));
@@ -248,7 +248,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		return pruningPred;
 	}
 
-	public List<BasicState<S1>> flattenState(List<S> lstate){
+	private List<BasicState<S1>> flattenState(List<S> lstate){
 		return lstate.stream()
 				.map(State::getState)
 				.reduce(new ArrayList<>(), (x,y)->{x.addAll(y); return x;});

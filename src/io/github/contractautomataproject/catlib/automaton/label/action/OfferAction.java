@@ -26,4 +26,8 @@ public class OfferAction extends Action  {
         return Objects.hash(OFFER+this.getLabel());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }

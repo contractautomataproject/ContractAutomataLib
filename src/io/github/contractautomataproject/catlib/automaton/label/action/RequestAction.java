@@ -24,4 +24,9 @@ public class RequestAction extends Action {
     public int hashCode() {
         return Objects.hash(REQUEST+this.getLabel());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }
