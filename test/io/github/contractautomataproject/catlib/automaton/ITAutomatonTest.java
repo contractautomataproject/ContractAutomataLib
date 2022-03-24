@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.Assert;
+import org.junit.Test;
+
+import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomataproject.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomataproject.catlib.automaton.label.action.RequestAction;
-import io.github.contractautomataproject.catlib.automaton.transition.Transition;
-import org.junit.Assert;
-import org.junit.Test;
-
-import io.github.contractautomataproject.catlib.automaton.label.CALabel;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
-import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition.Modality;
+import io.github.contractautomataproject.catlib.automaton.transition.Transition;
+import io.github.contractautomataproject.catlib.converters.AutDataConverter;
 
 public class ITAutomatonTest {
 
@@ -32,12 +32,12 @@ public class ITAutomatonTest {
 	
 	@Test
 	public void testString() {
-		BasicState<String> s0 = new BasicState<String>("0",true,false);
-		BasicState<String> s1 = new BasicState<String>("1",false,true);
-		BasicState<String> s2 = new BasicState<String>("2",false,true);
+		BasicState<String> s0 = new BasicState<>("0",true,false);
+		BasicState<String> s1 = new BasicState<>("1",false,true);
+		BasicState<String> s2 = new BasicState<>("2",false,true);
 		State<String> cs0 = new State<>(List.of(s0));
-		Transition<String,String,State<String>, Label<String>> t1 = new Transition<>(cs0, new Label<String>(List.of("m")), new State<>(List.of(s1)));
-		Transition<String,String,State<String>, Label<String>> t2 = new Transition<>(cs0, new Label<String>(List.of("m")), new State(List.of(s2)));
+		Transition<String,String,State<String>, Label<String>> t1 = new Transition<>(cs0, new Label<>(List.of("m")), new State<>(List.of(s1)));
+		Transition<String,String,State<String>, Label<String>> t2 = new Transition<>(cs0, new Label<>(List.of("m")), new State<>(List.of(s2)));
 
 		Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>> prop = new Automaton<>(Set.of(t1,t2));
 

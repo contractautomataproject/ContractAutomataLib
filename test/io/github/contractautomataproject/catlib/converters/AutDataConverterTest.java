@@ -6,17 +6,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
 
-import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomataproject.catlib.automaton.Automaton;
 import io.github.contractautomataproject.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomataproject.catlib.automaton.label.CALabel;
+import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 public class AutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

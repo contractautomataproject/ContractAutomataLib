@@ -122,7 +122,6 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 
 	private ModalTransition.Modality readModality(String strLine) {
 		String stype= strLine.substring(1,2);
-		ModalTransition.Modality type;
 		if (ModalTransition.URGENT.equals(stype))
 			return ModalTransition.Modality.URGENT;
 		else if (ModalTransition.LAZY.equals(stype))
