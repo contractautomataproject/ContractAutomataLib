@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="CAT_App" />
         <module name="contractautomatalib" />
+        <module name="CARE" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

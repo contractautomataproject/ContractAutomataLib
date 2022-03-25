@@ -3,14 +3,13 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FContractAutomataProject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/ContractAutomataProject/ContractAutomataLib/main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
 [![Code Quality Score](https://api.codiga.io/project/32018/score/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
-[![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.davidebasile/ContractAutomataLib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/davidebasile/ContractAutomataLib/0.0.1/)
 [![Maven Central Repository](https://img.shields.io/maven-central/v/io.github.davidebasile/ContractAutomataLib)](https://repo1.maven.org/maven2/io/github/davidebasile/ContractAutomataLib/0.0.1/)
 [![javadoc](https://javadoc.io/badge2/io.github.davidebasile/ContractAutomataLib/javadoc.svg)](https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
-
+<!--[![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)-->
 <h1 align=center>Contract Automata Lib </h1>
 
 <h2>About</h2>

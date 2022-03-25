@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- https://central.sonatype.org/publish/requirements/ -->
-	<groupId>io.github.davidebasile</groupId>
+	<groupId>io.github.contractautomataproject</groupId>
 	<artifactId>contractautomatalib</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
@@ -292,14 +292,15 @@
 				<plugin>
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
-					<version>1.4.10</version>
+					<version>LATEST</version>
+					<!--version>1.4.10</version>
 					<dependencies>
 						<dependency>
 							<groupId>io.github.wmaarts</groupId>
 							<artifactId>pitest-mutation-testing-elements-plugin</artifactId>
 							<version>0.4.0</version>
 						</dependency>
-					</dependencies>
+					</dependencies-->
 					<configuration>
 						<targetClasses>
 							<param>io.github.contractautomataproject.catlib.automaton*</param>
@@ -316,7 +317,8 @@
 							<param>io.github.contractautomataproject.catlib.automaton.transition*</param>
 						</targetTests>
 						<outputFormats>
-							<format>HTML2</format>
+							<format>HTML</format>
+							<!--format>HTML2</format-->
 						</outputFormats>
 					</configuration>
 				</plugin>

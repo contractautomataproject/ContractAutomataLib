@@ -33,9 +33,13 @@ public class LabelTest {
 	}
 
 	@Test
-	public void testHashcode() {
-
+	public void testHashCode() {
 		Assert.assertEquals(lab.hashCode(), new Label<>(List.of("a")).hashCode());
+	}
+
+	@Test
+	public void testHashCodeFalse() {
+		Assert.assertNotEquals(lab.hashCode(), new Label<>(List.of("b")).hashCode());
 	}
 
 	@Test
