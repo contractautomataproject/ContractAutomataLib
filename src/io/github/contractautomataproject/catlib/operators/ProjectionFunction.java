@@ -6,6 +6,7 @@ import io.github.contractautomataproject.catlib.automaton.label.action.*;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.operators.interfaces.TriFunction;
 
 import java.util.ArrayList;
 import java.util.List;

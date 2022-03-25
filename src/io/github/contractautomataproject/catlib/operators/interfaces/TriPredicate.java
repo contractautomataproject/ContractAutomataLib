@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.catlib.operators;
+package io.github.contractautomataproject.catlib.operators.interfaces;
 
 /**
  * A predicate over three arguments.  * Used in the synthesis method of MSCA for readability. 

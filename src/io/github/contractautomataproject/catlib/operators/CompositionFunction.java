@@ -9,6 +9,7 @@ import io.github.contractautomataproject.catlib.automaton.state.AbstractState;
 import io.github.contractautomataproject.catlib.automaton.state.BasicState;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.operators.interfaces.TetraFunction;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
@@ -274,8 +275,4 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		return createLabel.apply(l);
 	}
 
-}
-
-interface TetraFunction<T,U,V,W,Z> {
-	Z apply(T arg1, U arg2, V arg3,W arg4);
 }

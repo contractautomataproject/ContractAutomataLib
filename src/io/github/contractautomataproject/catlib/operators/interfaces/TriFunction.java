@@ -1,4 +1,4 @@
-package io.github.contractautomataproject.catlib.operators;
+package io.github.contractautomataproject.catlib.operators.interfaces;
 
 /**
  * A function over three arguments, for readability.

@@ -14,6 +14,7 @@ import io.github.contractautomataproject.catlib.automaton.label.Label;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomataproject.catlib.automaton.transition.Transition;
+import io.github.contractautomataproject.catlib.operators.interfaces.TriPredicate;
 
 /**
  * Class implementing the abstract synthesis operator
@@ -38,8 +39,8 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	 * @param req the invariant requirement to enforce (e.g. agreement, strong agreement)
 	 */
 	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> pruningPredicate,
-			TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate, 
-			Predicate<L> req, 
+			TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate,
+			Predicate<L> req,
 			Function<Set<T>,A> createAut) {
 		super();
 		this.pruningPred = (x,t,bad) -> bad.contains(x.getTarget())|| !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
@@ -55,8 +56,8 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	 * @param forbiddenPredicate the forbidden predicate
 	 * @param req  the invariant requirement to enforce (e.g. agreement, strong agreement)
 	 */
-	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate, 
-			Predicate<L> req, 
+	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate,
+			Predicate<L> req,
 			Function<Set<T>,A> createAut) {
 		this((x,t,bad) -> false, forbiddenPredicate,req, createAut);
 	}

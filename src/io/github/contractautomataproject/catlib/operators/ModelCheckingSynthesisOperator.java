@@ -7,6 +7,7 @@ import io.github.contractautomataproject.catlib.automaton.label.action.Action;
 import io.github.contractautomataproject.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomataproject.catlib.automaton.state.State;
 import io.github.contractautomataproject.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomataproject.catlib.operators.interfaces.TriPredicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,8 @@ SynthesisOperator<S1,Action,State<S1>,CALabel,ModalTransition<S1, Action,State<S
 	 */
 	public ModelCheckingSynthesisOperator(
 			TriPredicate<ModalTransition<S1,Action,State<S1>,CALabel>,
-			Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
-			Set<State<S1>>> pruningPredicate,
+						Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
+						Set<State<S1>>> pruningPredicate,
 			TriPredicate<ModalTransition<S1,Action,State<S1>,CALabel>,
 			Set<ModalTransition<S1,Action,State<S1>,CALabel>>,
 			Set<State<S1>>> forbiddenPredicate,
