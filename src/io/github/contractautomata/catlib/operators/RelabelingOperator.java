@@ -30,7 +30,9 @@ public class RelabelingOperator<S1, L extends Label<Action>> implements
 	private final Predicate<BasicState<S1>> initialStatePred;
 	private final Predicate<BasicState<S1>> finalStatePred;
 
-	public RelabelingOperator(Function<List<Action>,L> createLabel, UnaryOperator<S1> relabel,Predicate<BasicState<S1>> initialStatePred,
+	public RelabelingOperator(Function<List<Action>,L> createLabel,
+							  UnaryOperator<S1> relabel,
+							  Predicate<BasicState<S1>> initialStatePred,
 			Predicate<BasicState<S1>> finalStatePred) {
 		this.createLabel=createLabel;
 		this.relabel=relabel;

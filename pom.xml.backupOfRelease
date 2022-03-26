@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- https://central.sonatype.org/publish/requirements/ -->
-	<groupId>io.github.davidebasile</groupId>
+	<groupId>io.github.contractautomata</groupId>
 	<artifactId>ContractAutomataLib</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>

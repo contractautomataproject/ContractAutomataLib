@@ -41,7 +41,7 @@ For the API documentation, check the links below.
   <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
 </ul> 
 
-The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib/latest/overview-summary.html</a>.
+The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html</a>.
 
 The documentation is up-to date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
 The diagrams contained in this documentation have been generated using the Model-based Software Engineering tool Sparx Enterprise Architect. 

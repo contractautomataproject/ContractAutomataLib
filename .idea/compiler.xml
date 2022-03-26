@@ -10,6 +10,7 @@
         <module name="CARE_Example" />
         <module name="expRepScicoSI" />
         <module name="catlib" />
+        <module name="maze" />
         <module name="CARE" />
       </profile>
     </annotationProcessing>
