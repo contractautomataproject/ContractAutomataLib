@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- https://central.sonatype.org/publish/requirements/ -->
-	<groupId>io.github.contractautomataproject</groupId>
-	<artifactId>contractautomatalib</artifactId>
+	<groupId>io.github.contractautomata</groupId>
+	<artifactId>catlib</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
