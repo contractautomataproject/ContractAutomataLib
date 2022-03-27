@@ -30,6 +30,8 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 	private TriPredicate<T, Set<T>, Set<S>> pruningPred;
 	private final TriPredicate<T, Set<T>, Set<S>> forbiddenPred;
 	private final Predicate<L> req;
+
+
 	private final Function<Set<T>,A> createAut;
 
 	/**
@@ -62,13 +64,12 @@ L extends Label<L1>,T extends ModalTransition<S1,L1,S,L>, A extends Automaton<S1
 		this((x,t,bad) -> false, forbiddenPredicate,req, createAut);
 	}
 
-
-	public void setPruningPred(TriPredicate<T, Set<T>, Set<S>> pruningPredicate, Predicate<L> req) {
-		this.pruningPred =  (x,t,bad) -> bad.contains(x.getTarget()) || !req.test(x.getLabel()) || pruningPredicate.test(x, t, bad);
-	}
-
 	public Predicate<L> getReq() {
 		return req;
+	}
+
+	public Function<Set<T>, A> getCreateAut() {
+		return createAut;
 	}
 
 	/** 

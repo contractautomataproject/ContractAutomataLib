@@ -16,14 +16,22 @@ import io.github.contractautomata.catlib.automaton.state.State;
  * @author Davide Basile
  *
  */
-public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1> {
+public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
+		ModalTransition<S1,Action,State<S1>,CALabel>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
+		Label<Action>,
+		ModalTransition<S1,Action,State<S1>,Label<Action>>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
+		{
 
 	/**
 	 * 
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req){
-		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, null, null,null);
+		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req,
+				Automaton::new,CALabel::new,ModalTransition::new,State::new);
+
 	}
 
 	/**
@@ -31,11 +39,11 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	 * @param req the invariant requirement (e.g. agreement)
 	 * @param prop the property to enforce expressed as an automaton
 	 */
-	public OrchestrationSynthesisOperator(Predicate<CALabel> req, 
-			Predicate<Label<Action>> reqmc,
+	public OrchestrationSynthesisOperator(Predicate<CALabel> req,
 			Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop){
-		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, reqmc, prop, 
-				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
+		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, prop,
+				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()),
+				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
 	}
 
 	/**

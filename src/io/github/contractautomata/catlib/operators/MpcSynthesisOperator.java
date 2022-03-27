@@ -1,41 +1,49 @@
 package io.github.contractautomata.catlib.operators;
 
-import java.util.function.Predicate;
-
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+
+import java.util.function.Predicate;
 
 /**
  * Class implementing the mpc operator
  * @author Davide Basile
  *
  */
-public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1>
+public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
+		ModalTransition<S1,Action,State<S1>,CALabel>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
+		Label<Action>,
+		ModalTransition<S1,Action,State<S1>,Label<Action>>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
 
 	/**
-	 * 
+	 *
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public MpcSynthesisOperator(Predicate<CALabel> req) {
-		super((x,t,bad) -> x.isUrgent(), req, null, null, null);
-	}	
-	
-	
+		super((x,t,bad) -> x.isUrgent(), req,
+				Automaton::new,CALabel::new,ModalTransition::new,State::new);
+	}
+
+
+
 	/**
-	 * 
+	 *
 	 * @param req the invariant requirement (e.g. agreement)
 	 * @param prop the property to enforce expressed as an automaton
 	 */
-	public MpcSynthesisOperator(Predicate<CALabel> req, Predicate<Label<Action>> reqmc,
-			Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop)
+	public MpcSynthesisOperator(Predicate<CALabel> req,
+								Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop)
 	{
-		super((x,t,bad) -> x.isUrgent(), req, reqmc, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()));
-	}	
+		super((x,t,bad) -> x.isUrgent(), req, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()),
+				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
+	}
 	
 
 	/**

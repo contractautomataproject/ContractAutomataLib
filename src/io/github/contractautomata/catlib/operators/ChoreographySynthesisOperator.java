@@ -22,34 +22,44 @@ import io.github.contractautomata.catlib.automaton.state.State;
  * @author Davide Basile
  *
  */
-public class ChoreographySynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1> {
+public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
+        ModalTransition<S1,Action,State<S1>,CALabel>,
+        Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
+        Label<Action>,
+        ModalTransition<S1,Action,State<S1>,Label<Action>>,
+        Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
+{
 
 	private final Predicate<CALabel> req;
 	private Function<Stream<ModalTransition<S1, Action,State<S1>,CALabel>>,Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice=Stream::findAny;
 
 	
-	public ChoreographySynthesisOperator(Predicate<CALabel> req,  Predicate<Label<Action>> reqmc,
+	public ChoreographySynthesisOperator(Predicate<CALabel> req,
 			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,reqmc, prop,
-				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getAction()));//offers are necessary
-		this.req=req;
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req, prop,
+				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getAction()), //offers are necessary
+                Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
+
+        this.req=req;
 	}
 	
 
 	public ChoreographySynthesisOperator(Predicate<CALabel> req){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
-		this.req=req;
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,
+                Automaton::new,CALabel::new,ModalTransition::new,State::new);
+
+        this.req=req;
 	}
 	
 	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
 			Function<Stream<ModalTransition<S1,Action,State<S1>,CALabel>>,
 				Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,null, null,null);
-		this.req=req;
+		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req, null,null,
+                Automaton::new,CALabel::new,ModalTransition::new,State::new,null,null,null);
+
+        this.req=req;
 		this.choice=choice;
 	}
-	
-
 
 	/** 
 	 * invokes the synthesis method for synthesising the choreography
@@ -64,14 +74,21 @@ public class ChoreographySynthesisOperator<S1> extends ModelCheckingSynthesisOpe
 		if (aut.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
+
+		final Set<String> violatingbc=new HashSet<>();
+		//this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
 		
-		final Set<String> violatingbc = new HashSet<>();
-		this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
-		
-		ModalTransition<S1,Action,State<S1>,CALabel> toRemove;
+		ModalTransition<S1,Action,State<S1>,CALabel> toRemove=null;
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> chor;
 		do 
-		{ 
+		{
+			if (toRemove!=null) {
+				final String toRemoveString = toRemove.toString();
+				aut = new Automaton<>(aut.getTransition().parallelStream()
+						.filter(t -> !t.toString().equals(toRemoveString))
+						.collect(Collectors.toSet()));
+			}
+
 			chor = super.apply(aut);
 			if (chor==null)
 				break;

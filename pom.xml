@@ -292,15 +292,15 @@
 				<plugin>
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
-					<version>LATEST</version>
-					<!--version>1.4.10</version>
+					<!--version>LATEST</version-->
+					<version>1.4.10</version>
 					<dependencies>
 						<dependency>
 							<groupId>io.github.wmaarts</groupId>
 							<artifactId>pitest-mutation-testing-elements-plugin</artifactId>
 							<version>0.4.0</version>
 						</dependency>
-					</dependencies-->
+					</dependencies>
 					<configuration>
 						<targetClasses>
 							<param>io.github.contractautomata.catlib.automaton*</param>
@@ -317,8 +317,7 @@
 							<param>io.github.contractautomata.catlib.automaton.transition*</param>
 						</targetTests>
 						<outputFormats>
-							<format>HTML</format>
-							<!--format>HTML2</format-->
+							<format>HTML2</format>
 						</outputFormats>
 					</configuration>
 				</plugin>

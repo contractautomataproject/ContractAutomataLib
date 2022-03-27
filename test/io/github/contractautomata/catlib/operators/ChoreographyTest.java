@@ -24,7 +24,6 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
-import io.github.contractautomata.catlib.requirements.StrongAgreementModelChecking;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 public class ChoreographyTest {
@@ -68,7 +67,6 @@ public class ChoreographyTest {
 				s -> s.min(Comparator.comparing(ModalTransition::toString));
 				
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator<>(new StrongAgreement(),choice).apply(aut);
-	
 
 		assertTrue(autEquals(cor,test));
 	}
@@ -152,7 +150,7 @@ public class ChoreographyTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop  = new Automaton<>(Set.of(t1,t2));
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir + "testcor_concur21_Example34.data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator<>(new StrongAgreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator<>(new StrongAgreement(), prop).apply(aut);
 	
 		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
 		

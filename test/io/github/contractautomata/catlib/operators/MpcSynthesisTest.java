@@ -20,7 +20,6 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.requirements.Agreement;
-import io.github.contractautomata.catlib.requirements.StrongAgreementModelChecking;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 
@@ -88,7 +87,7 @@ public class MpcSynthesisTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_empty_mpc_nodangling.data");
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<>(new Agreement(), new StrongAgreementModelChecking<>().negate(),prop).apply(aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<>(new Agreement(), prop).apply(aut);
 		Assert.assertNull(mpc);
 	}
 
