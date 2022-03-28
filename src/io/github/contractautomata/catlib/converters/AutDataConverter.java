@@ -38,6 +38,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,L>> importMSCA(String filename) throws IOException {
 		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
+
 		Path path = FileSystems.getDefault().getPath(filename);
 
 		String safeFileName = path.toString();
@@ -115,6 +116,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 						.filter(s->!s.isEmpty())
 						.toArray(String[]::new))
 				.toArray(String[][]::new);
+
 		if (fin.length!=rank)
 			throw new IllegalArgumentException("Final states with different rank");
 		return fin;
@@ -143,7 +145,9 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 						.toArray(String[]::new))
 				.toArray(String[][]::new);
 
-		if (tr[0].length!=rank || tr[1].length!=rank || tr[2].length!=rank)
+		if (tr[0].length!=rank ||
+				tr[1].length!=rank ||
+				tr[2].length!=rank)
 			throw new IOException("Ill-formed transitions, different ranks");
 
 		State<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source

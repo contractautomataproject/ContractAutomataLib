@@ -1,0 +1,7 @@
+Rank: 1
+Initial state: [0]
+Final states: [[2]]
+Transitions:
+([0],[blueberry],[1])
+([1],[ananas],[2])
+([0],[cherry],[2])
