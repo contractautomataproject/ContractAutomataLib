@@ -20,7 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class StateTest {
 	private static State<String> test;
 
-	@Mock BasicState<String> bs0; 
+	@Mock
+    BasicState<String> bs0;
 	@Mock BasicState<String> bs1;
 	@Mock BasicState<String> bs2;
 	@Mock BasicState<String> bs4;

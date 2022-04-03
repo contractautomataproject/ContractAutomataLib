@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -265,4 +266,39 @@ public class AutomatonTest {
 	}
 
 
+	public static boolean autEquals(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
+		Set<String> autTr=aut.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+		Set<String> testTr=test.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+
+		return autTr.parallelStream()
+				.allMatch(testTr::contains)
+				&&
+				testTr.parallelStream()
+						.allMatch(autTr::contains);
+	}
+
+	public static String counterExample(Automaton<?,?,?,?> aut, Automaton<?,?,?,?>  test) {
+		Set<String> autTr=aut.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+		Set<String> testTr=test.getTransition().parallelStream()
+				.map(Transition::toString)
+				.collect(Collectors.toSet());
+
+		String ctx1 = autTr.parallelStream()
+				.filter(t->!testTr.contains(t))
+				.collect(Collectors.joining(System.lineSeparator()));
+
+		String ctx2 = testTr.parallelStream()
+				.filter(t->!autTr.contains(t))
+				.collect(Collectors.joining(System.lineSeparator()));
+
+		return "Transitions that should not be in SUT: "+ctx1+System.lineSeparator()+
+				"Transitions not contained in SUT:"+ctx2;
+
+	}
 }

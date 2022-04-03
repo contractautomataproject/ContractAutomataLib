@@ -58,7 +58,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 				.noneMatch(AbstractState::isFinalState))
 			throw new IllegalArgumentException("No Final States!");
 		
-		if(this.getStates().stream()
+		if(states.stream()
 				.anyMatch(x-> states.stream()
 						.anyMatch(y->x!=y && x.getState().equals(y.getState()))))
 			throw new IllegalArgumentException("Transitions have ambiguous states (different objects for the same state).");
@@ -73,7 +73,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 	/**
 	 * @return all  states that appear in at least one transition
 	 */
-	public final Set<S> getStates()
+	public Set<S> getStates()
 	{
 		return tra.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))

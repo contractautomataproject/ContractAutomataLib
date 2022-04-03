@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 /**
@@ -24,13 +24,11 @@ public class Product {
 
 	public Product(Set<Feature> required, Set<Feature> forbidden)
 	{
-		if (required==null||forbidden==null)
-			throw new IllegalArgumentException();
+		Objects.requireNonNull(required);
+		Objects.requireNonNull(forbidden);
+
 		if (required.parallelStream()
-				.anyMatch(forbidden::contains)
-				||
-				forbidden.parallelStream()
-				.anyMatch(required::contains))
+				.anyMatch(forbidden::contains))
 			throw new IllegalArgumentException("A feature is both required and forbidden");
 
 		this.required= new HashSet<>(required);
@@ -80,21 +78,6 @@ public class Product {
 	
 	/**
 	 * 
-	 * @param sf the features to retain
-	 * @return a new product containing only the intersection of its features with those in sf
-	 */
-	public Product retainFeatures(Set<Feature> sf)
-	{
-		return new Product(this.required.stream()
-				.filter(sf::contains)
-				.collect(Collectors.toSet()),
-				this.forbidden.stream()
-				.filter(sf::contains)
-				.collect(Collectors.toSet()));
-	}
-	
-	/**
-	 * 
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */
@@ -110,7 +93,7 @@ public class Product {
 
 	/**
 	 * @param tr the set of transitions to check
-	 * @return true if all forbidden actions are not available in the transitions t
+	 * @return true if all forbidden actions are not available in the transitions tr
 	 */
 	public boolean checkForbidden(Set<? extends ModalTransition<String,Action,State<String>,CALabel>> tr)
 	{
@@ -124,13 +107,14 @@ public class Product {
 
 	public boolean isForbidden(CALabel l)
 	{
-		Feature f = new Feature(l.getAction().getLabel());
-		return this.getForbidden().contains(f);
+		return forbidden.stream()
+				.map(Feature::getName)
+				.anyMatch(s->s.equals(l.getAction().getLabel()));
 	}
 
 	public boolean isValid(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut)
 	{
-		return this.checkForbidden(aut.getTransition())&&this.checkRequired(aut.getTransition());
+		return this.checkForbidden(aut.getTransition()) && this.checkRequired(aut.getTransition());
 	}
 
 	@Override

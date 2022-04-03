@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.contractautomata.catlib.automaton.ITAutomatonTest.autEquals;
+import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEquals;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UnionTest {

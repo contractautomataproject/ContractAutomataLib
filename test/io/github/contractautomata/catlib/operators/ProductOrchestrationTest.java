@@ -3,12 +3,12 @@ package io.github.contractautomata.catlib.operators;
 
 import java.io.File;
 
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
@@ -26,7 +26,7 @@ public class ProductOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
-		Assert.assertTrue(ITAutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut),test));
+		Assert.assertTrue(AutomatonTest.autEquals(new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut),test));
 	}
 
 

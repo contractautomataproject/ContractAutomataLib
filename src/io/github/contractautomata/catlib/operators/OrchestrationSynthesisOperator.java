@@ -3,12 +3,12 @@ package io.github.contractautomata.catlib.operators;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the orchestration synthesis operator
@@ -16,8 +16,8 @@ import io.github.contractautomata.catlib.automaton.state.State;
  * @author Davide Basile
  *
  */
-public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
-		ModalTransition<S1,Action,State<S1>,CALabel>,
+public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1, State<S1>, CALabel,
+		ModalTransition<S1, Action,State<S1>,CALabel>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
 		Label<Action>,
 		ModalTransition<S1,Action,State<S1>,Label<Action>>,

@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.e2e;
+package it.io.github.contractautomata.catlib.e2e;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
-public class Snippets {
+public class ITSnippets {
 	final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	
 	@SuppressWarnings("unused")

@@ -1,548 +1,405 @@
 package io.github.contractautomata.catlib.family;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-/*
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import org.junit.Test;
- */
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import org.junit.Test;
-
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.converters.AutDataConverter;
-import io.github.contractautomata.catlib.family.converters.FamilyConverter;
-import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-/**
- * 
- ** @author Davide
- *
- */
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+
+@RunWith(MockitoJUnitRunner.Strict.class)
 public class FMCATest {
-	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
-    private final FamilyConverter dfc = new ProdFamilyConverter();
-	
-	@Test
-	public void constructorTest_Exception_nullArgument() {
-		Family fam = new Family(new HashSet<>());
-		assertThatThrownBy(() -> new FMCA(null, fam))
-	    .isInstanceOf(IllegalArgumentException.class);
-	}
 
-	@Test
-	public void getAut_test() throws Exception 
-	{
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
-		FMCA aut = new FMCA(a,new Family(new HashSet<>()));
-		assertEquals(aut.getAut(),a);
-	}
-	
-	
-	@Test
-	public void testValidProductsOrc() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam= new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
-		Set<Product> vp = aut.productsRespectingValidity();
 
-		Family test = new Family(dfc.importProducts(dir+"validProductsOrcTest.prod"));
-		
-		assertEquals(vp,test.getProducts());
-	}
+    private final Function<Product,String> toString = p->"R:" + p.getRequired().stream()
+            .sorted(Comparator.comparing(Feature::toString))
+            .collect(Collectors.toList())  +
+            ";"+System.lineSeparator()+"F:" +
+            p.getForbidden().stream()
+                    .sorted(Comparator.comparing(Feature::toString))
+                    .collect(Collectors.toList())
+            +";"+System.lineSeparator();
 
-	@Test
-	public void testCanonicalProducts() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
 
-		Set<Product> cps = aut.getCanonicalProducts().keySet();
-		
-		Family test = new Family(dfc.importProducts(dir+"canonicalProductsTest.prod"));
+    Function<Set<Product>,Set<String>> sorting =  s -> s.stream()
+            .sorted(Comparator.comparing(p->p.getForbidden().toString()+p.getRequired().toString()))
+            .map(toString)
+            .collect(Collectors.toSet());
 
-		assertEquals(cps,test.getProducts());
-	}
+    @Mock Feature f1;
+    @Mock Feature f2;
+    @Mock Feature f3;
 
-	@Test
-	public void testProductsWithNonEmptyOrchestration() throws Exception
-	{
-		
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
-		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
+    @Mock Product p1;
+    @Mock Product p2;
+    @Mock Product p3;
+    @Mock Product p4;
+    @Mock Family family;
 
-		Family test = new Family(dfc.importProducts(dir+"productsWithNonEmptyOrchestration.prod"));
-		
-		assertEquals(vp,test.getProducts());
-	}
+    Set<Product> set;
 
-	@Test
-	public void testFamilyOrc() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA faut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+    FMCA aut;
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> controller = faut.getOrchestrationOfFamily();
+    @Mock BasicState<String> bs0;
+    @Mock BasicState<String> bs1;
+    @Mock BasicState<String> bs2;
+    @Mock State<String> cs1;
+    @Mock State<String> cs2;
+    @Mock State<String> cs3;
+    @Mock Action act;
+    @Mock ModalTransition<String,Action,State<String>,CALabel> t1;
+    @Mock ModalTransition<String,Action,State<String>,CALabel> t2;
+    @Mock ModalTransition<String,Action,State<String>,CALabel> t3;
+    @Mock ModalTransition<String,Action,State<String>,CALabel> t4;
+    @Mock Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a;
 
-		assertTrue(ITAutomatonTest.autEquals(controller, test));
-	}
-	@Test
-	public void testOrchestrationOfFamilyEnumerative() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
-		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> ofe =  aut.getOrchestrationOfFamilyEnumerative();
-		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
 
-		assertTrue(ITAutomatonTest.autEquals(ofe, test));
-	}
+    @Before
+    public void setUp() throws Exception {
+        f1 = mock(Feature.class);
+        f2 = mock(Feature.class);
+        f3 = mock(Feature.class);
+        f3 = mock(Feature.class);
 
-	//exceptions
-	
-	@Test
-	public void testCanonicalProductsException() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
-		FMCA fmca = new FMCA(aut,fam);
-		assertThatThrownBy(fmca::getCanonicalProducts)
-		.isInstanceOf(UnsupportedOperationException.class);	
-	}
+        when(f1.getName()).thenReturn("f1");
+        when(f2.getName()).thenReturn("f2");
+        when(f3.getName()).thenReturn("f3");
 
-	@Test
-	public void testSelectProductSatisfyingPredicateException() throws Exception
-	{
-		String fileName =dir+"ValidProducts.prod";
-		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data"),fam);
-		
-		assertThatThrownBy(aut::productsWithNonEmptyOrchestration)
-		.isInstanceOf(UnsupportedOperationException.class);
-	}
-	
-	@Test
-	public void constructorException2()
-	{
-		assertThatThrownBy(() -> new FMCA(null, (Set<Product>) null))
-		.isInstanceOf(IllegalArgumentException.class);
-	}
+        when(p1.getRequired()).thenReturn(Set.of(f1));
+        when(p1.getForbidden()).thenReturn(Set.of(f2, f3));
+//        when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
+
+        when(p2.getRequired()).thenReturn(Collections.singleton(f1));
+        when(p2.getForbidden()).thenReturn(Collections.singleton(f3));
+        //       when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p3.getRequired()).thenReturn(Collections.singleton(f1));
+        when(p3.getForbidden()).thenReturn(Collections.singleton(f2));
+//        when(p3.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p4.getRequired()).thenReturn(Set.of(f3));
+        when(p4.getForbidden()).thenReturn(Collections.emptySet());
+        //       when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
+
+
+        set = new HashSet<>(Arrays.asList(p1,p2,p3,p4));
+//        when(family.getProducts()).thenReturn(set);
+        when(family.getMaximalProducts()).thenReturn(Set.of(p2,p3,p4));
+
+        //       when(bs0.isInitial()).thenReturn(true);
+        when(bs0.isFinalState()).thenReturn(false);
+        when(bs0.getState()).thenReturn("0");
+        when(bs1.isFinalState()).thenReturn(true);
+        when(bs2.isFinalState()).thenReturn(true);
+        when(bs1.getState()).thenReturn("1");
+        when(bs2.getState()).thenReturn("2");
+
+        when(cs1.isInitial()).thenReturn(true);
+        when(cs1.toString()).thenReturn(List.of("0","0").toString());
+        when(cs3.isFinalState()).thenReturn(true);
+
+        when(cs1.getState()).thenReturn(asList(bs0,bs0));
+        when(cs2.getState()).thenReturn(asList(bs1,bs0));
+        when(cs3.getState()).thenReturn(asList(bs1,bs2));
+
+        ////
+        act = mock(OfferAction.class);
+        RequestAction ract = mock(RequestAction.class);
+        CALabel lab = mock(CALabel.class);
+        when(t1.getLabel()).thenReturn(lab);
+        when(lab.getAction()).thenReturn(act);
+        when(lab.getLabel()).thenReturn(List.of(act,ract));
+        when(act.getLabel()).thenReturn("f1");
+        when(act.toString()).thenReturn("!f1");
+        //       when(ract.getLabel()).thenReturn("f1");
+        when(ract.toString()).thenReturn("?f1");
+
+        Action act2 = mock(OfferAction.class);
+        RequestAction ract2 = mock(RequestAction.class);
+
+        CALabel lab2 = mock(CALabel.class);
+        when(t2.getLabel()).thenReturn(lab2);
+        when(lab2.getAction()).thenReturn(act2);
+        when(lab2.getLabel()).thenReturn(List.of(act2,ract2));
+        when(act2.getLabel()).thenReturn("f2");
+        when(act2.toString()).thenReturn("!f2");
+        //       when(ract2.getLabel()).thenReturn("f2");
+        when(ract2.toString()).thenReturn("?f2");
+
+        CALabel lab3 = mock(CALabel.class);
+        Action act3 = mock(OfferAction.class);
+        RequestAction ract3 = mock(RequestAction.class);
+
+        when(t3.getLabel()).thenReturn(lab3);
+        when(lab3.getAction()).thenReturn(act3);
+        when(lab3.getLabel()).thenReturn(List.of(act3,ract3));
+        when(act3.getLabel()).thenReturn("f3");
+        when(act3.toString()).thenReturn("!f3");
+//        when(ract3.getLabel()).thenReturn("f3");
+        when(ract3.toString()).thenReturn("?f3");
+
+        ///
+
+        when(t1.getSource()).thenReturn(cs1);
+        when(t1.getLabel()).thenReturn(lab);
+        when(t1.getTarget()).thenReturn(cs2);
+        when(t1.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
+        when(t1.getRank()).thenReturn(2);
+        when(t1.toString()).thenReturn("([0, 0],[!f1,?f1],[1, 0])");
+
+        when(t2.getSource()).thenReturn(cs2);
+        when(t2.getLabel()).thenReturn(lab2);
+        when(t2.getTarget()).thenReturn(cs3);
+        when(t2.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
+        when(t2.getRank()).thenReturn(2);
+        when(t2.toString()).thenReturn("([1, 0],[!f2,?f2],[1, 2])");
+
+        when(t3.getSource()).thenReturn(cs3);
+        when(t3.getLabel()).thenReturn(lab3);
+        when(t3.getTarget()).thenReturn(cs1);
+        when(t3.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
+        when(t3.getRank()).thenReturn(2);
+        when(t3.toString()).thenReturn("([1, 2],[!f3,?f3],[0, 0])");
+
+
+        when(p1.isForbidden(lab2)).thenReturn(true);
+        when(p3.isForbidden(lab2)).thenReturn(true);
+        when(p1.isForbidden(lab3)).thenReturn(true);
+        when(p2.isForbidden(lab3)).thenReturn(true);
+
+
+        when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3)));
+        when(a.getStates()).thenReturn(Set.of(cs1,cs2,cs3));
+        when(a.getForwardStar(cs1)).thenReturn(Set.of(t1));
+
+        when(a.getInitial()).thenReturn(cs1);
+
+//        when(p1.checkRequired(anySet())).thenReturn(true);
+        when(p2.checkRequired(anySet())).thenReturn(true);
+        //       when(p3.checkRequired(anySet())).thenReturn(true);
+        when(p4.checkRequired(anySet())).thenReturn(true);
+        when(p4.isValid(any())).thenReturn(true);
+
+
+        Map<Product, Map<Boolean,Set<Product>>> po =
+                Map.of(p1, Map.of(false, Collections.emptySet(),true,Set.of(p2,p3)),
+                        p2, Map.of(false, Set.of(p1),true, Collections.emptySet()),
+                        p3, Map.of(false, Set.of(p1),true, Collections.emptySet()),
+                        p4, Map.of(false, Collections.emptySet(),true, Collections.emptySet()));
+
+        when(family.getPo()).thenReturn(po);
+
+        aut =  new FMCA(a,family); //new FMCA(a,set);
+    }
+
+    @Test
+    public void testGetAut() {
+        assertEquals(a,aut.getAut());
+    }
+
+    @Test
+    public void testGetFamily() {
+        assertEquals(family,aut.getFamily());
+    }
+
+
+    @Test
+    public void testGetFamilyConstructor2() {
+        FMCA aut2 = new FMCA(a,set);
+        assertEquals(sorting.apply(set),sorting.apply(aut2.getFamily().getProducts()));
+    }
+
+    @Test
+    public void testGetFamilyConstructor3() {
+        Feature f4 = mock(Feature.class);//not present in aut (and orc)
+        Feature f5 = mock(Feature.class);//not present in orc
+
+        when(f4.getName()).thenReturn("f4");
+        when(f5.getName()).thenReturn("f5");
+
+        when(p4.getRequired()).thenReturn(Set.of(f3,f5));
+//        when(p4.getForbidden()).thenReturn(Collections.emptySet());
+
+
+        CALabel lab4 = mock(CALabel.class);
+        RequestAction ract4 = mock(RequestAction.class);
+     //   IdleAction iact = mock(IdleAction.class);
+
+        when(t4.getLabel()).thenReturn(lab4);
+        when(lab4.getAction()).thenReturn(ract4);
+ //       when(lab4.getLabel()).thenReturn(List.of(iact,ract4));
+        when(lab4.isRequest()).thenReturn(true);
+        when(ract4.getLabel()).thenReturn("f5");
+  //      when(ract4.toString()).thenReturn("?f5");
+
+        when(t4.getSource()).thenReturn(cs3);
+        when(t4.getLabel()).thenReturn(lab4);
+        when(t4.getTarget()).thenReturn(cs3);
+   //     when(t4.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
+ //       when(t4.getRank()).thenReturn(2);
+   //     when(t4.toString()).thenReturn("([1,2],[-,?f5],[1, 2])");
+
+        when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3,t4)));
+
+
+        Product p3before = mock(Product.class);
+        when(p3before.getRequired()).thenReturn(Set.of(f1,f4));
+        when(p3before.getForbidden()).thenReturn(Set.of(f2,f4));
+
+        set = new HashSet<>(Arrays.asList(p1,p2,p3before,p4));
+
+        FMCA aut2 = new FMCA(a,set);
+
+        Set<String> autProducts = sorting.apply(aut2.getFamily().getProducts());
+        Set<String> testSet = sorting.apply(new HashSet<>(Arrays.asList(p1,p2,p3)));
+
+        assertEquals(testSet, autProducts);
+
+    }
+
+    @Test
+    public void testGetCanonicalProducts() {
+        Feature f4 = mock(Feature.class);
+        when(f4.getName()).thenReturn("f4");
+
+        Product p5 = mock(Product.class);
+        when(p5.toString()).thenReturn("p5");
+
+        when(p5.checkRequired(any())).thenReturn(true);
+        when(p5.getForbidden()).thenReturn(Set.of(f4));
+
+        set = new HashSet<>(Arrays.asList(p1,p2,p3,p4,p5));
+        when(family.getMaximalProducts()).thenReturn(Set.of(p2,p3,p4,p5));
+
+        String test1 = "[p2=Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[1][2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
+                "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +
+                ", ";
+        String test2 = "=Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[1][2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
+                "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +
+                "([1, 2],[!f3,?f3],[0, 0])" + System.lineSeparator() +
+                "]";
+
+        String cp = aut.getCanonicalProducts().entrySet()
+                .stream().sorted(Comparator.comparing(e->e.getKey().toString()))
+                .collect(Collectors.toList()).toString();
+
+        assertTrue(cp.equals(test1+"p4"+test2) || cp.equals(test1+"p5"+test2));
+    }
+
+    @Test
+    public void getCanonicalProductsException() {
+        when(act.getLabel()).thenReturn("dummy");
+        when(a.getForwardStar(cs1)).thenReturn(Set.of(t1));
+        assertThrows(UnsupportedOperationException.class,()->aut.getCanonicalProducts());
+    }
+
+    @Test
+    public void testGetOrchestrationOfFamilyEnumerative() {
+        String test = "Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[0_1][0_2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
+                "([0_0, 0_0],[!f1, ?f1],[0_1, 0_0])" + System.lineSeparator() +
+                "([0_1, 0_0],[!f2, ?f2],[0_1, 0_2])" + System.lineSeparator() +
+                "([0_1, 0_2],[!f3, ?f3],[0_0, 0_0])" + System.lineSeparator();
+
+        String orc =  aut.getOrchestrationOfFamilyEnumerative().toString();
+        assertEquals(test, orc);
+    }
+
+    @Test
+    public void testGetOrchestrationOfFamily() {
+        String test1 = "Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[0_1, 1_1][0_2, 1_2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
+                "([0, 0],[!dummy, -],[1_0, 1_0])" + System.lineSeparator() +
+                "([0_0, 0_0],[!f1, ?f1],[0_1, 0_0])" + System.lineSeparator() +
+                "([0_1, 0_0],[!f2, ?f2],[0_1, 0_2])" + System.lineSeparator() +
+                "([0_1, 0_2],[!f3, ?f3],[0_0, 0_0])" + System.lineSeparator() +
+                "([1_0, 1_0],[!f1, ?f1],[1_1, 1_0])" + System.lineSeparator() +
+                "([1_1, 1_0],[!f2, ?f2],[1_1, 1_2])"+ System.lineSeparator();
+
+        String test2 = "Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[0_1, 1_1][0_2, 1_2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
+                "([0, 0],[!dummy, -],[1_0, 1_0])" + System.lineSeparator() +
+                "([0_0, 0_0],[!f1, ?f1],[0_1, 0_0])" + System.lineSeparator() +
+                "([0_1, 0_0],[!f2, ?f2],[0_1, 0_2])" + System.lineSeparator() +
+                "([1_0, 1_0],[!f1, ?f1],[1_1, 1_0])" + System.lineSeparator() +
+                "([1_1, 1_0],[!f2, ?f2],[1_1, 1_2])" + System.lineSeparator() +
+                "([1_1, 1_2],[!f3, ?f3],[1_0, 1_0])" + System.lineSeparator();
+
+        String orc = aut.getOrchestrationOfFamily().toString();
+
+        assertTrue(orc.equals(test1) || orc.equals(test2));
+    }
+
+    @Test
+    public void testGetTotalProductsWithNonemptyOrchestration() {
+        String test = "{p4=Rank: 2" + System.lineSeparator() +
+                "Initial state: [0, 0]" + System.lineSeparator() +
+                "Final states: [[1][2]]" + System.lineSeparator() +
+                "Transitions: " + System.lineSeparator() +
+                "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
+                "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +
+                "([1, 2],[!f3,?f3],[0, 0])" + System.lineSeparator() +
+                "}";
+
+        assertEquals(test,aut.getTotalProductsWithNonemptyOrchestration().toString());
+    }
+
+    @Test
+    public void testProductsRespectingValidityException() {
+        when(act.getLabel()).thenReturn("dummy");
+        assertThrows(UnsupportedOperationException.class,()->aut.productsRespectingValidity());
+    }
+
+    @Test
+    public void testProductsRespectingValidity() {
+
+        assertEquals(Set.of(p4),aut.productsRespectingValidity());
+    }
+
+    @Test
+    public void testProductsWithNonEmptyOrchestration() {
+        assertEquals("[p2, p4]",aut.productsWithNonEmptyOrchestration().stream()
+                .sorted(Comparator.comparing(Product::toString))
+                .collect(Collectors.toList())
+                .toString());
+    }
+
+
+    @Test
+    public void testConstructorNullArgument() {
+        assertThrows(NullPointerException.class,()->new FMCA(null, (Family) null));
+    }
 }
-
-//END OF THE CLASS
-
-
-
-//@Test
-//public void validProductsOrcFam() throws Exception
-//{
-//	
-//	String fileName =dir+"ValidProducts.prod";
-//	Family fam=new Family(dfc.importFamily(fileName));
-//	FMCA aut = new FMCA(Automaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>IO.parseXMLintoAutomaton<String,String,State<String>,ModalTransition<String,String,State<String>,CALabel>>(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.mxe"),fam);
-//
-//	Set<Product> rv = aut.respectingValidityFamily();
-//
-//	Set<Product> test = Family.readFileNew(dir+"respectingValidityTest.prod");
-////	Set<Product> vp = Arrays.stream(fam.validProducts(aut.getAut()))
-////			.mapToObj(i->fam.getElements()[i])
-////			.collect(Collectors.toSet());
-////	
-//	assertTrue(rv.equals(test));
-//}
-
-
-
-
-
-
-//old FMCA util 
-
-//@Test
-//public void testUnionRenaming()
-//{
-//	int[][] a1 = { {2,3}, {5,6}};
-//	int[][] a2 = { {1,4}, {7,8}};
-//	int[][] a3 = { {9}, {10}};
-//
-//	int[][] u = { {2,3,1,4,9}, {5,6,7,8,10}};
-//
-//	int[][] test =
-//	Arrays.stream(a1)
-//	.map(s->{return Arrays.stream(s)
-//			.map(ar->ar+10)
-//			.toArray();})
-//	.toArray(int[][]::new);
-//
-//	//System.out.print(Arrays.deepToString(test));
-//	assertEquals(u,test);
-//
-//}
-//
-
-	//	@Test
-	//	public void removeHolesTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, {1,0,2} };
-	//		assertEquals(FMCAUtilOld.removeHoles(test, 1),FMCAUtil.removeHoles(test, new int[][] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void removeHolesStringTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.removeHoles(test, 1),FMCAUtil.removeHoles(test, new String[] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void removeTailsNullTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}, {1,0,2}, null, null };
-	//		assertEquals(FMCAUtilOld.removeTailsNull(test, 2),FMCAUtil.removeTailsNull(test,2, new int[][] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void containsIntArTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
-	//		assertEquals(FMCAUtilOld.contains(new int[] {0,1,3}, test),FMCAUtil.contains(new int[] {0,1,3}, test));
-	//	}
-	//
-	//	@Test
-	//	public void containsIntArTestNull()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
-	//		assertEquals(FMCAUtilOld.contains(null, test),FMCAUtil.contains(null, test));
-	//	}
-	//	
-	//	@Test
-	//	public void containsTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.contains("1", test),FMCAUtil.contains("1",test));
-	//	}
-	//	
-	//	@Test
-	//	public void containsFalseTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.contains("5", test),FMCAUtil.contains("5",test));
-	//	}
-	//	
-	//	@Test
-	//	public void containsNullTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.contains(null, test),FMCAUtil.contains(null,test));
-	//	}
-	//	
-	//	@Test
-	//	public void containsLTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3","5","0"};
-	//		assertEquals(FMCAUtilOld.contains("1", test,5),FMCAUtil.contains("1",test,5));
-	//	}
-	//	
-	//	@Test
-	//	public void containsLFalseTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3","5","0"};
-	//		assertEquals(FMCAUtilOld.contains("5", test,5),FMCAUtil.contains("5",test,5));
-	//	}
-	//	
-	//	@Test
-	//	public void containsLNullTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3","5","0"};
-	//		assertEquals(FMCAUtilOld.contains(null, test,5),FMCAUtil.contains(null,test,5));
-	//	}
-	//	
-	//	@Test
-	//	public void getIndexTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.getIndex(test, "1"),FMCAUtil.getIndex(test, "1"));
-	//	}
-	//	
-	//	@Test
-	//	public void getIndexNullTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		assertEquals(FMCAUtilOld.getIndex(test, null),FMCAUtil.getIndex(test, null));
-	//	}
-	//	
-	//	@Test
-	//	public void setDifferenceTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}, {1,0,4} };
-	//		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, {0,1,3}};
-	//		
-	//		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2, new int[][] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void setDifferenceNullTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
-	//		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}};
-	//		
-	//		assertEquals(FMCAUtilOld.setDifference(test, test2),FMCAUtil.setDifference(test, test2, new int[][] {}));
-	//	}
-	//	
-	//	
-	//	@Test
-	//	public void removeDuplicatesStringTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		//assertEquals(FMCAUtilOld.removeDuplicates(test),FMCAUtil.removeDuplicates(test));
-	//		assertEquals(new String[] {"0","1","3"},FMCAUtil.removeDuplicates(test, new String[] {}));
-	//
-	//	}
-	//	
-	//	@Test
-	//	public void setUnionTest()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}, null, {1,0,4} };
-	//		int[][] test2 = new int[][] { {0,1,3}, {1,0,2}, null, {0,1,3}};
-	//	
-	//		assertEquals(FMCAUtilOld.setUnion(test, test2),FMCAUtil.setUnion(test, test2));
-	//	}
-	//	
-	//	@Test
-	//	public void setUnion2Test()
-	//	{
-	//		int[][] test = new int[][] { {0,1,3}  };
-	//		int[][] test2 = new int[][] { {0,1,3} };
-	//	
-	//		assertEquals(FMCAUtilOld.setUnion(test, test2),FMCAUtil.setUnion(test, test2));
-	//	}
-	//	
-	//
-	//	@Test
-	//	public void setUnionStringTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		String[] test2 = new String[] {"0", null, "3"};
-	//		
-	//		assertEquals(new String[] {"0","1","3"},FMCAUtil.setUnion(test, test2, new String[] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void setIntersectionTest()
-	//	{
-	//		String[] test = new String[] {"0","1","3", null, "3"};
-	//		String[] test2 = new String[] {"0", null, "3"};
-	//		
-	//		assertEquals(FMCAUtilOld.setIntersection(test, test2),FMCAUtil.setIntersection(test, test2, new String[] {}));
-	//	}
-	//	
-	//	@Test
-	//	public void maxTest() {
-	//		int[] test = new int[] {0, 1, 2 ,3, 2, 1};
-	//		
-	//		//taken from ProductFrame.java
-	//		int columns = Collections.max(Arrays.stream(test).boxed().collect(Collectors.toList()));  // FMCAUtil.max(deleng);
-	//		assertEquals(columns, FMCAUtilOld.max(test));
-	//	}
-	//}
-	//
-	//class FMCAUtilOld {
-	//	public static int[][] removeHoles(int[][] l, int holes )
-	//	{
-	//		/**
-	//		 * remove holes (null) in t
-	//		 */
-	//		int pointer=0;
-	//		int[][] fin = new int[l.length-holes][];
-	//		for (int ind=0;ind<l.length;ind++)
-	//		{
-	//			if (l[ind]!=null)
-	//			{
-	//				fin[pointer]=l[ind];
-	//				pointer++;
-	//			}
-	//		}
-	//		return fin;
-	//	}
-	//	
-	//	protected static String[] removeHoles(String[] l, int holes )
-	//	{
-	//		/**
-	//		 * remove holes (null) in t
-	//		 */
-	//		int pointer=0;
-	//		String[] fin = new String[l.length-holes];
-	//		for (int ind=0;ind<l.length;ind++)
-	//		{
-	//			if (l[ind]!=null)
-	//			{
-	//				fin[pointer]=l[ind];
-	//				pointer++;
-	//			}
-	//		}
-	//		return fin;
-	//	}
-	//	
-	//	public static int[][] removeTailsNull(int[][] q,int length)
-	//	{
-	//		int[][] r=new int[length][];
-	//		for (int i=0;i<length;i++)
-	//			r[i]=q[i];
-	//		return r;
-	//	}
-	//	
-	//	public static String[] removeTailsNull(String[] q,int length)
-	//	{
-	//		String[] r=new String[length];
-	//		for (int i=0;i<length;i++)
-	//			r[i]=q[i];
-	//		return r;
-	//	}
-	//	
-	//	public static boolean contains(int[] q, int[][] listq)
-	//	{
-	//		if (q==null)
-	//			return false;
-	//		for (int i=0;i<listq.length;i++)
-	//		{
-	//			if (listq[i]!=null)
-	//				if (Arrays.equals(q, listq[i]))
-	//					return true;
-	//		}
-	//		return false;
-	//	}
-	//
-	//	public static int getIndex(String[] q, String e)
-	//	{
-	//		for (int i=0;i<q.length;i++)
-	//		{
-	//			if ((q[i]!=null) &&(q[i].equals(e)))
-	//					return i;
-	//		}
-	//		return -1;
-	//	}
-	//	protected static int[][] setDifference(int[][] q1, int[][] q2)
-	//	{
-	//		int p=0;
-	//		int[][] m= new int[q1.length][];
-	//		for (int i=0;i<m.length;i++)
-	//		{
-	//			if (q1[i]!=null&&!contains(q1[i],q2)&&!contains(q1[i],m))
-	//			{
-	//				m[p]=q1[i];
-	//				p++;
-	//			}
-	//		}
-	//		m=removeTailsNull(m,p);
-	//		return m;
-	//	}
-	//	
-	//	protected static boolean contains(String q, String[] listq)
-	//	{
-	//		if (q==null)
-	//			return false;
-	//		for (int i=0;i<listq.length;i++)
-	//		{
-	//			if (listq[i]!=null)
-	//				if (q.equals(listq[i]))
-	//					return true;
-	//		}
-	//		return false;
-	//	}
-	//	
-	//	
-	//	//it does not remove duplicates null, but 
-	//	//remove holes remove nulls so there is a error there
-	//	public static String[] removeDuplicates(String[] m)
-	//	{
-	//		int removed=0;
-	//		for (int i=0;i<m.length;i++)
-	//		{
-	//			for (int j=i+1;j<m.length;j++)
-	//			{
-	//				if ((m[i]!=null)&&(m[j]!=null)&&(m[i].equals(m[j])))
-	//				{
-	//					m[j]=null;
-	//		 			removed++;
-	//				}
-	//			}
-	//		}
-	//		m=  removeHoles(m,removed);
-	//		return m;		
-	//	}
-	//	
-	//	public static String[] setIntersection(String[] q1, String[] q2)
-	//	{
-	//		int p=0;
-	//		String[] m= new String[q1.length];
-	//		for (int i=0;i<m.length;i++)
-	//		{
-	//			if (contains(q1[i],q2))
-	//			{
-	//				m[p]=q1[i];
-	//				p++;
-	//			}
-	//		}
-	//		m=FMCAUtilOld.removeTailsNull(m,p);
-	//		return m;
-	//	}
-	//	
-	//	protected static boolean contains(String t, String[] listq, int listlength)
-	//	{
-	//		if (t==null)
-	//			return false;
-	//		for (int i=0;i<listlength;i++)
-	//		{
-	//			if (t.equals(listq[i]))
-	//					return true;
-	//		}
-	//		return false;
-	//	}
-	//	
-	//	public static int[][] setUnion(int[][] q1, int[][] q2)
-	//	{
-	//		int[][] m= new int[q1.length+q2.length][];
-	//		for (int i=0;i<m.length;i++)
-	//		{
-	//			if (i<q1.length)
-	//				m[i]=q1[i];
-	//			else
-	//				m[i]=q2[i-q1.length];
-	//		}
-	//		m=FMCAUtil.removeDuplicates(m);
-	//		return m;
-	//	}
-	//	
-	//	public static int max(int[] n)
-	//	{
-	//		int max=0;
-	//		for (int i=0;i<n.length;i++)
-	//			if(n[i]>max)
-	//				max=n[i];
-	//		return max;
-	//	}
-
-
-

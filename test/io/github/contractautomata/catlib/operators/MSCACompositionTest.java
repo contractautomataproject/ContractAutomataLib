@@ -7,12 +7,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
@@ -79,7 +79,7 @@ public class MSCACompositionTest {
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotel_open.data");
-		assertTrue(ITAutomatonTest.autEquals(comp,test));
+		assertTrue(AutomatonTest.autEquals(comp,test));
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class MSCACompositionTest {
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, CALabel::isRequest).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotel_closed.data");
-		assertTrue(ITAutomatonTest.autEquals(comp,test));
+		assertTrue(AutomatonTest.autEquals(comp,test));
 	}
 
 
@@ -116,7 +116,7 @@ public class MSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"EconomyClient.data"));
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
-		assertTrue(ITAutomatonTest.autEquals(comp,test));
+		assertTrue(AutomatonTest.autEquals(comp,test));
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class MSCACompositionTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, CALabel::isRequest).apply(100);
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
-		assertTrue(ITAutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp),test));
+		assertTrue(AutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp),test));
 	}	
 
 	///////////////
@@ -146,7 +146,7 @@ public class MSCACompositionTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp= new MSCACompositionFunction<>(aut, null).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"(AxB).data");
 
-		assertTrue(ITAutomatonTest.autEquals(comp,test));
+		assertTrue(AutomatonTest.autEquals(comp,test));
 	}
 
 

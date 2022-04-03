@@ -1,9 +1,17 @@
 package io.github.contractautomata.catlib.operators;
 
-import static io.github.contractautomata.catlib.automaton.ITAutomatonTest.autEquals;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
+import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
+import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.converters.AutDataConverter;
+import io.github.contractautomata.catlib.requirements.StrongAgreement;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,19 +20,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import org.junit.Assert;
-import org.junit.Test;
-
-import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
-import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.state.BasicState;
-import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.converters.AutDataConverter;
-import io.github.contractautomata.catlib.requirements.StrongAgreement;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEquals;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ChoreographyTest {
 
@@ -154,7 +153,7 @@ public class ChoreographyTest {
 	
 		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Cor_(testcor_concur21_Example34)_prop.data");
 		
-		assertTrue(ITAutomatonTest.autEquals(cor, test));
+		assertTrue(AutomatonTest.autEquals(cor, test));
 	}
 
 }

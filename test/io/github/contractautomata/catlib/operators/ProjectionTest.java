@@ -1,7 +1,7 @@
 package io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
@@ -29,7 +29,7 @@ public class ProjectionTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test= bdc.importMSCA(dir+"BusinessClient.data");
 		aut=new ProjectionFunction<String>().apply(aut,0, t->t.getLabel().getRequester());
-		Assert.assertTrue(ITAutomatonTest.autEquals(aut,test));
+		Assert.assertTrue(AutomatonTest.autEquals(aut,test));
 
 	}
 
@@ -68,7 +68,7 @@ public class ProjectionTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test =
 				bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 
-		assertTrue(ITAutomatonTest.autEquals(closed_aut, test));
+		assertTrue(AutomatonTest.autEquals(closed_aut, test));
 	}
 
 	@Test
@@ -97,7 +97,7 @@ public class ProjectionTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test =
 				bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 
-		assertTrue(ITAutomatonTest.autEquals(closed_aut, test));
+		assertTrue(AutomatonTest.autEquals(closed_aut, test));
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class ProjectionTest {
 				.apply(aut,0, t->t.getLabel().getOfferer());
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = cmdc.importMSCA(dir+"cm_concur21.data");
-		assertTrue(ITAutomatonTest.autEquals(cm, test));
+		assertTrue(AutomatonTest.autEquals(cm, test));
 
 	}
 

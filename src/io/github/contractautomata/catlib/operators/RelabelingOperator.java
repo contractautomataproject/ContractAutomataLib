@@ -8,12 +8,12 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 /**
  * Class implementing the relabeling operator
@@ -21,7 +21,7 @@ import io.github.contractautomata.catlib.automaton.state.State;
  *
  */
 public class RelabelingOperator<S1, L extends Label<Action>> implements
-		Function<Automaton<S1, Action,State<S1>, ModalTransition<S1,Action,State<S1>,L>>,
+		Function<Automaton<S1, Action, State<S1>, ModalTransition<S1,Action,State<S1>,L>>,
 				Set<ModalTransition<S1, Action, State<S1>, L>>> {
 
 

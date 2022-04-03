@@ -1,7 +1,6 @@
-package io.github.contractautomata.catlib.converters;
+package it.io.github.contractautomata.catlib.converters;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
@@ -9,6 +8,8 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.transition.Transition;
+import io.github.contractautomata.catlib.converters.AutDataConverter;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+
 
 public class ITAutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

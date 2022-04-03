@@ -24,15 +24,16 @@ public class CALabelTest {
 
 
 	@Mock
-    IdleAction ia;
+	IdleAction ia;
 	@Mock
-    OfferAction oa;
+	OfferAction oa;
 	@Mock RequestAction ra;
 	@Mock
     Action act;
 	@Mock
-    AddressedOfferAction aoa;
-	@Mock AddressedRequestAction ara;
+	AddressedOfferAction aoa;
+	@Mock
+	AddressedRequestAction ara;
 	@Mock Address adr;
 
 	CALabel match;

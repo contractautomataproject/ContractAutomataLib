@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @author Davide Basile
  *
  */
-public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action,State<S1>, ModalTransition<S1, Action,State<S1>,CALabel>>,Integer,ToIntFunction<ModalTransition<S1,Action,State<S1>,CALabel>>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> {
+public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action, State<S1>, ModalTransition<S1, Action,State<S1>, CALabel>>,Integer,ToIntFunction<ModalTransition<S1,Action,State<S1>,CALabel>>,Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> {
 	private final  boolean createAddress;
 
 	public ProjectionFunction(boolean createAddress)

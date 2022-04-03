@@ -1,8 +1,7 @@
 package io.github.contractautomata.catlib.converters;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
-import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
@@ -24,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -218,13 +216,24 @@ public class AutDataConverterTest {
     }
 
     @Test
-    public void testExportMSCA() throws IOException {
+    public void testExportMSCAWithoutSuffix() throws IOException {
         Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
                 adc.importMSCA(dir+"(AxB).data");
 
-        adc.exportMSCA(dir+"(AxB)_export",aut); //without extension
+        adc.exportMSCA(dir+"(AxB)_export",aut);
 
-        assertTrue(ITAutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_export.data")));
+        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_export.data")));
+    }
+
+
+    @Test
+    public void testExportMSCAWithSuffix() throws IOException {
+        Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
+                adc.importMSCA(dir+"(AxB).data");
+
+        adc.exportMSCA(dir+"(AxB)_export.data",aut);
+
+        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_export.data")));
     }
 
     @Test

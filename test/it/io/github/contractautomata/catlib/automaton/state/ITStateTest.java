@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.automaton.state;
+package it.io.github.contractautomata.catlib.automaton.state;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -6,12 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import io.github.contractautomata.catlib.automaton.state.BasicState;
+import io.github.contractautomata.catlib.automaton.state.State;
 import org.junit.Before;
 import org.junit.Test;
 
 
 public class ITStateTest {
-	private  State<String> test;
+	private State<String> test;
 	
 	@Before
 	public void setup() {		

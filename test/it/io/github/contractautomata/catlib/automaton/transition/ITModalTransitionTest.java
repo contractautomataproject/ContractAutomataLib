@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.automaton.transition;
+package it.io.github.contractautomata.catlib.automaton.transition;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,8 @@ import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.automaton.transition.Transition;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,8 @@
-p0: R={card,noFreeCancellation,invoice,} F={sharedBathroom,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
-p1: R={card,noFreeCancellation,invoice,} F={receipt,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
-p2: R={card,noFreeCancellation,receipt,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
-p3: R={card,sharedBathroom,noFreeCancellation,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p0: R={card,sharedBathroom,noFreeCancellation,invoice,} F={receipt,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p1: R={card,noFreeCancellation,invoice,} F={sharedBathroom,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p2: R={card,noFreeCancellation,receipt,invoice,} F={sharedBathroom,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p3: R={card,noFreeCancellation,invoice,} F={receipt,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p4: R={card,noFreeCancellation,receipt,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p5: R={card,sharedBathroom,noFreeCancellation,receipt,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p6: R={card,sharedBathroom,noFreeCancellation,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p7: R={card,noFreeCancellation,invoice,} F={sharedBathroom,receipt,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}

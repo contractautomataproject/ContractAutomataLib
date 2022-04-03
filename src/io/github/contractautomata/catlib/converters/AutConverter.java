@@ -1,16 +1,14 @@
 package io.github.contractautomata.catlib.converters;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.function.BiPredicate;
-
-
-import io.github.contractautomata.catlib.automaton.label.action.*;
 import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.automaton.label.action.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 
 /**
  * The interface used to import/export MSCA

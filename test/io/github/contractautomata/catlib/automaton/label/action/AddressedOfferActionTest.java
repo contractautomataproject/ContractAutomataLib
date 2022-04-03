@@ -18,8 +18,10 @@ public class AddressedOfferActionTest {
 	
 	private AddressedOfferAction oa;
 	private OfferAction noa;
-	@Mock AddressedRequestAction ra;
-	@Mock Address adr;
+	@Mock
+    AddressedRequestAction ra;
+	@Mock
+    Address adr;
 	@Mock Address adr2;
 
 	@Before

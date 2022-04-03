@@ -14,8 +14,8 @@ import java.util.function.Predicate;
  * @author Davide Basile
  *
  */
-public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
-		ModalTransition<S1,Action,State<S1>,CALabel>,
+public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1, State<S1>, CALabel,
+		ModalTransition<S1, Action,State<S1>,CALabel>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
 		Label<Action>,
 		ModalTransition<S1,Action,State<S1>,Label<Action>>,

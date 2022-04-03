@@ -17,7 +17,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class RequestActionTest {
 	
 	private RequestAction ra;
-	@Mock OfferAction oa;
+	@Mock
+    OfferAction oa;
 
 	@Before
 	public void setUp() throws Exception {

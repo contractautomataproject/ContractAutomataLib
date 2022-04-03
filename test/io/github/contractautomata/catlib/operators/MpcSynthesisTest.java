@@ -8,12 +8,12 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
@@ -55,7 +55,7 @@ public class MpcSynthesisTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"test_urgent.data");		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir + File.separator + "test_urgent_mpc_agreement.data");
-		assertTrue(ITAutomatonTest.autEquals(new MpcSynthesisOperator<String>(new Agreement()).apply(aut),test));
+		assertTrue(AutomatonTest.autEquals(new MpcSynthesisOperator<String>(new Agreement()).apply(aut),test));
 	}
 	
 	@Test

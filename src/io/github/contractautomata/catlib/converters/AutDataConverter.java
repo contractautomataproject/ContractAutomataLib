@@ -2,12 +2,12 @@ package io.github.contractautomata.catlib.converters;
 
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  * @author Davide Basile
  *
  */
-public class AutDataConverter<L extends Label<Action>>  implements AutConverter<Automaton<String,Action,State<String>, ModalTransition<String, Action,State<String>,L>>,Automaton<?,?,?,?>> {
+public class AutDataConverter<L extends Label<Action>>  implements AutConverter<Automaton<String,Action, State<String>, ModalTransition<String, Action,State<String>,L>>,Automaton<?,?,?,?>> {
 	private final Function<List<Action>,L> createLabel;
 	private static final String SUFFIX = ".data";
 	private static final String EMPTYMSG = "Empty file name";

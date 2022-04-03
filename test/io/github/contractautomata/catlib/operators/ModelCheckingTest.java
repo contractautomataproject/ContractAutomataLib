@@ -1,7 +1,7 @@
 package io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.ITAutomatonTest;
+import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
@@ -22,7 +22,7 @@ public class ModelCheckingTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<Label<Action>> adc = new AutDataConverter<>(Label::new);
 	private ModelCheckingFunction<String,State<String>,Label<Action>,
-			ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>>
+                ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>>
 			mcf;
 	public static Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop ;
 	
@@ -46,7 +46,7 @@ public class ModelCheckingTest {
 		mcf = new ModelCheckingFunction<>(aut,prop, State::new, ModalTransition::new, Label::new,Automaton::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> comp = mcf.apply(Integer.MAX_VALUE);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> test = adc.importMSCA(dir + "modelchecking_loop_mc.data");
-		assertTrue(ITAutomatonTest.autEquals(comp, test));
+		assertTrue(AutomatonTest.autEquals(comp, test));
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class ModelCheckingTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> comp = mcf.apply(Integer.MAX_VALUE);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> test = adc.importMSCA(dir+"(AlicexBob)_forte2021_mc.data");
 
-		assertTrue(ITAutomatonTest.autEquals(comp, test));
+		assertTrue(AutomatonTest.autEquals(comp, test));
 	}
 
 	
@@ -68,7 +68,7 @@ public class ModelCheckingTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> comp = mcf.apply(Integer.MAX_VALUE);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> test = adc.importMSCA(dir + "test_lazy_loop_prop_mc.data");
 		
-		assertTrue(ITAutomatonTest.autEquals(comp, test));
+		assertTrue(AutomatonTest.autEquals(comp, test));
 		
 	}
 }
