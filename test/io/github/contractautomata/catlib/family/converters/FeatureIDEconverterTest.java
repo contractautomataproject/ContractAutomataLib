@@ -9,6 +9,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -30,9 +33,8 @@ public class FeatureIDEconverterTest {
 	@Test
 	public void testImportFamily() throws Exception
 	{
-		if (!System.getProperty("os.name").contains("Windows"))
-			return;
-		assertEquals(products2(),ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml").toString() );
+		String test = Files.readString(Paths.get(dir+"productsFeatureIDEmodel2"), StandardCharsets.UTF_8);
+		assertEquals(test,ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml").toString() );
 	}
 
 	@Test
@@ -72,30 +74,5 @@ public class FeatureIDEconverterTest {
 	public void testExportException()
 	{
 		assertThrows(UnsupportedOperationException.class, () -> ffc.exportFamily("", fam));
-	}
-	
-	
-	private String products2(){
-		return "[R:[sharedBathroom, card, receipt, singleRoom, freeCancellation];"+System.lineSeparator()+
-				"F:[noFreeCancellation, invoice, sharedRoom, privateBathroom, cash];"+System.lineSeparator()+
-				", R:[card, noFreeCancellation, receipt, privateBathroom];"+System.lineSeparator()+
-				"F:[sharedBathroom, singleRoom, invoice, sharedRoom, cash, freeCancellation];"+System.lineSeparator()+
-				", R:[card, noFreeCancellation, receipt, singleRoom, privateBathroom];"+System.lineSeparator()+
-				"F:[sharedBathroom, invoice, sharedRoom, cash, freeCancellation];"+System.lineSeparator()+
-				", R:[sharedBathroom, invoice, cash, freeCancellation];"+System.lineSeparator()+
-				"F:[card, noFreeCancellation, receipt, singleRoom, sharedRoom, privateBathroom];"+System.lineSeparator()+
-				", R:[sharedBathroom, receipt, singleRoom, invoice, cash, freeCancellation];"+System.lineSeparator()+
-				"F:[card, noFreeCancellation, sharedRoom, privateBathroom];"+System.lineSeparator()+
-				", R:[sharedBathroom, receipt, invoice, sharedRoom, cash, privateBathroom];"+System.lineSeparator()+
-				"F:[card, noFreeCancellation, singleRoom, freeCancellation];"+System.lineSeparator()+
-				", R:[sharedBathroom, noFreeCancellation, singleRoom, invoice, sharedRoom, cash, privateBathroom];"+System.lineSeparator()+
-				"F:[card, receipt, freeCancellation];"+System.lineSeparator()+
-				", R:[card, sharedBathroom, noFreeCancellation, receipt, sharedRoom, freeCancellation];"+System.lineSeparator()+
-				"F:[singleRoom, invoice, cash, privateBathroom];"+System.lineSeparator()+
-				", R:[card, sharedBathroom, invoice, sharedRoom, privateBathroom, freeCancellation];"+System.lineSeparator()+
-				"F:[noFreeCancellation, receipt, singleRoom, cash];"+System.lineSeparator()+
-				", R:[card, noFreeCancellation, receipt, singleRoom, invoice];"+System.lineSeparator()+
-				"F:[sharedBathroom, sharedRoom, privateBathroom, cash, freeCancellation];"+System.lineSeparator()+
-				"]";
 	}
 }
