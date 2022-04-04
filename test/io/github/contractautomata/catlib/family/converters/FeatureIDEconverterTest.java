@@ -90,7 +90,7 @@ public class FeatureIDEconverterTest {
 		if (System.getProperty("os.name").contains("Windows"))
 			return;
 
-		Path path = Paths.get(dir + "FeatureIDEmodel5" + File.separator + "products"+File.separator+"00002.conf");
+		Path path = Paths.get(dir + "FeatureIDEmodel5" + File.separator + "products"+File.separator+"00002.config");
 		Set<PosixFilePermission> perms = Files.readAttributes(path, PosixFileAttributes.class).permissions();
 
 		System.out.format("Permissions before: %s%n",  PosixFilePermissions.toString(perms));
