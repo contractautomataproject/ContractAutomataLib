@@ -78,7 +78,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 					if (f.isDirectory())
 					{
 						File[] ff = f.listFiles();
-						if (Objects.requireNonNull(ff).length>0
+						if (Objects.requireNonNull(ff).length>=1
 								&& ff[0].isFile()
 								&& ff[0].getName().contains("config"))//each product has its own sub-directory
 							return ff[0].getAbsolutePath();
