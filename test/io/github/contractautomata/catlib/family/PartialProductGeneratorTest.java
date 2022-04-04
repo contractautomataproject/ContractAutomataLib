@@ -30,8 +30,6 @@ public class PartialProductGeneratorTest {
         when(p1.getRequired()).thenReturn(Collections.emptySet());
         when(p2.getForbidden()).thenReturn(Collections.emptySet());
         when(p2.getRequired()).thenReturn(Collections.singleton(f1));
-        when(p3.getForbidden()).thenReturn(Collections.emptySet());
-        when(p3.getRequired()).thenReturn(Collections.emptySet());
 
         when(p1.removeFeatures(Collections.singleton(f1))).thenReturn(p3);
         when(p2.removeFeatures(Collections.singleton(f1))).thenReturn(p3);

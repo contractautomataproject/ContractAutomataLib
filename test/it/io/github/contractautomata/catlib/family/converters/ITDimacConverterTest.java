@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ITDimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -51,7 +50,6 @@ public class ITDimacConverterTest {
 		Family f2 = new Family(pg.apply(prodall));
 		Set<Product> max = f2.getMaximalProducts();
 		assertEquals(prod,max);
-	
 	}
 
 }

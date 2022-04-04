@@ -51,6 +51,9 @@ public class FeatureIDEconverterTest {
 	@Test
 	public void testImportFamilyWithSubfolderAndException() throws Exception
 	{
+		if (!System.getProperty("os.name").contains("Windows"))
+			return;
+
 		ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml");
 //		this test provokes an IOException for covering the catch block, however nor Travis neither GithubAction do raise the throwable
 
