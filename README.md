@@ -1,4 +1,5 @@
 ![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/03ece33560434e8a80619099d4a7ffcd)](https://app.codacy.com/gh/ContractAutomataProject/ContractAutomataLib?utm_source=github.com&utm_medium=referral&utm_content=ContractAutomataProject/ContractAutomataLib&utm_campaign=Badge_Grade_Settings)
 [![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FContractAutomataProject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/ContractAutomataProject/ContractAutomataLib/main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
