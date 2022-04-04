@@ -1,62 +1,96 @@
 package io.github.contractautomata.catlib.family.converters;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
+import io.github.contractautomata.catlib.family.Family;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Set;
-import java.util.function.UnaryOperator;
+import java.io.RandomAccessFile;
+import java.util.Collections;
 
-import org.junit.Test;
-
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.PartialProductGenerator;
-import io.github.contractautomata.catlib.family.Product;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 
+@RunWith(MockitoJUnitRunner.Strict.class)
 public class FeatureIDEconverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;	
-	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();
-	private final FamilyConverter pfc = new ProdFamilyConverter();
-	
+	private FamilyConverter ffc;
+
+	@Mock private Family fam;
+
+	@Before
+	public void setUp() {
+		ffc = new FeatureIDEfamilyConverter();
+	}
+
 	@Test
 	public void testImportFamily() throws Exception {
-		UnaryOperator<Set<Product>> spg = new PartialProductGenerator();
-		Family f1= new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml")));
-		Family f2= new Family(pfc.importProducts(dir +"ValidProducts.prod"));
-		assertEquals(f1.getProducts(),f2.getProducts());
+
+		assertEquals(products2(),ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml").toString() );
 	}
-	
-//	@Test
-//	public void testImportFamilyWithSubfolderAndException() throws Exception, ParserConfigurationException, SAXException
-//	{
-//		UnaryOperator<Set<Product>> spg = new PartialProductGenerator();
-//		new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml")));
-//
-////		this test provokes an IOException for covering the catch block, however nor Travis neither GithubAction do raise the throwable
-//
-//		final RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
-//				"products"+File.separator+"00003.config", "rw");
-//		raFile.getChannel().lock();
-//		assertThatThrownBy(()->ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml"))
-//		.isInstanceOf(IllegalArgumentException.class);
-//		raFile.close();
-//
-//	}
-	
-//	@Test
-//	public void testImportFamilyException() throws Exception, ParserConfigurationException, SAXException
-//	{
-//		Family f1= 
-//				new Family(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
-//		System.out.println(f1.getPo());//.values().iterator().next());
-//	}
+
+	@Test
+	public void testImportFamilyEmptyFolder() throws Exception {
+		assertEquals(Collections.emptySet(),ffc.importProducts(dir+"FeatureIDEmodel3"+File.separator+"model.xml"));
+	}
+
+
+
+	@Test
+	public void testImportFamilyHiddenDirectory() throws Exception {
+		String test = "[R:[card, noFreeCancellation, receipt, singleRoom, privateBathroom];"+System.lineSeparator()+
+				"F:[sharedBathroom, invoice, sharedRoom, cash, freeCancellation];"+System.lineSeparator()+
+				"]";
+		assertEquals(test,ffc.importProducts(dir+"FeatureIDEmodel4"+File.separator+"model.xml").toString());
+	}
+
+	@Test
+	public void testImportFamilyWithSubfolderAndException() throws Exception
+	{
+		ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml");
+//		this test provokes an IOException for covering the catch block, however nor Travis neither GithubAction do raise the throwable
+
+		try (RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
+				"products"+File.separator+"00003.config", "rw")) {
+			raFile.getChannel().lock();
+			assertThrows("java.lang.RuntimeException: java.io.IOException: The process cannot access the file because another process has locked a portion of the file",
+					RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel2" + File.separator + "model.xml"));
+		}
+	}
+
 	
 	@Test
-	public void testExportException() throws Exception
+	public void testExportException()
 	{
-		Family fam = new Family(pfc.importProducts(dir +"maximalProductsTest.prod"));
-		assertThatThrownBy(() -> ffc.exportFamily("", fam))
-		.isInstanceOf(UnsupportedOperationException.class);
+		assertThrows(UnsupportedOperationException.class, () -> ffc.exportFamily("", fam));
+	}
+	
+	
+	private String products2(){
+		return "[R:[sharedBathroom, card, receipt, singleRoom, freeCancellation];"+System.lineSeparator()+
+				"F:[noFreeCancellation, invoice, sharedRoom, privateBathroom, cash];"+System.lineSeparator()+
+				", R:[card, noFreeCancellation, receipt, privateBathroom];"+System.lineSeparator()+
+				"F:[sharedBathroom, singleRoom, invoice, sharedRoom, cash, freeCancellation];"+System.lineSeparator()+
+				", R:[card, noFreeCancellation, receipt, singleRoom, privateBathroom];"+System.lineSeparator()+
+				"F:[sharedBathroom, invoice, sharedRoom, cash, freeCancellation];"+System.lineSeparator()+
+				", R:[sharedBathroom, invoice, cash, freeCancellation];"+System.lineSeparator()+
+				"F:[card, noFreeCancellation, receipt, singleRoom, sharedRoom, privateBathroom];"+System.lineSeparator()+
+				", R:[sharedBathroom, receipt, singleRoom, invoice, cash, freeCancellation];"+System.lineSeparator()+
+				"F:[card, noFreeCancellation, sharedRoom, privateBathroom];"+System.lineSeparator()+
+				", R:[sharedBathroom, receipt, invoice, sharedRoom, cash, privateBathroom];"+System.lineSeparator()+
+				"F:[card, noFreeCancellation, singleRoom, freeCancellation];"+System.lineSeparator()+
+				", R:[sharedBathroom, noFreeCancellation, singleRoom, invoice, sharedRoom, cash, privateBathroom];"+System.lineSeparator()+
+				"F:[card, receipt, freeCancellation];"+System.lineSeparator()+
+				", R:[card, sharedBathroom, noFreeCancellation, receipt, sharedRoom, freeCancellation];"+System.lineSeparator()+
+				"F:[singleRoom, invoice, cash, privateBathroom];"+System.lineSeparator()+
+				", R:[card, sharedBathroom, invoice, sharedRoom, privateBathroom, freeCancellation];"+System.lineSeparator()+
+				"F:[noFreeCancellation, receipt, singleRoom, cash];"+System.lineSeparator()+
+				", R:[card, noFreeCancellation, receipt, singleRoom, invoice];"+System.lineSeparator()+
+				"F:[sharedBathroom, sharedRoom, privateBathroom, cash, freeCancellation];"+System.lineSeparator()+
+				"]";
 	}
 }

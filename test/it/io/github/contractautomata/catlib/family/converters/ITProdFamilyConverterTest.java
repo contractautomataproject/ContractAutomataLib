@@ -1,17 +1,15 @@
 package it.io.github.contractautomata.catlib.family.converters;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Set;
-
+import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
 import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
 import org.junit.Test;
 
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.Product;
+import java.io.File;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class ITProdFamilyConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -38,13 +36,5 @@ public class ITProdFamilyConverterTest {
 
 		assertEquals(fam.getProducts(),test);
 
-	}
-	
-	@Test
-	public void testExportException() throws Exception
-	{
-		Family fam = new Family(dfc.importProducts(dir +"maximalProductsTest.prod"));
-		assertThatThrownBy(() -> dfc.exportFamily("", fam))
-		.isInstanceOf(IllegalArgumentException.class);
 	}
 }

@@ -7,10 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,7 +33,7 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 
 	/**
 	 * loads the list of products generated through FeatureIDE
-	 * 
+	 *
 	 * @param filename the full path filename of model.xml FeatureIDE model file
 	 * @return the imported set of products
 	 * @throws IOException   io exception
@@ -45,22 +42,33 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	 */
 	@Override
 	public Set<Product> importProducts(String filename) throws ParserConfigurationException, SAXException, IOException
-	{	
-		Set<String> features=parseFeatures(filename);
-		String[][] eq = detectDuplicates(filename);
+	{
+		File inputFile = new File(getSafeFileName(filename));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		// to be compliant, completely disable DOCTYPE declaration:
+		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(inputFile);
+		//doc.getDocumentElement().normalize();
+
+		Set<String> features=parseFeatures(doc);
+		String[][] eq = detectDuplicates(doc);
+
+
 		for (String[] strings : eq) {
 			if (features.contains(strings[0]))
 				features.remove(strings[1]);
 		}
 
 		String safefilename=getSafeFileName(filename);
-		
+
 		File folder = new File(safefilename.substring(0, safefilename.lastIndexOf(File.separator))+File.separator+"products"+File.separator);
-		
+
 		File[] listFiles = folder.listFiles();
 		if (listFiles==null)
-			return new HashSet<>();
-		
+			return Collections.emptySet();
+
 		List<File> listOfFiles = Arrays.asList(listFiles);
 
 		return listOfFiles.parallelStream()
@@ -70,90 +78,70 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 					if (f.isDirectory())
 					{
 						File[] ff = f.listFiles();
-						if (ff!=null && ff.length>0 && ff[0]!=null && ff[0].isFile()&&ff[0].getName().contains("config"))//each product has its own sub-directory
-							return ff[0].getAbsolutePath();//this condition is never satisfied in the tests
+						if (Objects.requireNonNull(ff).length>0
+								&& ff[0].isFile()
+								&& ff[0].getName().contains("config"))//each product has its own sub-directory
+							return ff[0].getAbsolutePath();
 					}
-					return "";	
+					return "";
 				})
 				.filter(s->s.length()>0)
 				.map(s->{
 					try {
 						return Files.readAllLines(Paths.get(s), StandardCharsets.UTF_8);//required features
 					} catch (IOException e) {
-						throw new IllegalArgumentException(e);
+						throw new RuntimeException(e);
 					}
 				})
 				.map(l->new Product(features.parallelStream()
-							.filter(l::contains)//required
-							.map(Feature::new)
-							.collect(Collectors.toSet()),
-							features.parallelStream()
-							.filter(s->!l.contains(s))//forbidden
-							.map(Feature::new)
-							.collect(Collectors.toSet())))
+						.filter(l::contains)//required
+						.map(Feature::new)
+						.collect(Collectors.toSet()),
+						features.parallelStream()
+								.filter(s->!l.contains(s))//forbidden
+								.map(Feature::new)
+								.collect(Collectors.toSet())))
 				.collect(Collectors.toSet());
 	}
-	
-	
-	private Set<String> parseFeatures(String filename) throws ParserConfigurationException, SAXException, IOException
+
+
+	private Set<String> parseFeatures(Document doc)
 	{
-		File inputFile = new File(getSafeFileName(filename));
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		// to be compliant, completely disable DOCTYPE declaration:
-		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		
-		
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(inputFile);
-		doc.getDocumentElement().normalize();
 
 		NodeList nodeList = doc.getElementsByTagName("feature");
 
 		Set<String> features=new HashSet<>();
-		for (int i = 0; i < nodeList.getLength(); i++) 
+		for (int i = 0; i < nodeList.getLength(); i++)
 		{
 			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
-				features.add(((Element) nNode).getAttribute("name"));    
+			//in this format, nodes tagged with "feature" are always of type Node.ELEMENT_NODE
+			features.add(((Element) nNode).getAttribute("name"));
 		}
-		return features;		
+		return features;
 	}
 
 	/**
 	 * reads all iff constraints (eq node) and returns a table such that forall i table[i][0] equals table[i][1]
 	 */
-	private String[][] detectDuplicates(String filename) throws ParserConfigurationException, SAXException, IOException
+	private String[][] detectDuplicates(Document doc)
 	{
-
-		File inputFile = new File(getSafeFileName(filename));
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		// to be compliant, completely disable DOCTYPE declaration:
-		dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-		Document doc = dBuilder.parse(inputFile);
-		doc.getDocumentElement().normalize();
-
 		NodeList nodeList = doc.getElementsByTagName("eq");
 
 		String[][] table= new String[nodeList.getLength()][2]; //exact length
 
 		int ind =0;
-		for (int i = 0; i < nodeList.getLength(); i++) 
+		for (int i = 0; i < nodeList.getLength(); i++)
 		{
 			Node nNode = nodeList.item(i);
-			if ((nNode.getNodeType() == Node.ELEMENT_NODE))
-			{
-				NodeList childs = nNode.getChildNodes();
-				Node first = childs.item(1);
-				Node second = childs.item(3);
-				table[ind][0]= first.getTextContent();    
-				table[ind][1]= second.getTextContent();          
-				ind++;
-			}       
+			//in this format, nodes tagged with "eq" are always of type Node.ELEMENT_NODE
+			NodeList childs = nNode.getChildNodes();
+			Node first = childs.item(1);
+			Node second = childs.item(3);
+			table[ind][0]= first.getTextContent();
+			table[ind][1]= second.getTextContent();
+			ind++;
 		}
-		return table;		
+		return table;
 	}
 
 	private String getSafeFileName(String filename) {

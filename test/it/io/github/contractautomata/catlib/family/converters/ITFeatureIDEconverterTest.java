@@ -1,20 +1,18 @@
 package it.io.github.contractautomata.catlib.family.converters;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Set;
-import java.util.function.UnaryOperator;
-
+import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.PartialProductGenerator;
+import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
 import io.github.contractautomata.catlib.family.converters.FeatureIDEfamilyConverter;
 import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
 import org.junit.Test;
 
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.PartialProductGenerator;
-import io.github.contractautomata.catlib.family.Product;
+import java.io.File;
+import java.util.Set;
+import java.util.function.UnaryOperator;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class ITFeatureIDEconverterTest {
@@ -54,12 +52,5 @@ public class ITFeatureIDEconverterTest {
 //				new Family(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
 //		System.out.println(f1.getPo());//.values().iterator().next());
 //	}
-	
-	@Test
-	public void testExportException() throws Exception
-	{
-		Family fam = new Family(pfc.importProducts(dir +"maximalProductsTest.prod"));
-		assertThatThrownBy(() -> ffc.exportFamily("", fam))
-		.isInstanceOf(UnsupportedOperationException.class);
-	}
+
 }

@@ -1,5 +1,6 @@
 package io.github.contractautomata.catlib.family;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +44,7 @@ public class PartialProductGenerator implements UnaryOperator<Set<Product>>{
 		return Stream.iterate(setprod, s->!s.isEmpty(), sp->{
 			Map<Product,Set<Product>> map = features.stream()
 					.map(f->sp.parallelStream()
-							.collect(Collectors.groupingByConcurrent(p->p.removeFeatures(Set.of(f)),Collectors.toSet())))
+							.collect(Collectors.groupingByConcurrent(p->p.removeFeatures(Collections.singleton(f)),Collectors.toSet())))
 					.reduce(new ConcurrentHashMap<>(),(x,y)->{x.putAll(y); return x;});	
 			return map.entrySet().parallelStream()
 					.filter(e->e.getValue().size()>1)

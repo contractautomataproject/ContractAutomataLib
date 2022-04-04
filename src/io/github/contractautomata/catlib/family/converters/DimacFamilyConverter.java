@@ -7,12 +7,8 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -69,14 +65,14 @@ public class DimacFamilyConverter implements FamilyConverter {
 				out.println();
 			}
 			if (unsat) // do something for unsat case
-				return new HashSet<>();
+				return Collections.emptySet();
 
 			return Arrays.stream(baos.toString("UTF-8").split(System.lineSeparator()))
 					.map(s->Arrays.stream(s.split(" "))
 							.mapToInt(Integer::parseInt)
 							.boxed()
 							.filter(i->i!=0)
-							.collect(Collectors.partitioningBy(i->i>=0, 
+							.collect(Collectors.partitioningBy(i-> i>-1, //i>=0 causes a mutant to survive
 							Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))), 
 									Collectors.toSet()))))
 					.map(e->new Product(e.get(true),e.get(false)))

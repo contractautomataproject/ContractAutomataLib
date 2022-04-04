@@ -48,7 +48,7 @@ public class AutDataConverterTest {
         Label<Action> l = Mockito.mock(Label.class);
         when(l.getRank()).thenReturn(2);
         when(l.toString()).thenReturn("mock");
-        axb = new AutDataConverter<Label<Action>>(new Function<List<Action>, Label<Action>>() {
+        axb = new AutDataConverter<>(new Function<>() {
             @Override
             public Label<Action> apply(List<Action> actions) {
                 return l;
@@ -71,11 +71,6 @@ public class AutDataConverterTest {
 
         adc = new AutDataConverter<>(createLabel);
     }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
 
     @Test
     public void testImportInitial() {
@@ -115,9 +110,7 @@ public class AutDataConverterTest {
 
     @Test
     public void testImportMSCA() throws IOException {
-        Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
-                adc.importMSCA(dir+"(AxB).data");
-
+        adc.importMSCA(dir+"(AxB).data");
         verify(createLabel,times(5)).apply(Mockito.anyList());
 
     }
@@ -126,9 +119,7 @@ public class AutDataConverterTest {
     @Test
     public void testImportMSCANecessary() throws IOException {
         when(lab.getRank()).thenReturn(1);
-        Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
-                adc.importMSCA(dir+"BusinessClient.data");
-
+        adc.importMSCA(dir+"BusinessClient.data");
         verify(createLabel,times(6)).apply(Mockito.anyList());
     }
 
@@ -149,23 +140,23 @@ public class AutDataConverterTest {
                 adc.importMSCA(dir+"illformed7.data");
 
         assertEquals("[[3]]",aut.getStates().parallelStream()
-                .filter(s->s.isFinalState())
+                .filter(State::isFinalState)
                 .collect(Collectors.toList()).toString());
     }
 
     @Test
-    public void testImportEmptyFile() throws IOException {
+    public void testImportEmptyFile()  {
         assertThrows(IllegalArgumentException.class,
                 ()->adc.importMSCA(dir+"emptyfile.data"));
     }
     
     @Test
-    public void testImportMSCANoDataFormat() throws IOException {
+    public void testImportMSCANoDataFormat()  {
         assertThrows("Not a .data format",IllegalArgumentException.class,()->adc.importMSCA(dir+"test"));
     }
 
     @Test
-    public void testImportMSCANoFile() throws IOException {
+    public void testImportMSCANoFile()  {
         assertThrows(FileNotFoundException.class,()->adc.importMSCA(dir+"fdafdfdaf.data"));
     }
 
@@ -237,7 +228,7 @@ public class AutDataConverterTest {
     }
 
     @Test
-    public void testExportException() throws IOException {
+    public void testExportException() {
         assertThrows(IllegalArgumentException.class, ()->
         adc.exportMSCA("",null)); //without extension
 

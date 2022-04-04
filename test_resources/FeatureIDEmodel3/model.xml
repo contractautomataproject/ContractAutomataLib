@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	<featureModel chosenLayoutAlgorithm="1">
+		<struct>
+			<and abstract="true" mandatory="true" name="Composition">
+				<and abstract="true" mandatory="true" name="Hotel">
+					<alt abstract="true" mandatory="true" name="Payment">
+						<feature mandatory="true" name="card"/>
+						<feature mandatory="true" name="cash"/>
+					</alt>
+					<and abstract="true" mandatory="true" name="Notification">
+						<feature name="invoice"/>
+						<feature name="receipt"/>
+					</and>
+					<and abstract="true" mandatory="true" name="HotelRoom">
+						<feature name="sharedRoom"/>
+						<feature name="singleRoom"/>
+					</and>
+				</and>
+				<and abstract="true" mandatory="true" name="EconomyClient">
+					<and abstract="true" mandatory="true" name="EconomyBathroom">
+						<feature name="sharedBathroom"/>
+					</and>
+					<and abstract="true" mandatory="true" name="EconomyRoom">
+						<feature name="sharedRoom2"/>
+						<feature name="singleRoom2"/>
+					</and>
+					<and abstract="true" mandatory="true" name="EconomyCancellation">
+						<feature name="noFreeCancellation"/>
+					</and>
+				</and>
+				<and abstract="true" mandatory="true" name="BusinessClient">
+					<and abstract="true" mandatory="true" name="BusinessBathroom">
+						<feature name="privateBathroom"/>
+					</and>
+					<and abstract="true" mandatory="true" name="BusinessRoom">
+						<feature name="singleRoom3"/>
+					</and>
+					<and abstract="true" mandatory="true" name="BusinessCancellation">
+						<feature name="freeCancellation"/>
+					</and>
+				</and>
+			</and>
+		</struct>
+		<constraints>
+			<rule>
+				<eq>
+					<var>notPresent</var>
+					<var>notPresentBanana</var>
+				</eq>
+			</rule>
+		</constraints>
+		<calculations Auto="true" Constraints="true" Features="true" Redundant="true" Tautology="true"/>
+		<comments/>
+		<featureOrder userDefined="false"/>
+	</featureModel>

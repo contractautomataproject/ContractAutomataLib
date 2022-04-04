@@ -1,27 +1,25 @@
 package it.io.github.contractautomata.catlib.family.converters;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Set;
-
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.family.converters.DimacFamilyConverter;
-import io.github.contractautomata.catlib.family.converters.FamilyConverter;
-import io.github.contractautomata.catlib.family.converters.FeatureIDEfamilyConverter;
-import org.junit.Test;
-
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.family.FMCA;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.PartialProductGenerator;
 import io.github.contractautomata.catlib.family.Product;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.family.converters.DimacFamilyConverter;
+import io.github.contractautomata.catlib.family.converters.FamilyConverter;
+import io.github.contractautomata.catlib.family.converters.FeatureIDEfamilyConverter;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ITDimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
@@ -56,19 +54,5 @@ public class ITDimacConverterTest {
 	
 	}
 
-
-	@Test
-	public void testUnsat() throws Exception
-	{
-		Set<Product> prod= dfc.importProducts(dir+"unsat.dimacs");
-		assertTrue(prod.isEmpty());
-	}
-	
-	@Test
-	public void testExport() {
-		assertThatThrownBy(()->dfc.exportFamily(null, null))
-		.isInstanceOf(UnsupportedOperationException.class);
-		//just for coverage
-	}
 }
 
