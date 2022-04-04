@@ -177,7 +177,8 @@ public class FMCA {
 	{
 		//partial order exploited, one could also start the synthesis from the intersection of the controllers
 		//of the sub-products
-		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut)!=null);
+		return this.selectProductsSatisfyingPredicateUsingPO(aut, p->
+				new ProductOrchestrationSynthesisOperator<String>(new Agreement(), p).apply(aut) != null);
 	}
 
 	private Set<Product> selectProductsSatisfyingPredicateUsingPO(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a,Predicate<Product> pred)

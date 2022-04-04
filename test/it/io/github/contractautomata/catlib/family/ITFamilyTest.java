@@ -67,14 +67,23 @@ public class ITFamilyTest {
         List<Product> ar = new ArrayList<>(pr);
         int pIndex=100;
         Set<Product> products = fam.getSubProductsOfProduct(ar.get(pIndex));
-        System.out.println(ar.get(pIndex) + "\n" + products);
-        dfc.exportFamily(dir +"subProductsOfProduct_test.prod", new Family(products));
-
         Set<Product> test = dfc.importProducts(dir +"subProductsOfProduct_test.prod");
 
         assertEquals(products,test);
     }
 
+    @Test
+    public void testGetSubProductsNotClosedTransitively() throws Exception
+    {
+        String fileName =dir +"ValidProducts.prod";
+        Family fam=new Family(dfc.importProducts(fileName));
+        Set<Product> pr=fam.getProducts();
+        List<Product> ar = new ArrayList<>(pr);
+        int pIndex=100;
+        Set<Product> products = fam.getSubProductsNotClosedTransitively(ar.get(pIndex));
+        Set<Product> test = dfc.importProducts(dir +"subProductNotClosedTransitively_test.prod");
+        assertEquals(products,test);
+    }
 
     @Test
     public void testEquals1() {

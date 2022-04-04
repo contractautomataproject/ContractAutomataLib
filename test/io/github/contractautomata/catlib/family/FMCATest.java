@@ -37,7 +37,7 @@ public class FMCATest {
             +";"+System.lineSeparator();
 
 
-    Function<Set<Product>,Set<String>> sorting =  s -> s.stream()
+    private final Function<Set<Product>,Set<String>> sorting =  s -> s.stream()
             .sorted(Comparator.comparing(p->p.getForbidden().toString()+p.getRequired().toString()))
             .map(toString)
             .collect(Collectors.toSet());
@@ -75,11 +75,13 @@ public class FMCATest {
         f1 = mock(Feature.class);
         f2 = mock(Feature.class);
         f3 = mock(Feature.class);
-        f3 = mock(Feature.class);
 
         when(f1.getName()).thenReturn("f1");
         when(f2.getName()).thenReturn("f2");
         when(f3.getName()).thenReturn("f3");
+        when(f1.toString()).thenReturn("f1");
+        when(f2.toString()).thenReturn("f2");
+        when(f3.toString()).thenReturn("f3");
 
         when(p1.getRequired()).thenReturn(Set.of(f1));
         when(p1.getForbidden()).thenReturn(Set.of(f2, f3));
@@ -87,14 +89,17 @@ public class FMCATest {
 
         when(p2.getRequired()).thenReturn(Collections.singleton(f1));
         when(p2.getForbidden()).thenReturn(Collections.singleton(f3));
+        when(family.getSubProductsNotClosedTransitively(p2)).thenReturn(Collections.singleton(p1));
         //       when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
 
         when(p3.getRequired()).thenReturn(Collections.singleton(f1));
         when(p3.getForbidden()).thenReturn(Collections.singleton(f2));
 //        when(p3.getForbiddenAndRequiredNumber()).thenReturn(2);
+        when(family.getSubProductsNotClosedTransitively(p3)).thenReturn(Collections.singleton(p1));
 
         when(p4.getRequired()).thenReturn(Set.of(f3));
         when(p4.getForbidden()).thenReturn(Collections.emptySet());
+        when(family.getSubProductsNotClosedTransitively(p4)).thenReturn(Collections.emptySet());
         //       when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
 
 
@@ -186,8 +191,8 @@ public class FMCATest {
 
         when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3)));
         when(a.getStates()).thenReturn(Set.of(cs1,cs2,cs3));
+//        when(a.getBasicStates()).thenReturn(Map.of(1,Set.of(bs0,bs2),2,Set.of(bs0,bs1)));
         when(a.getForwardStar(cs1)).thenReturn(Set.of(t1));
-
         when(a.getInitial()).thenReturn(cs1);
 
 //        when(p1.checkRequired(anySet())).thenReturn(true);
@@ -205,7 +210,7 @@ public class FMCATest {
 
         when(family.getPo()).thenReturn(po);
 
-        aut =  new FMCA(a,family); //new FMCA(a,set);
+        aut =  new FMCA(a,family);
     }
 
     @Test
@@ -257,7 +262,6 @@ public class FMCATest {
 
         when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3,t4)));
 
-
         Product p3before = mock(Product.class);
         when(p3before.getRequired()).thenReturn(Set.of(f1,f4));
         when(p3before.getForbidden()).thenReturn(Set.of(f2,f4));
@@ -280,6 +284,7 @@ public class FMCATest {
 
         Product p5 = mock(Product.class);
         when(p5.toString()).thenReturn("p5");
+        assertEquals("p5",p5.toString()); //just to avoid unnecessary mocking exception
 
         when(p5.checkRequired(any())).thenReturn(true);
         when(p5.getForbidden()).thenReturn(Set.of(f4));
@@ -385,9 +390,40 @@ public class FMCATest {
 
     @Test
     public void testProductsRespectingValidity() {
-
         assertEquals(Set.of(p4),aut.productsRespectingValidity());
     }
+
+    @Test
+    public void testProductsRespectingValidity2() {
+    //    when(p1.getForbidden()).thenReturn(Collections.emptySet());
+   //     when(p1.getRequired()).thenReturn(Set.of(f1,f2,f3));
+   //     when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
+        when(p1.isValid(a)).thenReturn(true);
+
+   //     when(p2.getForbidden()).thenReturn(Collections.emptySet());
+   //     when(p2.getRequired()).thenReturn(Set.of(f2,f3));
+   //     when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
+        when(p2.isValid(a)).thenReturn(true);
+
+    //    when(p3.getForbidden()).thenReturn(Collections.emptySet());
+    //    when(p3.getRequired()).thenReturn(Set.of(f1,f3));
+    //    when(p3.getForbiddenAndRequiredNumber()).thenReturn(2);
+        when(p3.isValid(a)).thenReturn(true);
+
+    //    when(p4.getForbidden()).thenReturn(Collections.emptySet());
+    //    when(p4.getRequired()).thenReturn(Collections.singleton(f3));
+   //     when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
+        when(p4.isValid(a)).thenReturn(true);
+
+        when(family.getMaximalProducts()).thenReturn(Collections.singleton(p4));
+        when(family.getSubProductsNotClosedTransitively(p4)).thenReturn(Set.of(p2,p3));
+        when(family.getSubProductsNotClosedTransitively(p3)).thenReturn(Collections.singleton(p1));
+        when(family.getSubProductsNotClosedTransitively(p2)).thenReturn(Collections.singleton(p1));
+        when(family.getSubProductsNotClosedTransitively(p1)).thenReturn(Collections.emptySet());
+
+        assertEquals(Set.of(p1,p2,p3,p4),aut.productsRespectingValidity());
+    }
+
 
     @Test
     public void testProductsWithNonEmptyOrchestration() {
@@ -395,6 +431,76 @@ public class FMCATest {
                 .sorted(Comparator.comparing(Product::toString))
                 .collect(Collectors.toList())
                 .toString());
+    }
+
+    @Test
+    public void testProductsWithNonEmptyOrchestration2() {
+
+
+        when(p1.getRequired()).thenReturn(Collections.emptySet());
+        when(p1.getForbidden()).thenReturn(Set.of(f1,f2,f3));
+//        when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
+
+        when(p2.getRequired()).thenReturn(Collections.emptySet());
+        when(p2.getForbidden()).thenReturn(Set.of(f2,f3));
+//        when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p3.getRequired()).thenReturn(Collections.emptySet());
+        when(p3.getForbidden()).thenReturn(Set.of(f1,f3));
+//        when(p3.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p4.getRequired()).thenReturn(Collections.emptySet());
+        when(p4.getForbidden()).thenReturn(Collections.singleton(f3));
+ //       when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
+
+
+        CALabel lab4 = mock(CALabel.class);
+        Action act4 = mock(OfferAction.class);
+        RequestAction ract4 = mock(RequestAction.class);
+        when(lab4.getAction()).thenReturn(act4);
+ //       when(lab4.getLabel()).thenReturn(List.of(act4,ract4));
+        when(act4.getLabel()).thenReturn("f4");
+  //      when(act4.toString()).thenReturn("!f4");
+  //      when(ract4.toString()).thenReturn("?f4");
+
+        ModalTransition<String,Action,State<String>,CALabel> t4 = mock(ModalTransition.class);
+        when(t4.getSource()).thenReturn(cs1);
+        when(t4.getLabel()).thenReturn(lab4);
+        when(t4.getTarget()).thenReturn(cs1);
+  //      when(t4.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
+        when(t4.getRank()).thenReturn(2);
+ //       when(t4.toString()).thenReturn("([0, 0],[!f4,?f4],[0, 0])");
+
+
+ //       when(p1.isForbidden(lab4)).thenReturn(false);
+  //      when(p2.isForbidden(lab4)).thenReturn(false);
+ //       when(p3.isForbidden(lab4)).thenReturn(false);
+ //       when(p4.isForbidden(lab4)).thenReturn(false);
+
+        when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3,t4)));
+        when(a.getForwardStar(cs1)).thenReturn(Set.of(t1,t4));
+
+
+//        when(bs0.isFinalState()).thenReturn(true);
+        when(cs1.isFinalState()).thenReturn(true);
+
+        aut = new FMCA(a,Set.of(p1,p2,p3,p4));
+
+        String test = "[R:[];" + System.lineSeparator() +
+                "F:[f1, f2, f3];" + System.lineSeparator() +
+                ", R:[];" + System.lineSeparator() +
+                "F:[f1, f3];" + System.lineSeparator() +
+                ", R:[];" + System.lineSeparator() +
+                "F:[f2, f3];" + System.lineSeparator() +
+                ", R:[];" + System.lineSeparator() +
+                "F:[f3];" + System.lineSeparator() +
+                "]";
+
+
+        assertEquals(test,aut.productsWithNonEmptyOrchestration().stream()
+                .map(toString)
+                .sorted()
+                .collect(Collectors.toList()).toString());
     }
 
 

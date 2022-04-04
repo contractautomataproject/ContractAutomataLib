@@ -94,7 +94,6 @@ public class Family {
 				.parallelStream()
 				.filter(subProduct1->this.getSubProductsOfProduct(p)
 						.parallelStream()
-						.filter(subProduct2->!subProduct1.equals(subProduct2))
 						.noneMatch(subProduct2-> areComparable.test(subProduct1,subProduct2)
 								&&	compare.apply(subProduct2, subProduct1)<=-1))
 				.collect(Collectors.toSet());

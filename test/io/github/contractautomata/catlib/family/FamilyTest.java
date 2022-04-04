@@ -57,12 +57,12 @@ public class FamilyTest {
     }
 
     @Test
-    public void getProducts() {
+    public void testGetProducts() {
         assertEquals(set,family.getProducts());
     }
 
     @Test
-    public void getPo() {
+    public void testGetPo() {
         Map<Product, Map<Boolean,Set<Product>>> po =
         Map.of(p1, Map.of(false, Collections.emptySet(),true,Set.of(p2,p3)),
                 p2, Map.of(false, Set.of(p1),true, Collections.emptySet()),
@@ -73,39 +73,83 @@ public class FamilyTest {
     }
 
     @Test
-    public void getMaximumDepth() {
+    public void testGetMaximumDepth() {
         assertEquals(4,family.getMaximumDepth());
     }
 
     @Test
-    public void getSubProductsOfProductP1() {
+    public void testGetSubProductsOfProductP1() {
         assertEquals(Collections.emptySet(),family.getSubProductsOfProduct(p1));
     }
 
     @Test
-    public void getSubProductsOfProductP2() {
+    public void testGetSubProductsOfProductP2() {
         assertEquals(Collections.singleton(p1),family.getSubProductsOfProduct(p2));
     }
 
     @Test
-    public void getSuperProductsOfProductP1() {
+    public void testGetSuperProductsOfProductP1() {
         assertEquals(Set.of(p2,p3),family.getSuperProductsOfProduct(p1));
     }
 
 
     @Test
-    public void getSuperProductsOfProductP2() {
+    public void testGetSuperProductsOfProductP2() {
         assertEquals(Collections.emptySet(),family.getSuperProductsOfProduct(p2));
     }
 
     @Test
-    public void getMaximalProducts() {
+    public void testGetMaximalProducts() {
         assertEquals(Set.of(p2,p3,p4),family.getMaximalProducts());
     }
 
+    @Test
+    public void testGetSuperProductsTransitive() {
+        when(p1.getRequired()).thenReturn(Collections.emptySet());
+        when(p1.getForbidden()).thenReturn(Set.of(f1,f2,f3));
+        when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
+
+        when(p2.getRequired()).thenReturn(Collections.emptySet());
+        when(p2.getForbidden()).thenReturn(Set.of(f2,f3));
+        when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p4.getRequired()).thenReturn(Collections.emptySet());
+        when(p4.getForbidden()).thenReturn(Collections.singleton(f3));
+        when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
+
+        set = new HashSet<>(Arrays.asList(p1, p2, p4));
+        family = new Family(set);
+
+        assertEquals(Set.of(p1,p2),family.getSubProductsOfProduct(p4));
+    }
 
     @Test
-    public void getMaximalProductsHighDifference(){
+    public void testGetSubProductsNotClosedTransitively(){
+
+        when(p1.getRequired()).thenReturn(Collections.emptySet());
+        when(p1.getForbidden()).thenReturn(Set.of(f1,f2,f3));
+        when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
+
+        when(p2.getRequired()).thenReturn(Collections.emptySet());
+        when(p2.getForbidden()).thenReturn(Set.of(f2,f3));
+        when(p2.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p3.getRequired()).thenReturn(Collections.emptySet());
+        when(p3.getForbidden()).thenReturn(Set.of(f1,f3));
+        when(p3.getForbiddenAndRequiredNumber()).thenReturn(2);
+
+        when(p4.getRequired()).thenReturn(Collections.emptySet());
+        when(p4.getForbidden()).thenReturn(Collections.singleton(f3));
+        when(p4.getForbiddenAndRequiredNumber()).thenReturn(1);
+
+        set = new HashSet<>(Arrays.asList(p1, p2, p3, p4));
+        family = new Family(set);
+
+        assertEquals(Set.of(p2,p3),family.getSubProductsNotClosedTransitively(p4));
+    }
+
+    @Test
+    public void testGetMaximalProductsHighDifference(){
         when(p1.getRequired()).thenReturn(Collections.emptySet());
         when(p1.getForbidden()).thenReturn(Set.of(f1,f2,f3));
         when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
@@ -162,14 +206,14 @@ public class FamilyTest {
     }
 
     @Test
-    public void constructorException()
+    public void testConstructorException()
     {
         assertThatThrownBy(() -> new Family(null))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    public void constructorException2()
+    public void testConstructorException2()
     {
         assertThatThrownBy(() -> new Family(null,null,null))
                 .isInstanceOf(NullPointerException.class);

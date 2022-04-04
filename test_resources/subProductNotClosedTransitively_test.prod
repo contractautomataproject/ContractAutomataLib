@@ -1,0 +1,4 @@
+p0: R={card,noFreeCancellation,invoice,} F={sharedBathroom,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p1: R={card,noFreeCancellation,invoice,} F={receipt,singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p2: R={card,noFreeCancellation,receipt,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
+p3: R={card,sharedBathroom,noFreeCancellation,invoice,} F={singleRoom,sharedRoom,cash,privateBathroom,freeCancellation,}
