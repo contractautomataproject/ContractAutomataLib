@@ -1,0 +1,26 @@
+# Lists all features from the model with manual (first digit) and automatic (second digit) selection
+# 0 = deselected, 1 = selected, 2 = undefined
+21Composition
+21Hotel
+11payment
+12card
+20cash
+21notification
+22invoice
+22receipt
+21Room
+20singleRoom
+12sharedRoom
+22refunding
+22noRefunding
+22yesRefunding
+21Client
+21Type
+20Business
+21Economy
+22ReceptionReq
+2224h
+2212h
+21BathroomReq
+20privateBathroom
+21sharedBathroom

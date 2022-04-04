@@ -1,7 +1,6 @@
 package io.github.contractautomata.catlib.family.converters;
 
 import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.Feature;
 import io.github.contractautomata.catlib.family.Product;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,10 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;

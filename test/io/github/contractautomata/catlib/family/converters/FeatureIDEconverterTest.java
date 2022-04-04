@@ -67,9 +67,8 @@ public class FeatureIDEconverterTest {
 	{
 		if (!System.getProperty("os.name").contains("Windows"))
 			return;
-
-		ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml");
-//		this test provokes an IOException for covering the catch block, however nor Travis neither GithubAction do raise the throwable
+//		this test provokes an IOException for covering the catch block, however only works on Windows, in other OS
+//      locking files is advisory
 
 		try (RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
 				"products"+File.separator+"00003.config", "rw")) {
@@ -77,6 +76,14 @@ public class FeatureIDEconverterTest {
 			assertThrows("java.lang.RuntimeException: java.io.IOException: The process cannot access the file because another process has locked a portion of the file",
 					RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel2" + File.separator + "model.xml"));
 		}
+	}
+
+
+	@Test
+	public void testImportFamilyExceptionUnix() throws Exception
+	{
+		//one of the configurations has no permissions to read or write
+		assertThrows(RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel5" + File.separator + "model.xml"));
 	}
 
 	
