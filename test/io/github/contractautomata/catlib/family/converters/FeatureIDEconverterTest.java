@@ -10,15 +10,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -41,12 +39,12 @@ public class FeatureIDEconverterTest {
 	{
 		Set<Product> sp = ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml");
 
-//		FileWriter fileWriter = new FileWriter(dir+"productsFeatureIDEmodel2");
+//		FileWriter fileWriter = new FileWriter(dir+"productsFeatureIDEmodel2", StandardCharsets.UTF_8);
 //		PrintWriter printWriter = new PrintWriter(fileWriter);
-//		printWriter.print(FMCATest.sorting.apply(sp).toString());
+//		printWriter.print(FMCATest.sorting.apply(sp).stream().collect(Collectors.joining(System.lineSeparator())));
 //		printWriter.close();
-		String test = Files.readString(Paths.get(dir+"productsFeatureIDEmodel2"), StandardCharsets.UTF_8);
-		assertEquals(test,FMCATest.sorting.apply(sp).toString() );
+		Set<String> test = new HashSet<>(Files.readAllLines(Paths.get(dir+"productsFeatureIDEmodel2"), StandardCharsets.UTF_8));
+		assertEquals(test,FMCATest.sorting.apply(sp));
 	}
 
 	@Test

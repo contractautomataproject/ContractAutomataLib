@@ -30,12 +30,11 @@ public class FMCATest {
             .map(p->"R:" + p.getRequired().stream()
                     .sorted(Comparator.comparing(Feature::toString))
                     .collect(Collectors.toList())  +
-                    ";"+System.lineSeparator()+"F:" +
+                    "; F:" +
                     p.getForbidden().stream()
                             .sorted(Comparator.comparing(Feature::toString))
                             .collect(Collectors.toList())
-                    +";"+System.lineSeparator())
-            .sorted()
+                    +";")
             .collect(Collectors.toSet());
 
     @Mock Feature f1;
@@ -451,7 +450,7 @@ public class FMCATest {
 
         CALabel lab4 = mock(CALabel.class);
         Action act4 = mock(OfferAction.class);
-        RequestAction ract4 = mock(RequestAction.class);
+      //  RequestAction ract4 = mock(RequestAction.class);
         when(lab4.getAction()).thenReturn(act4);
  //       when(lab4.getLabel()).thenReturn(List.of(act4,ract4));
         when(act4.getLabel()).thenReturn("f4");
@@ -481,18 +480,11 @@ public class FMCATest {
 
         aut = new FMCA(a,Set.of(p1,p2,p3,p4));
 
-        String test = "[R:[];" + System.lineSeparator() +
-                "F:[f1, f2, f3];" + System.lineSeparator() +
-                ", R:[];" + System.lineSeparator() +
-                "F:[f2, f3];" + System.lineSeparator() +
-                ", R:[];" + System.lineSeparator() +
-                "F:[f3];" + System.lineSeparator() +
-                ", R:[];" + System.lineSeparator() +
-                "F:[f1, f3];" + System.lineSeparator() +
-                "]";
+        Set<String> test = Set.of("R:[]; F:[f1, f2, f3];",
+               "R:[]; F:[f2, f3];", "R:[]; F:[f3];",
+                "R:[]; F:[f1, f3];");
 
-
-        assertEquals(test,sorting.apply(aut.productsWithNonEmptyOrchestration()).toString());
+        assertEquals(test,sorting.apply(aut.productsWithNonEmptyOrchestration()));
     }
 
 
