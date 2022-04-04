@@ -26,20 +26,16 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class FMCATest {
 
-
-    private final Function<Product,String> toString = p->"R:" + p.getRequired().stream()
-            .sorted(Comparator.comparing(Feature::toString))
-            .collect(Collectors.toList())  +
-            ";"+System.lineSeparator()+"F:" +
-            p.getForbidden().stream()
+    public static final Function<Set<Product>,Set<String>> sorting =  s -> s.stream()
+            .map(p->"R:" + p.getRequired().stream()
                     .sorted(Comparator.comparing(Feature::toString))
-                    .collect(Collectors.toList())
-            +";"+System.lineSeparator();
-
-
-    private final Function<Set<Product>,Set<String>> sorting =  s -> s.stream()
-            .sorted(Comparator.comparing(p->p.getForbidden().toString()+p.getRequired().toString()))
-            .map(toString)
+                    .collect(Collectors.toList())  +
+                    ";"+System.lineSeparator()+"F:" +
+                    p.getForbidden().stream()
+                            .sorted(Comparator.comparing(Feature::toString))
+                            .collect(Collectors.toList())
+                    +";"+System.lineSeparator())
+            .sorted()
             .collect(Collectors.toSet());
 
     @Mock Feature f1;
@@ -436,7 +432,6 @@ public class FMCATest {
     @Test
     public void testProductsWithNonEmptyOrchestration2() {
 
-
         when(p1.getRequired()).thenReturn(Collections.emptySet());
         when(p1.getForbidden()).thenReturn(Set.of(f1,f2,f3));
 //        when(p1.getForbiddenAndRequiredNumber()).thenReturn(3);
@@ -489,18 +484,15 @@ public class FMCATest {
         String test = "[R:[];" + System.lineSeparator() +
                 "F:[f1, f2, f3];" + System.lineSeparator() +
                 ", R:[];" + System.lineSeparator() +
-                "F:[f1, f3];" + System.lineSeparator() +
-                ", R:[];" + System.lineSeparator() +
                 "F:[f2, f3];" + System.lineSeparator() +
                 ", R:[];" + System.lineSeparator() +
                 "F:[f3];" + System.lineSeparator() +
+                ", R:[];" + System.lineSeparator() +
+                "F:[f1, f3];" + System.lineSeparator() +
                 "]";
 
 
-        assertEquals(test,aut.productsWithNonEmptyOrchestration().stream()
-                .map(toString)
-                .sorted()
-                .collect(Collectors.toList()).toString());
+        assertEquals(test,sorting.apply(aut.productsWithNonEmptyOrchestration()).toString());
     }
 
 

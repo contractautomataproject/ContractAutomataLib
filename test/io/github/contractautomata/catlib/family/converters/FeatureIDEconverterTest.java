@@ -1,6 +1,8 @@
 package io.github.contractautomata.catlib.family.converters;
 
+import io.github.contractautomata.catlib.family.FMCATest;
 import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.Product;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,11 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -33,8 +39,14 @@ public class FeatureIDEconverterTest {
 	@Test
 	public void testImportFamily() throws Exception
 	{
+		Set<Product> sp = ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml");
+
+//		FileWriter fileWriter = new FileWriter(dir+"productsFeatureIDEmodel2");
+//		PrintWriter printWriter = new PrintWriter(fileWriter);
+//		printWriter.print(FMCATest.sorting.apply(sp).toString());
+//		printWriter.close();
 		String test = Files.readString(Paths.get(dir+"productsFeatureIDEmodel2"), StandardCharsets.UTF_8);
-		assertEquals(test,ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml").toString() );
+		assertEquals(test,FMCATest.sorting.apply(sp).toString() );
 	}
 
 	@Test
@@ -75,4 +87,5 @@ public class FeatureIDEconverterTest {
 	{
 		assertThrows(UnsupportedOperationException.class, () -> ffc.exportFamily("", fam));
 	}
+
 }
