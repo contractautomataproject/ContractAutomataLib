@@ -28,8 +28,10 @@ public class FeatureIDEconverterTest {
 	}
 
 	@Test
-	public void testImportFamily() throws Exception {
-
+	public void testImportFamily() throws Exception
+	{
+		if (!System.getProperty("os.name").contains("Windows"))
+			return;
 		assertEquals(products2(),ffc.importProducts(dir+"FeatureIDEmodel2"+File.separator+"model.xml").toString() );
 	}
 

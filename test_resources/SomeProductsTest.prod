@@ -1,5 +1,5 @@
 p0: R={card,invoice,} F={sharedRoom,cash,}
 p1: R={card,sharedBathroom,} F={cash,}
 p2: R={card,} F={invoice,sharedRoom,cash,}
-p3: R={invoice,cash,} F={card,sharedRoom,,}
-p4: R={card,} F={sharedRoom,cash,}
+p3: R={card,} F={sharedRoom,cash,}
+p4: R={invoice,cash,} F={card,sharedRoom,}
