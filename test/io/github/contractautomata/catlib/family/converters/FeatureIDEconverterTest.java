@@ -13,7 +13,11 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,6 +76,7 @@ public class FeatureIDEconverterTest {
 
 		try (RandomAccessFile raFile = new RandomAccessFile(dir+"FeatureIDEmodel2"+File.separator+
 				"products"+File.separator+"00003.config", "rw")) {
+
 			raFile.getChannel().lock();
 			assertThrows("java.lang.RuntimeException: java.io.IOException: The process cannot access the file because another process has locked a portion of the file",
 					RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel2" + File.separator + "model.xml"));
@@ -82,6 +87,27 @@ public class FeatureIDEconverterTest {
 	@Test
 	public void testImportFamilyExceptionUnix() throws Exception
 	{
+		if (System.getProperty("os.name").contains("Windows"))
+			return;
+//
+		Path path = Paths.get(dir + "FeatureIDEmodel5" + File.separator + "model.xml");
+		Set<PosixFilePermission> perms = Files.readAttributes(path, PosixFileAttributes.class).permissions();
+
+		System.out.format("Permissions before: %s%n",  PosixFilePermissions.toString(perms));
+
+		perms.remove(PosixFilePermission.OWNER_WRITE);
+		perms.remove(PosixFilePermission.OWNER_READ);
+		perms.remove(PosixFilePermission.OWNER_EXECUTE);
+		perms.remove(PosixFilePermission.GROUP_WRITE);
+		perms.remove(PosixFilePermission.GROUP_READ);
+		perms.remove(PosixFilePermission.GROUP_EXECUTE);
+		perms.remove(PosixFilePermission.OTHERS_WRITE);
+		perms.remove(PosixFilePermission.OTHERS_READ);
+		perms.remove(PosixFilePermission.OTHERS_EXECUTE);
+		Files.setPosixFilePermissions(path, perms);
+
+		System.out.format("Permissions after:  %s%n",  PosixFilePermissions.toString(perms));
+
 		//one of the configurations has no permissions to read or write
 		assertThrows(RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel5" + File.separator + "model.xml"));
 	}
