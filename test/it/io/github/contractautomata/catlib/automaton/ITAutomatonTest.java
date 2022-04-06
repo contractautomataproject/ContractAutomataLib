@@ -31,7 +31,7 @@ import static org.junit.Assert.assertThrows;
 public class ITAutomatonTest {
 
     private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
-    private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+    private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 
     @Test
     public void testString() {

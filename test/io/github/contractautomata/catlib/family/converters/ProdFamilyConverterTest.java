@@ -18,14 +18,13 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class ProdFamilyConverterTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private  FamilyConverter dfc;
 	@Mock Family fam;
 
 	@Before
 	public void setUp(){
 		dfc = new ProdFamilyConverter();
-
 	}
 
 	@Test

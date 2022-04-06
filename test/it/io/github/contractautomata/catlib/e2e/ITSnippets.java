@@ -27,7 +27,7 @@ import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 public class ITSnippets {
-	final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	
 	@SuppressWarnings("unused")
 	public void snippet1() throws Exception

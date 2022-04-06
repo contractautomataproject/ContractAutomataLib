@@ -39,7 +39,7 @@ public class AutDataConverterTest {
 
     private AutDataConverter<Label<Action>> adc;
 
-    private static final String dir = System.getProperty("user.dir")+ File.separator+"test_resources"+File.separator;
+    private static final String dir = System.getProperty("user.dir")+ File.separator+"test"+File.separator+"test_resources"+File.separator;
 
     private static  Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> axb;
 

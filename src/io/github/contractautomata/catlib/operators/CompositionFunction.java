@@ -163,7 +163,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 
 					if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
 						dontvisit.addAll(trans.parallelStream()
-								.filter(x->x.isLazy()&&pruningPred.test(x.getLabel()))
+								.filter(x->x.isLazy() && pruningPred.test(x.getLabel()))
 								.map(T::getTarget)
 								.collect(toList()));
 
@@ -183,7 +183,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		//in case of pruning if no final states are reachable return null
 		if (pruningPred!=null&& tr.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
-				.distinct().noneMatch(AbstractState::isFinalState))
+				.distinct().noneMatch(State::isFinalState))
 			return null;
 		else
 			return this.createAutomaton.apply(tr);
@@ -205,7 +205,9 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 									T tradd=createTransition.apply(sourcestate,
 											this.createLabel(e, ee),
 											operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))),
-											e.tra.isNecessary()?e.tra.getModality():ee.tra.getModality());
+											e.tra.isNecessary()?
+													e.tra.getModality()
+													:ee.tra.getModality());
 
 									return Stream.of(new AbstractMap.SimpleEntry<>(e.tra,
 													new AbstractMap.SimpleEntry<>(tradd,targetlist)),
@@ -270,8 +272,8 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		List<Action> l = new ArrayList<>(rank);
 		l.addAll(Collections.nCopies(shift,new IdleAction()));
 		l.addAll(lab.getLabel());
-		if (rank-l.size()>0)
-			l.addAll(Collections.nCopies((int)rank.longValue()-l.size(), new IdleAction()));
+		//it always hold that rank-l.size() is non-negative
+		l.addAll(Collections.nCopies((int)rank.longValue()-l.size(), new IdleAction()));
 		return createLabel.apply(l);
 	}
 

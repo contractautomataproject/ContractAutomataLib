@@ -330,6 +330,7 @@
 							<param>io.github.contractautomata.catlib.converters*</param>
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
+							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunction</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.contractautomata.catlib.automaton*</param>
@@ -340,6 +341,7 @@
 							<param>io.github.contractautomata.catlib.converters*</param>
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
+							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunctionTest</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

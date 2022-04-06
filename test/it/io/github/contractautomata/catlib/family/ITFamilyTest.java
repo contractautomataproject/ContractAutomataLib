@@ -18,7 +18,7 @@ import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
 import org.mockito.internal.matchers.Null;
 
 public class ITFamilyTest {
-    private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+    private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
     private final FamilyConverter dfc = new ProdFamilyConverter();
 
     @Test

@@ -17,7 +17,7 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 public class ProductOrchestrationTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	@Test

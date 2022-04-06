@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ITAutDataConverterTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 
 
 	@Test

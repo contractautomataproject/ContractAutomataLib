@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +9,8 @@ import java.util.List;
 
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.operators.MSCACompositionFunction;
+import io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,9 +22,9 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.spec.CompositionSpecValidation;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
-public class MSCACompositionTest {
+public class ITMSCACompositionTest {
 
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	//***********************************testing impl against spec on scenarios **********************************************

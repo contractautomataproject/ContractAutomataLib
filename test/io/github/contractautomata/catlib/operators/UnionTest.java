@@ -17,7 +17,7 @@ import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEqual
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UnionTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	@Test
 	public void unionTest() throws Exception {

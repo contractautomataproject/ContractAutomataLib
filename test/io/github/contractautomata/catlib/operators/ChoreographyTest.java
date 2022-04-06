@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ChoreographyTest {
 
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	@Test

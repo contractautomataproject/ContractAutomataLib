@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
@@ -8,6 +8,7 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
+import io.github.contractautomata.catlib.operators.ModelCheckingFunction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,11 +19,11 @@ import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
-public class ModelCheckingTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;
+public class ITModelCheckingTest {
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<Label<Action>> adc = new AutDataConverter<>(Label::new);
 	private ModelCheckingFunction<String,State<String>,Label<Action>,
-                ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>>
+					ModalTransition<String,Action,State<String>,Label<Action>>,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>>
 			mcf;
 	public static Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop ;
 	

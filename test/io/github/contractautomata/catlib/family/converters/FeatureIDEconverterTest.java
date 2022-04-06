@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThrows;
 
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class FeatureIDEconverterTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test_resources"+File.separator;	
+	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private FamilyConverter ffc;
 
 	@Mock private Family fam;
@@ -55,8 +55,6 @@ public class FeatureIDEconverterTest {
 	public void testImportFamilyEmptyFolder() throws Exception {
 		assertEquals(Collections.emptySet(),ffc.importProducts(dir+"FeatureIDEmodel3"+File.separator+"model.xml"));
 	}
-
-
 
 	@Test
 	public void testImportFamilyHiddenDirectory() throws Exception {
@@ -111,7 +109,6 @@ public class FeatureIDEconverterTest {
 		//one of the configurations has no permissions to read or write
 		assertThrows(RuntimeException.class, () -> ffc.importProducts(dir + "FeatureIDEmodel5" + File.separator + "model.xml"));
 	}
-
 	
 	@Test
 	public void testExportException()
