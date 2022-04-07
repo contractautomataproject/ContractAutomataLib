@@ -1,11 +1,10 @@
 package io.github.contractautomata.catlib.operators;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 
 public class MSCACompositionFunctionTest {
 

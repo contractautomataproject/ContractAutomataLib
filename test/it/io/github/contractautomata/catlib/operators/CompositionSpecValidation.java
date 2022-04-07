@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.spec;
+package it.io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
