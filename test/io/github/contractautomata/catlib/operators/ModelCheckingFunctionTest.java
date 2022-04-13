@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class ModelCheckingFunctionTest {
 
-    @Mock Label<Action> lab;
+ //   @Mock Label<Action> lab;
     @Mock IdleAction ia;
     @Mock Action a1;
     @Mock Action a2;
@@ -78,6 +78,7 @@ public class ModelCheckingFunctionTest {
 
         Label<Action> lab1 = mock(Label.class);
         when(lab1.getLabel()).thenReturn(List.of(ia,a2));
+        when(lab1.getAction()).thenReturn(a2);
         when(t1.getLabel()).thenReturn(lab1);
         when(t1.getTarget()).thenReturn(cs11);
 
