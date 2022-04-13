@@ -68,13 +68,6 @@
 			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>3.22.0</version>
-			<scope>test</scope>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -169,34 +162,31 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.0.0</version>
-					<executions>
-						<execution>
-							<id>add-test-source</id>
-							<phase>generate-test-sources</phase>
-							<goals>
-								<goal>add-test-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>src/it/java</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<version>3.0.0-M5</version>
 					<executions>
 						<execution>
+							<id>default-it</id>
 							<goals>
 								<goal>integration-test</goal>
 								<goal>verify</goal>
 							</goals>
+						</execution>
+						<execution>
+							<id>e2e-tests</id>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+							<configuration>
+								<excludes>
+									<exclude>**/IT*.java</exclude>
+								</excludes>
+								<includes>
+									<include>**/E2E*.java</include>
+								</includes>
+							</configuration>
 						</execution>
 					</executions>
 				</plugin>
@@ -334,6 +324,7 @@
 							<param>io.github.contractautomata.catlib.operators.CompositionFunction</param>
 							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunction</param>
 							<param>io.github.contractautomata.catlib.operators.SynthesisOperator</param>
+							<param>io.github.contractautomata.catlib.operators.ModelCheckingSynthesisOperator</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.contractautomata.catlib.automaton*</param>
@@ -348,6 +339,7 @@
 							<param>io.github.contractautomata.catlib.operators.CompositionFunctionTest</param>
 							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunctionTest</param>
 							<param>io.github.contractautomata.catlib.operators.SynthesisOperatorTest</param>
+							<param>io.github.contractautomata.catlib.operators.ModelCheckingSynthesisOperatorTest</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

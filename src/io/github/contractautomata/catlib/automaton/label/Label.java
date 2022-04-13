@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import io.github.contractautomata.catlib.automaton.Ranked;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 
 /**
  * Class representing a Label of a transition
@@ -30,7 +32,22 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 	public List<T> getLabel() {
 		return new ArrayList<>(label);
 	}
-	
+
+
+	public Action getAction(){
+		Action act = (Action) this.label.stream()
+				.filter(a->!(a instanceof IdleAction) && (a instanceof Action))
+				.findFirst()
+				.orElseThrow(IllegalArgumentException::new);//someone must not be idle
+
+		if  (!this.label.stream()
+				.filter(a->!(a instanceof IdleAction))
+				.allMatch(l->((Action) l).getLabel().equals(act.getLabel())))
+			throw new IllegalArgumentException();
+
+		return act;
+	}
+
 	@Override
 	public boolean match(Label<T> arg) {
 		return this.label.equals(arg.label);

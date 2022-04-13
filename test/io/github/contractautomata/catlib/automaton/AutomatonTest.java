@@ -38,7 +38,7 @@ public class AutomatonTest {
 	@Mock Transition<String,String,State<String>,Label<String>> t2mock;
 	@Mock Transition<String,String,State<String>,Label<String>> t3mock;
 
-	Automaton<String,String, State<String>,Transition<String,String, State<String>,Label<String>>> prop;
+	Automaton<String,String,State<String>,Transition<String,String,State<String>,Label<String>>> prop;
 
 	@Mock BasicState<String> bs0;
 	@Mock BasicState<String> bs1;

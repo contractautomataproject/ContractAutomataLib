@@ -1,4 +1,4 @@
-package it.io.github.contractautomata.catlib.e2e;
+package e2e.io.github.contractautomata.catlib;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,12 +25,13 @@ import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesis
 import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import org.junit.Test;
 
-public class ITSnippets {
+public class E2Eexamples {
 	final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
-	
-	@SuppressWarnings("unused")
-	public void snippet1() throws Exception
+
+	@Test
+	public void example1() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut = new ArrayList<>(2);
@@ -39,8 +40,10 @@ public class ITSnippets {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<String>(aut,new Agreement().negate()).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 	}
-	
-	public void snippet2() throws Exception
+
+
+	@Test
+	public void example2() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
@@ -48,20 +51,20 @@ public class ITSnippets {
 		bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
 
 	}
-	
 
-	@SuppressWarnings("unused")
-	public void snippet3() throws Exception
+
+	@Test
+	public void example3() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut);
 	}
-	
 
-	@SuppressWarnings("unused")
-	public void snippet4() throws Exception
+
+	@Test
+	public void example4() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -85,9 +88,10 @@ public class ITSnippets {
 		Product p = faut.getFamily().getProducts().iterator().next(); 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 	}
-	
-	@SuppressWarnings("unused")
-	public void snippet5() throws Exception
+
+
+	@Test
+	public void example5() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -107,9 +111,10 @@ public class ITSnippets {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 
 	}
-	
-	@SuppressWarnings("unused")
-	public void snippet6() throws Exception
+
+
+	@Test
+	public void example6() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");

@@ -1,24 +1,42 @@
 package io.github.contractautomata.catlib.automaton.label;
 
-import java.util.List;
-
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.when;
+
+
+@RunWith(MockitoJUnitRunner.Strict.class)
 public class LabelTest {
 	
 	Label<String> lab;
-	
+
+	@Mock IdleAction ia;
+	@Mock Action a1;
+	@Mock Action a2;
+
 	@Before
 	public void setup() {
+
+		when(a1.getLabel()).thenReturn("a");
+		when(a2.getLabel()).thenReturn("a");
 		lab = new Label<>(List.of("a"));
 	}
 	
 	
 	@Test
-	public void testGetAction() {
-		Assert.assertEquals(List.of("a"), lab.getLabel());
+	public void testGetLabel() {
+		assertEquals(List.of("a"), lab.getLabel());
 	}
 	
 	@Test
@@ -32,9 +50,34 @@ public class LabelTest {
 		Assert.assertFalse(lab.match(new Label<>(List.of("b"))));
 	}
 
+
+    @Test
+    public void testGetActionAllIdles() {
+        Label<Action> lab = new Label(List.of(ia,ia));
+        assertThrows(IllegalArgumentException.class, () -> lab.getAction());
+    }
+
+	@Test
+	public void testGetActionNoActions() {
+		assertThrows(IllegalArgumentException.class, () -> lab.getAction());
+	}
+
+	@Test
+    public void testGetActionDifferentActions() {
+        when(a2.getLabel()).thenReturn("b");
+		Label<Action> lab = new Label(List.of(a1,ia,a2));
+        assertThrows(IllegalArgumentException.class, () -> lab.getAction());
+    }
+
+    @Test
+    public void testGetAction() {
+		Label<Action> lab = new Label(List.of(a1,a2));
+        assertEquals(a1,lab.getAction());
+    }
+
 	@Test
 	public void testHashCode() {
-		Assert.assertEquals(lab.hashCode(), new Label<>(List.of("a")).hashCode());
+		assertEquals(lab.hashCode(), new Label<>(List.of("a")).hashCode());
 	}
 
 	@Test
@@ -44,29 +87,29 @@ public class LabelTest {
 
 	@Test
 	public void testGetRank() {
-		Assert.assertEquals(1, lab.getRank().intValue());
+		assertEquals(1, lab.getRank().intValue());
 	}
 
 	@Test
 	public void testGetRank2() {
 		Label<String> l = new Label<>(List.of("a","b"));	
-		Assert.assertEquals(2, l.getRank().intValue());
+		assertEquals(2, l.getRank().intValue());
 	}
 	
 	@Test
 	public void testToString() {
-		Assert.assertEquals(List.of("a").toString(), lab.toString());
+		assertEquals(List.of("a").toString(), lab.toString());
 	}
 	
 	@Test
 	public void equalsSameTrue() {
-		Assert.assertEquals(lab,lab);
+		assertEquals(lab,lab);
 	}
 	
 	@Test
 	public void equalsTwoInstancesTrue() {
 
-		Assert.assertEquals(lab, new Label<>(List.of("a")));
+		assertEquals(lab, new Label<>(List.of("a")));
 	}
 	
 	@Test
@@ -86,12 +129,12 @@ public class LabelTest {
 	
 	@Test
 	public void constructorExceptionNull() {
-		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<String>(null));
+		assertThrows(IllegalArgumentException.class, () -> new Label<String>(null));
 	}
 	
 	@Test
 	public void constructorExceptionEmpty() {
 		List<String> list = List.of();
-		Assert.assertThrows(IllegalArgumentException.class, () -> new Label<>(list));
+		assertThrows(IllegalArgumentException.class, () -> new Label<>(list));
 	}
 }

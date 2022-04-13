@@ -8,7 +8,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -208,15 +207,13 @@ public class FamilyTest {
     @Test
     public void testConstructorException()
     {
-        assertThatThrownBy(() -> new Family(null))
-                .isInstanceOf(NullPointerException.class);
+        assertThrows(NullPointerException.class, () -> new Family(null));
     }
 
     @Test
     public void testConstructorException2()
     {
-        assertThatThrownBy(() -> new Family(null,null,null))
-                .isInstanceOf(NullPointerException.class);
+        assertThrows(NullPointerException.class, () -> new Family(null,null,null));
     }
 
 }

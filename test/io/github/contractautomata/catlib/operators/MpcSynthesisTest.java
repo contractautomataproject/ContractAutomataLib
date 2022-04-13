@@ -1,8 +1,6 @@
 package io.github.contractautomata.catlib.operators;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.List;
@@ -64,8 +62,7 @@ public class MpcSynthesisTest {
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		MpcSynthesisOperator<String> m = new MpcSynthesisOperator<>(new Agreement());
-		assertThatThrownBy(() -> m.apply(orc))
-		.isInstanceOf(UnsupportedOperationException.class);
+		assertThrows(UnsupportedOperationException.class, () -> m.apply(orc));
 	}
 
 	/////mpc synthesis

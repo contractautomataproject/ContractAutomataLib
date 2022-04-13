@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class ProjectionTest {
@@ -119,26 +119,23 @@ public class ProjectionTest {
 	public void projectionException1() throws Exception {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
 		ProjectionFunction<String> pj = new ProjectionFunction<>();
-		assertThatThrownBy(() -> pj.apply(aut,-1, null))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Index out of rank");
+		assertThrows("Index out of rank",
+				IllegalArgumentException.class,
+				() -> pj.apply(aut,-1, null));
 	}
 
 	@Test
 	public void projectionException2() throws Exception {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
 		ProjectionFunction<String> pj = new ProjectionFunction<>();
-		assertThatThrownBy(() -> pj.apply(aut,2, null))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Index out of rank");
+		assertThrows("Index out of rank",IllegalArgumentException.class, () -> pj.apply(aut,2, null));
 	}
 
 	@Test
 	public void projectionException3() throws Exception {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClient.data");
 		ProjectionFunction<String> pj = new ProjectionFunction<>(true);
-		assertThatThrownBy(() -> pj.apply(aut,0, t->t.getLabel().getOfferer()))
-				.isInstanceOf(UnsupportedOperationException.class);
+		assertThrows(UnsupportedOperationException.class, () -> pj.apply(aut,0, t->t.getLabel().getOfferer()));
 	}
 
 
@@ -148,7 +145,7 @@ public class ProjectionTest {
 				bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
 
 		ProjectionFunction<String> pf = new ProjectionFunction<>(true);
-		Assert.assertThrows(UnsupportedOperationException.class,
+		assertThrows(UnsupportedOperationException.class,
 				()->pf.apply(aut,0,t->t.getLabel().getOfferer()));
 	}
 

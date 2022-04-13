@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class OrchestrationTest {
@@ -139,8 +139,7 @@ public class OrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
 		OrchestrationSynthesisOperator<String> os = new OrchestrationSynthesisOperator<>(new Agreement());
-		assertThatThrownBy(() -> os.apply(orc))
-		.isInstanceOf(UnsupportedOperationException.class);
+		assertThrows(UnsupportedOperationException.class, () -> os.apply(orc));
 	}
 }
 

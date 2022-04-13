@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEquals;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertThrows;
 
 public class UnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
@@ -46,8 +46,7 @@ public class UnionTest {
 	{
 		UnionFunction uf = new UnionFunction();
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> arg = new ArrayList<>();
-		assertThatThrownBy(()->uf.apply(arg))
-		.isInstanceOf(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, ()->uf.apply(arg));
 	}
 	
 
@@ -58,8 +57,7 @@ public class UnionTest {
 		aut.add(bdc.importMSCA(dir+"BusinessClientxHotel_open.data"));
 
 		UnionFunction uf = new UnionFunction();
-		assertThatThrownBy(() -> uf.apply(aut))
-		.isInstanceOf(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, ()->uf.apply(aut));
 	}
 
 	@Test
@@ -70,9 +68,8 @@ public class UnionTest {
 		aut.add(test);
 
 		UnionFunction uf = new UnionFunction();
-		assertThatThrownBy(() -> uf.apply(aut))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessage("Illegal label containing _ in some basic state");
+		assertThrows("Illegal label containing _ in some basic state",IllegalArgumentException.class, ()->uf.apply(aut));
+
 	}
 
 	@Test
@@ -82,8 +79,7 @@ public class UnionTest {
 		aut.add(null);
 
 		UnionFunction uf = new UnionFunction();
-		assertThatThrownBy(() -> uf.apply(aut))
-		.isInstanceOf(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, ()->uf.apply(aut));
 	}
 
 }

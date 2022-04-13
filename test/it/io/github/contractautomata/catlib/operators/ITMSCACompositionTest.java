@@ -1,6 +1,6 @@
 package it.io.github.contractautomata.catlib.operators;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -173,9 +173,7 @@ public class ITMSCACompositionTest {
 		aut.add(bdc.importMSCA(dir+"forNullClosedAgreementComposition.data"));
 
 		MSCACompositionFunction<String> mcf = new MSCACompositionFunction<>(aut, null);
-		assertThatThrownBy(() -> mcf.apply(0))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessageContaining("No transitions");
+		assertThrows("No transitions",IllegalArgumentException.class,() -> mcf.apply(0));
 	}
 
 }

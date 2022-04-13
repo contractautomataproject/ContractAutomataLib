@@ -20,10 +20,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEquals;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.autEquals;
+import static org.junit.Assert.*;
 
 public class ChoreographyTest {
 
@@ -98,8 +96,7 @@ public class ChoreographyTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
 		ChoreographySynthesisOperator<String> cso = new ChoreographySynthesisOperator<>(new StrongAgreement());
-		assertThatThrownBy(() -> cso.apply(orc))
-		.isInstanceOf(UnsupportedOperationException.class);
+		assertThrows(UnsupportedOperationException.class, () -> cso.apply(orc));
 	}
 
 	@Test

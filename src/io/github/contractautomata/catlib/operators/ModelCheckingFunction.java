@@ -35,7 +35,9 @@ public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action
 						  Function<List<Action>,L> createLabel,
 						  Function<Set<T>,A> createAutomaton) {
 		super(Arrays.asList(aut, prop),
-				(l1,l2)-> getAction(l1).getLabel().equals(l2.getLabel().get(0).getLabel()),
+				(l1,l2)-> l1.getAction()
+						.getLabel()
+						.equals(l2.getLabel().get(0).getLabel()),
 				createState, createTransition, createLabel,createAutomaton,
 				l->{	List<Action> listAct = l.getLabel();
 					return ((listAct.get(l.getRank()-1) instanceof IdleAction)||
@@ -46,20 +48,6 @@ public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action
 		if (prop.getRank()!=1)
 			throw new IllegalArgumentException();
 
-	}
-
-	public static <L extends Label<Action>>  Action getAction(L label){
-		Action act = label.getLabel().stream()
-				.filter(a->!(a instanceof IdleAction))
-				.findFirst()
-				.orElseThrow(IllegalArgumentException::new);//someone must not be idle
-
-		if  (!label.getLabel().stream()
-				.filter(a->!(a instanceof IdleAction))
-				.allMatch(l->l.getLabel().equals(act.getLabel())))
-			throw new IllegalArgumentException();
-
-		return act;
 	}
 
 }

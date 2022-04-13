@@ -152,23 +152,4 @@ public class ModelCheckingFunctionTest {
         assertThrows(IllegalArgumentException.class, ()->new ModelCheckingFunction<>(aut,prop,createState,createTransition,createLabel,createAutomaton));
         verify(prop, times(2)).getRank();
     }
-
-    @Test
-    public void testGetActionAllIdles() {
-        when(lab.getLabel()).thenReturn(List.of(ia,ia));
-        assertThrows(IllegalArgumentException.class, () -> ModelCheckingFunction.getAction(lab));
-    }
-
-    @Test
-    public void testGetActionDifferentActions() {
-        when(a2.getLabel()).thenReturn("b");
-        when(lab.getLabel()).thenReturn(List.of(a1,a2));
-        assertThrows(IllegalArgumentException.class, () -> ModelCheckingFunction.getAction(lab));
-    }
-
-    @Test
-    public void testGetAction() {
-        when(lab.getLabel()).thenReturn(List.of(a1,a2));
-        assertEquals(a1,ModelCheckingFunction.getAction(lab));
-    }
 }

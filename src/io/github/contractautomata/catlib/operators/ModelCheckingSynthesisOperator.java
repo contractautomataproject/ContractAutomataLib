@@ -146,10 +146,16 @@ public class ModelCheckingSynthesisOperator<S1,
 						List<Action> li = new ArrayList<>(t.getLabel().getLabel());
 						li.set(t.getRank()-1, new IdleAction()); //silencing the prop moves
 						L lab = createLabel.apply(li);
-						if (mcf.getPruningPred().test(t.getLabel())&&t.isLazy()&&this.getReq().test(lab)) //the transition was lazy and bad (satisfying pruning pred),
+						if (mcf.getPruningPred().test(t.getLabel())
+								&& t.isLazy()
+								&& this.getReq().test(lab)) //the transition was lazy and bad (satisfying pruning pred),
 							// but after removing the prop move it satisfies getReq: it must be changed.
 							lab=changeLabel.apply(lab); //change either to request or offer
-						return createTransition.apply(t.getSource(),lab,t.getTarget(),t.getModality());})
+						return createTransition.apply(
+								t.getSource(),
+								lab,
+								t.getTarget(),
+								t.getModality());})
 					.collect(Collectors.toSet()));
 
 			//computing the synthesis

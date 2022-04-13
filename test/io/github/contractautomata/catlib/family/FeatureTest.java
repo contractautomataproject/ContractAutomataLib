@@ -1,11 +1,9 @@
 package io.github.contractautomata.catlib.family;
 
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class FeatureTest {
 
@@ -81,8 +79,7 @@ public class FeatureTest {
 	//***EXCEPTIONS
 	@Test
 	public void testConstructorExceptionNullArgument() {
-		assertThatThrownBy(() -> new Feature(null))
-		.isInstanceOf(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, () -> new Feature(null));
 	}
 
 }

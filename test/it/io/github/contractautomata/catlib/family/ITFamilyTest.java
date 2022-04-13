@@ -1,21 +1,18 @@
 package it.io.github.contractautomata.catlib.family;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
+import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.Product;
+import io.github.contractautomata.catlib.family.converters.FamilyConverter;
+import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.Product;
-import org.junit.Assert;
-import org.junit.Test;
-
-import io.github.contractautomata.catlib.family.converters.FamilyConverter;
-import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
-import org.mockito.internal.matchers.Null;
+import static org.junit.Assert.assertEquals;
 
 public class ITFamilyTest {
     private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
