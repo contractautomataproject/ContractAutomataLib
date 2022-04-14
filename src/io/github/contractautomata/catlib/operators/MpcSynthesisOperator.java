@@ -41,7 +41,8 @@ public class MpcSynthesisOperator<S1> extends ModelCheckingSynthesisOperator<S1,
 	public MpcSynthesisOperator(Predicate<CALabel> req,
 								Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop)
 	{
-		super((x,t,bad) -> x.isUrgent(), req, prop,t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()),
+		super((x,t,bad) -> x.isUrgent(), req, prop,
+				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()),
 				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
 	}
 	

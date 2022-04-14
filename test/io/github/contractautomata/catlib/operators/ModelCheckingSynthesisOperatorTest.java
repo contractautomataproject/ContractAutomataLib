@@ -23,8 +23,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
@@ -33,68 +32,68 @@ public class ModelCheckingSynthesisOperatorTest {
 
     final static RuntimeException re = new RuntimeException();
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Label<Action> lab;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) IdleAction ia;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Action a1;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Action a2;
+    @Mock Label<Action> lab;
+    @Mock IdleAction ia;
+    @Mock Action a1;
+    @Mock Action a2;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) BasicState<String> bs0;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) State<String> cs11;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) State<String> cs21;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) State<String> comp1;
+    @Mock BasicState<String> bs0;
+    @Mock State<String> cs11;
+    @Mock State<String> cs21;
+    @Mock State<String> comp1;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Label<Action> lab1conv;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) CALabel lab1;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) CALabel labcompreverse;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Label<Action> lab2;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Label<Action> labcomp;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Label<Action> labCompNoMatch;
+    @Mock Label<Action> lab1conv;
+    @Mock CALabel lab1;
+    @Mock CALabel labcompreverse;
+    @Mock Label<Action> lab2;
+    @Mock Label<Action> labcomp;
+    @Mock Label<Action> labCompNoMatch;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Predicate<CALabel> req;
+    @Mock Predicate<CALabel> req;
 
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Automaton<String, Action, State<String>,
+    @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,CALabel>> aut;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Automaton<String, Action, State<String>,
+    @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> autconv;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Automaton<String, Action, State<String>,
+    @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> prop;
 
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Automaton<String, Action, State<String>,
+    @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> comp;
 
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Automaton<String, Action, State<String>,
+    @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,CALabel>> compconv;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,CALabel> t1;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,Label<Action>> t1conv;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,CALabel> tcompreverse;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,Label<Action>> tp1;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,Label<Action>> tcomp;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS)  ModalTransition<String, Action, State<String>,Label<Action>> tcompNoMatch;
+    @Mock  ModalTransition<String, Action, State<String>,CALabel> t1;
+    @Mock  ModalTransition<String, Action, State<String>,Label<Action>> t1conv;
+    @Mock  ModalTransition<String, Action, State<String>,CALabel> tcompreverse;
+    @Mock  ModalTransition<String, Action, State<String>,Label<Action>> tp1;
+    @Mock  ModalTransition<String, Action, State<String>,Label<Action>> tcomp;
+    @Mock  ModalTransition<String, Action, State<String>,Label<Action>> tcompNoMatch;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Function<List<BasicState<String>>,State<String>> createState;
+    @Mock Function<List<BasicState<String>>,State<String>> createState;
 
     TetraFunction<State<String>,CALabel,State<String>,ModalTransition.Modality,
             ModalTransition<String, Action, State<String>,CALabel>>
             createTransition;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Function<List<Action>,CALabel> createLabel;
+    @Mock Function<List<Action>,CALabel> createLabel;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) UnaryOperator<CALabel> changeLabel;
+    @Mock UnaryOperator<CALabel> changeLabel;
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Function<Set<ModalTransition<String, Action, State<String>,CALabel>>,Automaton<String, Action, State<String>,
+    @Mock Function<Set<ModalTransition<String, Action, State<String>,CALabel>>,Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,CALabel>>> createAutomaton;
 
 
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Function<List<Action>,Label<Action>> createLabelProp;
+    @Mock Function<List<Action>,Label<Action>> createLabelProp;
     TetraFunction<State<String>,Label<Action>,State<String>,ModalTransition.Modality, ModalTransition<String, Action, State<String>,Label<Action>>>
             createTransitionProp;
-    @Mock(answer = Answers.RETURNS_SMART_NULLS) Function<Set<ModalTransition<String, Action, State<String>,Label<Action>>>,Automaton<String, Action, State<String>,
+    @Mock Function<Set<ModalTransition<String, Action, State<String>,Label<Action>>>,Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>>> createAutomatonProp;
 
     ModelCheckingSynthesisOperator<String,State<String>,CALabel,
@@ -214,6 +213,10 @@ public class ModelCheckingSynthesisOperatorTest {
 
     }
 
+    @Test
+    public void getChangeLabel() {
+        assertEquals(changeLabel,mcso.getChangeLabel());
+    }
 
     @Test
     public void apply() {

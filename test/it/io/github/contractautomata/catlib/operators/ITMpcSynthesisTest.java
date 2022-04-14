@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,7 @@ import java.util.Set;
 
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.operators.MpcSynthesisOperator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 
-public class MpcSynthesisTest {
+public class ITMpcSynthesisTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 

@@ -42,7 +42,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req,
 			Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop){
 		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, prop,
-				t->new CALabel(t.getRank(),t.getRequester(),t.getCoAction()),
+				l->new CALabel(l.getRank(),l.getRequester(),l.getCoAction()),
 				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
 	}
 
@@ -62,13 +62,17 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	}
 
 
-	private static <S1> boolean isUncontrollableOrchestration(ModalTransition<S1,Action,State<S1>,CALabel> tra,Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
+	private static <S1> boolean isUncontrollableOrchestration(ModalTransition<S1,Action,State<S1>,CALabel> tra,
+															  Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str,
+															  Set<State<S1>> badStates)
 	{
-		return 	tra.isUncontrollable(str,badStates, 
+		  return tra.isUncontrollable(str,badStates,
 				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
 				&&(t.getSource().getState().get(t.getLabel().getRequester())
-						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state					
-				&&(tt.getLabel().isRequest()&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
-						tt.getLabel().isMatch()&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
+						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state
+				&&(tt.getLabel().isRequest()
+						&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
+						tt.getLabel().isMatch()
+								&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
 	}
 }

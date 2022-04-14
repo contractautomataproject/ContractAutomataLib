@@ -33,7 +33,7 @@ public class ModelCheckingSynthesisOperator<S1,
 		A2 extends Automaton<S1,Action,S,T2>>  extends SynthesisOperator<S1,Action,S,L,T,A> {
 
 	private final A2 prop;
-	private final Function<L,L> changeLabel;
+	private final UnaryOperator<L> changeLabel;
 	private final Function<List<Action>,L> createLabel;
 	private final TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition;
 	private final Function<List<BasicState<S1>>,S> createState;
@@ -161,5 +161,9 @@ public class ModelCheckingSynthesisOperator<S1,
 			//computing the synthesis
 			return  super.apply(deletingPropAction);
 		}
+	}
+
+	public UnaryOperator<L> getChangeLabel(){
+		return this.changeLabel;
 	}
 }

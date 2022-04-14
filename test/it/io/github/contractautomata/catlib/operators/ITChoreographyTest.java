@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
@@ -9,6 +9,7 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
+import io.github.contractautomata.catlib.operators.ChoreographySynthesisOperator;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.autEquals;
 import static org.junit.Assert.*;
 
-public class ChoreographyTest {
+public class ITChoreographyTest {
 
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

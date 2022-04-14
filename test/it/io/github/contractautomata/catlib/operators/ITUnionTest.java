@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
@@ -6,6 +6,7 @@ import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
+import io.github.contractautomata.catlib.operators.UnionFunction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import static io.github.contractautomata.catlib.automaton.AutomatonTest.autEquals;
 import static org.junit.Assert.assertThrows;
 
-public class UnionTest {
+public class ITUnionTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	@Test
@@ -41,13 +42,7 @@ public class UnionTest {
 	}
 
 
-	@Test
-	public void union_empty() 
-	{
-		UnionFunction uf = new UnionFunction();
-		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> arg = new ArrayList<>();
-		assertThrows(IllegalArgumentException.class, ()->uf.apply(arg));
-	}
+
 	
 
 	@Test
@@ -72,14 +67,5 @@ public class UnionTest {
 
 	}
 
-	@Test
-	public void union_nullElement() {
-		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut = new ArrayList<>(2);	
-		aut.add(null);
-		aut.add(null);
-
-		UnionFunction uf = new UnionFunction();
-		assertThrows(IllegalArgumentException.class, ()->uf.apply(aut));
-	}
 
 }
