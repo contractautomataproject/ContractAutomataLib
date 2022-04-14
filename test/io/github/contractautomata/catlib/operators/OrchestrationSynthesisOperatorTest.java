@@ -291,7 +291,7 @@ public class OrchestrationSynthesisOperatorTest {
 
     @Test
     public void applyException() {
-        when(t11.isPermitted()).thenReturn(false);
+      //  when(t11.isPermitted()).thenReturn(false);
         when(lab.isOffer()).thenReturn(true);
         assertThrows(UnsupportedOperationException.class, () -> oso.apply(aut));
     }
