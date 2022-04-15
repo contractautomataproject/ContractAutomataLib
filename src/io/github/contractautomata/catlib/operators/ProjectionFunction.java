@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 /**
  * Class implementing the projection function
- * 
+ *
  * @author Davide Basile
  *
  */
@@ -42,13 +42,14 @@ public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action,
 	 * @param getNecessaryPrincipal function returning the index of the necessary principal in a match transition (it could be 
 	 * 		  either the offerer or the requester), if any
 	 * @return the projected i-th principal
-	 * 
+	 *
 	 */
 	@Override
 	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut, Integer indexprincipal,
 																							 ToIntFunction<ModalTransition<S1,Action,State<S1>,CALabel>> getNecessaryPrincipal)
 	{
-		if ((indexprincipal<0)||(indexprincipal>aut.getRank())) 
+		if ((indexprincipal<0)
+				||(indexprincipal>=aut.getRank()))
 			throw new IllegalArgumentException("Index out of rank");
 
 		//extracting the basicstates of the principal and creating the castates of the projection
@@ -61,33 +62,38 @@ public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action,
 		//associating each castate of the composition with the castate of the principal
 		Map<State<S1>,State<S1>> map2princst =
 				aut.getTransition().parallelStream()
-				.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
-				.distinct()
-				.collect(Collectors.toMap(Function.identity(), s->bs2cs.get(s.getState().get(indexprincipal))));
+						.flatMap(t->Stream.of(t.getSource(), t.getTarget()))
+						.distinct()
+						.collect(Collectors.toMap(Function.identity(), s->bs2cs.get(s.getState().get(indexprincipal))));
 
 
 		return new Automaton<>(aut.getTransition().parallelStream()
 				.filter(t-> t.getLabel().isMatch()
-						?(t.getLabel().getOfferer().equals(indexprincipal) || t.getLabel().getRequester().equals(indexprincipal))
-								:t.getLabel().getOffererOrRequester().equals(indexprincipal))
+						?(t.getLabel().getOfferer().equals(indexprincipal)
+						|| t.getLabel().getRequester().equals(indexprincipal))
+						:t.getLabel().getOffererOrRequester().equals(indexprincipal))
 				.map(t-> new ModalTransition<>(map2princst.get(t.getSource()),
 						createLabel(t, indexprincipal),
 						map2princst.get(t.getTarget()),
 						(t.isPermitted() || (t.getLabel().isMatch() && getNecessaryPrincipal.applyAsInt(t) != indexprincipal))
 								? ModalTransition.Modality.PERMITTED
-								: t.isLazy() ? ModalTransition.Modality.LAZY : ModalTransition.Modality.URGENT))
+							: t.isLazy() ? ModalTransition.Modality.LAZY
+								: ModalTransition.Modality.URGENT))
 				.collect(Collectors.toSet()));
 	}
 
 	private CALabel createLabel(ModalTransition<S1,Action,State<S1>,CALabel> t,Integer indexprincipal) {
 		if (!createAddress)
-			return (!t.getLabel().isRequest()&&t.getLabel().getOfferer().equals(indexprincipal))?
-					new CALabel(1,0,t.getLabel().getAction())
-					:new CALabel(1,0,t.getLabel().isRequest()?t.getLabel().getAction()
-					:t.getLabel().getCoAction());
+			return (!t.getLabel().isRequest()
+					&&t.getLabel().getOfferer().equals(indexprincipal))?
+						new CALabel(1,0,t.getLabel().getAction())
+						:new CALabel(1,0,t.getLabel().isRequest()?
+							t.getLabel().getAction()
+							:t.getLabel().getCoAction());
 		else
 		{
-			if (!t.getLabel().isMatch() || t.getLabel().getAction() instanceof AddressedAction)
+			if (!t.getLabel().isMatch()
+					|| t.getLabel().getAction() instanceof AddressedAction)
 				throw new UnsupportedOperationException();
 
 			if (t.getLabel().getOfferer().equals(indexprincipal))

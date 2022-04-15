@@ -106,26 +106,6 @@ public class UnionFunctionTest {
     }
 
     @Test
-    public void testListSizeForMutation() {
-        if (System.getProperty("java.version").startsWith("17"))
-            return;
-        List<Automaton<String, Action, State<String>,
-                ModalTransition<String, Action, State<String>, CALabel>>> list =
-                Mockito.spy(new ArrayList<>(List.of(aut,aut2)));
-        when(list.size()).thenReturn(3);
-        assertThrows(IndexOutOfBoundsException.class, ()->uf.apply(list));
-
-        when(list.size()).thenReturn(-1);
-        try{
-            uf.apply(list);
-        } catch(IllegalArgumentException e) {
-            assertEquals("No transitions", e.getMessage());
-            return;
-        }
-        Assert.fail();
-    }
-
-    @Test
     public void testNull() {
         assertThrows(IllegalArgumentException.class,()->uf.apply(null));
     }
@@ -151,4 +131,26 @@ public class UnionFunctionTest {
         when(bs.getState()).thenReturn("bs_0");
         assertThrows(IllegalArgumentException.class, ()->uf.apply(List.of(aut,aut2)));
     }
+
+    @Test
+    public void testListSizeForMutation() {
+        if (System.getProperty("java.version").startsWith("17"))
+            return;
+
+        List<Automaton<String, Action, State<String>,
+                ModalTransition<String, Action, State<String>, CALabel>>> list =
+                Mockito.spy(new ArrayList<>(List.of(aut,aut2)));
+        when(list.size()).thenReturn(3);
+        assertThrows(IndexOutOfBoundsException.class, ()->uf.apply(list));
+
+        when(list.size()).thenReturn(-1);
+        try{
+            uf.apply(list);
+        } catch(IllegalArgumentException e) {
+            assertEquals("No transitions", e.getMessage());
+            return;
+        }
+        Assert.fail();
+    }
+
 }

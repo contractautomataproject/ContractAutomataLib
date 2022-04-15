@@ -329,6 +329,7 @@
 							<param>io.github.contractautomata.catlib.operators.MpcSynthesisOperator</param>
 							<param>io.github.contractautomata.catlib.operators.RelabelingOperator</param>
 							<param>io.github.contractautomata.catlib.operators.UnionFunction</param>
+							<param>io.github.contractautomata.catlib.operators.ProjectionFunction</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.contractautomata.catlib.automaton*</param>
@@ -348,6 +349,7 @@
 							<param>io.github.contractautomata.catlib.operators.MpcSynthesisOperatorTest</param>
 							<param>io.github.contractautomata.catlib.operators.RelabelingOperatorTest</param>
 							<param>io.github.contractautomata.catlib.operators.UnionFunctionTest</param>
+							<param>io.github.contractautomata.catlib.operators.ProjectionFunctionTest</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

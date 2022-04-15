@@ -61,8 +61,6 @@ public class ProductTest {
 		required = new HashSet<Feature>(Arrays.asList(f1));
 		forbidden = new HashSet<Feature>(Arrays.asList(f2,f3));
 
-
-
 		p = new Product(new String[] {"cherry","ananas"}, new String[] {"blueberry"});
 		ps = new Product(required,forbidden);
 

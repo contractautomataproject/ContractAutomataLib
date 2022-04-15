@@ -9,6 +9,7 @@ import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -25,16 +26,15 @@ public class RelabelingOperatorTest {
 
     Function<List<Action>, CALabel> createLabel;
     UnaryOperator<String> relabel;
-    @Mock
-    Predicate<BasicState<String>> initialStatePred;
+
+    @Mock Predicate<BasicState<String>> initialStatePred;
     @Mock Predicate<BasicState<String>> finalStatePred;
 
 
     @Mock CALabel lab;
     @Mock CALabel lab2;
 
-    @Mock
-    BasicState<String> bs1;
+    @Mock BasicState<String> bs1;
     @Mock BasicState<String> bs2;
     @Mock BasicState<String> bs3;
 
@@ -48,6 +48,7 @@ public class RelabelingOperatorTest {
     @Mock
     Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>, CALabel>> aut;
+
     RelabelingOperator<String,CALabel> ro;
 
     @Before
