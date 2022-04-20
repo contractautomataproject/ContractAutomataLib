@@ -321,15 +321,7 @@
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
 							<param>io.github.contractautomata.catlib.family.requirements*</param>
-							<param>io.github.contractautomata.catlib.operators.CompositionFunction</param>
-							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunction</param>
-							<param>io.github.contractautomata.catlib.operators.SynthesisOperator</param>
-							<param>io.github.contractautomata.catlib.operators.ModelCheckingSynthesisOperator</param>
-							<param>io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator</param>
-							<param>io.github.contractautomata.catlib.operators.MpcSynthesisOperator</param>
-							<param>io.github.contractautomata.catlib.operators.RelabelingOperator</param>
-							<param>io.github.contractautomata.catlib.operators.UnionFunction</param>
-							<param>io.github.contractautomata.catlib.operators.ProjectionFunction</param>
+							<param>io.github.contractautomata.catlib.operators*</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.contractautomata.catlib.automaton*</param>
@@ -341,15 +333,7 @@
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
 							<param>io.github.contractautomata.catlib.family.requirements*</param>
-							<param>io.github.contractautomata.catlib.operators.CompositionFunctionTest</param>
-							<param>io.github.contractautomata.catlib.operators.ModelCheckingFunctionTest</param>
-							<param>io.github.contractautomata.catlib.operators.SynthesisOperatorTest</param>
-							<param>io.github.contractautomata.catlib.operators.ModelCheckingSynthesisOperatorTest</param>
-							<param>io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperatorTest</param>
-							<param>io.github.contractautomata.catlib.operators.MpcSynthesisOperatorTest</param>
-							<param>io.github.contractautomata.catlib.operators.RelabelingOperatorTest</param>
-							<param>io.github.contractautomata.catlib.operators.UnionFunctionTest</param>
-							<param>io.github.contractautomata.catlib.operators.ProjectionFunctionTest</param>
+							<param>io.github.contractautomata.catlib.operators*</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

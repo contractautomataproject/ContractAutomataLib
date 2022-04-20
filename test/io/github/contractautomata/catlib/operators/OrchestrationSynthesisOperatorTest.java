@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(MockitoJUnitRunner.Strict.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class OrchestrationSynthesisOperatorTest {
 
     @Mock(answer = Answers.RETURNS_SMART_NULLS)
@@ -291,7 +291,14 @@ public class OrchestrationSynthesisOperatorTest {
 
     @Test
     public void applyException() {
-      //  when(t11.isPermitted()).thenReturn(false);
+        when(lab.isOffer()).thenReturn(true);
+        assertThrows(UnsupportedOperationException.class, () -> oso.apply(aut));
+    }
+
+
+    @Test
+    public void applyException2() {
+        when(t11.isPermitted()).thenReturn(false);
         when(lab.isOffer()).thenReturn(true);
         assertThrows(UnsupportedOperationException.class, () -> oso.apply(aut));
     }

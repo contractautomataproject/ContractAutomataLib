@@ -75,34 +75,26 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
 
-		final Set<String> violatingbc=new HashSet<>();
-		//this.setPruningPred((x,t,bad) -> violatingbc.contains(x.toString()),req);
-		
-		ModalTransition<S1,Action,State<S1>,CALabel> toRemove=null;
-		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> chor;
-		do 
+		while(true)
 		{
-			if (toRemove!=null) {
-				final String toRemoveString = toRemove.toString();
-				aut = new Automaton<>(aut.getTransition().parallelStream()
-						.filter(t -> !t.toString().equals(toRemoveString))
-						.collect(Collectors.toSet()));
-			}
-
-			chor = super.apply(aut);
+			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> chor = super.apply(aut);
 			if (chor==null)
-				break;
+				return null;
 			final Set<ModalTransition<S1,Action,State<S1>,CALabel>> trf = chor.getTransition();
-			toRemove=choice.apply(chor.getTransition().parallelStream()
+			ModalTransition<S1,Action,State<S1>,CALabel> violatingBC = choice.apply(chor.getTransition().parallelStream()
 					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
-		} while (toRemove!=null && violatingbc.add(toRemove.toString()));
-		return chor;
+			if (violatingBC==null)
+				return chor;
+			aut = new Automaton<>(aut.getTransition().parallelStream()
+					.filter(t -> !t.toString().equals(violatingBC.toString()))
+					.collect(Collectors.toSet()));
+		}
 	}
 
 	private static <S1> boolean isUncontrollableChoreography(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
 	{
-		return 	tra.isUncontrollable(str,badStates, 
+		return tra.isUncontrollable(str,badStates,
 				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
 				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer
 				&&t.getSource().equals(tt.getSource()));//the same global source state
@@ -128,7 +120,8 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 				//it's not the same state of tra but sender is in the same state of this
 
 				.allMatch(s -> ftr.parallelStream()
-						.anyMatch(x->x.getSource()==s && tra.getLabel().equals(x.getLabel()))
+						.anyMatch(x->x.getSource()==s
+								&& tra.getLabel().equals(x.getLabel()))
 						//for all such states there exists an outgoing transition with the same label of tra
 						);
 	}
