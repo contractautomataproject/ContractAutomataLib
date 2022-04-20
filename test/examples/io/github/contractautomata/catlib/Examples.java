@@ -1,4 +1,4 @@
-package e2e.io.github.contractautomata.catlib;
+package examples.io.github.contractautomata.catlib;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,12 +25,10 @@ import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesis
 import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import org.junit.Test;
 
-public class E2Eexamples {
+public class Examples {
 	final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 
-	@Test
 	public void example1() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -42,7 +40,6 @@ public class E2Eexamples {
 	}
 
 
-	@Test
 	public void example2() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -53,7 +50,6 @@ public class E2Eexamples {
 	}
 
 
-	@Test
 	public void example3() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -63,7 +59,6 @@ public class E2Eexamples {
 	}
 
 
-	@Test
 	public void example4() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -90,7 +85,6 @@ public class E2Eexamples {
 	}
 
 
-	@Test
 	public void example5() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -112,8 +106,6 @@ public class E2Eexamples {
 
 	}
 
-
-	@Test
 	public void example6() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

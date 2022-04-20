@@ -1,10 +1,11 @@
-package io.github.contractautomata.catlib.operators;
+package it.io.github.contractautomata.catlib.operators;
 
 
 import java.io.File;
 
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesisOperator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
-public class ProductOrchestrationTest {
+public class ITProductOrchestrationTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 

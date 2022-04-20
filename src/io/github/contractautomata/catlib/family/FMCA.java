@@ -193,7 +193,7 @@ public class FMCA {
 								.collect(Collectors.toSet()),
 						s->!s.isEmpty(),
 						s->s.parallelStream()
-								.map(p->this.family.getSubProductsNotClosedTransitively(p))
+								.map(this.family::getSubProductsNotClosedTransitively)
 								.flatMap(Set::stream)
 								.filter(pred)
 								.collect(Collectors.toSet()))

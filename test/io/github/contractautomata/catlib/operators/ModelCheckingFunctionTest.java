@@ -28,7 +28,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class ModelCheckingFunctionTest {
 
- //   @Mock Label<Action> lab;
     @Mock IdleAction ia;
     @Mock Action a1;
     @Mock Action a2;

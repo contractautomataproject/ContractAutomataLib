@@ -67,7 +67,7 @@ public class DimacFamilyConverter implements FamilyConverter {
 			if (unsat) // do something for unsat case
 				return Collections.emptySet();
 
-			return Arrays.stream(baos.toString("UTF-8").split(System.lineSeparator()))
+			return Arrays.stream(baos.toString(StandardCharsets.UTF_8).split(System.lineSeparator()))
 					.map(s->Arrays.stream(s.split(" "))
 							.mapToInt(Integer::parseInt)
 							.boxed()

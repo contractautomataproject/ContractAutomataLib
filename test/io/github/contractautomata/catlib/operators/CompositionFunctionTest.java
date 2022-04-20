@@ -84,103 +84,57 @@ public class CompositionFunctionTest {
    
     @Before
     public void setUp(){
-//        when(bs0.isInitial()).thenReturn(true);
-//        when(bs0.isFinalState()).thenReturn(false);
-//        when(bs0.getState()).thenReturn("0");
-
-//        when(bs1.isInitial()).thenReturn(false);
-//        when(bs1.isFinalState()).thenReturn(true);
-//        when(bs1.getState()).thenReturn("1");
-
-//        when(bs2.isInitial()).thenReturn(false);
-//        when(bs2.isFinalState()).thenReturn(true);
-//        when(bs2.getState()).thenReturn("2");
 
         when(cs11.isInitial()).thenReturn(true);
-//        when(cs11.isFinalState()).thenReturn(false);
-//        when(cs11.toString()).thenReturn(List.of("0","0").toString());
         when(cs11.getState()).thenReturn(asList(bs0,bs0));
 
         when(cs12.isInitial()).thenReturn(false);
-//        when(cs12.isFinalState()).thenReturn(false);
-//        when(cs12.toString()).thenReturn(List.of("1","0").toString());
         when(cs12.getState()).thenReturn(asList(bs1,bs0));
 
         when(cs13.isInitial()).thenReturn(false);
-//        when(cs13.isFinalState()).thenReturn(true);
-//        when(cs13.toString()).thenReturn(List.of("1","2").toString());
         when(cs13.getState()).thenReturn(asList(bs1,bs2));
 
         when(cs21.isInitial()).thenReturn(true);
-//        when(cs21.isFinalState()).thenReturn(false);
-//        when(cs21.toString()).thenReturn(List.of("0").toString());
         when(cs21.getState()).thenReturn(Collections.singletonList(bs0));
 
         when(cs22.isInitial()).thenReturn(false);
-//        when(cs22.isFinalState()).thenReturn(true);
-//        when(cs22.toString()).thenReturn(List.of("1").toString());
         when(cs22.getState()).thenReturn(Collections.singletonList(bs1));
 
         when(cs23.isInitial()).thenReturn(false);
-//        when(cs23.isFinalState()).thenReturn(true);
-//        when(cs23.toString()).thenReturn(List.of("2").toString());
         when(cs23.getState()).thenReturn(Collections.singletonList(bs2));
 
-//        when(csc1.isInitial()).thenReturn(true);
-//        when(csc1.isFinalState()).thenReturn(false);
-//        when(csc1.toString()).thenReturn(List.of("0","0","0").toString());
         when(csc1.getState()).thenReturn(asList(bs0,bs0,bs0,bs0));
 
-//        when(csc2.isInitial()).thenReturn(false);
         when(csc2.isFinalState()).thenReturn(false);
-//        when(csc2.toString()).thenReturn(List.of("1","0","1").toString());
         when(csc2.getState()).thenReturn(asList(bs1,bs0,bs1,bs0));
 
-//        when(csc21.isInitial()).thenReturn(false);
         when(csc21.isFinalState()).thenReturn(false);
-//        when(csc21.toString()).thenReturn(List.of("1","2","1").toString());
         when(csc21.getState()).thenReturn(asList(bs1,bs2,bs1,bs0));
 
-//        when(csc22.isInitial()).thenReturn(false);
         when(csc22.isFinalState()).thenReturn(false);
-//        when(csc22.toString()).thenReturn(List.of("1","0","2").toString());
         when(csc22.getState()).thenReturn(asList(bs1,bs0,bs2,bs0));
 
-//        when(csc3.isInitial()).thenReturn(false);
         when(csc3.isFinalState()).thenReturn(true);
-//        when(csc3.toString()).thenReturn(List.of("1","2","2").toString());
         when(csc3.getState()).thenReturn(asList(bs1,bs2,bs2,bs0));
 
         when(ia.toString()).thenReturn("-");
-//        when(offact1.getLabel()).thenReturn("a1");
         when(offact1.toString()).thenReturn("!a1");
-//        when(reqact1.getLabel()).thenReturn("a1");
         when(reqact1.toString()).thenReturn("?a1");
-//        when(offact2.getLabel()).thenReturn("a2");
         when(offact2.toString()).thenReturn("!a2");
-//        when(reqact2.getLabel()).thenReturn("a2");
         when(reqact2.toString()).thenReturn("?a2");
 
         CALabel lab11 = mock(CALabel.class);
         when(t11.getLabel()).thenReturn(lab11);
         when(t11.isNecessary()).thenReturn(true);
         when(lab11.getLabel()).thenReturn(List.of(reqact1,ia));
-//        when(lab11.getAction()).thenReturn(reqact1);
-//        when(t11.getSource()).thenReturn(cs11);
         when(t11.getTarget()).thenReturn(cs12);
         when(t11.getModality()).thenReturn(ModalTransition.Modality.URGENT);
-//        when(t11.getRank()).thenReturn(2);
-//        when(t11.toString()).thenReturn("([0, 0],[?a1,-],[1, 0])");
 
         CALabel lab21 = mock(CALabel.class);
         when(t21.getLabel()).thenReturn(lab21);
-//        when(lab21.getAction()).thenReturn(offact1);
         when(lab21.getLabel()).thenReturn(List.of(offact1));
-//        when(t21.getSource()).thenReturn(cs21);
         when(t21.getTarget()).thenReturn(cs22);
         when(t21.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
-//        when(t21.getRank()).thenReturn(1);
-//        when(t21.toString()).thenReturn("([0],[!a1],[1])");
 
         when(lab1_2.getLabel()).thenReturn(List.of(reqact1,ia,offact1,ia));
         when(tc1_2.getLabel()).thenReturn(lab1_2);
@@ -190,25 +144,16 @@ public class CompositionFunctionTest {
         when(tc1_2.isUrgent()).thenReturn(true);
 
         CALabel lab12 = mock(CALabel.class);
-//        when(lab12.getAction()).thenReturn(offact2);
         when(lab12.getLabel()).thenReturn(List.of(offact2,reqact2));
         when(t12.getLabel()).thenReturn(lab12);
-//        when(t12.getSource()).thenReturn(cs12);
         when(t12.getTarget()).thenReturn(cs13);
         when(t12.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
-//        when(t12.getRank()).thenReturn(2);
-//        when(t12.toString()).thenReturn("([1, 0],[!a2,?a2],[1, 2])");
 
         CALabel lab22 = mock(CALabel.class);
         when(t22.getLabel()).thenReturn(lab22);
-//        when(t22.isNecessary()).thenReturn(true);
-//        when(lab22.getAction()).thenReturn(reqact2);
         when(lab22.getLabel()).thenReturn(List.of(reqact2));
-//        when(t22.getSource()).thenReturn(cs22);
         when(t22.getTarget()).thenReturn(cs23);
         when(t22.getModality()).thenReturn(ModalTransition.Modality.LAZY);
-//        when(t22.getRank()).thenReturn(1);
-//        when(t22.toString()).thenReturn("([1],[?a2],[2])");
 
         when(tc2_21.getLabel()).thenReturn(lab2_21);
         when(lab2_21.getLabel()).thenReturn(List.of(offact2,reqact2,ia,ia));
@@ -236,22 +181,16 @@ public class CompositionFunctionTest {
         when(tc21_3.isNecessary()).thenReturn(true);
         when(tc2_22.isLazy()).thenReturn(true);
 
-//        when(a1.getTransition()).then(args -> new HashSet<>(Arrays.asList(t11, t12)));
         when(a1.getStates()).thenReturn(Set.of(cs11, cs12, cs13));
-//        when(a1.getBasicStates()).thenReturn(Map.of(1,Set.of(bs0,bs2),2,Set.of(bs0,bs1)));
         when(a1.getForwardStar(cs11)).thenReturn(Set.of(t11));
         when(a1.getForwardStar(cs12)).thenReturn(Set.of(t12));
         when(a1.getForwardStar(cs13)).thenReturn(Collections.emptySet());
-//        when(a1.getInitial()).thenReturn(cs11);
         when(a1.getRank()).thenReturn(2);
 
-//        when(a2.getTransition()).then(args -> new HashSet<>(Arrays.asList(t21, t22)));
         when(a2.getStates()).thenReturn(Set.of(cs21, cs22, cs23));
-//        when(a2.getBasicStates()).thenReturn(Map.of(1,Set.of(bs0,bs1,bs2)));
         when(a2.getForwardStar(cs21)).thenReturn(Set.of(t21));
         when(a2.getForwardStar(cs22)).thenReturn(Set.of(t22));
         when(a2.getForwardStar(cs23)).thenReturn(Collections.emptySet());
-//        when(a2.getInitial()).thenReturn(cs21);
         when(a2.getRank()).thenReturn(1);
 
         when(a3.getStates()).thenReturn(Collections.singleton(cs21));
@@ -331,8 +270,6 @@ public class CompositionFunctionTest {
     @Test
     public void testApplyNecessaryMatchOnSecondPrincipal() {
         when(t11.isNecessary()).thenReturn(false);
-//        when(t21.isNecessary()).thenReturn(true);
-//        when(t11.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
         when(t21.getModality()).thenReturn(ModalTransition.Modality.URGENT);
         cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
         cf.apply(Integer.MAX_VALUE);
