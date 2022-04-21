@@ -1,4 +1,4 @@
-package examples.io.github.contractautomata.catlib;
+package examples;
 
 import java.io.File;
 import java.util.ArrayList;

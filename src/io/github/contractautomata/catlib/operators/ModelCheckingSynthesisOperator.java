@@ -143,7 +143,7 @@ public class ModelCheckingSynthesisOperator<S1,
 			//lazy transitions are quantified existentially on the states: the states must not be modified
 			A deletingPropAction = this.getCreateAut().apply(comp.getTransition()
 					.parallelStream().map(t->{
-						List<Action> li = new ArrayList<>(t.getLabel().getLabel());
+						List<Action> li = new ArrayList<>(t.getLabel().getContent());
 						li.set(t.getRank()-1, new IdleAction()); //silencing the prop moves
 						L lab = createLabel.apply(li);
 						if (mcf.getPruningPred().test(t.getLabel())

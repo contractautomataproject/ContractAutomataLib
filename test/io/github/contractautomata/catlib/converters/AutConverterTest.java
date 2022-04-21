@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class AutConverterTest {
 
-    AutConverter ac = new AutConverter() {
+    final AutConverter ac = new AutConverter() {
         @Override
         public Automaton<?, ?, ?, ?> importMSCA(String filename) throws IOException, ParserConfigurationException, SAXException {
             return null;

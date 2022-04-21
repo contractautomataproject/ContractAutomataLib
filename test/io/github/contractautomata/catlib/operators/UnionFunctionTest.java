@@ -68,7 +68,7 @@ public class UnionFunctionTest {
 //        when(cs1.isFinalState()).thenReturn(true);
 //        when(cs2.isFinalState()).thenReturn(true);
 
-        when(lab.getLabel()).thenReturn(List.of(act));
+        when(lab.getContent()).thenReturn(List.of(act));
 
         when(t1.getSource()).thenReturn(cs12);
         when(t1.getLabel()).thenReturn(lab);
@@ -112,24 +112,28 @@ public class UnionFunctionTest {
 
     @Test
     public void testEmpty() {
-        assertThrows(IllegalArgumentException.class, ()->uf.apply(Collections.emptyList()));
+        List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> aut = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, ()->uf.apply(aut));
     }
 
     @Test
     public void testNullElement() {
-        assertThrows(IllegalArgumentException.class, ()->uf.apply(new ArrayList<>(Collections.singleton(null))));
+        List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> aut = new ArrayList<>(Collections.singleton(null));
+        assertThrows(IllegalArgumentException.class, ()->uf.apply(aut));
     }
 
     @Test
     public void testDifferentRank() {
         when(aut2.getRank()).thenReturn(2);
-        assertThrows(IllegalArgumentException.class, ()->uf.apply(List.of(aut,aut2)));
+        List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> laut = List.of(aut,aut2);
+        assertThrows(IllegalArgumentException.class, ()->uf.apply(laut));
     }
 
     @Test
     public void testIllegalLabel() {
         when(bs.getState()).thenReturn("bs_0");
-        assertThrows(IllegalArgumentException.class, ()->uf.apply(List.of(aut,aut2)));
+        List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> laut = List.of(aut,aut2);
+        assertThrows(IllegalArgumentException.class, ()->uf.apply(laut));
     }
 
     @Test

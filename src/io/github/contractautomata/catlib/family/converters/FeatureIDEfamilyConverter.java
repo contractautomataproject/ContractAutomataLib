@@ -50,7 +50,6 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(inputFile);
-		//doc.getDocumentElement().normalize();
 
 		Set<String> features=parseFeatures(doc);
 		String[][] eq = detectDuplicates(doc);

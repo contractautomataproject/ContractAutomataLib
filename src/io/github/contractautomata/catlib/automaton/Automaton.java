@@ -12,12 +12,16 @@ import io.github.contractautomata.catlib.automaton.transition.Transition;
 
 
 /**
- * Class representing an Automaton
+ * This class implements an automaton. <br>
+ * An automaton has a set of transitions, a set of states, an initial state and a set of final states. <br>
+ * The types of states, transitions, labels of transitions, are all generics and must extend the corresponding <br>
+ * super-class. <br>
+ * Each automaton object has rank: it can represent either a single principal, or an ensemble of principals. <br>
  * 
  * @author Davide Basile
  *
- * @param <S1> the generic type in State<S1>
- * @param <L1> the generic type in Label<L1>
+ * @param <S1> the generic type in State&lt;S1&gt;, the content of a state.
+ * @param <L1> the generic type in Label&lt;L1&gt;, the content of a label.
  * @param <S> the generic type of states
  * @param <T> the generic type of transitions
  */
@@ -25,10 +29,17 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 { 
 
 	/**
-	 * transitions of the automaton
+	 * The set of transitions of the automaton
 	 */
 	private final Set<T> tra;
 
+	/**
+	 * This constructor builds an automaton from its set of transitions.
+	 *
+	 * @param tr the set of transitions, required to be non-null, non-empty, without null elements, all transitions having
+	 *           the same rank, with exactly one initial state, with at least a final state, and each state must be represented by
+	 *           a single object. The set of states is derived from source and target states of each transition.
+	 */
 	public Automaton(Set<T> tr) 
 	{
 		Objects.requireNonNull(tr);
@@ -65,13 +76,18 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 
 	}
 
+	/**
+	 * Getter of the set of transitions
+	 * @return the set of transitions
+	 */
 	public  Set<T> getTransition()
 	{
 		return new HashSet<>(tra);
 	}
 
 	/**
-	 * @return all  states that appear in at least one transition
+	 * Returns the states of the automaton.
+	 * @return all states that appear in at least one transition.
 	 */
 	public Set<S> getStates()
 	{
@@ -81,12 +97,12 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 	}
 	
 	/**
-	 * 
+	 * Returns a map where for each entry the key is the index of principal, and the value is its set of basic states.
+	 * It is required that states are lists of basic states.
 	 * @return a map where for each entry the key is the index of principal, and the value is its set of basic states
 	 */
 	public Map<Integer,Set<BasicState<S1>>> getBasicStates()
 	{
-
 		return this.getStates().stream()
 				.flatMap(cs->cs.getState().stream()
 						.map(bs-> new AbstractMap.SimpleEntry<>(cs.getState().indexOf(bs), bs)))
@@ -94,7 +110,10 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 
 	}
 
-
+	/**
+	 * Returns the unique initial state
+	 * @return the unique initial state
+	 */
 	public S getInitial()
 	{
 		return  tra.parallelStream()
@@ -103,20 +122,29 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 				.findFirst().orElseThrow(NullPointerException::new);
 	}
 
+	/**
+	 * Method inherited from the interface Ranked.
+	 * It returns the rank of the automaton.
+	 * @return the rank of the automaton
+	 */
 	@Override
 	public Integer getRank()
 	{
 		return this.tra.iterator().next().getRank();
 	}
-	
+
+	/**
+	 * It returns the number of states of the automaton.
+	 * @return the number of states of the automaton.
+	 */
 	public int getNumStates()
 	{
 		return this.getStates().size();
 	}
 
 	/**
-	 * 
-	 * @param source source state of the forward star
+	 * Returns the set of transitions outgoing from the state source
+	 * @param source the source state of the forward star
 	 * @return set of transitions outgoing state source
 	 */
 	public Set<T> getForwardStar(AbstractState<?> source) {
@@ -125,6 +153,11 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 				.collect(Collectors.toSet());
 	}
 
+
+	/**
+	 * Print a String representing this object
+	 * @return a String representing this object
+	 */
 	@Override
 	public String toString() {
 		StringBuilder pr = new StringBuilder();

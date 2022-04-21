@@ -117,13 +117,13 @@ public class CompositionSpecValidation<S1> implements BooleanSupplier {
 							   ModalTransition<S1,Action,State<S1>,CALabel> tj,
 							   Integer i,
 							   Integer j){
-		return t.getLabel().getLabel().size()==comp.getRank() &&
-				IntStream.range(0,t.getLabel().getLabel().size()).allMatch(li->
-						(li<shift(aut,i))?t.getLabel().getLabel().get(li) instanceof IdleAction
-								:(li<shift(aut,i+1))?t.getLabel().getLabel().get(li).equals(ti.getLabel().getLabel().get(li-shift(aut,i)))
-								:(li<shift(aut,j))?t.getLabel().getLabel().get(li) instanceof IdleAction
-								:(li<shift(aut,j+1))?t.getLabel().getLabel().get(li).equals(tj.getLabel().getLabel().get(li-shift(aut,j)))
-								:t.getLabel().getLabel().get(li) instanceof IdleAction);
+		return t.getLabel().getContent().size()==comp.getRank() &&
+				IntStream.range(0,t.getLabel().getContent().size()).allMatch(li->
+						(li<shift(aut,i))?t.getLabel().getContent().get(li) instanceof IdleAction
+								:(li<shift(aut,i+1))?t.getLabel().getContent().get(li).equals(ti.getLabel().getContent().get(li-shift(aut,i)))
+								:(li<shift(aut,j))?t.getLabel().getContent().get(li) instanceof IdleAction
+								:(li<shift(aut,j+1))?t.getLabel().getContent().get(li).equals(tj.getLabel().getContent().get(li-shift(aut,j)))
+								:t.getLabel().getContent().get(li) instanceof IdleAction);
 	}
 
 	private boolean targetMatch(ModalTransition<S1,Action,State<S1>,CALabel> t,
@@ -165,11 +165,11 @@ public class CompositionSpecValidation<S1> implements BooleanSupplier {
 	}
 
 	private boolean labelInterleaving(ModalTransition<S1,Action,State<S1>,CALabel> t, ModalTransition<S1,Action,State<S1>,CALabel> ti, Integer i) {
-		return t.getLabel().getLabel().size()==comp.getRank() &&
-				IntStream.range(0,t.getLabel().getLabel().size()).allMatch(li->
-						(li<shift(aut,i))?t.getLabel().getLabel().get(li) instanceof IdleAction
-								:(li<shift(aut,i+1))?t.getLabel().getLabel().get(li).equals(ti.getLabel().getLabel().get(li-shift(aut,i)))
-								:t.getLabel().getLabel().get(li) instanceof IdleAction);
+		return t.getLabel().getContent().size()==comp.getRank() &&
+				IntStream.range(0,t.getLabel().getContent().size()).allMatch(li->
+						(li<shift(aut,i))?t.getLabel().getContent().get(li) instanceof IdleAction
+								:(li<shift(aut,i+1))?t.getLabel().getContent().get(li).equals(ti.getLabel().getContent().get(li-shift(aut,i)))
+								:t.getLabel().getContent().get(li) instanceof IdleAction);
 	}
 
 	private boolean targetStateInterleaving(ModalTransition<S1,Action,State<S1>,CALabel> t, ModalTransition<S1,Action,State<S1>,CALabel> ti, Integer i) {

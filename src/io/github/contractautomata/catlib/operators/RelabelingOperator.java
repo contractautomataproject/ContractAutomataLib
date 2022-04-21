@@ -62,7 +62,7 @@ public class RelabelingOperator<S1, L extends Label<Action>> implements
 
 		return  aut.getTransition().stream()
 				.map(t-> new ModalTransition<>(clonedcastates.get(t.getSource()),
-						createLabel.apply(t.getLabel().getLabel()),
+						createLabel.apply(t.getLabel().getContent()),
 						clonedcastates.get(t.getTarget()),
 						t.getModality()))
 				.collect(Collectors.toSet());

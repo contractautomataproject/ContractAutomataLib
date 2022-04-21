@@ -36,7 +36,7 @@ public class LabelTest {
 	
 	@Test
 	public void testGetLabel() {
-		assertEquals(List.of("a"), lab.getLabel());
+		assertEquals(List.of("a"), lab.getContent());
 	}
 	
 	@Test

@@ -259,8 +259,8 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private L createLabel(TIndex e1, TIndex e2){
 		List<Action> li = IntStream.range(0, aut.size())
 				.mapToObj(i->{
-					if (i==e1.ind) return e1.tra.getLabel().getLabel();
-					else if (i==e2.ind) return e2.tra.getLabel().getLabel();
+					if (i==e1.ind) return e1.tra.getLabel().getContent();
+					else if (i==e2.ind) return e2.tra.getLabel().getContent();
 					else return Collections.nCopies(aut.get(i).getRank(),new IdleAction());
 				})
 				.flatMap(List::stream)
@@ -271,7 +271,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private L shiftLabel(L lab, Integer rank, Integer shift){
 		List<Action> l = new ArrayList<>(rank);
 		l.addAll(Collections.nCopies(shift,new IdleAction()));
-		l.addAll(lab.getLabel());
+		l.addAll(lab.getContent());
 		//it always hold that rank-l.size() is non-negative
 		l.addAll(Collections.nCopies((int)rank.longValue()-l.size(), new IdleAction()));
 		return createLabel.apply(l);

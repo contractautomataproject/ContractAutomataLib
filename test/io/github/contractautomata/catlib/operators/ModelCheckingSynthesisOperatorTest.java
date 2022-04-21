@@ -122,7 +122,7 @@ public class ModelCheckingSynthesisOperatorTest {
         doReturn("a").when(a2).getLabel();
 
 //        doReturn(List.of(ia,a2)).when(lab1).getLabel();
-        doReturn(List.of(ia,a2)).when(lab1conv).getLabel();
+        doReturn(List.of(ia,a2)).when(lab1conv).getContent();
         doReturn(a2).when(lab1conv).getAction();
 
         doReturn(cs11).when(t1).getSource();
@@ -132,13 +132,13 @@ public class ModelCheckingSynthesisOperatorTest {
         doReturn(lab1conv).when(t1conv).getLabel();
         doReturn(cs11).when(t1conv).getTarget();
 
-        doReturn(List.of(a1)).when(lab2).getLabel();
+        doReturn(List.of(a1)).when(lab2).getContent();
         doReturn(lab2).when(tp1).getLabel();
         doReturn(cs21).when(tp1).getTarget();
         doReturn(ModalTransition.Modality.PERMITTED).when(tp1).getModality();
 
         doReturn(3).when(labcomp).getRank();
-        doReturn(List.of(ia,a2,a1)).when(labcomp).getLabel();
+        doReturn(List.of(ia,a2,a1)).when(labcomp).getContent();
         doReturn(comp1).when(tcomp).getSource();
         doReturn(labcomp).when(tcomp).getLabel();
         doReturn(comp1).when(tcomp).getTarget();
@@ -198,7 +198,7 @@ public class ModelCheckingSynthesisOperatorTest {
 
         when(createState.apply(comp1.getState())).thenReturn(comp1);
         when(createLabel.apply(List.of(ia,a2, new IdleAction()))).thenReturn(labcompreverse);
-        when(createLabelProp.apply(labcomp.getLabel())).thenReturn(labcomp);
+        when(createLabelProp.apply(labcomp.getContent())).thenReturn(labcomp);
         when(createAutomatonProp.apply(Set.of(t1conv))).thenReturn(autconv);//when converting
         when(createAutomatonProp.apply(Set.of(tcomp))).thenReturn(comp);//after composing autconv with prop
         when(createAutomaton.apply(Set.of(tcompreverse))).thenReturn(compconv);//when reverting
@@ -238,7 +238,7 @@ public class ModelCheckingSynthesisOperatorTest {
     public void applyCoverChangeLabel() {
         when(tcomp.isLazy()).thenReturn(true);
         when(tcomp.isNecessary()).thenReturn(true);
-        when(labcomp.getLabel()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
+        when(labcomp.getContent()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
         assertNotNull(mcso.apply(aut));
         verify(changeLabel).apply(any());
     }
@@ -249,7 +249,7 @@ public class ModelCheckingSynthesisOperatorTest {
         when(req.test(any())).thenReturn(false);
         when(tcomp.isLazy()).thenReturn(true);
         when(tcomp.isNecessary()).thenReturn(true);
-        when(labcomp.getLabel()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
+        when(labcomp.getContent()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
         mcso.apply(aut);
         verify(changeLabel,never()).apply(any());
     }
@@ -259,7 +259,7 @@ public class ModelCheckingSynthesisOperatorTest {
     @Test
     public void applyCoverChangeLabelBranchNotSatisfyLazy() {
         when(tcomp.isNecessary()).thenReturn(true);
-        when(labcomp.getLabel()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
+        when(labcomp.getContent()).thenReturn(List.of(ia,a2,ia));//pruningpred true in model checking
         mcso.apply(aut);
         verify(changeLabel,never()).apply(any());
     }

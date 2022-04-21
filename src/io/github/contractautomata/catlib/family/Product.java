@@ -77,7 +77,8 @@ public class Product {
 	}
 	
 	/**
-	 * 
+	 *
+	 * @param <S1> the type of the content of the state
 	 * @param tr the set of transitions to check
 	 * @return true if all required actions are available in the transitions tr
 	 */

@@ -124,7 +124,7 @@ public class FMCATest {
         CALabel lab = mock(CALabel.class);
         when(t1.getLabel()).thenReturn(lab);
         when(lab.getAction()).thenReturn(act);
-        when(lab.getLabel()).thenReturn(List.of(act,ract));
+        when(lab.getContent()).thenReturn(List.of(act,ract));
         when(act.getLabel()).thenReturn("f1");
         when(act.toString()).thenReturn("!f1");
         //       when(ract.getLabel()).thenReturn("f1");
@@ -136,7 +136,7 @@ public class FMCATest {
         CALabel lab2 = mock(CALabel.class);
         when(t2.getLabel()).thenReturn(lab2);
         when(lab2.getAction()).thenReturn(act2);
-        when(lab2.getLabel()).thenReturn(List.of(act2,ract2));
+        when(lab2.getContent()).thenReturn(List.of(act2,ract2));
         when(act2.getLabel()).thenReturn("f2");
         when(act2.toString()).thenReturn("!f2");
         //       when(ract2.getLabel()).thenReturn("f2");
@@ -148,7 +148,7 @@ public class FMCATest {
 
         when(t3.getLabel()).thenReturn(lab3);
         when(lab3.getAction()).thenReturn(act3);
-        when(lab3.getLabel()).thenReturn(List.of(act3,ract3));
+        when(lab3.getContent()).thenReturn(List.of(act3,ract3));
         when(act3.getLabel()).thenReturn("f3");
         when(act3.toString()).thenReturn("!f3");
 //        when(ract3.getLabel()).thenReturn("f3");

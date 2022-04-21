@@ -126,17 +126,17 @@ public class CompositionFunctionTest {
         CALabel lab11 = mock(CALabel.class);
         when(t11.getLabel()).thenReturn(lab11);
         when(t11.isNecessary()).thenReturn(true);
-        when(lab11.getLabel()).thenReturn(List.of(reqact1,ia));
+        when(lab11.getContent()).thenReturn(List.of(reqact1,ia));
         when(t11.getTarget()).thenReturn(cs12);
         when(t11.getModality()).thenReturn(ModalTransition.Modality.URGENT);
 
         CALabel lab21 = mock(CALabel.class);
         when(t21.getLabel()).thenReturn(lab21);
-        when(lab21.getLabel()).thenReturn(List.of(offact1));
+        when(lab21.getContent()).thenReturn(List.of(offact1));
         when(t21.getTarget()).thenReturn(cs22);
         when(t21.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
 
-        when(lab1_2.getLabel()).thenReturn(List.of(reqact1,ia,offact1,ia));
+        when(lab1_2.getContent()).thenReturn(List.of(reqact1,ia,offact1,ia));
         when(tc1_2.getLabel()).thenReturn(lab1_2);
         when(tc1_2.getSource()).thenReturn(csc1);
         when(tc1_2.getTarget()).thenReturn(csc2);
@@ -144,37 +144,37 @@ public class CompositionFunctionTest {
         when(tc1_2.isUrgent()).thenReturn(true);
 
         CALabel lab12 = mock(CALabel.class);
-        when(lab12.getLabel()).thenReturn(List.of(offact2,reqact2));
+        when(lab12.getContent()).thenReturn(List.of(offact2,reqact2));
         when(t12.getLabel()).thenReturn(lab12);
         when(t12.getTarget()).thenReturn(cs13);
         when(t12.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
 
         CALabel lab22 = mock(CALabel.class);
         when(t22.getLabel()).thenReturn(lab22);
-        when(lab22.getLabel()).thenReturn(List.of(reqact2));
+        when(lab22.getContent()).thenReturn(List.of(reqact2));
         when(t22.getTarget()).thenReturn(cs23);
         when(t22.getModality()).thenReturn(ModalTransition.Modality.LAZY);
 
         when(tc2_21.getLabel()).thenReturn(lab2_21);
-        when(lab2_21.getLabel()).thenReturn(List.of(offact2,reqact2,ia,ia));
+        when(lab2_21.getContent()).thenReturn(List.of(offact2,reqact2,ia,ia));
         when(tc2_21.getSource()).thenReturn(csc2);
         when(tc2_21.getTarget()).thenReturn(csc21);
 
         when(lab2_22.isRequest()).thenReturn(true);
         when(tc2_22.getLabel()).thenReturn(lab2_22);
-        when(lab2_22.getLabel()).thenReturn(List.of(ia,ia,reqact2,ia));
+        when(lab2_22.getContent()).thenReturn(List.of(ia,ia,reqact2,ia));
         when(tc2_22.getSource()).thenReturn(csc2);
         when(tc2_22.getTarget()).thenReturn(csc22);
         when(tc2_22.isNecessary()).thenReturn(true);
         when(tc2_22.isLazy()).thenReturn(true);
 
         when(tc22_3.getLabel()).thenReturn(lab22_3);
-        when(lab22_3.getLabel()).thenReturn(List.of(offact2,reqact2,ia,ia));
+        when(lab22_3.getContent()).thenReturn(List.of(offact2,reqact2,ia,ia));
         when(tc22_3.getSource()).thenReturn(csc22);
         when(tc22_3.getTarget()).thenReturn(csc3);
 
         when(lab21_3.isRequest()).thenReturn(true);
-        when(lab21_3.getLabel()).thenReturn(List.of(ia,ia,reqact2,ia));
+        when(lab21_3.getContent()).thenReturn(List.of(ia,ia,reqact2,ia));
         when(tc21_3.getLabel()).thenReturn(lab21_3);
         when(tc21_3.getSource()).thenReturn(csc21);
         when(tc21_3.getTarget()).thenReturn(csc3);
@@ -217,26 +217,26 @@ public class CompositionFunctionTest {
         };
         createTransition =
                 (s1,lab,s2,m)-> {
-                    if (s1.equals(tc1_2.getSource()) && lab.getLabel().toString().equals(tc1_2.getLabel().getLabel().toString()) && s2.equals(tc1_2.getTarget()) && m.equals(ModalTransition.Modality.URGENT))
+                    if (s1.equals(tc1_2.getSource()) && lab.getContent().toString().equals(tc1_2.getLabel().getContent().toString()) && s2.equals(tc1_2.getTarget()) && m.equals(ModalTransition.Modality.URGENT))
                         return tc1_2;
-                    if (s1==tc2_21.getSource() && lab.getLabel().toString().equals(tc2_21.getLabel().getLabel().toString()) && s2==tc2_21.getTarget() && m.equals(ModalTransition.Modality.PERMITTED))
+                    if (s1==tc2_21.getSource() && lab.getContent().toString().equals(tc2_21.getLabel().getContent().toString()) && s2==tc2_21.getTarget() && m.equals(ModalTransition.Modality.PERMITTED))
                         return tc2_21;
-                    if (s1.equals(tc2_22.getSource()) && lab.getLabel().toString().equals(tc2_22.getLabel().getLabel().toString()) && s2.equals(tc2_22.getTarget()) && m.equals(ModalTransition.Modality.LAZY))
+                    if (s1.equals(tc2_22.getSource()) && lab.getContent().toString().equals(tc2_22.getLabel().getContent().toString()) && s2.equals(tc2_22.getTarget()) && m.equals(ModalTransition.Modality.LAZY))
                         return tc2_22;
-                    if (s1==tc22_3.getSource() && lab.getLabel().toString().equals(tc22_3.getLabel().getLabel().toString()) && s2==tc22_3.getTarget() && m.equals(ModalTransition.Modality.PERMITTED))
+                    if (s1==tc22_3.getSource() && lab.getContent().toString().equals(tc22_3.getLabel().getContent().toString()) && s2==tc22_3.getTarget() && m.equals(ModalTransition.Modality.PERMITTED))
                         return tc22_3;
-                    if (s1==tc21_3.getSource() && lab.getLabel().toString().equals(tc21_3.getLabel().getLabel().toString()) && s2==tc21_3.getTarget() && m.equals(ModalTransition.Modality.LAZY))
+                    if (s1==tc21_3.getSource() && lab.getContent().toString().equals(tc21_3.getLabel().getContent().toString()) && s2==tc21_3.getTarget() && m.equals(ModalTransition.Modality.LAZY))
                         return tc21_3;
-                    System.out.println(s1 + " " + lab.getLabel() + " " +s2 + " " + tc1_2.getLabel().getLabel().toString());
+                    System.out.println(s1 + " " + lab.getContent() + " " +s2 + " " + tc1_2.getLabel().getContent().toString());
                     throw new UnsupportedOperationException();
                 };
         createLabel = l -> {
-            if (l.toString().equals(tc1_2.getLabel().getLabel().toString())) return lab1_2;
-            if (l.toString().equals(tc2_21.getLabel().getLabel().toString())) return lab2_21;
-            if (l.toString().equals(tc2_22.getLabel().getLabel().toString())) return lab2_22;
-            if (l.toString().equals(tc21_3.getLabel().getLabel().toString())) return lab21_3;
-            if (l.toString().equals(tc22_3.getLabel().getLabel().toString())) return lab22_3;
-            System.out.println(l + " " + tc1_2.getLabel().getLabel() + " throwing now");
+            if (l.toString().equals(tc1_2.getLabel().getContent().toString())) return lab1_2;
+            if (l.toString().equals(tc2_21.getLabel().getContent().toString())) return lab2_21;
+            if (l.toString().equals(tc2_22.getLabel().getContent().toString())) return lab2_22;
+            if (l.toString().equals(tc21_3.getLabel().getContent().toString())) return lab21_3;
+            if (l.toString().equals(tc22_3.getLabel().getContent().toString())) return lab22_3;
+            System.out.println(l + " " + tc1_2.getLabel().getContent() + " throwing now");
             throw new UnsupportedOperationException();
         };
     }
@@ -257,10 +257,10 @@ public class CompositionFunctionTest {
         when(csc21.getState()).thenReturn(asList(bs1,bs2,bs1));
         when(csc22.getState()).thenReturn(asList(bs1,bs0,bs2));
         when(csc3.getState()).thenReturn(asList(bs1,bs2,bs2));
-        when(lab1_2.getLabel()).thenReturn(List.of(reqact1,ia,offact1));
-        when(lab2_21.getLabel()).thenReturn(List.of(offact2,reqact2,ia));
-        when(lab2_22.getLabel()).thenReturn(List.of(ia,ia,reqact2));
-        when(lab21_3.getLabel()).thenReturn(List.of(ia,ia,reqact2));
+        when(lab1_2.getContent()).thenReturn(List.of(reqact1,ia,offact1));
+        when(lab2_21.getContent()).thenReturn(List.of(offact2,reqact2,ia));
+        when(lab2_22.getContent()).thenReturn(List.of(ia,ia,reqact2));
+        when(lab21_3.getContent()).thenReturn(List.of(ia,ia,reqact2));
 
         cf = new CompositionFunction<>(List.of(a1,a2),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
         cf.apply(Integer.MAX_VALUE);

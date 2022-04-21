@@ -1,8 +1,14 @@
 package io.github.contractautomata.catlib.operators;
 
+import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 
@@ -10,6 +16,7 @@ public class MSCACompositionFunctionTest {
 
     @Test
     public void constructorException() throws Exception {
-        assertThrows(IllegalArgumentException.class, ()-> new MSCACompositionFunction<>(Collections.emptyList(),null));
+        List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> aut = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, ()-> new MSCACompositionFunction<>(aut,null));
     }
 }

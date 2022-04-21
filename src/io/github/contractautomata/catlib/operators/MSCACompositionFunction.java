@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Class implementing the composition of Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<String>,CALabel>>
+ * Class implementing the composition of Automaton
  * 
  * @author Davide Basile
  */

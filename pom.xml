@@ -48,8 +48,8 @@
 		</repository>
 	</distributionManagement>
 	<properties>
-		<maven.compiler.source>1.9</maven.compiler.source>
-		<maven.compiler.target>1.9</maven.compiler.target>
+		<maven.compiler.source>1.11</maven.compiler.source>
+		<maven.compiler.target>1.11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.organization>contractautomataproject</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -157,8 +157,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.1</version>
 					<configuration>
-						<source>1.9</source>
-						<target>1.9</target>
+						<source>1.11</source>
+						<target>1.11</target>
 					</configuration>
 				</plugin>
 				<plugin>
