@@ -213,12 +213,10 @@ https://doi.org/10.1007/978-3-030-78142-2_14
 
 
 [SCICO20] Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
-https://doi.org/10.1016/j.scico.2019.102344
-(pdf at https://openportal.isti.cnr.it/data/2019/409807/2019_409807.published.pdf)
+https://doi.org/10.1016/j.scico.2019.102344 (Open Access)
 
 [LMCS20] Basile, D., ter Beek, M.H. and Pugliese, R., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29.
-https://doi.org/10.23638/LMCS-16(2:9)2020
-(pdf at http://openportal.isti.cnr.it/data/2020/423262/2020_%20423262.published.pdf)
+https://doi.org/10.23638/LMCS-16(2:9)2020 (Open Access)
 
 [SPLC18] Basile, D., ter Beek, M.H. and Gnesi, S., 2018, September. Modelling and Analysis with Featured Modal Contract Automata. In Proceedings of the 22nd International Systems and Software Product Line Conference (SPLC'18), Volume 2. ACM, pp. 11-16.
 https://doi.org/10.1145/3236405.3236408
@@ -243,7 +241,7 @@ https://doi.org/10.1007/978-3-319-39570-8_5
 https://doi.org/10.1016/j.jlamp.2015.09.011
 
 [LMCS16] Ferrari, G.L., Degano, P. and Basile, D., 2016. Automata for specifying and orchestrating service contracts. Logical methods in computer science, 12. 
-https://doi.org/10.2168/LMCS-12(4:6)2016
+https://doi.org/10.2168/LMCS-12(4:6)2016  (Open Access)
 
 
 
