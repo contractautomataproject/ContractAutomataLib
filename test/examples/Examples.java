@@ -14,14 +14,14 @@ import io.github.contractautomata.catlib.family.FMCA;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.PartialProductGenerator;
 import io.github.contractautomata.catlib.family.Product;
-import io.github.contractautomata.catlib.family.converters.DimacFamilyConverter;
+import io.github.contractautomata.catlib.family.converters.DimacsFamilyConverter;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
 import io.github.contractautomata.catlib.family.converters.FeatureIDEfamilyConverter;
 import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
-import io.github.contractautomata.catlib.operators.ChoreographySynthesisOperator;
-import io.github.contractautomata.catlib.operators.MSCACompositionFunction;
-import io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator;
-import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.ChoreographySynthesisOperator;
+import io.github.contractautomata.catlib.operations.MSCACompositionFunction;
+import io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.ProductOrchestrationSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
@@ -113,7 +113,7 @@ public class Examples {
 
 		//false parameter means that only maximal products (models of the formula) are generated, 
 		//if true all products (models of the formula) are imported
-		FamilyConverter dimfc = new DimacFamilyConverter(false);
+		FamilyConverter dimfc = new DimacsFamilyConverter(false);
 		
 		//import Dimac CNF formula models. Dimac file has been created using FeatureIDE export
 		Set<Product> sp3 = dimfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs"); 

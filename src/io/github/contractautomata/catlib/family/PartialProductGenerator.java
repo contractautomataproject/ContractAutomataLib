@@ -12,29 +12,38 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Class implementing the partial product generation operator
+ * Class implementing the partial product generation operator. <br>
+ * This operator takes in input a set of total products (with all features assigned),<br>
+ * and returns a set of products comprehending total products and partial products (not all features assigned).<br>
+ * This operator is similar to the <a href="https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm">Quine-McCluskey algorithm</a>.<br>
+ *
  * @author Davide Basile
  *
  */
 public class PartialProductGenerator implements UnaryOperator<Set<Product>>{
 
 	/**
-	 * https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm
-	 *  
+	 * This operator takes in input a set of total products (with all features assigned),
+	 * and returns a set of products comprehending total products and partial products (not all features assigned).<br>
+	 * This operator is similar to the <a href="https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm">Quine-McCluskey algorithm</a>.<br>
+	 *
 	 * Given two products p1 p2 identical but for a feature f activated in one 
-	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. 
-	 * This method generates all possible super products. 
-	 * It is required that all super products are such that the corresponding feature model formula is satisfied. 
-	 * This condition holds for the method.
-	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a 
-	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2 
-	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).
-	 * 
-	 * @param setprod  the starting set of total products
-	 * @return the set of all total and partial products generated
+	 * and deactivated in the other, a super product (a.k.a. sub-family) is generated such that f is left unresolved. <br>
+	 * This method generates all possible super products. <br>
+	 * All  generated super products are such that the corresponding feature model formula is satisfied. <br>
+	 *
+	 * @param setprod  the set of total products to start the generation of partial products.
+	 * @return the set of all total and partial products.
 	 */
 	@Override
 	public Set<Product> apply(Set<Product> setprod){
+		/**
+		 * 	 * All generated super products are such that the corresponding feature model formula is satisfied. <br>
+		 * 	 * This condition holds for this method, and a brief argument follows.<br>
+		 * 	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a
+		 * 	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2
+		 * 	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).<br>
+		 */
 		Set<Feature> features =
 				setprod.parallelStream()
 		.flatMap(p->Stream.of(p.getRequired().stream(),p.getForbidden().stream()))

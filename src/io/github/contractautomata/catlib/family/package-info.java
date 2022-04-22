@@ -6,7 +6,7 @@
  * The family of products is implemented by the class <tt>Family</tt>. <br>
  * Each product is implemented by the class <tt>Product</tt>. <br>
  * Each feature of a product is implemented by the class <tt>Feature</tt>. <br>
- * FMCA exploits the possibility of partial products, i.e., products where the
+ * FMCA exploits the possibility of having partial products, i.e., products where the
  * assignment of features is not completely known. <br>
  * The class <tt>PartialProductGenerator</tt> is used for generating all partial products  <br>
  * starting from the set of total products, i.e., products where all features are either  <br>

@@ -24,7 +24,7 @@ import io.github.contractautomata.catlib.family.Feature;
 import io.github.contractautomata.catlib.family.Product;
 
 /**
- * Class implementing import/export from the .prod textual format
+ * Class implementing import/export from the <tt>.prod</tt> textual format.
  * 
  * @author Davide Basile
  *
@@ -32,7 +32,14 @@ import io.github.contractautomata.catlib.family.Product;
 public class ProdFamilyConverter implements FamilyConverter {
 
 	private static final String EMPTYMSG = "Empty file name";
-	
+
+	/**
+	 * Overrides the method of FamilyConverter
+	 *
+	 * @param filename  the name of the file to import
+	 * @return  a set of products loaded from filename, representing a family of products
+	 * @throws IOException
+	 */
 	@Override
 	public Set<Product> importProducts(String filename) throws IOException {
 		Path path = FileSystems.getDefault().getPath(filename);
@@ -58,6 +65,13 @@ public class ProdFamilyConverter implements FamilyConverter {
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * Overrides the method of FamilyConverter
+	 *
+	 * @param filename the name of the file to which the family of products is stored
+	 * @param fam the family to be exported
+	 * @throws IOException
+	 */
 	@Override
 	public void exportFamily(String filename, Family fam) throws IOException{
 		if (filename==null || filename.isEmpty())
@@ -70,10 +84,29 @@ public class ProdFamilyConverter implements FamilyConverter {
 		try (PrintWriter pr = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path.toString()), StandardCharsets.UTF_8)))
 		{
 			pr.print(IntStream.range(0, ar.size())
-					.mapToObj(i->ar.get(i).toStringFile(i))
+					.mapToObj(i->toStringFile(ar.get(i), i))
 					.collect(Collectors.joining(System.lineSeparator())));
 			
 		}
+	}
+
+
+	/**
+	 * Returns a String representation of the product (to be stored in a file .prod).
+	 *
+	 * @param p the product
+	 * @param id the id of the product
+	 * @return a String representation of the product (to be stored in a file .prod).
+	 */
+	private String toStringFile(Product p, int id)
+	{
+		String req=p.getRequired().stream()
+				.map(Feature::getName)
+				.collect(Collectors.joining(","));
+		String forb=p.getForbidden().stream()
+				.map(Feature::getName)
+				.collect(Collectors.joining(","));
+		return "p"+id+": R={"+req+",} F={"+forb+",}";
 	}
 
 }

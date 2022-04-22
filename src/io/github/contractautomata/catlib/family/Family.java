@@ -12,20 +12,55 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Class representing a family of products. 
- * A family contains its products/configurations and may contain also its subfamilies, organised as a partial order
+ * Class implementing a family of products (i.e., a product line). <br>
+ * A family is represented by its products (or configurations). <br>
+ * In featured modal contract automata, partial products are also considered, also known as sub-families. <br>
+ * In a partial product not all features are rendered as required or forbidden. <br>
+ * The sub-products are partially ordered.<br>
+ *
+ * The formal definitions can be found in:
+ *  * <ul>
+ *  *  *     <li>Basile, D. et al., 2020.
+ *  *  *     Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
+ *  *  *      (<a href="https://doi.org/10.1016/j.scico.2019.102344">https://doi.org/10.1016/j.scico.2019.102344</a>)</li>
+ *  *  </ul>
  *
  * @author Davide Basile
  *
  */
 public class Family {
 
+	/**
+	 * the set of products.
+	 */
 	private final Set<Product> products;
+
+	/**
+	 * the partial order of products.
+	 * A map such that for each product (key) a map is returned (value).
+	 * The value is amp partitioning in false/true the sub/super products of the key, where
+	 * a sub product contains all the features (required/forbidden) of its
+	 * super product.
+	 */
 	private final Map<Product,Map<Boolean,Set<Product>>> po;
 
+	/**
+	 * a predicate for checking if two products are comparable.
+	 */
 	private final BiPredicate<Product,Product> areComparable;
+
+	/**
+	 * a predicate for comparing two comparable products.
+	 */
 	private final BiFunction<Product, Product, Integer> compare;
 
+	/**
+	 * Constructor of a family from a set of products.
+	 * In this constructor, two products are comparable if one (p1) contains all required and forbidden features of the other (p2),
+	 * and in this case  p1 is less than p2.
+	 *
+	 * @param products the set of products.
+	 */
 	public Family(Set<Product> products)
 	{
 		this(products,
@@ -37,11 +72,11 @@ public class Family {
 	}
 
 	/**
-	 * This constructor also instantiate the partial order
+	 * Constructor of a family from a set of products, and the predicates for the partial order.
 	 *
-	 * @param products the products of the family
-	 * @param areComparable  a predicate to compare to check if two products can be compared
-	 * @param compare the function to compare two products
+	 * @param products the set of products of the family  (must be non-null).
+	 * @param areComparable  a bipredicate to check if two products can be compared (must be non-null).
+	 * @param compare the function to compare two products (must be non-null).
 	 */
 	public Family(Set<Product> products, BiPredicate<Product,Product> areComparable, BiFunction<Product, Product, Integer> compare)
 	{
@@ -60,16 +95,26 @@ public class Family {
 
 	}
 
+	/**
+	 * Getter of the set of products.
+	 * @return the set of products.
+	 */
 	public Set<Product> getProducts() {
 		return new HashSet<>(products);
 	}
 
+	/**
+	 * Getter of the partial order of products.
+	 * @return the partial order of products.
+	 */
 	public Map<Product, Map<Boolean, Set<Product>>> getPo() {
 		return new HashMap<>(po);
 	}
 
 	/**
-	 * @return the maximum number of features available for a product i.e. the maximum depth of the po tree
+	 * Returns the maximum number of features available for a product in this product-line, i.e., the maximum depth of the partial order.
+	 *
+	 * @return the maximum number of features available for a product in this product-line, i.e., the maximum depth of the partial order.
 	 */
 	public int getMaximumDepth()
 	{
@@ -78,16 +123,34 @@ public class Family {
 				.max().orElse(0)+1; //also consider products with zero features	
 	}
 
+	/**
+	 * Returns the sub-products of prod.
+	 * @param prod  the product whose sub-products are returned
+	 * @return the sub-products of prod.
+	 */
 	public Set<Product> getSubProductsOfProduct(Product prod)
 	{
 		return this.po.get(prod).get(false);
 	}
 
+
+	/**
+	 * Returns the super-products of prod.
+	 * @param prod  the product whose super-products are returned
+	 * @return the super-products of prod.
+	 */
 	public Set<Product> getSuperProductsOfProduct(Product prod)
 	{
 		return this.po.get(prod).get(true);
 	}
 
+	/**
+	 * Returns the sub-products of prod not closed transitively. These are all sub-products of p
+	 * such that, given two of them, it is never the case that one is a sub-product of the other.
+	 *
+	 * @param p  the product whose sub-products are returned
+	 * @return the sub-products not closed transitively of prod.
+	 */
 	public Set<Product> getSubProductsNotClosedTransitively(Product p) {
 		return this.getSubProductsOfProduct(p)
 				.parallelStream()
@@ -99,7 +162,8 @@ public class Family {
 	}
 
 	/**
-	 * @return all maximal products p s.t. there is no p' greater than p
+	 * Returns all maximal products p s.t. there is no p' greater than p.
+	 * @return all maximal products p s.t. there is no p' greater than p.
 	 */
 	public Set<Product> getMaximalProducts()
 	{
@@ -109,11 +173,21 @@ public class Family {
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * Overrides the method of the object class
+	 * @return the hashcode of this object
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(products);
 	}
 
+
+	/**
+	 * Overrides the method of the object class
+	 * @param obj the other object to compare to
+	 * @return true if the two objects are equal
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -124,6 +198,11 @@ public class Family {
 		return products.equals(other.products);
 	}
 
+
+	/**
+	 * Print a representation of this object as String
+	 * @return  a representation of this object as String
+	 */
 	@Override
 	public String toString() {
 		return "Family [products=" + products + "]";

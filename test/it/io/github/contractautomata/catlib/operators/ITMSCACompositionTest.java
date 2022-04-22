@@ -9,8 +9,8 @@ import java.util.List;
 
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.operators.MSCACompositionFunction;
-import io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.MSCACompositionFunction;
+import io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator;
 import org.junit.Assert;
 import org.junit.Test;
 

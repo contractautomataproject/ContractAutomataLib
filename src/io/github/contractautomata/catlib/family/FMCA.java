@@ -10,24 +10,45 @@ import java.util.stream.Stream;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesisOperator;
-import io.github.contractautomata.catlib.operators.UnionFunction;
+import io.github.contractautomata.catlib.operations.ProductOrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.UnionFunction;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
 
 /**
- * Class implementing a Featured Modal Contract Automata
+ * Class implementing a Featured Modal Contract Automaton (FMCA). <br>
+ * An FMCA pairs a modal contract automaton with a family, and provides operations on this pair. <br>
+ *
+ * FMCA and their operations have been introduced in: <br>
+ *
+ *  * <ul>
+ *  *  *     <li>Basile, D. et al., 2020.
+ *  *  *     Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
+ *  *  *      (<a href="https://doi.org/10.1016/j.scico.2019.102344">https://doi.org/10.1016/j.scico.2019.102344</a>)</li>
+ *  *  </ul>
  *
  * @author Davide Basile
  *
  */
 public class FMCA {
 
+	/**
+	 * the modal contract automaton.
+	 */
 	private final Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> aut;
+
+	/**
+	 * the family.
+	 */
 	private final Family family;
 
+	/**
+	 * Constructor for an FMCA from an automaton and a family.
+	 * @param aut  the automaton (must be non-null).
+	 * @param family the family (must be non-null).
+	 */
 	public FMCA(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut, Family family)
 	{
 		Objects.requireNonNull(aut);
@@ -37,11 +58,10 @@ public class FMCA {
 	}
 
 	/**
-	 * this constructor instantiates the family of products starting by refining products to
-	 * remove redundant products (that are already known to have empty orchestrations).
-	 * Only features of the products that are labels of the automaton aut are retained 
-	 * Those products requiring features not present in the orchestration of aut in agreement 
-	 * are discarded.
+	 * This constructor instantiates the family of products by performing a pre-processing, to polish
+	 * the set of products prod given as argument. <br>
+	 * Firstly, all features that are not labels of the given automaton are removed from the products. <br>
+	 * After that, redundant products are removed (those requiring features present in aut but not in its orchestration in agreement). <br>
 	 *
 	 * @param aut the automaton
 	 * @param products the set of products
@@ -65,8 +85,8 @@ public class FMCA {
 		Set<String> orcActions =getActions.apply(orc);
 
 		//products are polished from features not present in the automaton
-		//(e.g. equivalent features, abstract features)
-		//products requiring features not present in the orchestration are removed
+		//(e.g. equivalent features, features that are never forbidden).
+		//Once the orchestration is computed, products requiring features not present in the orchestration are removed.
 		this.aut=aut;
 		this.family= new Family(products.parallelStream()
 				.filter(p->orcActions.containsAll(p.getRequired().stream()
@@ -85,14 +105,30 @@ public class FMCA {
 				(p1,p2) -> p1.getForbidden().size()-p2.getForbidden().size());
 	}
 
+	/**
+	 * Getter of the automaton.
+	 * @return the automaton.
+	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> getAut() {
 		return aut;
 	}
 
+	/**
+	 * Getter of the family.
+	 * @return the family.
+	 */
 	public Family getFamily() {
 		return family;
 	}
 
+	/**
+	 * Returns the canonical products of this FMCA. <br>
+	 * A canonical product represents all the maximal elements in the FMCA that have the same set of forbidden actions. <br>
+	 * It is required that the automaton does not contain transitions labelled with "dummy" (these labels are generated when
+	 * computing the union of a set of automata). <br>
+	 *
+	 * @return  the canonical products of this FMCA.
+	 */
 	public Map<Product,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> getCanonicalProducts()
 	{
 		if (aut.getForwardStar(aut.getInitial()).stream()
@@ -122,8 +158,9 @@ public class FMCA {
 	}
 
 	/**
+	 * Returns the orchestration of the family as the union of orchestrations of total products.
 	 *
-	 * @return computes the orchestration of the family as the union of orchestrations of total products
+	 * @return the orchestration of the family as the union of orchestrations of total products
 	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> getOrchestrationOfFamilyEnumerative()
 	{
@@ -131,8 +168,9 @@ public class FMCA {
 	}
 
 	/**
+	 * Returns the orchestration of the family as the union of orchestrations of canonical products. <br>
 	 *
-	 * @return computes the orchestration of the family by only considering canonical products
+	 * @return the orchestration of the family as the union of orchestrations of canonical products.
 	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> getOrchestrationOfFamily()
 	{
@@ -140,6 +178,10 @@ public class FMCA {
 				.values()));
 	}
 
+	/**
+	 * Returns a map pairing a product with its non-empty orchestration in agreement.
+	 * @return a map pairing a product with its non-empty orchestration in agreement.
+	 */
 	public Map<Product,Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> getTotalProductsWithNonemptyOrchestration()
 	{
 		return this.family.getPo().entrySet()
@@ -153,8 +195,10 @@ public class FMCA {
 	}
 
 	/**
-	 * respectingValidity see Theorem 3 of JSCP2020(Basile et al.),
-	 * this method exploits the partial order so it starts from maximal products
+	 * Returns the set of products respecting validity. <br>
+	 * A product p is respecting validity iff all the mandatory actions in p correspond to executable transitions in the automaton and no action forbidden
+	 * in p have executable counterparts in the automaton.  <br>
+	 * This method exploits the partial order so it starts from maximal products.
 	 *
 	 * @return the set of products respecting validity
 	 */
@@ -168,6 +212,11 @@ public class FMCA {
 		return selectProductsSatisfyingPredicateUsingPO(a, p->p.isValid(a));
 	}
 
+	/**
+	 * The set of products with non-empty orchestration in agreement.
+	 *
+	 * @return the set of products with non-empty orchestration in agreement.
+	 */
 	public Set<Product> productsWithNonEmptyOrchestration()
 	{
 		return this.productsWithNonEmptyOrchestration(aut);

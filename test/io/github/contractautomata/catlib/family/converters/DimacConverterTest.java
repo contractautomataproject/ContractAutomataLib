@@ -18,8 +18,8 @@ public class DimacConverterTest {
 
 	@Before
 	public void setUp() {
- 		dfc = new DimacFamilyConverter(true);
-		dfc_pi = new DimacFamilyConverter(false);
+ 		dfc = new DimacsFamilyConverter(true);
+		dfc_pi = new DimacsFamilyConverter(false);
 	}
 	
 	@Test

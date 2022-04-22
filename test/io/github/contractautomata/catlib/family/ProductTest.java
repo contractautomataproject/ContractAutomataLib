@@ -160,17 +160,6 @@ public class ProductTest {
 	}
 
 	@Test
-	public void testToStringId() {
-		assertEquals("p0: R={cherry,ananas,} F={blueberry,}", p.toStringFile(0));
-	}
-
-	@Test
-	public void testToHTMLString() {
-		assertEquals("<html>P0 R:[cherry, ananas]<br />" + 
-				"F:[blueberry]</html>", p.toHTMLString("P0"));
-	}
-
-	@Test
 	public void testToString() {
 		assertEquals(p.toString(),"R:[cherry, ananas];" + System.lineSeparator()+
 				"F:[blueberry];"+System.lineSeparator());

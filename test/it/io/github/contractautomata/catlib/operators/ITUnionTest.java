@@ -6,7 +6,7 @@ import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
-import io.github.contractautomata.catlib.operators.UnionFunction;
+import io.github.contractautomata.catlib.operations.UnionFunction;
 import org.junit.Assert;
 import org.junit.Test;
 

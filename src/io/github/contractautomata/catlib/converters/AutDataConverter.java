@@ -19,22 +19,44 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Import/Export textual DATA format
+ * This class supports the conversion of an automaton into a textual format, with extension <tt>.data</tt>. <br>
+ *
+ * @param <L> the type of the label of the automaton to import, must extend <tt>Label&lg;Action&rg;</tt>
  *
  * @author Davide Basile
- *
  */
 public class AutDataConverter<L extends Label<Action>>  implements AutConverter<Automaton<String,Action, State<String>, ModalTransition<String, Action,State<String>,L>>,Automaton<?,?,?,?>> {
+
+	/**
+	 * a builder of a label of type L from a list of actions
+	 */
 	private final Function<List<Action>,L> createLabel;
+
+	/**
+	 * suffix, the used file extension
+	 */
 	private static final String SUFFIX = ".data";
+
+	/**
+	 * message to show in case of an empty file name
+	 */
 	private static final String EMPTYMSG = "Empty file name";
 
+	/**
+	 * Constructor.
+	 * @param createLabel  a function building a label from a list of actions, used during import when instantiating the labels of the automaton
+	 */
 	public AutDataConverter(Function<List<Action>, L> createLabel) {
 		super();
 		this.createLabel = createLabel;
 	}
 
-
+	/**
+	 * Impor an automaton from a textual representation
+	 * @param filename   the name of the file containing the automaton
+	 * @return the imported automaton, where the content of each state and action is a String, labels are of type L, and transitions can have modalities
+	 * @throws IOException
+	 */
 	public Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,L>> importMSCA(String filename) throws IOException {
 		if (!filename.endsWith(SUFFIX))
 			throw new IllegalArgumentException("Not a .data format");
@@ -197,9 +219,11 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	/**
-	 * Export the textual description of the automaton in a .data file
+	 * Store the automaton passed as argument in a <tt>.data</tt> format.
 	 *
-	 * @throws FileNotFoundException in case filename is not found
+	 * @param filename  the name of the file to store
+	 * @param aut  the automaton to store
+	 * @throws IOException
 	 */
 	@Override
 	public  void exportMSCA(String filename, Automaton<?,?,?,?> aut) throws IOException {

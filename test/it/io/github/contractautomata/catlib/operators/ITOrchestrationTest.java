@@ -9,7 +9,7 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
-import io.github.contractautomata.catlib.operators.OrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
 import org.junit.Assert;
 import org.junit.Before;

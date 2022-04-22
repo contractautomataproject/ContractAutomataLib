@@ -10,7 +10,7 @@ import io.github.contractautomata.catlib.family.FMCA;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.PartialProductGenerator;
 import io.github.contractautomata.catlib.family.Product;
-import io.github.contractautomata.catlib.family.converters.DimacFamilyConverter;
+import io.github.contractautomata.catlib.family.converters.DimacsFamilyConverter;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
 import io.github.contractautomata.catlib.family.converters.FeatureIDEfamilyConverter;
 import org.junit.Test;
@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 public class ITDimacConverterTest {
 	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 
-	private final FamilyConverter dfc = new DimacFamilyConverter(true);
-	private final FamilyConverter dfc_pi = new DimacFamilyConverter(false);
+	private final FamilyConverter dfc = new DimacsFamilyConverter(true);
+	private final FamilyConverter dfc_pi = new DimacsFamilyConverter(false);
 	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	

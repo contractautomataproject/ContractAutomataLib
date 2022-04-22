@@ -5,7 +5,7 @@ import java.io.File;
 
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.operators.ProductOrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.ProductOrchestrationSynthesisOperator;
 import org.junit.Assert;
 import org.junit.Test;
 

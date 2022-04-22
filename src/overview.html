@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+    <TITLE>API Overview</TITLE>
+</HEAD>
+<BODY>
+<p>
+   The Contract Automata Library supports the Contract Automata formalism and their operations, and can be easily extended to support similar automata-based formalisms.
+    <br>
+    Currently, synchronous Communicating Machines are also supported by the library. <br>
+    Using the library it is possible to create new automata, import/export them, and to perform operations
+    on them, as for example computing a composition of contracts, or computing a refinement of a composition satisfying
+    some property (expressed as an automaton or an invariant). <br>
+</p>
+
+<p>
+    Contract automata are a dialect of Finite State Automata, with special labels and tailored composition and synthesis
+    operations.  <br>
+    Contract automata are composable: a composition of contracts is again a contract automaton. <br>
+    Contract automata support as operation the synthesis of the most permissive controller from Supervisory
+    Control Theory for Discrete Event Systems. <br>
+    Contract automata are used to express behavioural contracts, which are used to specify (behavioural)
+    services interfaces, for computing a composition of contracts and synthesise a composition enjoying well-behaving properties.
+</p>
+
+<p>
+Contract automata formalise behavioural service contracts in terms of service offer actions
+and service request actions that need to match to achieve agreement among a composition of contracts. <br>
+Modalities are used to indicate when an action must be matched (necessary) and when it can be withdrawn (permitted)
+in the synthesised coordination. <br>
+    Contract automata can be configured using a product line, where each product (or configuration) predicate on which actions are required
+    and which are forbidden.
+</p>
+
+<p>For more info and references on publications about Contract Automata check
+    <a href="https://contractautomataproject.github.io/ContractAutomataLib/">https://contractautomataproject.github.io/ContractAutomataLib/</a>
+</p>
+</BODY>
+</HTML>

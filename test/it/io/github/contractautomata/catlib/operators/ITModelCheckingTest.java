@@ -8,7 +8,7 @@ import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
-import io.github.contractautomata.catlib.operators.ModelCheckingFunction;
+import io.github.contractautomata.catlib.operations.ModelCheckingFunction;
 import org.junit.Before;
 import org.junit.Test;
 

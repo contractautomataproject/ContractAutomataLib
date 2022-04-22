@@ -16,7 +16,8 @@ import io.github.contractautomata.catlib.automaton.transition.Transition;
  * An automaton has a set of transitions, a set of states, an initial state and a set of final states. <br>
  * The types of states, transitions, labels of transitions, are all generics and must extend the corresponding <br>
  * super-class. <br>
- * Each automaton object has rank: it can represent either a single principal, or an ensemble of principals. <br>
+ * Each automaton object is ranked: it can represent either a single principal, or an ensemble of principals. <br>
+ * States and labels are tuples whose size equals the rank of the automaton. <br>
  * 
  * @author Davide Basile
  *

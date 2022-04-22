@@ -10,8 +10,8 @@ import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 
 /**
  * Class representing a Label of a transition. <br>
- * Each label contains a tuple of elements of unconstrained generic type, its content. <br>
- * The rank is the number of elements in the labels. Labels can be matched by other labels thanks <br>
+ * Each label contains a tuple of elements of unconstrained generic type. <br>
+ * The rank is the size of the tuple. Labels can be matched by other labels thanks <br>
  * to the Matchable interface. <br>
  *
  * @author Davide Basile
@@ -47,8 +47,8 @@ public class Label<T> implements Ranked,Matchable<Label<T>>{
 
 	/**
 	 * This method requires a label to be a list of actions, and requires
-	 * the actions in the label to be either idle or all equals, and at least
-	 * one action must not be idle.
+	 * the actions in the label to be either idle or not, all actions that
+	 * are not idle must be equals, and at least one action must not be idle.
 	 * It returns the unique action.
 	 *
 	 * @return  the (unique) action of the label

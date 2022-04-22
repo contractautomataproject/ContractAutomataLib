@@ -14,11 +14,33 @@ import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.Product;
 
 /**
- * Interface for importing/exporting a family
+ * This is the interface to be implemented for importing/exporting a family.
+ *
  * @author Davide Basile
  *
  */
 public interface FamilyConverter {
+	/**
+	 * Returns a set of products loaded from filename, representing a family of products,
+	 * imported from filename.
+	 *
+	 * @param filename  the name of the file to import
+	 * @return a set of products loaded from filename, representing a family of products
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws ParseFormatException
+	 * @throws ContradictionException
+	 * @throws TimeoutException
+	 */
 	Set<Product> importProducts(String filename) throws IOException, ParserConfigurationException, SAXException, ParseFormatException, ContradictionException, TimeoutException;
+
+	/**
+	 * Stores the content of the family fam in the file filename.
+	 *
+	 * @param filename the name of the file to which the family of products is stored
+	 * @param fam the family to be exported
+	 * @throws IOException
+	 */
 	void exportFamily(String filename, Family fam) throws IOException;
 }
