@@ -42,7 +42,7 @@ public class ProductTest {
 	@Mock CALabel lab;
 	@Mock CALabel lab2;
 
-	@Mock Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = mock(Automaton.class);
+	@Mock Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut;
 
 	Set<Feature> required;
 	Set<Feature> forbidden;

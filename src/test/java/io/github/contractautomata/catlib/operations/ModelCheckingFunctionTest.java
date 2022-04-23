@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +36,10 @@ public class ModelCheckingFunctionTest {
     @Mock State<String> cs21;
     @Mock State<String> comp1;
 
+    @Mock Label<Action> lab1;
+    @Mock Label<Action> lab2;
     @Mock Label<Action> labcomp;
+    @Mock Label<Action> labCompNoMatch;
 
     @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> aut;
@@ -75,13 +77,11 @@ public class ModelCheckingFunctionTest {
         when(a1.getLabel()).thenReturn("a");
         when(a2.getLabel()).thenReturn("a");
 
-        Label<Action> lab1 = mock(Label.class);
         when(lab1.getContent()).thenReturn(List.of(ia,a2));
         when(lab1.getAction()).thenReturn(a2);
         when(t1.getLabel()).thenReturn(lab1);
         when(t1.getTarget()).thenReturn(cs11);
 
-        Label<Action> lab2 = mock(Label.class);
         when(lab2.getContent()).thenReturn(List.of(a1));
         when(tp1.getLabel()).thenReturn(lab2);
         when(tp1.getTarget()).thenReturn(cs21);
@@ -93,7 +93,6 @@ public class ModelCheckingFunctionTest {
         when(tcomp.getLabel()).thenReturn(labcomp);
         when(tcomp.getTarget()).thenReturn(comp1);
 
-        Label<Action> labCompNoMatch = mock(Label.class);
         when(labCompNoMatch.getRank()).thenReturn(3);
         when(labCompNoMatch.getContent()).thenReturn(List.of(ia,a2,ia));
         when(tcompNoMatch.getLabel()).thenReturn(labCompNoMatch);

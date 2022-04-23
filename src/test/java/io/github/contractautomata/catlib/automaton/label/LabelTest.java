@@ -53,7 +53,7 @@ public class LabelTest {
 
     @Test
     public void testGetActionAllIdles() {
-        Label<Action> lab = new Label(List.of(ia,ia));
+        Label<Action> lab = new Label<>(List.of(ia,ia));
         assertThrows(IllegalArgumentException.class, () -> lab.getAction());
     }
 
@@ -65,13 +65,13 @@ public class LabelTest {
 	@Test
     public void testGetActionDifferentActions() {
         when(a2.getLabel()).thenReturn("b");
-		Label<Action> lab = new Label(List.of(a1,ia,a2));
+		Label<Action> lab = new Label<>(List.of(a1,ia,a2));
         assertThrows(IllegalArgumentException.class, () -> lab.getAction());
     }
 
     @Test
     public void testGetAction() {
-		Label<Action> lab = new Label(List.of(a1,a2));
+		Label<Action> lab = new Label<>(List.of(a1,a2));
         assertEquals(a1,lab.getAction());
     }
 

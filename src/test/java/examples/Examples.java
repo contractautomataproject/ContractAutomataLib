@@ -29,6 +29,7 @@ import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 public class Examples {
 	final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 
+	@SuppressWarnings("unused")
 	public void example1() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -50,6 +51,7 @@ public class Examples {
 	}
 
 
+	@SuppressWarnings("unused")
 	public void example3() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -59,6 +61,7 @@ public class Examples {
 	}
 
 
+	@SuppressWarnings("unused")
 	public void example4() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -85,6 +88,7 @@ public class Examples {
 	}
 
 
+	@SuppressWarnings("unused")
 	public void example5() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -106,6 +110,7 @@ public class Examples {
 
 	}
 
+	@SuppressWarnings("unused")
 	public void example6() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);

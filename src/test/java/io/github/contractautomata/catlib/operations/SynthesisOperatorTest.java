@@ -161,16 +161,16 @@ public class SynthesisOperatorTest {
 
     @Test
     public void applyCoverMutationBackwardVisit() {
-        State<String> cs14 = mock(State.class);
-        ModalTransition<String,Action,State<String>,CALabel> t13 = mock(ModalTransition.class);
-        ModalTransition<String,Action,State<String>,CALabel> t14 = mock(ModalTransition.class);
-        when(t13.getSource()).thenReturn(cs11);
-        when(t13.getTarget()).thenReturn(cs14);
-        when(t14.getSource()).thenReturn(cs14);
-        when(t14.getTarget()).thenReturn(cs14);
+        State<?> cs14 =  mock(State.class);
+        ModalTransition<?,?,?,?> t13 = mock(ModalTransition.class);
+        ModalTransition<?,?,?,?> t14 = mock(ModalTransition.class);
+        doReturn(cs11).when(t13).getSource();
+        doReturn(cs14).when(t13).getTarget();
+        doReturn(cs14).when(t14).getSource();
+        doReturn(cs14).when(t14).getTarget();
 
         when(a1.getTransition()).then(inv->new HashSet<>(Set.of(t11,t12,t13,t14)));
-        when(a1.getStates()).thenReturn(Set.of(cs11, cs12, cs13,cs14));
+        doReturn(Set.of(cs11, cs12, cs13,cs14)).when(a1).getStates();
 
         so = new SynthesisOperator<>((x,t,bad) -> false, x->true, createAut);
         so.apply(a1);

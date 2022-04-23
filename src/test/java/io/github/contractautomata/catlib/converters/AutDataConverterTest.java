@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class AutDataConverterTest {
 
+	@Mock static Label<Action> l;
     @Mock Label<Action> lab;
 
     @Spy Function<List<Action>,Label<Action>> createLabel;
@@ -42,7 +43,6 @@ public class AutDataConverterTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        Label<Action> l = Mockito.mock(Label.class);
         when(l.getRank()).thenReturn(2);
         when(l.toString()).thenReturn("mock");
         axb = new AutDataConverter<>(new Function<>() {

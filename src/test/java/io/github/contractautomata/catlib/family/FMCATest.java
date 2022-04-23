@@ -457,10 +457,10 @@ public class FMCATest {
   //      when(act4.toString()).thenReturn("!f4");
   //      when(ract4.toString()).thenReturn("?f4");
 
-        ModalTransition<String,Action,State<String>,CALabel> t4 = mock(ModalTransition.class);
-        when(t4.getSource()).thenReturn(cs1);
-        when(t4.getLabel()).thenReturn(lab4);
-        when(t4.getTarget()).thenReturn(cs1);
+        ModalTransition<?,?,?,?> t4 = mock(ModalTransition.class);
+        doReturn(cs1).when(t4).getSource();
+        doReturn(lab4).when(t4).getLabel();
+        doReturn(cs1).when(t4).getTarget();
   //      when(t4.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
         when(t4.getRank()).thenReturn(2);
  //       when(t4.toString()).thenReturn("([0, 0],[!f4,?f4],[0, 0])");
@@ -472,7 +472,7 @@ public class FMCATest {
  //       when(p4.isForbidden(lab4)).thenReturn(false);
 
         when(a.getTransition()).then(args -> new HashSet<>(Arrays.asList(t1,t2,t3,t4)));
-        when(a.getForwardStar(cs1)).thenReturn(Set.of(t1,t4));
+        doReturn(Set.of(t1,t4)).when(a).getForwardStar(cs1);
 
 
 //        when(bs0.isFinalState()).thenReturn(true);

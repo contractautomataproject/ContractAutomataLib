@@ -42,6 +42,7 @@ public class OrchestrationSynthesisOperatorTest {
     @Mock State<String> cs13;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t11;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t12;
+    @Mock ModalTransition<String,Action,State<String>,CALabel> t13;
 
     @Captor ArgumentCaptor<BiPredicate
             <ModalTransition<String, Action, State<String>, CALabel>,
@@ -109,7 +110,6 @@ public class OrchestrationSynthesisOperatorTest {
         when(t12.getLabel()).thenReturn(lab2);
         oso = new OrchestrationSynthesisOperator<>(l->!l.equals(lab2));
 
-        ModalTransition<String,Action,State<String>,CALabel> t13 = mock(ModalTransition.class);
         when(t13.getLabel()).thenReturn(lab);
         when(t13.getSource()).thenReturn(cs12);
         when(t13.getTarget()).thenReturn(cs13);
