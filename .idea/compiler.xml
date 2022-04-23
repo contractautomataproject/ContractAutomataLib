@@ -10,6 +10,7 @@
         <module name="catlib" />
         <module name="maze" />
         <module name="CARE" />
+        <module name="TicTacToe" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
