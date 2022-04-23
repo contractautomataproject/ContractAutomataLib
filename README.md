@@ -30,19 +30,20 @@ For  information on the usage and installation of the library, check the User Do
 
 <h4> API Documentation</h4>
 
+For the API documentation, check the links below.
+The documentation is up-to date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280 of 23 April 2022</a>.
 
-For the API documentation, check the links below. 
+
+The following documentation have been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
 <ul>
-  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>
+  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation. A Navigable site visualizing the packages and class diagrams of the project.</a>
 </li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a></li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a></li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf). Contains all the diagrams of the project. </a></li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf). Contains information on all classes and their members.</a></li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html</a>.
 
-The documentation is up-to date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/commit/d92c4b6f73d157b163f0df97d0192dbd6d26b252">d92c4b6 of 8 December 2021</a>. 
-The diagrams contained in this documentation have been generated using the Model-based Software Engineering tool Sparx Enterprise Architect. 
 
 
 <h2>License</h2>
