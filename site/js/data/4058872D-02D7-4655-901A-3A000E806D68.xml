@@ -1,0 +1,4 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.1.4.1:1", "", "interfaces", "EARoot/EA1/EA1/EA1/EA1/EA4/EA1/EA91.htm", "3.png", "40", "0", "", "Logical diagram0","{1876D0D9-C9D3-48ed-874C-CE2D2C2603AF}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.4.1:2", "", "«interface» TetraFunction", "EARoot/EA1/EA1/EA1/EA1/EA4/EA1/EA94.htm", "8.png", "E535", "0", "", "Interface0","{C9C0B94E-1F47-4fbd-91C0-2B12A61B34B2}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.4.1:3", "", "«interface» TriFunction", "EARoot/EA1/EA1/EA1/EA1/EA4/EA1/EA95.htm", "8.png", "E536", "0", "", "Interface0","{A65785D2-25AA-4f45-9935-F534AA255380}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.4.1:4", "", "«interface» TriPredicate", "EARoot/EA1/EA1/EA1/EA1/EA4/EA1/EA96.htm", "8.png", "E537", "0", "", "Interface0","{6E604087-BD58-4095-B684-67DCF74DA04A}");
