@@ -31,15 +31,16 @@ For  information on the usage and installation of the library, check the User Do
 <h4> API Documentation</h4>
 
 For the API documentation, check the links below.
-The documentation is up-to date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280 of 23 April 2022</a>.
+
+This documentation is up-to date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280</a> of 23 April 2022.
 
 
-The following documentation have been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
+The following documentation has  been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
 <ul>
-  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation. A Navigable site visualizing the packages and class diagrams of the project.</a>
+  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>. A Navigable site visualizing the packages and class diagrams of the project.
 </li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf). Contains all the diagrams of the project. </a></li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf). Contains information on all classes and their members.</a></li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a>. Contains all the diagrams of the project. </li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a>. Contains information on all classes and their members.</li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html</a>.
