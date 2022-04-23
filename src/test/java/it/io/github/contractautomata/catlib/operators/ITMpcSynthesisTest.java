@@ -22,8 +22,9 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 
+import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
+
 public class ITMpcSynthesisTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 
 	@Test

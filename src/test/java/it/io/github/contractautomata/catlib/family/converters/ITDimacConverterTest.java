@@ -18,11 +18,11 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Set;
 
+
+import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.assertEquals;
 
 public class ITDimacConverterTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
-
 	private final FamilyConverter dfc = new DimacsFamilyConverter(true);
 	private final FamilyConverter dfc_pi = new DimacsFamilyConverter(false);
 	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();

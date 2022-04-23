@@ -12,11 +12,12 @@ import java.io.File;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
+
+import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.assertEquals;
 
 
 public class ITFeatureIDEconverterTest {
-	private final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
 	private final FamilyConverter ffc = new FeatureIDEfamilyConverter();
 	private final FamilyConverter pfc = new ProdFamilyConverter();
 	
