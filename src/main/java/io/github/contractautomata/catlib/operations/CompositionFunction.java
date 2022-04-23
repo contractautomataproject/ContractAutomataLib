@@ -65,17 +65,6 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private final Function<List<Action>,L> createLabel;
 	private final Function<Set<T>,A> createAutomaton;
 
-
-	//each transition of each MSCA in aut is associated with the corresponding index in aut
-	final class TIndex {//more readable than Entry
-		final T tra;
-		final Integer ind;
-		public TIndex(T tr, Integer i) {
-			this.tra=tr; //different principals may have equal transitions
-			this.ind=i;
-		}
-	}
-
 	private final List<? extends Automaton<S1,Action,S,T>> aut;
 	private final int rank;
 	private final S initialState;
@@ -86,6 +75,16 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private final Set<List<S>> visited;
 	private final Queue<S> dontvisit;
 	private final Predicate<L> pruningPred;
+
+	//each transition of each MSCA in aut is associated with the corresponding index in aut
+	final class TIndex {//more readable than Entry
+		final T tra;
+		final Integer ind;
+		public TIndex(T tr, Integer i) {
+			this.tra=tr; //different principals may have equal transitions
+			this.ind=i;
+		}
+	}
 
 	/**
 	 * Constructor for a composition function.

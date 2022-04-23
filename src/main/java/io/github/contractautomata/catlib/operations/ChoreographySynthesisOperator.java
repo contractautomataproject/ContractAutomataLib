@@ -91,18 +91,20 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 	/**
 	 * Applies the choreography synthesis operator to aut
 	 *
-	 * @param aut the plant automaton to which the synthesis is performed
+	 * @param arg the plant automaton to which the synthesis is performed
 	 * @return the synthesised choreography, removing only one transition violating the branching condition 
 	 * each time no further updates are possible. The transition to remove is chosen non-deterministically in
 	 * case a specific strategy was not provided in the constructor.
 	 * 
 	 */
 	@Override
-	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut)
+	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> arg)
 	{
-		if (aut.getTransition().parallelStream()
+		if (arg.getTransition().parallelStream()
 				.anyMatch(t-> !t.isPermitted()&&t.getLabel().isRequest()))
 			throw new UnsupportedOperationException("The automaton contains necessary requests that are not allowed in the choreography synthesis");
+
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> aut = arg;
 
 		while(true)
 		{

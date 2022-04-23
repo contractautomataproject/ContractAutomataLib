@@ -191,17 +191,17 @@ public class CALabel extends Label<Action> {
 				.filter(s->!(s instanceof IdleAction))
 				.findAny().orElseThrow(IllegalArgumentException::new);
 
-		if (!this.isRequest()) {
-			if (action instanceof AddressedAction)
-				return new AddressedRequestAction(action.getLabel(),((AddressedAction) action).getAddress());
-			else
-				return new RequestAction(action.getLabel());
-		}
-		else {
+		if (this.isRequest()) {
 			if (action instanceof AddressedAction)
 				return new AddressedOfferAction(action.getLabel(),((AddressedAction) action).getAddress());
 			else
 				return new OfferAction(action.getLabel());
+		}
+		else {
+			if (action instanceof AddressedAction)
+				return new AddressedRequestAction(action.getLabel(),((AddressedAction) action).getAddress());
+			else
+				return new RequestAction(action.getLabel());
 		}
 	}
 

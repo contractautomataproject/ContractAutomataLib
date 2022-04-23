@@ -107,15 +107,7 @@ public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action,
 	}
 
 	private CALabel createLabel(ModalTransition<S1,Action,State<S1>,CALabel> t,Integer indexprincipal) {
-		if (!createAddress)
-			return (!t.getLabel().isRequest()
-					&&t.getLabel().getOfferer().equals(indexprincipal))?
-						new CALabel(1,0,t.getLabel().getAction())
-						:new CALabel(1,0,t.getLabel().isRequest()?
-							t.getLabel().getAction()
-							:t.getLabel().getCoAction());
-		else
-		{
+		if (createAddress) {
 			if (!t.getLabel().isMatch()
 					|| t.getLabel().getAction() instanceof AddressedAction)
 				throw new UnsupportedOperationException();
@@ -126,6 +118,13 @@ public class ProjectionFunction<S1> implements TriFunction<Automaton<S1, Action,
 			else
 				return new CALabel(1,0,new AddressedRequestAction(t.getLabel().getAction().getLabel(),
 						new Address(t.getLabel().getOfferer()+"",indexprincipal+"")));
+
 		}
+		else return (!t.getLabel().isRequest()
+					&&t.getLabel().getOfferer().equals(indexprincipal))?
+						new CALabel(1,0,t.getLabel().getAction())
+						:new CALabel(1,0,t.getLabel().isRequest()?
+							t.getLabel().getAction()
+							:t.getLabel().getCoAction());
 	}
 }

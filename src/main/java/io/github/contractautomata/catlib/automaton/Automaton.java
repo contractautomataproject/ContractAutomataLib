@@ -59,7 +59,9 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 
 		this.tra=new HashSet<>(tr);
 
-		Set<S> states = this.getStates();
+		Set<S> states = tra.parallelStream()
+				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
+				.collect(Collectors.toSet());
 
 		if (states.parallelStream()
 				.filter(S::isInitial)
