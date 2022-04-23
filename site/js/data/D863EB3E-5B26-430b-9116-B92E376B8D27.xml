@@ -1,4 +1,0 @@
-tocTab[tocTab.length] = new Array("0.1.1.1.1.1.3:1", "", "transition", "EARoot/EA1/EA1/EA1/EA1/EA1/EA3/EA38.htm", "175.png", "25", "0", "", "Logical diagram0","{680E4CE9-58F2-4df2-A030-7B5ECED72E1B}");
-tocTab[tocTab.length] = new Array("0.1.1.1.1.1.3:2", "", "MSCATransition", "EARoot/EA1/EA1/EA1/EA1/EA1/EA3/EA41.htm", "5.png", "E451", "0", "", "Class0","{84D56C27-741B-4fc6-8FF2-069F0CEE30BE}");
-tocTab[tocTab.length] = new Array("0.1.1.1.1.1.3:3", "", "Transition", "EARoot/EA1/EA1/EA1/EA1/EA1/EA3/EA42.htm", "5.png", "E452", "0", "", "Class0","{2AABC9B4-48A2-4550-960B-D7CE80C2A15F}");
-tocTab[tocTab.length] = new Array("0.1.1.1.1.1.3:4", "", "Modality", "EARoot/EA1/EA1/EA1/EA1/EA1/EA3/EA43.htm", "247.png", "E450", "E451", "", "Enumeration0","{262E86E5-F082-43fe-9650-A9DDF11DC850}");
