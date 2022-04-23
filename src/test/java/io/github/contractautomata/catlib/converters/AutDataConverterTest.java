@@ -32,7 +32,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class AutDataConverterTest {
 
-	@Mock static Label<Action> l;
+	@SuppressWarnings("unchecked")
+	static Label<Action> l = mock(Label.class);
+	
     @Mock Label<Action> lab;
 
     @Spy Function<List<Action>,Label<Action>> createLabel;
