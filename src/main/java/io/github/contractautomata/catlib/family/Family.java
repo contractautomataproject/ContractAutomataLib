@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
  *
  * The formal definitions can be found in:
  *  * <ul>
- *  *  *     <li>Basile, D. et al., 2020.
- *  *  *     Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
- *  *  *      (<a href="https://doi.org/10.1016/j.scico.2019.102344">https://doi.org/10.1016/j.scico.2019.102344</a>)</li>
- *  *  </ul>
+ *       <li>Basile, D. et al., 2020.
+ *       Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
+ *        (<a href="https://doi.org/10.1016/j.scico.2019.102344">https://doi.org/10.1016/j.scico.2019.102344</a>)</li>
+ *  </ul>
  *
  * @author Davide Basile
  *

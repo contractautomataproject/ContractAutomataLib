@@ -37,12 +37,12 @@ public class PartialProductGenerator implements UnaryOperator<Set<Product>>{
 	 */
 	@Override
 	public Set<Product> apply(Set<Product> setprod){
-		/**
-		 * 	 * All generated super products are such that the corresponding feature model formula is satisfied. <br>
-		 * 	 * This condition holds for this method, and a brief argument follows.<br>
-		 * 	 * Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a
-		 * 	 * disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2
-		 * 	 * is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).<br>
+		/*
+		 * 	 All generated super products are such that the corresponding feature model formula is satisfied. <br>
+		 * 	 This condition holds for this method, and a brief argument follows.<br>
+		 * 	 Indeed, assume the feature model formula is in CNF, it is never the case that f is the only literal of a
+		 * 	 disjunct (i.e. a truth value must be assigned to f); otherwise either p1 or p2
+		 * 	 is not a valid product (p1 if f is negated in the disjunct, p2 otherwise).<br>
 		 */
 		Set<Feature> features =
 				setprod.parallelStream()

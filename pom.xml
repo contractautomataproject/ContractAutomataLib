@@ -4,11 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- https://central.sonatype.org/publish/requirements/ -->
-	<groupId>io.github.contractautomata</groupId>
+	<groupId>io.github.contractautomataproject</groupId>
 	<artifactId>catlib</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-
 	<name>ContractAutomataLib</name>
 	<description>Library for specifying and verifying contract automata.</description>
 	<url>https://github.com/ContractAutomataProject/ContractAutomataLib</url>
@@ -32,20 +31,24 @@
 	<scm>
 		<connection>scm:git:git://github.com/ContractAutomataProject/ContractAutomataLib.git</connection>
 		<developerConnection>scm:git:ssh://github.com:ContractAutomataProject/ContractAutomataLib.git</developerConnection>
-		<url>http://github.com/ContractAutomataProject/ContractAutomataLib/tree/code-cleaning</url>
+		<url>http://github.com/ContractAutomataProject/ContractAutomataLib/tree/main</url>
 	</scm>
 
+	<!-- https://central.sonatype.org/publish/publish-maven/ -->
 	<distributionManagement>
-		<!-- https://central.sonatype.org/publish/publish-maven/ <snapshotRepository> 
-			<id>ossrh</id> <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url> 
-			</snapshotRepository> <repository> <id>ossrh</id> <name>Central Repository 
-			OSSRH</name> <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url> 
-			</repository> -->
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<repository>
-			<id>github</id>
-			<name>GitHub davidebasile Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/davidebasile/contractautomatalib</url>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
+		<!--repository>
+			<id>github</id>
+			<name>GitHub Davide Basile Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/davidebasile/contractautomatalib</url>
+		</repository-->
 	</distributionManagement>
 	<properties>
 		<maven.compiler.source>1.11</maven.compiler.source>
@@ -101,6 +104,17 @@
 			<plugins>
 				<!-- https://central.sonatype.org/publish/publish-maven/ -->
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<useReleaseProfile>false</useReleaseProfile>
+						<releaseProfiles>release</releaseProfiles>
+						<goals>deploy</goals>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.sonatype.plugins</groupId>
 					<artifactId>nexus-staging-maven-plugin</artifactId>
 					<version>1.6.7</version>
@@ -129,6 +143,8 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.9.1</version>
 					<configuration>
+						<!-->https://stackoverflow.com/questions/58836862/jdk-11-and-javadoc<-->
+						<source>8</source>
 						<overview>${basedir}/src/overview.html</overview>
 					</configuration>
 					<executions>
@@ -354,6 +370,14 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.16.0</version>
+				<configuration>
+					<targetJdk>1.8</targetJdk>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<reporting>
@@ -378,10 +402,15 @@
 					</plugins>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!--plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>LATEST</version>
+				<configuration>
+					<outputFormats>
+						<format>HTML</format>
+					</outputFormats>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -389,7 +418,32 @@
 						</reports>
 					</reportSet>
 				</reportSets>
+			</plugin-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.16.0</version>
+				<configuration>
+					<targetJdk>1.8</targetJdk>
+				</configuration>
 			</plugin>
+			<!--plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>3.0.0-M6</version>
+			</plugin-->
+			<!--plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>LATEST</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin-->
 		</plugins>
 	</reporting>
 </project>

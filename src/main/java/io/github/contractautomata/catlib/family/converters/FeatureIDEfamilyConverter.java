@@ -156,7 +156,6 @@ public class FeatureIDEfamilyConverter implements FamilyConverter {
 	 *
 	 * @param filename the name of the file to which the family of products is stored
 	 * @param fam the family to be exported
-	 * @throws IOException
 	 */
 	@Override
 	public void exportFamily(String filename, Family fam) {

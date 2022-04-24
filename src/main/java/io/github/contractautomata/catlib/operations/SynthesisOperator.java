@@ -83,6 +83,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 	 * @param pruningPredicate  the pruning predicate 
 	 * @param forbiddenPredicate the forbidden predicate
 	 * @param req the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 * @param createAut the constructor of the automaton
 	 */
 	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> pruningPredicate,
 							 TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate,
@@ -104,6 +105,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 	 *
 	 * @param forbiddenPredicate the forbidden predicate
 	 * @param req  the invariant requirement to enforce (e.g. agreement, strong agreement)
+	 * @param createAut  the constructor of the automaton
 	 */
 	public SynthesisOperator(TriPredicate<T, Set<T>, Set<S>> forbiddenPredicate,
 							 Predicate<L> req,
@@ -139,7 +141,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 		class Pair{
 			final Set<T> tr;
 			final Set<S> s;
-			public Pair(Set<T> tr, Set<S> s) {
+			Pair(Set<T> tr, Set<S> s) {
 				this.tr = tr; this.s = s;
 			}
 		}

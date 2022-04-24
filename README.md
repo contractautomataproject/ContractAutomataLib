@@ -5,9 +5,9 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f7dcd94be9141b1b64ef615edbb3991)](https://www.codacy.com/gh/ContractAutomataProject/ContractAutomataLib/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ContractAutomataProject/ContractAutomataLib&amp;utm_campaign=Badge_Grade)
 [![Code Quality Score](https://api.codiga.io/project/32018/score/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.davidebasile/ContractAutomataLib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/davidebasile/ContractAutomataLib/0.0.1/)
-[![Maven Central Repository](https://img.shields.io/maven-central/v/io.github.davidebasile/ContractAutomataLib)](https://repo1.maven.org/maven2/io/github/davidebasile/ContractAutomataLib/0.0.1/)
-[![javadoc](https://javadoc.io/badge2/io.github.davidebasile/ContractAutomataLib/javadoc.svg)](https://javadoc.io/doc/io.github.davidebasile/ContractAutomataLib)
+[![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.contractautomataproject/catlib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/contractautomataproject/catlib/1.0.0/)
+[![Maven Central Repository](https://img.shields.io/maven-central/v/io.github.contractautomataproject/catlib)](https://repo1.maven.org/maven2/io/github/contractautomataproject/catlib/1.0.0/)
+[![javadoc](https://javadoc.io/badge2/io.github.contractautomataproject/catlib/javadoc.svg)](https://javadoc.io/doc/io.github.contractautomataproject/catlib)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 <!--[![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)-->
@@ -32,18 +32,18 @@ For  information on the usage and installation of the library, check the User Do
 
 For the API documentation, check the links below.
 
-This documentation is up-to date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280</a> of 23 April 2022.
+This documentation is up-to-date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280</a> of 23 April 2022.
 
 
 The following documentation has  been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
 <ul>
-  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>. A Navigable site visualizing the packages and class diagrams of the project.
+  <li> <a href="https://contractautomataproject.github.io/ContractAutomataLib/site/index.htm">Online documentation</a>. A navigable site visualizing the packages and class diagrams of the project.
 </li>
   <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a>. Contains all the diagrams of the project. </li>
-  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a>. Contains information on all classes and their members.</li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a>. Contains information on all classes and their members (similar to javadoc).</li>
 </ul> 
 
-The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html">https://javadoc.io/doc/io.github.contractautomata/ContractAutomataLib/latest/overview-summary.html</a>.
+The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomataproject/catlib">https://javadoc.io/doc/io.github.contractautomataproject/catlib</a>.
 
 
 

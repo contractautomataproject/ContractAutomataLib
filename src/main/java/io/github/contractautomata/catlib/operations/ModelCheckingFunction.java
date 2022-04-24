@@ -17,16 +17,16 @@ import java.util.stream.IntStream;
 
 /**
  * Class implementing the Model Checking Function. <br>
- * This is implemented by instantiating the <tt>CompositionFunction</tt> to the case where
+ * This is implemented by instantiating the <code>CompositionFunction</code> to the case where
  * two automata are composed: the first is a contract automaton, whilst the second is a generic
  * automaton describing a property. <br>
  * The output is a synchronous product between the contract automaton and the property. <br>
  *
  *     @param <S1> the generic type of the content of states
- *     @param <S> the generic type of states, must be a subtype of <tt>State&lt;S1&gt;</tt>
- *     @param <L> the generic type of the labels, must be a subtype of <tt>Label&lt;Action&gt;</tt>
- *     @param <T> the generic type of a transitions, must be a subtype of <tt>ModalTransition&lt;S1,Action,S,L&gt;</tt>
- *     @param <A> the generic type of the automata, must be a subtype of <tt>Automaton&lt;S1,Action,S,T &gt;</tt>
+ *     @param <S> the generic type of states, must be a subtype of <code>State&lt;S1&gt;</code>
+ *     @param <L> the generic type of the labels, must be a subtype of <code>Label&lt;Action&gt;</code>
+ *     @param <T> the generic type of a transitions, must be a subtype of <code>ModalTransition&lt;S1,Action,S,L&gt;</code>
+ *     @param <A> the generic type of the automata, must be a subtype of <code>Automaton&lt;S1,Action,S,T &gt;</code>
  *
  *
  * @author Davide Basile
@@ -39,9 +39,9 @@ public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action
 {
 	/**
 	 * The constructor of a model checking function.<br>
-	 * The match function of <tt>CompositionFunction</tt> is instantiated to match two labels with
+	 * The match function of <code>CompositionFunction</code> is instantiated to match two labels with
 	 * the same action content (in the style of a synchronous product). <br>
-	 * The pruning predicate of <tt>CompositionFunction</tt> is instantiated to prune labels of transitions
+	 * The pruning predicate of <code>CompositionFunction</code> is instantiated to prune labels of transitions
 	 * where the automaton is not synchronizing with the property (and vice-versa). <br>
 	 * The rank of the property must be 1. <br>
 	 *

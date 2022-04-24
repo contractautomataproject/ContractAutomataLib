@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 /**
  * Class implementing the projection function. <br>
- * This function takes as arguments an automaton  (of rank>1)  and an index, and returns the principal automaton (of rank 1)
+ * This function takes as arguments an automaton  (of rank greater than 1)  and an index, and returns the principal automaton (of rank 1)
  * at position index.  <br>
  * The projected automaton can store information, if needed, on the principals it was interacting with in the composition.  <br>
  * In this case, the projected actions are addressed actions. <br>

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Class implementing a label of a Contract Automaton, by extending the super class <tt>Label</tt>. <br>
+ * Class implementing a label of a Contract Automaton, by extending the super class <code>Label</code>. <br>
  * The content of each label is a list of actions. <br>
  * Contract automata labels can be of three types:<br>
  * <ul>

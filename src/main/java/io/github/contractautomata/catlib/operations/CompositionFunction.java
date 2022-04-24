@@ -1,14 +1,14 @@
 package io.github.contractautomata.catlib.operations;
 
-import io.github.contractautomata.catlib.automaton.label.action.Action;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.Ranked;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomata.catlib.automaton.state.AbstractState;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.operations.interfaces.TetraFunction;
 
 import java.util.*;
@@ -21,7 +21,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -49,10 +48,10 @@ import static java.util.stream.Collectors.*;
  *          </ul>
  *
  *     @param <S1> the generic type of the content of states
- *     @param <S> the generic type of states, must be a subtype of <tt>State&lt;S1&gt;</tt>
- *     @param <L> the generic type of the labels, must be a subtype of <tt>Label&lt;Action&gt;</tt>
- *     @param <T> the generic type of a transitions, must be a subtype of <tt>ModalTransition&lt;S1,Action,S,L&gt;</tt>
- *     @param <A> the generic type of the automata, must be a subtype of <tt>Automaton&lt;S1,Action,S,T &gt;</tt>
+ *     @param <S> the generic type of states, must be a subtype of <code>State&lt;S1&gt;</code>
+ *     @param <L> the generic type of the labels, must be a subtype of <code>Label&lt;Action&gt;</code>
+ *     @param <T> the generic type of a transitions, must be a subtype of <code>ModalTransition&lt;S1,Action,S,L&gt;</code>
+ *     @param <A> the generic type of the automata, must be a subtype of <code>Automaton&lt;S1,Action,S,T &gt;</code>
  *
  * @author Davide Basile
  */
@@ -80,7 +79,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	final class TIndex {//more readable than Entry
 		final T tra;
 		final Integer ind;
-		public TIndex(T tr, Integer i) {
+		TIndex(T tr, Integer i) {
 			this.tra=tr; //different principals may have equal transitions
 			this.ind=i;
 		}
@@ -114,7 +113,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		List<S> initial = aut.stream()
 				.flatMap(a -> a.getStates().stream())
 				.filter(AbstractState::isInitial)
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		initialState = createState.apply(flattenState(initial));
 		this.toVisit = new ConcurrentLinkedQueue<>(List.of(new AbstractMap.SimpleEntry<>(initial, 0)));

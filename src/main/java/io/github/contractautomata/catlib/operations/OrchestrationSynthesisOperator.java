@@ -11,9 +11,8 @@ import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
 /**
- * Class implementing the orchestration synthesis operator.
+ * Class implementing the orchestration synthesis operator.<br>
  *
- * Class implementing the most permissive controller synthesis operator.<br>
  *	The implemented algorithm is formally specified in Definition 3.2 and Theorem 5.4 of
  * <ul>
  *     <li>Basile, D., et al., 2020.

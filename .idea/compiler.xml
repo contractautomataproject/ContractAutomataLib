@@ -6,18 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CAT_App" />
         <module name="catlib" />
-        <module name="maze" />
-        <module name="CARE" />
-        <module name="TicTacToe" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="CARE_Example" target="11" />
-      <module name="CATLib" target="1.9" />
-      <module name="contractautomatalib" target="1.9" />
-      <module name="expRepScicoSI" target="1.9" />
-    </bytecodeTargetLevel>
   </component>
 </project>

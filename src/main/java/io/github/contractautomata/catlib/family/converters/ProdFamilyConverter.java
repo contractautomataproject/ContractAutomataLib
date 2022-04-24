@@ -24,7 +24,7 @@ import io.github.contractautomata.catlib.family.Feature;
 import io.github.contractautomata.catlib.family.Product;
 
 /**
- * Class implementing import/export from the <tt>.prod</tt> textual format.
+ * Class implementing import/export from the <code>.prod</code> textual format.
  * 
  * @author Davide Basile
  *

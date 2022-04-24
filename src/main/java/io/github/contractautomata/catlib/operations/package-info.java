@@ -1,18 +1,18 @@
 /**
  * This package groups the various operations that can be performed on automata. <br>
- * <tt>Projection</tt> is used to extract a principal automaton from a composed automaton. <br>
- * <tt>Relabeling</tt> is used to relabel the states of an automaton. <br>
- * <tt>Union</tt> is used to compute the union of different contract automata. <br>
- * The main operations are <tt>Composition</tt>, to compose automata, and <tt>Synthesis</tt>  <br>
+ * <code>Projection</code> is used to extract a principal automaton from a composed automaton. <br>
+ * <code>Relabeling</code> is used to relabel the states of an automaton. <br>
+ * <code>Union</code> is used to compute the union of different contract automata. <br>
+ * The main operations are <code>Composition</code>, to compose automata, and <code>Synthesis</code>  <br>
  * to refine an automaton to satisfy given predicates.<br>
  * These two classes are generics. <br>
- * <tt>MSCACompositionFunction</tt> instantiates the generic types to those used by a modal contract automaton. <br>
- * <tt>ModelCheckingFunction</tt> extends <tt>CompositionFunction</tt> to compose an automaton with a property. <br>
- * <tt>ModelCheckingSynthesisOperator</tt> is used to synthesise an automaton enforcing a given property, using <br>
+ * <code>MSCACompositionFunction</code> instantiates the generic types to those used by a modal contract automaton. <br>
+ * <code>ModelCheckingFunction</code> extends <code>CompositionFunction</code> to compose an automaton with a property. <br>
+ * <code>ModelCheckingSynthesisOperator</code> is used to synthesise an automaton enforcing a given property, using <br>
  * both model checking and synthesis. <br>
- * From this last class the <tt>MpcSynthesisOperator</tt>, <tt>OrchestrationSynthesisOperator</tt>, and <br>
- * <tt>ChoreographySynthesisOperator</tt> are derived. <br>
- * <tt>ProductOrchestrationSynthesisOperator</tt> further specialises the orchestration synthesis for a given configuration. <br>
+ * From this last class the <code>MpcSynthesisOperator</code>, <code>OrchestrationSynthesisOperator</code>, and <br>
+ * <code>ChoreographySynthesisOperator</code> are derived. <br>
+ * <code>ProductOrchestrationSynthesisOperator</code> further specialises the orchestration synthesis for a given configuration. <br>
  *
  * These operations are formally specified in:
  * <ul>
@@ -24,5 +24,8 @@
  *      (<a href="https://doi.org/10.23638/LMCS-16(2:9)2020">https://doi.org/10.23638/LMCS-16(2:9)2020</a>)</li>
  * </ul>
  *
+ * Class diagram of this package:<br>
+ *
+ * <img src="https://github.com/ContractAutomataProject/ContractAutomataLib/blob/gh-pages/doc/operations%20diagram.png?raw=true" alt="the class diagram">
  */
 package io.github.contractautomata.catlib.operations;

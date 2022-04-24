@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
  * Otherwise, the synthesis operation is applied on the result of the application of the model checking function. <br>
  *
  *     @param <S1> the generic type of the content of states
- *     @param <S> the generic type of states, must be a subtype of <tt>State&lt;S1&gt;</tt>
- *     @param <L> the generic type of the labels of the automaton to check, must be a subtype of <tt>L2</tt>
- *     @param <T> the generic type of the transitions of the automaton to check, must be a subtype of <tt>ModalTransition&lt;S1,Action,S,L&gt;</tt>
- *     @param <A> the generic type of the automaton to check, must be a subtype of <tt>Automaton&lt;S1,Action,S,T &gt;</tt>
-  *    @param <L2> the generic type of the labels of the property, must be a subtype of <tt>Label&lt;Action&gt;</tt>
-  *    @param <T2> the generic type of the transitions of the property, must be a subtype of <tt>ModalTransition&lt;S1,Action,S,L2&gt;</tt>
- *     @param <A2> the generic type of the automaton property, must be a subtype of <tt>Automaton&lt;S1,Action,S,T2 &gt;</tt>
+ *     @param <S> the generic type of states, must be a subtype of <code>State&lt;S1&gt;</code>
+ *     @param <L> the generic type of the labels of the automaton to check, must be a subtype of <code>L2</code>
+ *     @param <T> the generic type of the transitions of the automaton to check, must be a subtype of <code>ModalTransition&lt;S1,Action,S,L&gt;</code>
+ *     @param <A> the generic type of the automaton to check, must be a subtype of <code>Automaton&lt;S1,Action,S,T &gt;</code>
+  *    @param <L2> the generic type of the labels of the property, must be a subtype of <code>Label&lt;Action&gt;</code>
+  *    @param <T2> the generic type of the transitions of the property, must be a subtype of <code>ModalTransition&lt;S1,Action,S,L2&gt;</code>
+ *     @param <A2> the generic type of the automaton property, must be a subtype of <code>Automaton&lt;S1,Action,S,T2 &gt;</code>
  */
 public class ModelCheckingSynthesisOperator<S1,
 		S extends State<S1>,

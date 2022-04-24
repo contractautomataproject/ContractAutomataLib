@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * This class supports the conversion of an automaton into a textual format, with extension <tt>.data</tt>. <br>
+ * This class supports the conversion of an automaton into a textual format, with extension <code>.data</code>. <br>
  *
- * @param <L> the type of the label of the automaton to import, must extend <tt>Label&lg;Action&rg;</tt>
+ * @param <L> the type of the label of the automaton to import, must extend <code>Label&lt;Action&gt;</code>
  *
  * @author Davide Basile
  */
@@ -219,7 +219,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	/**
-	 * Store the automaton passed as argument in a <tt>.data</tt> format.
+	 * Store the automaton passed as argument in a <code>.data</code> format.
 	 *
 	 * @param filename  the name of the file to store
 	 * @param aut  the automaton to store
