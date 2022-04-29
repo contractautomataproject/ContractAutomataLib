@@ -1,0 +1,15 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:1", "", "operations", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA76.htm", "175.png", "39", "0", "", "Logical diagram0","{EAE37040-4695-477c-9107-3C155B4C72EA}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:2", "", "ChoreographySynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA79.htm", "5.png", "E531", "0", "", "Class0","{8A318D3A-F9CA-4fcd-90ED-C9B993CA30CB}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:3", "", "CompositionFunction", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA80.htm", "5.png", "E533", "0", "", "Class0","{2D8FA252-8B6F-428d-B8BD-138DEC8D0026}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:4", "", "ModelCheckingFunction", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA82.htm", "5.png", "E538", "0", "", "Class0","{A67A43EF-0627-4181-8BF8-D54DA2E2E0AD}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:5", "", "ModelCheckingSynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA83.htm", "5.png", "E539", "0", "", "Class0","{CA34C0F0-8B0D-41eb-87C5-9A862D7A3055}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:6", "", "MpcSynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA84.htm", "5.png", "E540", "0", "", "Class0","{90A5422B-20C7-4b2f-A228-42782F1EB2C3}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:7", "", "MSCACompositionFunction", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA85.htm", "5.png", "E541", "0", "", "Class0","{2529C7E8-BE6B-47e2-8AB5-486314BD842A}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:8", "", "OrchestrationSynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA86.htm", "5.png", "E542", "0", "", "Class0","{77E25CF1-EAA0-4881-9B05-546D089C309C}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:9", "", "ProductOrchestrationSynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA87.htm", "5.png", "E543", "0", "", "Class0","{207A9398-617D-472a-9370-F38AD5BC886B}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:10", "", "ProjectionFunction", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA88.htm", "5.png", "E544", "0", "", "Class0","{9F78FDAD-2E30-4892-85E5-11FBC31C42D8}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:11", "", "RelabelingOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA89.htm", "5.png", "E545", "0", "", "Class0","{4CC13471-481F-447e-BDF5-FD107ABC6253}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:12", "", "SynthesisOperator", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA90.htm", "5.png", "E546", "0", "", "Class0","{AD4D58DB-169D-4271-88EA-419328F86BE3}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:13", "", "UnionFunction", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA91.htm", "5.png", "E547", "0", "", "Class0","{9E1D13B6-A008-4905-933F-8E0065FCD9CD}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4:14", "", "TIndex", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA92.htm", "5.png", "E532", "E533", "", "Class0","{1FDD241E-B180-4987-BBC3-E3789730C0AE}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1.1.4.1", "1", "interfaces", "EARoot/EA1/EA1/EA1/EA1/EA1/EA1/EA4/EA1/EA95.htm", "4.png", "", "", "{4058872D-02D7-4655-901A-3A000E806D68}", "Package");

@@ -1,0 +1,684 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>operations::ChoreographySynthesisOperator</title>
+<link href="../../../../../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="pageHeader"></div>
+<div class="PageBody">
+	<div id="name_classifier" style="display: none;"></div>
+	<span class="ObjectTitle"><script type="text/javascript">document.write(nameClassifier("ChoreographySynthesisOperator", " : "))</script>  : Public   Class</span>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">4/23/2022 5:47:30 PM</td>
+		</tr>
+		<tr>
+			<td class="ObjectDetailsTopic">Modified:</td>
+			<td class="ObjectDetailsValue">4/23/2022 5:47:30 PM</td>
+		</tr>
+		<tr style="height: 10px"><td colspan="2"></td></tr>
+		<tr>
+			<td class="ObjectDetailsTopic"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td class="ObjectDetailsValue">Davide Basile</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr id="proj02" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Phase:</td>
+			<td class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr id="proj03" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Status:</td>
+			<td class="ObjectDetailsValue">Proposed</td>
+		</tr>
+		<tr id="proj04" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Complexity:</td>
+			<td class="ObjectDetailsValue">Easy</td>
+		</tr>
+		<tr id="proj05" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Difficulty:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj06" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Priority:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj05" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Multiplicity:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr>
+			<td class="ObjectDetailsTopic"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">UUID:</td>
+			<td class="ObjectDetailsValue">{8A318D3A-F9CA-4fcd-90ED-C9B993CA30CB}</td>
+		</tr>
+		<tr id="adv01" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Appears In:</td>
+			<td class="ObjectDetailsValue"><a href="EA74.htm">operations</a></td>
+		</tr>
+	</table>
+	<div class="ObjectDetailsNotes">Class implementing the Choreography Synthesis. The implemented algorithm is formally specified in Definition 4.4&#160;&#160;and Theorem 5.5 of &lt;br/&gt;&lt;ul&gt;<br />&lt;li&gt;Basile, D., et al., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29. (&lt;a href=&quot;file://https://doi.org/10.23638/LMCS-16(2:9)2020&quot;&gt;https://doi.org/10.23638/LMCS-16(2:9)2020&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt;&#160;&#160;&lt;br/&gt;@param #lt;S1#gt; the type of the content of states&lt;br/&gt;&lt;br/&gt;</div>
+
+	<div class="TableGroup" id="TableGroup">
+		<ul class="ItemTitle">
+			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
+			<li onClick="parent.toggleItem('Operations');" id="OperationsTitle">Operations</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
+			<li onClick="parent.toggleItem('Links');" id="LinksTitle">Other Links</li>
+		</ul>
+<div class="ItemBody" id="AttributesTable">
+	<table border="0" cellspacing="0" cellpadding="0" class="Table">
+		<tr>
+			<td width="100%" class="TableHeading">Attribute</td>
+		</tr>
+						<tr>
+				<td width="100%" class="TableRow">
+					<i>Private Function&lt;Stream&lt;ModalTransition&lt;S1, Action,State&lt;S1&gt;,CALabel&gt;&gt;,Optional&lt;ModalTransition&lt;S1,Action,State&lt;S1&gt;,CALabel&gt;&gt;&gt;</i><br /><strong>&nbsp;&nbsp;choice</strong>
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">										
+					<a href="#" onclick="parent.toggleData('DetailsImageAttributes225')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="DetailsImageAttributes225" border="0" />Details:</a>
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+					
+						<tr id="DetailsImageAttributes225_00" style="display: none;">
+							<td width="75"><i>Alias:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes225_01" style="display: none;">
+							<td width="75"><i>Initial:</i></td>
+							<td>Stream::findAny</td>
+						</tr>
+						<tr id="DetailsImageAttributes225_02" style="display: none;">
+							<td width="75"><i>Stereotype: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes225_03" style="display: none;">
+							<td width="75"><i>Ordered: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes225_04" style="display: none;">
+							<td width="75"><i>Range: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes225_05" style="display: none;">
+							<td width="75"><i>Transient: </i></td>
+							<td>False</td>
+						</tr>
+						<tr id="DetailsImageAttributes225_06" style="display: none;">
+							<td width="75"><i>Derived: </i></td>
+							<td>False</td>
+						</tr>
+							<tr id="DetailsImageAttributes225_07" style="display: none;">
+							<td width="75"><i>IsID: </i></td>
+						<td>False</td>
+						</tr>
+					</table>
+					
+					
+						&nbsp;
+						
+				</td>
+			</tr>			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private const Predicate&lt;CALabel&gt;</i><br /><strong>&nbsp;&nbsp;req</strong>
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">										
+					<a href="#" onclick="parent.toggleData('DetailsImageAttributes226')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="DetailsImageAttributes226" border="0" />Details:</a>
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+					
+						<tr id="DetailsImageAttributes226_00" style="display: none;">
+							<td width="75"><i>Alias:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes226_01" style="display: none;">
+							<td width="75"><i>Initial:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes226_02" style="display: none;">
+							<td width="75"><i>Stereotype: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes226_03" style="display: none;">
+							<td width="75"><i>Ordered: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes226_04" style="display: none;">
+							<td width="75"><i>Range: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes226_05" style="display: none;">
+							<td width="75"><i>Transient: </i></td>
+							<td>False</td>
+						</tr>
+						<tr id="DetailsImageAttributes226_06" style="display: none;">
+							<td width="75"><i>Derived: </i></td>
+							<td>False</td>
+						</tr>
+							<tr id="DetailsImageAttributes226_07" style="display: none;">
+							<td width="75"><i>IsID: </i></td>
+						<td>False</td>
+						</tr>
+					</table>
+					
+					
+						&nbsp;
+						
+				</td>
+			</tr>
+	</table>
+</div>
+<div class="ItemBody" id="OperationsTable">
+	<table border="0" cellspacing="0" cellpadding="0" class="Table">
+		<tr>
+			<td width="100%" class="TableHeading">Operation</td>
+		</tr>
+						<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>apply</strong>(					<a href="#" onclick="parent.toggleData('param{68438741-D861-49a3-B7C5-BE920CFEA2F1}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{68438741-D861-49a3-B7C5-BE920CFEA2F1}" border="0" />arg: Automaton&lt;S1, Action, State&lt;S1&gt;, ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{68438741-D861-49a3-B7C5-BE920CFEA2F1}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{68438741-D861-49a3-B7C5-BE920CFEA2F1}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{68438741-D861-49a3-B7C5-BE920CFEA2F1}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{68438741-D861-49a3-B7C5-BE920CFEA2F1}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the plant automaton to which the synthesis is performed</div>
+</td>
+						</tr>
+					</table>
+):Automaton&lt;S1,Action,State&lt;S1&gt;,ModalTransition&lt;S1,Action,State&lt;S1&gt;,CALabel&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations227" onclick="parent.toggleDiv('detailsDIVOperations227','DetailsImageOperations227')" />Details:
+						<div id="detailsDIVOperations227" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i>Tags:</i><span style="margin-left: .7cm;"> </span></td>
+							<td>annotations=@Override<br/></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Applies the choreography synthesis operator to aut &lt;br/&gt;@return the synthesised choreography, removing only one transition violating the branching condition each time no further updates are possible. The transition to remove is chosen non-deterministically in case a specific strategy was not provided in the constructor.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>ChoreographySynthesisOperator</strong>(					<a href="#" onclick="parent.toggleData('param{089094B9-6A74-427d-B85B-A32FF52CD116}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{089094B9-6A74-427d-B85B-A32FF52CD116}" border="0" />req: Predicate&lt;CALabel&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{089094B9-6A74-427d-B85B-A32FF52CD116}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{089094B9-6A74-427d-B85B-A32FF52CD116}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{089094B9-6A74-427d-B85B-A32FF52CD116}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{089094B9-6A74-427d-B85B-A32FF52CD116}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the invariant requirement to be enforced on labels.</div>
+</td>
+						</tr>
+					</table>
+):
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations228" onclick="parent.toggleDiv('detailsDIVOperations228','DetailsImageOperations228')" />Details:
+						<div id="detailsDIVOperations228" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Constructor for the choreography synthesis operator enforcing the requirement req. &lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>ChoreographySynthesisOperator</strong>(					<a href="#" onclick="parent.toggleData('param{87443178-E262-46f9-9647-D012A7FE46A0}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{87443178-E262-46f9-9647-D012A7FE46A0}" border="0" />req: Predicate&lt;CALabel&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{87443178-E262-46f9-9647-D012A7FE46A0}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{87443178-E262-46f9-9647-D012A7FE46A0}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{87443178-E262-46f9-9647-D012A7FE46A0}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{87443178-E262-46f9-9647-D012A7FE46A0}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the invariant requirement to be enforced on labels</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}" border="0" />prop: Automaton&lt;S1, Action, State&lt;S1&gt;, ModalTransition&lt;S1, Action, State&lt;S1&gt;, Label&lt;Action&gt;&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{52252A54-58F1-4223-9E6B-9A75CF85ACEF}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the property automaton to be enforced</div>
+</td>
+						</tr>
+					</table>
+):
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations229" onclick="parent.toggleDiv('detailsDIVOperations229','DetailsImageOperations229')" />Details:
+						<div id="detailsDIVOperations229" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Constructor for the choreography synthesis operator enforcing the requirement req and property prop. &lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>ChoreographySynthesisOperator</strong>(					<a href="#" onclick="parent.toggleData('param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}" border="0" />req: Predicate&lt;CALabel&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{8BFA98F7-F3ED-4bf8-8010-CDA3E0F27D5E}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the invariant requirement to be enforced on labels</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}" border="0" />choice: Function&lt;Stream&lt;ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;&gt;, <br />				Optional&lt;ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{6E365FDA-22B1-4163-A637-6F8D3E01E01A}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the strategy for selecting a transition (not satisfying the branching condition) to be pruned</div>
+</td>
+						</tr>
+					</table>
+):
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations230" onclick="parent.toggleDiv('detailsDIVOperations230','DetailsImageOperations230')" />Details:
+						<div id="detailsDIVOperations230" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Constructor for the choreography synthesis operator enforcing the requirement req. #lt;br#gt; This constructor also takes in input a strategy for resolving the choice when pruning a transition not satisfying the branching condition. &lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private static</i><br />
+					<strong>isUncontrollableChoreography</strong>(					<a href="#" onclick="parent.toggleData('param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}" border="0" />tra: ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{0BDA1592-FD7F-4c94-9C8B-61B8AA9CFB2B}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{69703143-2209-4813-8896-A1E3734890AA}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{69703143-2209-4813-8896-A1E3734890AA}" border="0" />str: Set&lt;? extends ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{69703143-2209-4813-8896-A1E3734890AA}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{69703143-2209-4813-8896-A1E3734890AA}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{69703143-2209-4813-8896-A1E3734890AA}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{69703143-2209-4813-8896-A1E3734890AA}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}" border="0" />badStates: Set&lt;State&lt;S1&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{68CABFFE-2BFA-432c-AAB5-BD1B2802C15C}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+):boolean
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations231" onclick="parent.toggleDiv('detailsDIVOperations231','DetailsImageOperations231')" />Details:
+						<div id="detailsDIVOperations231" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i>Tags:</i><span style="margin-left: .7cm;"> </span></td>
+							<td>generic=<S1><br/></td>
+						</tr>
+					</table>
+					
+					
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>satisfiesBranchingCondition</strong>(					<a href="#" onclick="parent.toggleData('param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}" border="0" />tra: ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{1FF58275-BE82-4753-BEF3-4E2B0D385C57}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the transition to check</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}" border="0" />trans: Set&lt;ModalTransition&lt;S1, Action, State&lt;S1&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{9F9681A7-7D26-46f2-A489-A5A6062D90C4}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the set of transitions to check against tra</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../images/plus03.gif" align="absmiddle" id="param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}" border="0" />bad: Set&lt;State&lt;S1&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{6980690C-C83A-4fe6-97EF-85CD1B5B8E67}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the set of bad (dangling) states to check</div>
+</td>
+						</tr>
+					</table>
+):boolean
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations232" onclick="parent.toggleDiv('detailsDIVOperations232','DetailsImageOperations232')" />Details:
+						<div id="detailsDIVOperations232" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Return true if the set of transitions and bad states violate the branching condition.&#160;&#160;The requirements for ensuring that the synthesised automaton is a (form of) choreography roughly&#160;&#160;amount to the so-called branching condition requiring that principals perform their offers/outputs independently of the other principals in the composition.&#160;&#160;See Definition 4.1 in&lt;br/&gt;&lt;ul&gt;<br />&lt;li&gt;Basile, D., et al., 2020. Synthesis of Orchestrations and Choreographies: Bridging the Gap between Supervisory Control and Coordination of Services. Logical Methods in Computer Science, vol. 16(2), pp. 9:1 - 9:29. (&lt;a href=&quot;file://https://doi.org/10.23638/LMCS-16(2:9)2020&quot;&gt;https://doi.org/10.23638/LMCS-16(2:9)2020&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt; &lt;br/&gt;@return true if the set of transitions and bad states violate the branching condition&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+
+		</table>
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>		<div class="ItemBody" id="LinksTable">
+			<table align="center" border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Object</td>
+					<td width="10%" class="TableHeading">Type</td>
+					<td width="10%" class="TableHeading">Connection</td>
+					<td width="10%" class="TableHeading">Direction</td>
+					<td width="40%" class="TableHeading">Notes</td>
+				</tr>
+				<tr>
+					<td width="30%" class="TableRow" valign="top"><a href="EA81.htm">ModelCheckingSynthesisOperator</a></td>
+					<td width="10%" class="TableRow" valign="top">Class</td>
+					<td width="10%" class="TableRow" valign="top">Generalization</td>
+					<td width="10%" class="TableRow" valign="top">To</td>
+					<td width="40%" class="TableRow" valign="top">&nbsp;</td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+<div class="pageFooter"></div>
+ 
+</body>
+</html>

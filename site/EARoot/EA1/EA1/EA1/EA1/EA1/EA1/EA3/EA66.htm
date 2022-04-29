@@ -1,0 +1,878 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>family::FMCA</title>
+<link href="../../../../../../../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="pageHeader"></div>
+<div class="PageBody">
+	<div id="name_classifier" style="display: none;"></div>
+	<span class="ObjectTitle"><script type="text/javascript">document.write(nameClassifier("FMCA", " : "))</script>  : Public   Class</span>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">4/23/2022 5:47:29 PM</td>
+		</tr>
+		<tr>
+			<td class="ObjectDetailsTopic">Modified:</td>
+			<td class="ObjectDetailsValue">4/23/2022 5:47:29 PM</td>
+		</tr>
+		<tr style="height: 10px"><td colspan="2"></td></tr>
+		<tr>
+			<td class="ObjectDetailsTopic"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td class="ObjectDetailsValue">Davide Basile</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr id="proj02" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Phase:</td>
+			<td class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr id="proj03" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Status:</td>
+			<td class="ObjectDetailsValue">Proposed</td>
+		</tr>
+		<tr id="proj04" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Complexity:</td>
+			<td class="ObjectDetailsValue">Easy</td>
+		</tr>
+		<tr id="proj05" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Difficulty:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj06" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Priority:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="proj05" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Multiplicity:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr>
+			<td class="ObjectDetailsTopic"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td class="ObjectDetailsValue"></td>
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">UUID:</td>
+			<td class="ObjectDetailsValue">{F5422B40-4F84-4ac0-9FE0-C851674C7C8D}</td>
+		</tr>
+		<tr id="adv01" style="display: none;">
+			<td class="ObjectDetailsTopic" style="padding-left: 18px;">Appears In:</td>
+			<td class="ObjectDetailsValue"><a href="EA60.htm">family</a></td>
+		</tr>
+	</table>
+	<div class="ObjectDetailsNotes">Class implementing a Featured Modal Contract Automaton (FMCA). #lt;br#gt; An FMCA pairs a modal contract automaton with a family, and provides operations on this pair. #lt;br#gt;&#160;&#160;FMCA and their operations have been introduced in: #lt;br#gt; &lt;br/&gt;&lt;ul&gt;<br />&lt;li&gt;Basile, D. et al., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344. (&lt;a href=&quot;file://https://doi.org/10.1016/j.scico.2019.102344&quot;&gt;https://doi.org/10.1016/j.scico.2019.102344&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt; &lt;br/&gt;&lt;br/&gt;</div>
+
+	<div class="TableGroup" id="TableGroup">
+		<ul class="ItemTitle">
+			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
+			<li onClick="parent.toggleItem('Operations');" id="OperationsTitle">Operations</li>
+			<li onClick="parent.toggleItem('AssociationsTo');" id="AssociationsToTitle">Associations To</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
+		</ul>
+<div class="ItemBody" id="AttributesTable">
+	<table border="0" cellspacing="0" cellpadding="0" class="Table">
+		<tr>
+			<td width="100%" class="TableHeading">Attribute</td>
+		</tr>
+						<tr>
+				<td width="100%" class="TableRow">
+					<i>Private const Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String,Action,State&lt;String&gt;, CALabel&gt;&gt;</i><br /><strong>&nbsp;&nbsp;aut</strong>
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">										
+					<a href="#" onclick="parent.toggleData('DetailsImageAttributes173')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="DetailsImageAttributes173" border="0" />Details:</a>
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+					
+						<tr id="DetailsImageAttributes173_00" style="display: none;">
+							<td width="75"><i>Alias:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes173_01" style="display: none;">
+							<td width="75"><i>Initial:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes173_02" style="display: none;">
+							<td width="75"><i>Stereotype: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes173_03" style="display: none;">
+							<td width="75"><i>Ordered: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes173_04" style="display: none;">
+							<td width="75"><i>Range: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes173_05" style="display: none;">
+							<td width="75"><i>Transient: </i></td>
+							<td>False</td>
+						</tr>
+						<tr id="DetailsImageAttributes173_06" style="display: none;">
+							<td width="75"><i>Derived: </i></td>
+							<td>False</td>
+						</tr>
+							<tr id="DetailsImageAttributes173_07" style="display: none;">
+							<td width="75"><i>IsID: </i></td>
+						<td>False</td>
+						</tr>
+					</table>
+					
+					
+						<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			the modal contract automaton.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						
+				</td>
+			</tr>			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private const <a href="EA64.htm">Family</a></i><br /><strong>&nbsp;&nbsp;family</strong>
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">										
+					<a href="#" onclick="parent.toggleData('DetailsImageAttributes174')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="DetailsImageAttributes174" border="0" />Details:</a>
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+					
+						<tr id="DetailsImageAttributes174_00" style="display: none;">
+							<td width="75"><i>Alias:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes174_01" style="display: none;">
+							<td width="75"><i>Initial:</i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes174_02" style="display: none;">
+							<td width="75"><i>Stereotype: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes174_03" style="display: none;">
+							<td width="75"><i>Ordered: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes174_04" style="display: none;">
+							<td width="75"><i>Range: </i></td>
+							<td></td>
+						</tr>
+						<tr id="DetailsImageAttributes174_05" style="display: none;">
+							<td width="75"><i>Transient: </i></td>
+							<td>False</td>
+						</tr>
+						<tr id="DetailsImageAttributes174_06" style="display: none;">
+							<td width="75"><i>Derived: </i></td>
+							<td>False</td>
+						</tr>
+							<tr id="DetailsImageAttributes174_07" style="display: none;">
+							<td width="75"><i>IsID: </i></td>
+						<td>False</td>
+						</tr>
+					</table>
+					
+					
+						<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			the family.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						
+				</td>
+			</tr>
+	</table>
+</div>
+<div class="ItemBody" id="OperationsTable">
+	<table border="0" cellspacing="0" cellpadding="0" class="Table">
+		<tr>
+			<td width="100%" class="TableHeading">Operation</td>
+		</tr>
+						<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>FMCA</strong>(					<a href="#" onclick="parent.toggleData('param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}" border="0" />aut: Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String, Action, State&lt;String&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{E0C4BA80-E797-4fbb-BC6E-7B95B1E04B82}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the automaton (must be non-null).</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}" border="0" />family: <a href="EA64.htm">Family</a></a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{77E77894-A1CE-49a1-91B3-FAF75B0C6C43}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the family (must be non-null).</div>
+</td>
+						</tr>
+					</table>
+):
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations175" onclick="parent.toggleDiv('detailsDIVOperations175','DetailsImageOperations175')" />Details:
+						<div id="detailsDIVOperations175" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Constructor for an FMCA from an automaton and a family.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>FMCA</strong>(					<a href="#" onclick="parent.toggleData('param{903B8143-B4E2-4e33-83A4-023CFC4AF848}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{903B8143-B4E2-4e33-83A4-023CFC4AF848}" border="0" />aut: Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String, Action, State&lt;String&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{903B8143-B4E2-4e33-83A4-023CFC4AF848}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{903B8143-B4E2-4e33-83A4-023CFC4AF848}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{903B8143-B4E2-4e33-83A4-023CFC4AF848}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{903B8143-B4E2-4e33-83A4-023CFC4AF848}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the automaton</div>
+</td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{922B875D-DB4A-4482-90FC-313E338B1E99}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{922B875D-DB4A-4482-90FC-313E338B1E99}" border="0" />products: Set&lt;Product&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{922B875D-DB4A-4482-90FC-313E338B1E99}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{922B875D-DB4A-4482-90FC-313E338B1E99}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{922B875D-DB4A-4482-90FC-313E338B1E99}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{922B875D-DB4A-4482-90FC-313E338B1E99}03" style="display: none;">
+							<td width="50"></td>
+							<td><div class="ObjectDetailsNotes">the set of products</div>
+</td>
+						</tr>
+					</table>
+):
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations176" onclick="parent.toggleDiv('detailsDIVOperations176','DetailsImageOperations176')" />Details:
+						<div id="detailsDIVOperations176" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			This constructor instantiates the family of products by performing a pre-processing, to polish the set of products prod given as argument. #lt;br#gt; Firstly, all features that are not labels of the given automaton are removed from the products. #lt;br#gt; After that, redundant products are removed (those requiring features present in aut but not in its orchestration in agreement). #lt;br#gt; &lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getAut</strong>():Automaton&lt;String,Action,State&lt;String&gt;,ModalTransition&lt;String,Action,State&lt;String&gt;,CALabel&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations177" onclick="parent.toggleDiv('detailsDIVOperations177','DetailsImageOperations177')" />Details:
+						<div id="detailsDIVOperations177" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Getter of the automaton.&lt;br/&gt;@return the automaton.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getCanonicalProducts</strong>():Map&lt;Product,Automaton&lt;String,Action,State&lt;String&gt;,ModalTransition&lt;String,Action,State&lt;String&gt;,CALabel&gt;&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations178" onclick="parent.toggleDiv('detailsDIVOperations178','DetailsImageOperations178')" />Details:
+						<div id="detailsDIVOperations178" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Returns the canonical products of this FMCA. #lt;br#gt; A canonical product represents all the maximal elements in the FMCA that have the same set of forbidden actions. #lt;br#gt; It is required that the automaton does not contain transitions labelled with &quot;dummy&quot; (these labels are generated when computing the union of a set of automata). #lt;br#gt; &lt;br/&gt;@return&#160;&#160;the canonical products of this FMCA.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getFamily</strong>():<a href="EA64.htm">Family</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations179" onclick="parent.toggleDiv('detailsDIVOperations179','DetailsImageOperations179')" />Details:
+						<div id="detailsDIVOperations179" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Getter of the family.&lt;br/&gt;@return the family.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getOrchestrationOfFamily</strong>():Automaton&lt;String,Action,State&lt;String&gt;,ModalTransition&lt;String,Action,State&lt;String&gt;,CALabel&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations180" onclick="parent.toggleDiv('detailsDIVOperations180','DetailsImageOperations180')" />Details:
+						<div id="detailsDIVOperations180" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Returns the orchestration of the family as the union of orchestrations of canonical products. #lt;br#gt; &lt;br/&gt;@return the orchestration of the family as the union of orchestrations of canonical products.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getOrchestrationOfFamilyEnumerative</strong>():Automaton&lt;String,Action,State&lt;String&gt;,ModalTransition&lt;String,Action,State&lt;String&gt;,CALabel&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations181" onclick="parent.toggleDiv('detailsDIVOperations181','DetailsImageOperations181')" />Details:
+						<div id="detailsDIVOperations181" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Returns the orchestration of the family as the union of orchestrations of total products. &lt;br/&gt;@return the orchestration of the family as the union of orchestrations of total products&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>getTotalProductsWithNonemptyOrchestration</strong>():Map&lt;Product,Automaton&lt;String,Action,State&lt;String&gt;,ModalTransition&lt;String,Action,State&lt;String&gt;,CALabel&gt;&gt;&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations182" onclick="parent.toggleDiv('detailsDIVOperations182','DetailsImageOperations182')" />Details:
+						<div id="detailsDIVOperations182" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Returns a map pairing a product with its non-empty orchestration in agreement.&lt;br/&gt;@return a map pairing a product with its non-empty orchestration in agreement.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>productsRespectingValidity</strong>():Set&lt;Product&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations183" onclick="parent.toggleDiv('detailsDIVOperations183','DetailsImageOperations183')" />Details:
+						<div id="detailsDIVOperations183" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			Returns the set of products respecting validity. #lt;br#gt; A product p is respecting validity iff all the mandatory actions in p correspond to executable transitions in the automaton and no action forbidden in p have executable counterparts in the automaton.&#160;&#160;#lt;br#gt; This method exploits the partial order so it starts from maximal products. &lt;br/&gt;@return the set of products respecting validity&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private</i><br />
+					<strong>productsRespectingValidity</strong>(					<a href="#" onclick="parent.toggleData('param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}" border="0" />a: Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String, Action, State&lt;String&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{D72AB7B5-EF6B-4e6f-B69B-727911FCB575}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+):Set&lt;Product&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations184" onclick="parent.toggleDiv('detailsDIVOperations184','DetailsImageOperations184')" />Details:
+						<div id="detailsDIVOperations184" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Public</i><br />
+					<strong>productsWithNonEmptyOrchestration</strong>():Set&lt;Product&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations185" onclick="parent.toggleDiv('detailsDIVOperations185','DetailsImageOperations185')" />Details:
+						<div id="detailsDIVOperations185" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					<div class="ObjectDetailsNotes"><table>
+	<tr>
+		<td valign="top">
+			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
+		</td>
+		<td>
+			The set of products with non-empty orchestration in agreement. &lt;br/&gt;@return the set of products with non-empty orchestration in agreement.&lt;br/&gt;
+		</td>
+	</tr>
+</table></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private</i><br />
+					<strong>productsWithNonEmptyOrchestration</strong>(					<a href="#" onclick="parent.toggleData('param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}" border="0" />aut: Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String, Action, State&lt;String&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{19BAD9CA-BC91-49d3-BF8B-D6389247ABC4}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+):Set&lt;Product&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations186" onclick="parent.toggleDiv('detailsDIVOperations186','DetailsImageOperations186')" />Details:
+						<div id="detailsDIVOperations186" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" class="TableRow">
+					<i>Private</i><br />
+					<strong>selectProductsSatisfyingPredicateUsingPO</strong>(					<a href="#" onclick="parent.toggleData('param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}" border="0" />a: Automaton&lt;String, Action, State&lt;String&gt;, ModalTransition&lt;String, Action, State&lt;String&gt;, CALabel&gt;&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{8BA55408-5221-49aa-8CCC-68DA9F5034A0}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+					<a href="#" onclick="parent.toggleData('param{C196455D-8346-4376-976E-05E1EE0868B5}')" style="text-decoration: none; color: #000000;"><img src="../../../../../../../../images/plus03.gif" align="absmiddle" id="param{C196455D-8346-4376-976E-05E1EE0868B5}" border="0" />pred: Predicate&lt;Product&gt;</a>, 
+					<table border="0" cellspacing="0" cellpadding="0" class="Table" style="padding: 4px 18px;">
+						<tr id="param{C196455D-8346-4376-976E-05E1EE0868B5}00" style="display: none;">
+							<td width="50"><strong>Default:</strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{C196455D-8346-4376-976E-05E1EE0868B5}01" style="display: none;">
+							<td width="50"><strong>Kind:</strong></td>
+							<td>in</td>
+						</tr>
+						<tr id="param{C196455D-8346-4376-976E-05E1EE0868B5}02" style="display: none;">
+							<td width="50"><strong>Stereotype: </strong></td>
+							<td></td>
+						</tr>
+						<tr id="param{C196455D-8346-4376-976E-05E1EE0868B5}03" style="display: none;">
+							<td width="50"></td>
+							<td></td>
+						</tr>
+					</table>
+):Set&lt;Product&gt;
+				</td>
+			</tr>
+			<tr>
+				<td class="TableRowBottomDashed"  colspan="1">
+					<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageOperations187" onclick="parent.toggleDiv('detailsDIVOperations187','DetailsImageOperations187')" />Details:
+						<div id="detailsDIVOperations187" class="DetailsDiv" >
+					<i>Sequential  </i>
+					<table>
+						<tr>
+							<td valign = "top"><i></i><span style="margin-left: .7cm;"> </span></td>
+							<td></td>
+						</tr>
+					</table>
+					
+					
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+
+		</table>
+</div>		<div class="ItemBody" id="AssociationsToTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="40%" class="TableHeading">Element</td>
+					<td width="30%" class="TableHeading">Source Role</td>
+					<td width="30%" class="TableHeading">Target Role</td>
+				</tr>
+				<tr>
+					<td width="40%" class="TableRow" valign="top">
+						<a href="../EA1/EA20.htm">Automaton</a><br />
+						Class &nbsp;
+					</td>
+					<td width="30%" class="TableRow" valign="top">
+						<strong>Name:</strong> &nbsp;<br />
+						&nbsp;
+					</td>
+					<td width="30%" class="TableRow" valign="top">
+						<strong>Name:</strong> aut<br />
+						&nbsp;	
+					</td>
+				</tr>
+				<tr>
+					<td class="TableRowBottomDashed"  colspan="3">
+						<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageLink188" onclick="parent.toggleDiv('detailsDIVLink188','DetailsImageLink188')" />Details:
+							<div id="detailsDIVLink188" class="DetailsDiv" >
+							&nbsp;
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td width="40%" class="TableRow" valign="top">
+						<a href="EA64.htm">Family</a><br />
+						Class &nbsp;
+					</td>
+					<td width="30%" class="TableRow" valign="top">
+						<strong>Name:</strong> &nbsp;<br />
+						&nbsp;
+					</td>
+					<td width="30%" class="TableRow" valign="top">
+						<strong>Name:</strong> family<br />
+						&nbsp;	
+					</td>
+				</tr>
+				<tr>
+					<td class="TableRowBottomDashed"  colspan="3">
+						<div class="DetailsDivParent"><img src="../../../../../../../../images/minus03.gif" align="absmiddle" id="DetailsImageLink189" onclick="parent.toggleDiv('detailsDIVLink189','DetailsImageLink189')" />Details:
+							<div id="detailsDIVLink189" class="DetailsDiv" >
+							&nbsp;
+							</div>
+						</div>
+					</td>
+				</tr>
+
+			</table>
+		</div>
+		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>	</div>
+<div class="pageFooter"></div>
+ 
+</body>
+</html>
