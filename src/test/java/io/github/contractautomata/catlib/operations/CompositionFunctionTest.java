@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(MockitoJUnitRunner.Strict.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CompositionFunctionTest {
 
     @Mock BasicState<String> bs0;
