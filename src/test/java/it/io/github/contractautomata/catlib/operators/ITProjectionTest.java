@@ -42,7 +42,7 @@ public class ITProjectionTest {
 				.mapToObj(i->new ProjectionFunction<String>(true).apply(aut,i, t->t.getLabel().getOfferer()))
 				.collect(Collectors.toList());
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> closed_aut = new MSCACompositionFunction<>(principals,new StrongAgreement().negate()).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> closed_aut = new MSCACompositionFunction<>(principals,t->!t.getLabel().isMatch()).apply(100);
 
 		bdc.exportMSCA(dir+"testcor_concur21_Example34_closureCA.data", closed_aut);
 
@@ -65,7 +65,7 @@ public class ITProjectionTest {
 						.collect(Collectors.toList());
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> closed_aut =
-				new MSCACompositionFunction<>(principals,new StrongAgreement().negate()).apply(100);
+				new MSCACompositionFunction<>(principals,t->!t.getLabel().isMatch()).apply(100);
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test =
 				bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");
@@ -85,7 +85,7 @@ public class ITProjectionTest {
 						.collect(Collectors.toList());
 
 		final Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> intermediate =
-				new MSCACompositionFunction<>(principals,new StrongAgreement().negate()).apply(100);
+				new MSCACompositionFunction<>(principals,t->!t.getLabel().isMatch()).apply(100);
 
 
 		principals = IntStream.range(0,intermediate.getRank())
@@ -94,7 +94,7 @@ public class ITProjectionTest {
 						.collect(Collectors.toList());
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> closed_aut =
-				new MSCACompositionFunction<>(principals,new StrongAgreement().negate()).apply(100);
+				new MSCACompositionFunction<>(principals,t->!t.getLabel().isMatch()).apply(100);
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test =
 				bdc.importMSCA(dir+"testcor_concur21_Example34_closureCM.data");

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThrows;
 public class MSCACompositionFunctionTest {
 
     @Test
-    public void constructorException() throws Exception {
+    public void constructorException()  {
         List<Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>>> aut = Collections.emptyList();
         assertThrows(IllegalArgumentException.class, ()-> new MSCACompositionFunction<>(aut,null));
     }

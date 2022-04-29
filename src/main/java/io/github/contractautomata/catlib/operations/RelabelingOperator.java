@@ -42,7 +42,7 @@ public class RelabelingOperator<S1, L extends Label<Action>> implements
 	 * @param createLabel  a function used to create a new object label from a list of actions.
 	 * @param relabel  the unary operator which takes an argument of type S1 and returns the updated value of S1
 	 * @param initialStatePred  a predicate true when the argument is an initial state, used to change initial state.
-	 * @param finalStatePred a predicate true when the argument is a final state, used to change final states.
+	 * @param finalStatePred a predicate true when the argument is a final state, used to change local final states.
 	 */
 	public RelabelingOperator(Function<List<Action>,L> createLabel,
 							  UnaryOperator<S1> relabel,

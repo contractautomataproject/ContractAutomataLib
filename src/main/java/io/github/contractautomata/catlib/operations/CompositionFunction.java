@@ -73,7 +73,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private final Set<T> tr;
 	private final Set<List<S>> visited;
 	private final Queue<S> dontvisit;
-	private final Predicate<L> pruningPred;
+	private final Predicate<T> pruningPred;
 
 	//each transition of each MSCA in aut is associated with the corresponding index in aut
 	final class TIndex {//more readable than Entry
@@ -94,7 +94,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	 * @param createTransition	a function taking as arguments the composed source state, composed label, composed target state and composed modality, and returns the created transition 
 	 * @param createLabel a function taking as arguments a list of actions, and returns the composed label
 	 * @param createAutomaton a function taking as argument the set of transitions of the composition, and returns the composed automaton
-	 * @param pruningPred a predicate on labels useful for pruning unwanted transitions not to be explored during the computation of the composition
+	 * @param pruningPred a predicate on transitions useful for pruning unwanted transitions not to be explored during the computation of the composition
 	 *
 	 */
 	public CompositionFunction(List<A> aut,
@@ -103,7 +103,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 							   TetraFunction<S,L,S,ModalTransition.Modality, T> createTransition,
 							   Function<List<Action>,L> createLabel,
 							   Function<Set<T>,A> createAutomaton,
-							   Predicate<L> pruningPred)
+							   Predicate<T> pruningPred)
 	{
 		this.aut= new ArrayList<>(aut);
 		this.rank= aut.stream()
@@ -175,24 +175,24 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 
 				//if source state is bad then don't visit target states
 				boolean badsourcestate = pruningPred!=null && trmap.parallelStream()
-						.anyMatch(x->pruningPred.test(x.getKey().getLabel())&&x.getKey().isUrgent());
+						.anyMatch(x->pruningPred.test(x.getKey())&&x.getKey().isUrgent());
 
 				if (badsourcestate && sourcestate.equals(initialState))
 					return null;
 				else if (!badsourcestate) {//adding transitions, updating states
 					Set<T> trans= trmap.parallelStream()
-							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey().getLabel()))
+							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey()))
 							.map(Entry::getKey).collect(toSet());
 					tr.addAll(trans);
 
 					if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
 						dontvisit.addAll(trans.parallelStream()
-								.filter(x->x.isLazy() && pruningPred.test(x.getLabel()))
+								.filter(x->x.isLazy() && pruningPred.test(x))
 								.map(T::getTarget)
 								.collect(toList()));
 
 					toVisit.addAll(trmap.parallelStream()
-							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey().getLabel()))
+							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey()))
 							.map(Entry::getValue).collect(toSet())
 							.parallelStream()
 							.map(s->new AbstractMap.SimpleEntry<>(s,sourceEntry.getValue()+1))
@@ -282,7 +282,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	 * Getter of the pruning predicate.
 	 * @return the pruning predicate.
 	 */
-	public Predicate<L> getPruningPred() {
+	public Predicate<T> getPruningPred() {
 		return pruningPred;
 	}
 

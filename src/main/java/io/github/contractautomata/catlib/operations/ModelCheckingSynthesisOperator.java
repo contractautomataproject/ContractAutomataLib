@@ -190,7 +190,7 @@ public class ModelCheckingSynthesisOperator<S1,
 						List<Action> li = new ArrayList<>(t.getLabel().getContent());
 						li.set(t.getRank()-1, new IdleAction()); //silencing the prop moves
 						L lab = createLabel.apply(li);
-						if (mcf.getPruningPred().test(t.getLabel())
+						if (mcf.getPruningPred().test(t)
 								&& t.isLazy()
 								&& this.getReq().test(lab)) //the transition was lazy and bad (satisfying pruning pred),
 							// but after removing the prop move it satisfies getReq: it must be changed.

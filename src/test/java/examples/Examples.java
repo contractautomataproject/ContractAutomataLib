@@ -36,7 +36,7 @@ public class Examples {
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut = new ArrayList<>(2);
 		aut.add(bdc.importMSCA(dir+"BusinessClient.data"));//loading textual .data description of a CA
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<String>(aut,new Agreement().negate()).apply(100);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut,t->t.getLabel().isRequest()).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 	}
 

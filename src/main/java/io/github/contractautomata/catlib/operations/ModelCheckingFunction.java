@@ -62,9 +62,9 @@ public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action
 						.getLabel()
 						.equals(l2.getContent().get(0).getLabel()),
 				createState, createTransition, createLabel,createAutomaton,
-				l->{	List<Action> listAct = l.getContent();
-					return ((listAct.get(l.getRank()-1) instanceof IdleAction)||
-							IntStream.range(0, l.getRank()-1)
+				t->{	List<Action> listAct = t.getLabel().getContent();
+					return ((listAct.get(t.getRank()-1) instanceof IdleAction)||
+							IntStream.range(0, t.getRank()-1)
 									.mapToObj(listAct::get)
 									.allMatch(IdleAction.class::isInstance));});
 

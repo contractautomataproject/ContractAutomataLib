@@ -25,7 +25,7 @@ public class MSCACompositionFunction<S1> extends CompositionFunction<S1,State<S1
 	 * @param aut  the list of automata to compose
 	 * @param pruningPred the pruning predicate
 	 */
-	public MSCACompositionFunction(List<Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> aut, Predicate<CALabel> pruningPred)
+	public MSCACompositionFunction(List<Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>> aut, Predicate<ModalTransition<S1,Action,State<S1>,CALabel>> pruningPred)
 	{
 		super(aut,CALabel::match,State::new,ModalTransition::new,CALabel::new,Automaton::new, pruningPred);
 	}

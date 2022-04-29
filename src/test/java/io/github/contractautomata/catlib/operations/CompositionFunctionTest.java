@@ -244,7 +244,7 @@ public class CompositionFunctionTest {
     @Test
     public void testApply() {
         when(createAutomaton.apply(any())).thenReturn(comp);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         assertNotNull(cf.apply(Integer.MAX_VALUE)); //for mutation testing
         verify(createAutomaton).apply(Set.of(tc1_2,tc2_21,tc2_22,tc21_3));
     }
@@ -262,7 +262,7 @@ public class CompositionFunctionTest {
         when(lab2_22.getContent()).thenReturn(List.of(ia,ia,reqact2));
         when(lab21_3.getContent()).thenReturn(List.of(ia,ia,reqact2));
 
-        cf = new CompositionFunction<>(List.of(a1,a2),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton).apply(Set.of(tc1_2,tc2_21,tc2_22,tc21_3));
     }
@@ -271,7 +271,7 @@ public class CompositionFunctionTest {
     public void testApplyNecessaryMatchOnSecondPrincipal() {
         when(t11.isNecessary()).thenReturn(false);
         when(t21.getModality()).thenReturn(ModalTransition.Modality.URGENT);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton).apply(Set.of(tc1_2,tc2_21,tc2_22,tc21_3));
     }
@@ -279,7 +279,7 @@ public class CompositionFunctionTest {
     @Test
     public void testApplyLazyNotRequest() {
         when(tc2_22.getLabel().isRequest()).thenReturn(false);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton).apply(Set.of(tc1_2,tc2_21,tc2_22,tc21_3,tc22_3));
     }
@@ -288,7 +288,7 @@ public class CompositionFunctionTest {
     public void testApplyPruningPredReturnNull() {
         when(tc2_22.isNecessary()).thenReturn(false);
         when(tc21_3.isNecessary()).thenReturn(false);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton,never()).apply(any());
     }
@@ -298,7 +298,7 @@ public class CompositionFunctionTest {
         when(tc2_22.isNecessary()).thenReturn(false);
         when(tc21_3.isNecessary()).thenReturn(false);
         when(csc2.isFinalState()).thenReturn(true);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton,times(1)).apply(Set.of(tc1_2,tc2_21));
     }
@@ -306,7 +306,7 @@ public class CompositionFunctionTest {
     @Test
     public void testBadSourceStateInitial() {
         when(tc1_2.getLabel().isRequest()).thenReturn(true);
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton,never()).apply(any());
     }
@@ -316,7 +316,7 @@ public class CompositionFunctionTest {
         when(tc2_22.getLabel().isRequest()).thenReturn(true);
         when(tc2_22.isUrgent()).thenReturn(true);
         when(csc2.isFinalState()).thenReturn(true);// for mutation testing
-        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,CALabel::isRequest);
+        cf = new CompositionFunction<>(List.of(a1,a2,a3),match,createState,createTransition,createLabel,createAutomaton,t->t.getLabel().isRequest());
         cf.apply(Integer.MAX_VALUE);
         verify(createAutomaton).apply(Collections.singleton(tc1_2));
     }
