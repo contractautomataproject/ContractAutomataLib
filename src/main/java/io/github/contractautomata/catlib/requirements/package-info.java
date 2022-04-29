@@ -9,6 +9,6 @@
  *
  * Class diagram of this package:<br>
  *
- * <img src="hcodeps://github.com/ContractAutomataProject/ContractAutomataLib/blob/gh-pages/doc/requirements%20diagram.png?raw=true" alt="the class diagram">
+ * <img src="https://github.com/ContractAutomataProject/ContractAutomataLib/blob/gh-pages/doc/requirements%20diagram.png?raw=true" alt="the class diagram">
  */
 package io.github.contractautomata.catlib.requirements;

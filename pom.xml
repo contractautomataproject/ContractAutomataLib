@@ -6,7 +6,7 @@
 	<!-- https://central.sonatype.org/publish/requirements/ -->
 	<groupId>io.github.contractautomataproject</groupId>
 	<artifactId>catlib</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 	<name>ContractAutomataLib</name>
 	<description>Library for specifying and verifying contract automata.</description>
