@@ -4,23 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ffacc6d0-7798-4e40-b012-d37882ab3141" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/doc/CAT_Lib_diagrams.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/CAT_Lib_doc.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/operations diagram.png" beforeDir="false" />
-    </list>
+    <list default="true" id="ffacc6d0-7798-4e40-b012-d37882ab3141" name="Changes" comment="update site and docs" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Davide Basile &lt;davide.basile@isti.cnr.it&gt;" />
+      </list>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SET_USER_NAME_GLOBALLY" value="false" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="28THTfAWkjm0IgotZsAX5EKO8Cb" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -31,6 +37,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/doc" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -50,6 +57,35 @@
       <option name="presentableId" value="Default" />
       <updated>1651233673695</updated>
     </task>
+    <task id="LOCAL-00001" summary="update site and docs">
+      <created>1651234105616</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1651234105616</updated>
+    </task>
+    <task id="LOCAL-00002" summary="update site and docs">
+      <created>1651234228082</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1651234228082</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update site and docs">
+      <created>1651234267678</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1651234267678</updated>
+    </task>
+    <task id="LOCAL-00004" summary="update site and docs">
+      <created>1651234290343</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1651234290343</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -62,5 +98,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="update site and docs" />
+    <option name="LAST_COMMIT_MESSAGE" value="update site and docs" />
   </component>
 </project>
