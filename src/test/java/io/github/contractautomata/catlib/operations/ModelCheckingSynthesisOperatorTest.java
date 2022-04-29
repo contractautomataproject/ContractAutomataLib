@@ -114,7 +114,7 @@ public class ModelCheckingSynthesisOperatorTest {
 
         doReturn(true).when(cs21).isInitial();
 //        doReturn(true).when(cs21).isFinalState();
-        doReturn(asList(bs0)).when(cs21).getState();
+        doReturn(List.of(bs0)).when(cs21).getState();
         doReturn(true).when(comp1).isFinalState();
         doReturn(asList(bs0,bs0,bs0)).when(comp1).getState();
 
@@ -137,7 +137,7 @@ public class ModelCheckingSynthesisOperatorTest {
         doReturn(cs21).when(tp1).getTarget();
         doReturn(ModalTransition.Modality.PERMITTED).when(tp1).getModality();
 
-        doReturn(3).when(labcomp).getRank();
+//        doReturn(3).when(labcomp).getRank();
         doReturn(List.of(ia,a2,a1)).when(labcomp).getContent();
         doReturn(comp1).when(tcomp).getSource();
         doReturn(labcomp).when(tcomp).getLabel();
@@ -179,11 +179,11 @@ public class ModelCheckingSynthesisOperatorTest {
 //        doReturn(3).when(comp).getRank();
 //        doReturn(3).when(compconv).getRank();
 
-        doAnswer(args -> new HashSet<>(Arrays.asList(t1))).when(aut).getTransition();
+        doAnswer(args -> new HashSet<>(List.of(t1))).when(aut).getTransition();
 //        doAnswer(args -> new HashSet<>(Arrays.asList(tp1))).when(prop).getTransition();
 //        doAnswer(args -> new HashSet<>(Arrays.asList(t1conv))).when(autconv).getTransition();
-        doAnswer(args -> new HashSet<>(Arrays.asList(tcomp))).when(comp).getTransition();
-        doAnswer(args -> new HashSet<>(Arrays.asList(tcompreverse))).when(compconv).getTransition();
+        doAnswer(args -> new HashSet<>(List.of(tcomp))).when(comp).getTransition();
+        doAnswer(args -> new HashSet<>(List.of(tcompreverse))).when(compconv).getTransition();
 
         createTransitionProp = (s,l,t,m) -> {
             if (s!=null && s.equals(t1.getSource()) && l!=null && l.equals(t1.getLabel()) && t!=null && t.equals(t1.getTarget())) return t1conv;

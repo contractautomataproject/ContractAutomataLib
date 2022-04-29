@@ -68,7 +68,7 @@ public class ModelCheckingFunctionTest {
         when(cs11.isInitial()).thenReturn(true);
         when(cs11.getState()).thenReturn(asList(bs0,bs0));
         when(cs21.isInitial()).thenReturn(true);
-        when(cs21.getState()).thenReturn(asList(bs0));
+        when(cs21.getState()).thenReturn(List.of(bs0));
         when(comp1.isFinalState()).thenReturn(true);
         when(comp1.getState()).thenReturn(asList(bs0,bs0,bs0));
         when(aut.getStates()).thenReturn(Set.of(cs11));
@@ -87,15 +87,17 @@ public class ModelCheckingFunctionTest {
         when(tp1.getTarget()).thenReturn(cs21);
         when(tp1.getModality()).thenReturn(ModalTransition.Modality.PERMITTED);
 
-        when(labcomp.getRank()).thenReturn(3);
+//        when(labcomp.getRank()).thenReturn(3);
         when(labcomp.getContent()).thenReturn(List.of(ia,a2,a1));
         when(tcomp.getSource()).thenReturn(comp1);
         when(tcomp.getLabel()).thenReturn(labcomp);
         when(tcomp.getTarget()).thenReturn(comp1);
+        when(tcomp.getRank()).thenReturn(3);
 
-        when(labCompNoMatch.getRank()).thenReturn(3);
+//        when(labCompNoMatch.getRank()).thenReturn(3);
         when(labCompNoMatch.getContent()).thenReturn(List.of(ia,a2,ia));
         when(tcompNoMatch.getLabel()).thenReturn(labCompNoMatch);
+        when(tcompNoMatch.getRank()).thenReturn(3);
 
         when(aut.getForwardStar(cs11)).thenReturn(Collections.singleton(t1));
         when(prop.getForwardStar(cs21)).thenReturn(Collections.singleton(tp1));
