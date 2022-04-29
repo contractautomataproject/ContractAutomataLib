@@ -32,7 +32,7 @@ For  information on the usage and installation of the library, check the User Do
 
 For the API documentation, check the links below.
 
-This documentation is up-to-date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/9038280a63618d68740d90329864476abc8d73fd">9038280</a> of 23 April 2022.
+This documentation is up-to-date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/4e1044e4d4f0daf192f7e040d386a01153a4349e">4e1044e</a> of 29 April 2022.
 
 
 The following documentation has  been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
