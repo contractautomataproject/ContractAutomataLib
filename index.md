@@ -27,10 +27,10 @@ of your Maven project.
 
 <h2>Usage</h2>
 
-The following examples are available under the test folder `/src/test/java/examples` of the Github repository. 
-These examples are loading automata that are stored and can be found under the folder `src/test/resources`. 
+The following examples are available under the test folder `/src/test/java/examples` of the Github repository.
 These are examples taken from the Hotel Reservation example published in [SCICO20] and [LMCS20] (see references below).
 Both journal articles are Open Access and can be accessed freely.
+The examples below are loading automata that are stored and can be found under the folder `src/test/resources`. 
 
 The first  example starts by loading the `BusinessClient` and `Hotel` automata described in Section 2 of [SCICO20].
 These automata are stored in `.data` textual format, and are imported using `AutDataConverter`. 
@@ -167,7 +167,7 @@ A textual `.data` format is also supported, as well as a `.json` format (still u
 This is an example of the `PriviledgedClient.data` principal contract automaton taken from [LMCS20].
 This contract has rank 1, initial state is `[0]`, final states are `[4]`,`[0]` and `[3]`.
 This contract has been created using the GUI app and has been exported in the `.data` format.
-It has four transitions, descripted by indicating the source state, label and target state.
+It has four transitions, described by indicating the source state, label and target state.
 A necessary lazy transition is prefixed by `!L` whilst a necessary urgent transition is prefixed by `!U`.
 
 ```c
@@ -206,16 +206,16 @@ In this case, the contract automaton is of rank 5.
 Note that the final states of each principal are separately reported.
 In a final state of the composed automaton it is required that all principals are in a final state (e.g., `[0, 4, 14, 4, 4]` is a final state).
 
-See the references below for more informations on the contract automata formalism.
+See the references below for more information on the contract automata formalism.
 
 
 <h2> Developers Documentation </h2>
 
-The info for developers is available at the README and Wiki of the github repository (link above).
+The info for developers is available at the README of the Github repository (link above).
 
 <h2>Contacts</h2>
 
-Contact me on davide.basile@isti.cnr.it for questions on this software.
+Contact me on davide.basile@isti.cnr.it if you have questions.
 
 
 <h2>References</h2>
@@ -224,7 +224,6 @@ Contact me on davide.basile@isti.cnr.it for questions on this software.
 In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 2021, pages 225-238,
 https://doi.org/10.1007/978-3-030-78142-2_14
 (pdf at https://openportal.isti.cnr.it/data/2021/454603/2021_454603.postprint.pdf)
-
 
 [SCICO20] Basile, D., ter Beek, M.H., Degano, P., Legay, A., Ferrari, G.L., Gnesi, S. and Di Giandomenico, F., 2020. Controller synthesis of service contracts with variability. Science of Computer Programming, vol. 187, pp. 102344.
 https://doi.org/10.1016/j.scico.2019.102344 (Open Access)
