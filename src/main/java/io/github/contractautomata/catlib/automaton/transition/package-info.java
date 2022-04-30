@@ -2,8 +2,8 @@
  * The transition package groups the transitions of an automaton.<br>
  * <code>Transition</code> is the super class, it has a source and target states and a label.<br>
  * <code>ModalTransition</code> extends <code>Transition</code> to include modalities.<br>
- * Modalities of Contract Automata are permicodeed and necessary.<br>
- * A necessary transition has a label that must be match in a composition whilst a permicodeed transition
+ * Modalities of Contract Automata are permitted and necessary.<br>
+ * A necessary transition has a label that must be match in a composition whilst a permitted transition
  * can be withdrawn.<br>
  * Necessary transitions can be further distinguished between urgent and lazy, where urgent is the classic<br>
  * notion of uncontrollability, whereas lazy is a novel notion introduced in contract automata.<br>
