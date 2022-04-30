@@ -1,9 +1,7 @@
 ## Welcome
 
-
-
 The Contract Automata Library (CATLib)  is the main repository of the Contract Automata Toolkit.
-The Contract Automata Toolkit groups together repositories about Contract Automata.
+The Contract Automata Toolkit groups together repositories about contract automata.
 Contract automata are a formalism developed in the research area of foundations for services and distributed computing.
 They are used for specifying services' interface, called behavioral contracts, as finite state automata, with functionalities for composing contracts
 and generating the orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product lines (FMCA).
@@ -27,27 +25,36 @@ of your Maven project.
 
 <h2>Usage</h2>
 
-The following examples are available under the test folder `/src/test/java/examples` of the Github repository.
-These are examples taken from the Hotel Reservation example published in [SCICO20] and [LMCS20] (see references below).
-Both journal articles are Open Access and can be accessed freely.
-The examples below are loading automata that are stored and can be found under the folder `src/test/resources`. 
+This section shows the usage of some functionalities of the library. 
+It is assumed that the reader is familiar with contract automata and its operations. 
+If not, you may refer to the references below, and the technical documentation of the library
+(whose links are in the README of the repository (link above)).
 
-The first  example starts by loading the `BusinessClient` and `Hotel` automata described in Section 2 of [SCICO20].
-These automata are stored in `.data` textual format, and are imported using `AutDataConverter`. 
+The following examples are available under the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
+These snippets of code are using the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
+Both these journal articles are Open Access and can be freely downloaded.
+The examples below are loading files that are stored under the folder `src/test/resources` of the repository. 
+
+The first  example shows how to load automata, compute their composition and compute the synthesis of the orchestration.
+It starts by loading the `BusinessClient` and `Hotel` automata that are depicted in Figure 2 and Figure 3 in [SCICO20]. 
+These automata have been stored in `.data` textual format, and are imported using `AutDataConverter` (for more information 
+on the textual format check the Editing section below).
 The `MSCACompositionFunction` is used to compute a composition of these two automata. 
 The constructor takes a pruning predicate: when generating the composition, transitions whose labels are requests 
 will not be further explored.
 This is used to avoid generating portions of the automaton only reachable by transitions
-violating the predicate that we will enforce with the orchestration.
-The predicate is the property of agreement: each request of either the client 
-or the hotel must be matched by an offer of the other partner.
+violating the predicate that we want to enforce with the orchestration.
 Indeed, the orchestration synthesis would prune these transitions anyway.
 This allows to scale up to bigger compositions without losing information.
+The predicate is the property of agreement: each request of either the client 
+or the hotel must be matched by an offer of the other partner. 
+Transitions whose labels have a request but no offer are pruned.
 When applying the composition, a bound to the maximum length of a path in the composition is passed as argument. 
 This allows to implement a `bounded` composition.
 After the composition is computed, this will be refined to an orchestration. 
 This is done with the `OrchestrationSynthesisOperator`, which takes as argument the aforementioned agreement property.
-computes their composition and compute the synthesis of an orchestration enforcing agreement (all requests are matched). 
+computes their composition and compute the synthesis of an orchestration enforcing agreement (all requests are matched).  
+This composition is depicted in Figure 6 in [SCICO20].
 
 ```java
 AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -58,8 +65,15 @@ Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 ```
 
-This snippet loads a composition stored in a `.data` format, synthesises the choreography enforcing
-strong agreement (all requests and offers are matched) and stores it in a .data format.
+The example below shows how to synthesise a choreography and store the result. 
+It loads a precomputed composition stored in a `.data` format. 
+The automata in the composition are depicted in Figure 1, Figure 2 and Figure 3 in [LMCS20].
+Afterwards,  the choreography is synthesised using
+ the class `ChoreographySynthesisOperator` that takes as argument a property invariant on the 
+synthesised labels. In this case the property is strong agreement: all labels must be matches 
+between an offer and a request. 
+The choreography is stored again in a `.data` format. 
+The computed choreography is depicted in Figure 8 in [LMCS20].  
 ```java
 AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
@@ -67,9 +81,16 @@ Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String
 bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_example.data",cor);
 ```
 
-The following snippet loads an MSCA, it synthesises an orchestration enforcing agreement
-for a specific product (i.e., a configuration), requiring features `card` and `sharedBathroom`,
-and forbidding feature `singleRoom`.
+The following example  shows how to instantiate a single product, and how to synthesise an orchestration for that 
+specific product. 
+The loaded automaton is the composition of the example in [SCICO20]. 
+The `EconomyClient` automaton is depicted in Figure 4 in [SCICO20].
+The product is instantiated using the class `Product`, taking as argument the required and forbidden features. 
+The product is  requiring features `card` and `sharedBathroom` to be reachable as labels in the automaton, and forbidding feature `cash`.
+The class `ProductOrchestrationSynthesisOperator` takes as argument the property to enforce (agreement) and the 
+product, and is applied on the loaded automaton.  
+The orchestration for this product is depicted in Figure 5 in [SCICO20].
+
 ```java
 AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -77,10 +98,15 @@ Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"c
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut);
 ```
 
-The following snippet imports a product line (i.e., a family) using the textual format `.prod`.
-In this example the Family is generated independently of the automaton.
-Two different MSCA are used, both are paired with the family into an FMCA.
-An orchestration of a product is computed.
+The following example shows how to import a product-line expressed in `.prod` format and how 
+to instantiate a Featured Modal Contract Automaton (FMCA).
+Firstly, two automata are loaded, again these are automata taken from the example in [SCICO20].
+The set of products of the family is imported using the class `ProdFamilyConverter`.
+In this example the Family is generated independently of the automaton. 
+The family is instantiated with the class `Family`. 
+Afterward, two `FMCA` are instantiated. 
+They have the same automaton, but different families. 
+Finally, one of the products of the family is picked up and the corresponding orchestration is computed.
 
 ```java
 AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -106,9 +132,11 @@ Product p = faut.getFamily().getProducts().iterator().next();
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 ```
 
-The following snippet imports a product line as a `.xml` FeatureIDE model (whose products are generated by FeatureIDE).
-FeatureIDE does not generate partial products, which are generated using `PartialProductGenerator`.
-The set of products is passed to the constructor of the FMCA, this will exploit the information on the actions
+The following example shows how to import a product line as a `.xml` FeatureIDE model (whose products are generated by FeatureIDE). 
+This is done with the class `FeatureIDEfamilyConverter`. 
+When instantiating the FMCA, we apply the `PartialProductGenerator` to the products we have just imported.
+Indeed, FeatureIDE does not generate partial products, which are generated using `PartialProductGenerator`.
+The set of products is passed to the constructor of the `FMCA`: this will exploit the information on the actions
 of the automaton to refine the set of products, discarding redundant ones.
 The orchestration of a product of the family is synthesised.
 
@@ -131,12 +159,15 @@ Product p = faut.getFamily().getProducts().iterator().next();
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 ```
 
-The following snippet imports a product line as a `.dimac` file.
-Dimac constructor has a parameter, if true all products are generated,
+Finally, the following example shows how to  import a product line as a `.dimac` file.
+The `DimacsFamilyConverter` constructor has a parameter, if true all products are generated,
 otherwise only maximal products are generated.
 Avoiding the generation of all products and partial products greatly improve
-performances. This is useful if only the orchestration of the product line is to
+performances with respect to generating them as in the above example. 
+This is useful if only the orchestration of the product line is to
 be synthesised, and there is no need to operate on a single product.
+The orchestration of the family is computed by invoking the method 
+`getOrchestrationOfFamily` on the `FMCA` object. 
 
 ```java
 AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -216,7 +247,7 @@ See the references below for more information on the contract automata formalism
 
 <h2> Developers Documentation </h2>
 
-The info for developers is available at the README of the Github repository (link above).
+The info for developers is available at the README of the GitHub repository (link above).
 
 <h2>Contacts</h2>
 
