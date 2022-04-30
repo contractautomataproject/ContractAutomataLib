@@ -28,7 +28,13 @@ of your Maven project.
 This section shows the usage of some functionalities of the library. 
 It is assumed that the reader is familiar with contract automata and its operations. 
 If not, you may refer to the references below, and the technical documentation of the library
-(whose links are in the README of the repository (link above)).
+(whose links are in the README of the repository (link above)). 
+
+Apart from the examples below, check the repository https://github.com/contractautomataproject/tictactoe for an  
+ example of the tic-tac-toe game modelled as contract automata, using the operations of composition 
+and synthesis to compute the strategy for a player to never lose a game.
+That example also shows how to use the automata to realize an application (the game) whose control 
+flow is internally orchestrated by the synthesised contract.
 
 The following examples are available under the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
 These snippets of code are using the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
