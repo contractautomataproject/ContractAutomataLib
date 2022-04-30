@@ -31,8 +31,8 @@ If not, you may refer to the references below, as well as the technical document
 (whose links are in the README of the repository (link above)). 
 
 The repository <a href="https://github.com/contractautomataproject/tictactoe">https://github.com/contractautomataproject/tictactoe</a> contains 
-an example of usage of the Contract Automata Library to model the tic-tac-toe game using contract automata and the  operations of composition 
-and synthesis to compute the strategy for a player to never lose a game.
+an example of usage of the Contract Automata Library to model the tic-tac-toe game using contract automata and their composition 
+and synthesis operations to compute the strategy for a player to never lose a game.
 The example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
 flow of the application. We refer to the above repository for more information.
 
@@ -62,7 +62,6 @@ When applying the composition, a bound to the maximum length of a path in the co
 This allows to implement a `bounded` composition.
 After the composition is computed, this will be refined to an orchestration. 
 This is done with the `OrchestrationSynthesisOperator`, which takes as argument the aforementioned agreement property.
-computes their composition and compute the synthesis of an orchestration enforcing agreement (all requests are matched).  
 This composition is depicted in Figure 6 in [SCICO20].
 
 ```java
