@@ -32,11 +32,11 @@ public class ITDimacConverterTest {
 	public void testImport() throws Exception
 	{
 		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
-		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut =
+				bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 
 		FMCA fmca = new FMCA(aut,prod);
-		
-		
+
 		FMCA fmca_two = new FMCA(aut, ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
 		assertEquals(fmca.getFamily(), fmca_two.getFamily());
 	}

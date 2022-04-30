@@ -27,7 +27,8 @@ public class ITFMCATest {
 	@Test
 	public void getAut_test() throws Exception 
 	{
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a
+				= bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
 		FMCA aut = new FMCA(a,new Family(new HashSet<>()));
 		assertEquals(aut.getAut(),a);
 	}
@@ -106,7 +107,8 @@ public class ITFMCATest {
 	{
 		String fileName =dir+"ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut
+				= bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 		FMCA fmca = new FMCA(aut,fam);
 		assertThrows(UnsupportedOperationException.class,fmca::getCanonicalProducts);
 	}

@@ -26,11 +26,53 @@ import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 
+/**
+ * Class containing some examples available in the site https://contractautomataproject.github.io/ContractAutomataLib/
+ *
+ * These examples show how to load, store and performing operations on automata.
+ *
+ * The used automata are taken from the Hotel Reservation case study published in the open access journals
+ *  https://doi.org/10.1016/j.scico.2019.102344
+ *  https://doi.org/10.23638/LMCS-16(2:9)2020
+ *
+ * All the code of these examples is taken from tests of this project.
+ *
+ * This means that the tests check that the results of these examples are correct.
+ */
 public class Examples {
-	final String dir = System.getProperty("user.dir")+File.separator+"test"+File.separator+"test_resources"+File.separator;
+	private static final String dir = System.getProperty("user.dir")+File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator;
 
-	@SuppressWarnings("unused")
-	public void example1() throws Exception
+	public static void main(String[] args) throws Exception {
+		System.out.println("Running example 1");
+		example1();
+
+		System.out.println("Running example 2");
+		example2();
+
+		System.out.println("Running example 3");
+		example3();
+
+		System.out.println("Running example 4");
+		example4();
+
+		System.out.println("Running example 5");
+		example5();
+
+		System.out.println("Running example 6");
+		example6();
+
+		System.out.println("Program terminated.");
+	}
+
+	/**
+	 * example tested in
+	 *
+	 * ITMSCACompositionTest - compositionTestSCP2020_BusinessClientxHotel_open
+	 * ITOrchestrationTest - orcTestSCP2020_BusinessClientxHotelxEconomyClient_transitions
+	 *
+	 * @throws Exception
+	 */
+	private static void example1() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		List<Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>>> aut = new ArrayList<>(2);
@@ -38,31 +80,60 @@ public class Examples {
 		aut.add(bdc.importMSCA(dir+"Hotel.data"));
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp = new MSCACompositionFunction<>(aut,t->t.getLabel().isRequest()).apply(100);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
+
+		System.out.println(orc);
 	}
 
-
-	public void example2() throws Exception
+	/**
+	 * example tested in
+	 *
+	 * chorTestLMCS2020Transitions
+	 * chorTestLMCS2020TransitionsConstructorTwoArguments
+	 *
+	 * of ITChoreographyTest
+	 *
+	 * @throws Exception
+	 */
+	private static void example2() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(ClientxPriviledgedClientxBrokerxHotelxHotel).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> cor = new ChoreographySynthesisOperator<String>(new StrongAgreement()).apply(aut);
-		bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel).data",cor);
+		bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_example.data",cor);
 
+		System.out.println(cor);
 	}
 
 
-	@SuppressWarnings("unused")
-	public void example3() throws Exception
+	/**
+	 * example tested in
+	 *
+	 * orcTestSCP2020_BusinessClientxHotelxEconomyClient_product4858_transitions
+	 *
+	 * of ITProductOrchestrationTest
+	 *
+	 * @throws Exception
+	 */
+	private static void example3() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
-		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"singleRoom"});
+		Product p = new Product(new String[] {"card","sharedBathroom"}, new String[] {"cash"});
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(aut);
+
+		System.out.println(orc);
 	}
 
 
-	@SuppressWarnings("unused")
-	public void example4() throws Exception
+	/**
+	 * example tested in
+	 *
+	 * testReadProducts  from  ITProdFamilyConverterTest
+	 * testValidProductsOrc from ITFMCATest
+	 *
+	 * @throws Exception
+	 */
+	private static void example4() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -80,16 +151,25 @@ public class Examples {
 		
 		//two different FMCA may be using the same family
 		FMCA faut = new FMCA(aut,fam);
-		FMCA faut2 = new FMCA(aut2,fam);
+		new FMCA(aut2,fam);
 
-		//selecting a product of first FMCA and computing its orchestration
+		//selecting a product of the first FMCA and computing its orchestration
 		Product p = faut.getFamily().getProducts().iterator().next(); 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
+
+
+		System.out.println(orcfam1);
 	}
 
-
-	@SuppressWarnings("unused")
-	public void example5() throws Exception
+	/**
+	 * example tested in
+	 *
+	 * testImportFamily ITFeatureIDEconverterTest
+	 * testImport and testPrimeImplicant from ITDimacConverterTest
+	 *
+	 * @throws Exception
+	 */
+	private static void example5() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -108,10 +188,18 @@ public class Examples {
 		Product p = faut.getFamily().getProducts().iterator().next(); 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam1 = new ProductOrchestrationSynthesisOperator<String>(new Agreement(),p).apply(faut.getAut());
 
+		System.out.println(orcfam1);
 	}
 
-	@SuppressWarnings("unused")
-	public void example6() throws Exception
+	/**
+	 * Example tested in
+	 *
+	 * testImportFamily ITFeatureIDEconverterTest
+	 * testImport and testPrimeImplicant from ITDimacConverterTest
+	 *
+	 * @throws Exception
+	 */
+	private static void example6() throws Exception
 	{
 		AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
@@ -128,5 +216,8 @@ public class Examples {
 		//processing of all products and partial products
 		FMCA faut = new FMCA(aut,sp3);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orcfam2 = faut.getOrchestrationOfFamily();
+
+
+		System.out.println(orcfam2);
 	}
 }
