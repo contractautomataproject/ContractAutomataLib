@@ -30,11 +30,11 @@ It is assumed that the reader is familiar with contract automata and their opera
 If not, you may refer to the references below, as well as the technical documentation of the library
 (whose links are in the README of the repository (link above)). 
 
-Apart from the examples below, check the repository <a href="https://github.com/contractautomataproject/tictactoe">https://github.com/contractautomataproject/tictactoe</a> for an  
- example of the tic-tac-toe game modelled as contract automata, using the operations of composition 
+The repository <a href="https://github.com/contractautomataproject/tictactoe">https://github.com/contractautomataproject/tictactoe</a> contains 
+an example of usage of the Contract Automata Library to model the tic-tac-toe game using contract automata and the  operations of composition 
 and synthesis to compute the strategy for a player to never lose a game.
-That example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
-flow of the application.
+The example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
+flow of the application. We refer to the above repository for more information.
 
 The following examples are applying the library to the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
 This is a common example in service-oriented computing, and features clients booking reservations from hotels with intermediary brokers. 
