@@ -36,10 +36,13 @@ and synthesis to compute the strategy for a player to never lose a game.
 That example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
 flow of the application.
 
-The following examples are available under the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
-These snippets of code are using the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
-Both these journal articles are Open Access and can be freely downloaded.
-The examples below are loading files that are stored under the folder `src/test/resources` of the repository. 
+The following examples are applying the library to the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
+This is a common example in service-oriented computing, and features clients booking reservations from hotels with intermediary brokers. 
+The examples are thoroughly described in Section 2 of [SCICO20] (the whole section is devoted to describing the example) and 
+the Example 2.2 of [LMCS20]. This last example is only used when showing how to synthesise a choreography.
+Both these journal articles are Open Access and can be freely downloaded. 
+The following code is available in the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
+The used files are stored under the folder `src/test/resources` of the repository. 
 
 The first  example shows how to load automata, compute their composition and compute the synthesis of the orchestration.
 It starts by loading the `BusinessClient` and `Hotel` automata that are depicted in Figure 2 and Figure 3 in [SCICO20]. 
