@@ -26,8 +26,8 @@ of your Maven project.
 <h2>Usage</h2>
 
 This section shows the usage of some functionalities of the library. 
-It is assumed that the reader is familiar with contract automata and its operations. 
-If not, you may refer to the references below, and the technical documentation of the library
+It is assumed that the reader is familiar with contract automata and their operations. 
+If not, you may refer to the references below, as well as the technical documentation of the library
 (whose links are in the README of the repository (link above)). 
 
 Apart from the examples below, check the repository <a href="https://github.com/contractautomataproject/tictactoe">https://github.com/contractautomataproject/tictactoe</a> for an  
