@@ -1,5 +1,6 @@
 package it.io.github.contractautomata.catlib.family.converters;
 
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.PartialProductGenerator;
 import io.github.contractautomata.catlib.family.Product;
@@ -13,7 +14,6 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.assertEquals;
 
 
@@ -24,8 +24,8 @@ public class ITFeatureIDEconverterTest {
 	@Test
 	public void testImportFamily() throws Exception {
 		UnaryOperator<Set<Product>> spg = new PartialProductGenerator();
-		Family f1= new Family(spg.apply(ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml")));
-		Family f2= new Family(pfc.importProducts(dir +"ValidProducts.prod"));
+		Family f1= new Family(spg.apply(ffc.importProducts(ITAutomatonTest.dir+ "FeatureIDEmodel" +File.separator+"model.xml")));
+		Family f2= new Family(pfc.importProducts(ITAutomatonTest.dir + "ValidProducts.prod"));
 		assertEquals(f1.getProducts(),f2.getProducts());
 	}
 }

@@ -8,10 +8,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.transition.Transition;
-import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.state.State;
@@ -33,7 +33,7 @@ import io.github.contractautomata.catlib.automaton.state.State;
  */
 public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
         ModalTransition<S1,Action,State<S1>,CALabel>,
-        Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
         Label<Action>,
         ModalTransition<S1,Action,State<S1>,Label<Action>>,
         Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>

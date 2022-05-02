@@ -46,7 +46,7 @@ public class RelabelingOperatorTest {
 
     @Mock
     Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>, CALabel>> aut;
+                            ModalTransition<String, Action, State<String>, CALabel>> aut;
 
     RelabelingOperator<String,CALabel> ro;
 

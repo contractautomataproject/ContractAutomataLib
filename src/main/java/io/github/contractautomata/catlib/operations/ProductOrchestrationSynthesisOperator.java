@@ -2,12 +2,12 @@ package io.github.contractautomata.catlib.operations;
 
 import java.util.function.Predicate;
 
+import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.family.Product;
 
 /**
  * Class implementing the orchestration synthesis for a specific product of a product line. <br>

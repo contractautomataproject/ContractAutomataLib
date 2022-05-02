@@ -52,8 +52,9 @@ public class ModelCheckingSynthesisOperatorTest {
     @Mock Predicate<CALabel> req;
 
 
-    @Mock Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>,CALabel>> aut;
+    @Mock
+    Automaton<String, Action, State<String>,
+                            ModalTransition<String, Action, State<String>,CALabel>> aut;
 
     @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> autconv;

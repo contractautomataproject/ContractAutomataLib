@@ -1,8 +1,8 @@
 package it.io.github.contractautomata.catlib.family;
 
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
@@ -11,13 +11,13 @@ import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
 import io.github.contractautomata.catlib.family.converters.ProdFamilyConverter;
-import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.*;
 
 public class ITFMCATest {
@@ -27,22 +27,22 @@ public class ITFMCATest {
 	@Test
 	public void getAut_test() throws Exception 
 	{
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> a
-				= bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Automaton<String,Action, State<String>, ModalTransition<String,Action,State<String>,CALabel>> a
+				= bdc.importMSCA(ITAutomatonTest.dir+ "(BusinessClientxHotelxEconomyClient).data");
 		FMCA aut = new FMCA(a,new Family(new HashSet<>()));
-		assertEquals(aut.getAut(),a);
+		Assert.assertEquals(aut.getAut(),a);
 	}
 	
 	
 	@Test
 	public void testValidProductsOrc() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam= new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
+		FMCA aut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
 		Set<Product> vp = aut.productsRespectingValidity();
 
-		Family test = new Family(dfc.importProducts(dir+"validProductsOrcTest.prod"));
+		Family test = new Family(dfc.importProducts(ITAutomatonTest.dir+ "validProductsOrcTest.prod"));
 		
 		assertEquals(vp,test.getProducts());
 	}
@@ -50,13 +50,13 @@ public class ITFMCATest {
 	@Test
 	public void testCanonicalProducts() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
+		FMCA aut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "(BusinessClientxHotelxEconomyClient).data"),fam);
 
 		Set<Product> cps = aut.getCanonicalProducts().keySet();
 		
-		Family test = new Family(dfc.importProducts(dir+"canonicalProductsTest.prod"));
+		Family test = new Family(dfc.importProducts(ITAutomatonTest.dir+ "canonicalProductsTest.prod"));
 
 		assertEquals(cps,test.getProducts());
 	}
@@ -65,12 +65,12 @@ public class ITFMCATest {
 	public void testProductsWithNonEmptyOrchestration() throws Exception
 	{
 		
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
+		FMCA aut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(BusinessClientxHotelxEconomyClient).data"),fam);
 		Set<Product> vp = aut.productsWithNonEmptyOrchestration();
 
-		Family test = new Family(dfc.importProducts(dir+"productsWithNonEmptyOrchestration.prod"));
+		Family test = new Family(dfc.importProducts(ITAutomatonTest.dir+ "productsWithNonEmptyOrchestration.prod"));
 		
 		assertEquals(vp,test.getProducts());
 	}
@@ -78,10 +78,10 @@ public class ITFMCATest {
 	@Test
 	public void testFamilyOrc() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA faut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+		FMCA faut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "(BusinessClientxHotelxEconomyClient).data"),fam);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> controller = faut.getOrchestrationOfFamily();
 
@@ -90,12 +90,12 @@ public class ITFMCATest {
 	@Test
 	public void testOrchestrationOfFamilyEnumerative() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data"),fam);
+		FMCA aut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "(BusinessClientxHotelxEconomyClient).data"),fam);
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> ofe =  aut.getOrchestrationOfFamilyEnumerative();
-		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"test_ofe.data");//Orc_fam_wopo_test.mxe");
+		Automaton<String, Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "test_ofe.data");//Orc_fam_wopo_test.mxe");
 
 		assertTrue(ITAutomatonTest.autEquals(ofe, test));
 	}
@@ -105,10 +105,10 @@ public class ITFMCATest {
 	@Test
 	public void testCanonicalProductsException() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut
-				= bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
+				= bdc.importMSCA(ITAutomatonTest.dir+ "Orc_family_(BusinessClientxHotelxEconomyClient)_test.data");
 		FMCA fmca = new FMCA(aut,fam);
 		assertThrows(UnsupportedOperationException.class,fmca::getCanonicalProducts);
 	}
@@ -116,9 +116,9 @@ public class ITFMCATest {
 	@Test
 	public void testSelectProductSatisfyingPredicateException() throws Exception
 	{
-		String fileName =dir+"ValidProducts.prod";
+		String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
 		Family fam=new Family(dfc.importProducts(fileName));
-		FMCA aut = new FMCA(bdc.importMSCA(dir+"Orc_family_(BusinessClientxHotelxEconomyClient)_test.data"),fam);
+		FMCA aut = new FMCA(bdc.importMSCA(ITAutomatonTest.dir+ "Orc_family_(BusinessClientxHotelxEconomyClient)_test.data"),fam);
 		
 		assertThrows(UnsupportedOperationException.class,aut::productsWithNonEmptyOrchestration);
 	}

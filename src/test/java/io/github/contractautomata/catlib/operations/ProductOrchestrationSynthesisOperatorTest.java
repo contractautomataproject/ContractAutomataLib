@@ -1,12 +1,12 @@
 package io.github.contractautomata.catlib.operations;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.family.Product;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ public class ProductOrchestrationSynthesisOperatorTest {
 
     @Mock(answer = Answers.RETURNS_SMART_NULLS)
     Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>, CALabel>> aut;
+                            ModalTransition<String, Action, State<String>, CALabel>> aut;
 
     @Mock
     Product p;

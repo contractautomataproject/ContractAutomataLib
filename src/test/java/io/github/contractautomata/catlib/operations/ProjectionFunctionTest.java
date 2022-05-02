@@ -24,12 +24,16 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ProjectionFunctionTest {
 
-    @Mock Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> aut;
+    @Mock
+    Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> aut;
     @Mock ToIntFunction<ModalTransition<String,Action,State<String>,CALabel>> getNecessaryPrincipal;
 
-    @Mock OfferAction act;
-    @Mock AddressedOfferAction addressedOfferAction;
-    @Mock RequestAction ract;
+    @Mock
+    OfferAction act;
+    @Mock
+    AddressedOfferAction addressedOfferAction;
+    @Mock
+    RequestAction ract;
     @Mock CALabel lab;
     @Mock CALabel lab2;
 
@@ -199,7 +203,7 @@ public class ProjectionFunctionTest {
                 pf.apply(aut,0,getNecessaryPrincipal);
         assertNotNull(proj);
         assertTrue(proj.getTransition().stream().map(t->t.getLabel().getAction())
-                .allMatch(a-> a instanceof  AddressedRequestAction));
+                .allMatch(a-> a instanceof AddressedRequestAction));
     }
     @Test
     public void applyException() {

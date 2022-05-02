@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
+import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
+import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,22 +21,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.state.BasicState;
-import io.github.contractautomata.catlib.automaton.state.State;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ModalTransitionTest {
 
-	@Mock Label<Action> lab;
-	@Mock BasicState<String> bs1;
+	@Mock
+	Label<Action> lab;
+	@Mock
+	BasicState<String> bs1;
 
 
-	@Mock State<String> cs0;
+	@Mock
+	State<String> cs0;
 	@Mock State<String> cs1;
 	@Mock State<String> cs2;
-	@Mock CALabel calab;
+	@Mock
+	CALabel calab;
 	
 	ModalTransition<String,Action,State<String>,Label<Action>> tu;
 	ModalTransition<String,Action,State<String>,Label<Action>> tl;

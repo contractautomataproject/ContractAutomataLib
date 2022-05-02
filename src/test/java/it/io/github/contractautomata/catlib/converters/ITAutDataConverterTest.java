@@ -1,16 +1,15 @@
 package it.io.github.contractautomata.catlib.converters;
 
-import static  it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.transition.Transition;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
-import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,7 +30,7 @@ public class ITAutDataConverterTest {
 	@Test
 	public void testTransition() throws IOException {
 		Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> axb =
-				bdc.importMSCA(dir+"(AxB).data");
+				bdc.importMSCA(ITAutomatonTest.dir+ "(AxB).data");
 
 		String test = "[([0, 0],[!pippo, ?pippo],[1, 1]), ([1, 1],[!pluto, -],[2, 1]), ([1, 1],[-, !pluto],[1, 2]), ([1, 2],[!pluto, -],[2, 2]), ([2, 1],[-, !pluto],[2, 2])]";
 
@@ -45,9 +44,9 @@ public class ITAutDataConverterTest {
 	@Test
 	public void loadAndPrintTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if by loading and printing the automaton does not change
-		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
-		bdc.exportMSCA(dir+"BusinessClientxHotelxEconomyClient_export.data",aut);
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient_export.data");
+		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "BusinessClientxHotelxEconomyClient.data");
+		bdc.exportMSCA(ITAutomatonTest.dir+ "BusinessClientxHotelxEconomyClient_export.data",aut);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "BusinessClientxHotelxEconomyClient_export.data");
 		Assert.assertTrue(ITAutomatonTest.autEquals(aut,test));
 	}
 	
@@ -55,7 +54,7 @@ public class ITAutDataConverterTest {
 	public void loadAndCheckBasicStatesTest_SCP2020_BusinessClientxHotelxEconomyClient() throws Exception {		
 		//check if there are different objects for the same basic state
 		
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(dir+"BusinessClientxHotelxEconomyClient.data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "BusinessClientxHotelxEconomyClient.data");
 
 		Assert.assertFalse(aut.getStates().stream()
 		.flatMap(cs->cs.getState().stream()
@@ -69,7 +68,7 @@ public class ITAutDataConverterTest {
 	public void testImportProp() throws IOException {
 		AutDataConverter<Label<Action>> adc = new AutDataConverter<>(Label::new);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>>
-		prop = adc.importMSCA(dir+"prop.data");
+		prop = adc.importMSCA(ITAutomatonTest.dir+ "prop.data");
 
 
 		BasicState<String> s0 = new BasicState<>("0", true, false);

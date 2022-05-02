@@ -5,13 +5,12 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.Product;
 import org.sat4j.reader.ParseFormatException;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.TimeoutException;
 import org.xml.sax.SAXException;
-
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.Product;
 
 /**
  * This is the interface to be implemented for importing/exporting a family.

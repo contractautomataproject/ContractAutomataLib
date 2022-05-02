@@ -38,7 +38,8 @@ public class CompositionFunctionTest {
     @Mock State<String> cs13;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t11;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t12;
-    @Mock Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a1;
+    @Mock
+    Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a1;
 
     @Mock State<String> cs21;
     @Mock State<String> cs22;

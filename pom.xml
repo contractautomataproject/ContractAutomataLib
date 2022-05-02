@@ -51,8 +51,8 @@
 		</repository-->
 	</distributionManagement>
 	<properties>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>1.11</maven.compiler.source>
+		<maven.compiler.target>1.11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.organization>contractautomataproject</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -180,6 +180,26 @@
 						<target>1.11</target>
 					</configuration>
 				</plugin>
+				<!--https://www.mojohaus.org/build-helper-maven-plugin/usage.html-->
+				<!--plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.3.0</version>
+					<executions>
+						<execution>
+							<id>add-test-source</id>
+							<phase>generate-test-sources</phase>
+							<goals>
+								<goal>add-test-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>src/test/it/java</source>
+								</sources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin-->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
@@ -191,8 +211,11 @@
 								<goal>integration-test</goal>
 								<goal>verify</goal>
 							</goals>
+							<!--configuration>
+								<testSourceDirectory>src/test/it/java</testSourceDirectory>
+							</configuration-->
 						</execution>
-						<execution>
+						<!--execution>
 							<id>e2e-tests</id>
 							<goals>
 								<goal>integration-test</goal>
@@ -206,7 +229,7 @@
 									<include>**/E2E*.java</include>
 								</includes>
 							</configuration>
-						</execution>
+						</execution-->
 					</executions>
 				</plugin>
 				<plugin>

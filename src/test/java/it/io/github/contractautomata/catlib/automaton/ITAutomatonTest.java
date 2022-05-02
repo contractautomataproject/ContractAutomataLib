@@ -10,21 +10,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.automaton.label.CALabel;
+import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
+import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.automaton.transition.Transition;
+import io.github.contractautomata.catlib.converters.AutDataConverter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
-import io.github.contractautomata.catlib.automaton.state.BasicState;
-import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition.Modality;
-import io.github.contractautomata.catlib.automaton.transition.Transition;
-import io.github.contractautomata.catlib.converters.AutDataConverter;
 
 import static org.junit.Assert.assertThrows;
 
@@ -77,13 +76,13 @@ public class ITAutomatonTest {
         ),
                 new CALabel(lab),
                 new State<>(Arrays.asList(bs0, bs1, bs3)),
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
         State<String> cs = new State<>(Arrays.asList(bs0, bs1, bs2, bs3)//,0,0
         );
         tr.add(new ModalTransition<>(cs,
                 new CALabel(lab2),
                 cs,
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
 
         assertThrows("Transitions with different rank", IllegalArgumentException.class, () -> new Automaton<>(tr));
     }
@@ -103,7 +102,7 @@ public class ITAutomatonTest {
         ),
                 new CALabel(lab),
                 new State<>(List.of(bs1)),
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
 
         assertThrows("Not Exactly one Initial State found!",
                 IllegalArgumentException.class,
@@ -124,7 +123,7 @@ public class ITAutomatonTest {
         ),
                 new CALabel(lab),
                 new State<>(List.of(bs1)),
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
 
         assertThrows("No Final States!",
                 IllegalArgumentException.class,
@@ -143,12 +142,12 @@ public class ITAutomatonTest {
         tr.add(new ModalTransition<>(new State<>(List.of(bs1)),
                 new CALabel(lab),
                 new State<>(List.of(bs2)),
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
 
         tr.add(new ModalTransition<>(new State<>(List.of(bs2)),
                 new CALabel(lab),
                 new State<>(List.of(bs2)),
-                Modality.PERMITTED));
+                ModalTransition.Modality.PERMITTED));
         assertThrows("Transitions have ambiguous states (different objects for the same state).",
                 IllegalArgumentException.class,
                 () -> new Automaton<>(tr));
@@ -157,7 +156,7 @@ public class ITAutomatonTest {
 
     @Test
     public void testToString() throws IOException {
-        Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut= bdc.importMSCA(dir+"Orc_(BusinessClientxHotelxEconomyClient).data");
+        Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut= bdc.importMSCA(dir+ "Orc_(BusinessClientxHotelxEconomyClient).data");
         String test ="Rank: 3"+System.lineSeparator()+
                 "Initial state: [0, 0, 0]"+System.lineSeparator()+
                 "Final states: [[3][3][3]]"+System.lineSeparator()+

@@ -3,6 +3,7 @@ package io.github.contractautomata.catlib.family.converters;
 import io.github.contractautomata.catlib.family.FMCATest;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.Product;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-import static  it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
+import static  io.github.contractautomata.catlib.family.converters.DimacConverterTest.dir;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -49,7 +50,7 @@ public class FeatureIDEconverterTest {
 //		printWriter.print(FMCATest.sorting.apply(sp).stream().collect(Collectors.joining(System.lineSeparator())));
 //		printWriter.close();
 		Set<String> test = new HashSet<>(Files.readAllLines(Paths.get(dir+"productsFeatureIDEmodel2"), StandardCharsets.UTF_8));
-		assertEquals(test,FMCATest.sorting.apply(sp));
+		Assert.assertEquals(test, FMCATest.sorting.apply(sp));
 	}
 
 	@Test

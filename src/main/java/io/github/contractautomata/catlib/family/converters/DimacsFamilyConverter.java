@@ -12,6 +12,9 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.github.contractautomata.catlib.family.Family;
+import io.github.contractautomata.catlib.family.Feature;
+import io.github.contractautomata.catlib.family.Product;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.reader.DimacsReader;
 import org.sat4j.reader.ParseFormatException;
@@ -21,10 +24,6 @@ import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 import org.sat4j.tools.ModelIterator;
-
-import io.github.contractautomata.catlib.family.Family;
-import io.github.contractautomata.catlib.family.Feature;
-import io.github.contractautomata.catlib.family.Product;
 
 /**
  * Class for importing and exporting DIMACS CNF models as families of products. <br>
@@ -91,7 +90,7 @@ public class DimacsFamilyConverter implements FamilyConverter {
 							.boxed()
 							.filter(i->i!=0)
 							.collect(Collectors.partitioningBy(i-> i>-1, //i>=0 causes a mutant to survive
-							Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))), 
+							Collectors.mapping(i->new Feature(i2s.get(Math.abs(i))),
 									Collectors.toSet()))))
 					.map(e->new Product(e.get(true),e.get(false)))
 					.collect(Collectors.toSet());			

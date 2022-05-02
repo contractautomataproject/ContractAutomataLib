@@ -1,6 +1,7 @@
 package it.io.github.contractautomata.catlib.family;
 
 
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.family.Family;
 import io.github.contractautomata.catlib.family.Product;
 import io.github.contractautomata.catlib.family.converters.FamilyConverter;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.assertEquals;
 
 public class ITFamilyTest {
@@ -21,10 +21,10 @@ public class ITFamilyTest {
     @Test
     public void maximalProducts() throws Exception
     {
-        String fileName =dir+"ValidProducts.prod";
+        String fileName = ITAutomatonTest.dir+ "ValidProducts.prod";
         Family fam=  new Family(dfc.importProducts(fileName));
         Set<Product> mp= fam.getMaximalProducts();
-        Set<Product> test = dfc.importProducts(dir +"maximalProductsTest.prod");
+        Set<Product> test = dfc.importProducts(ITAutomatonTest.dir + "maximalProductsTest.prod");
 
         assertEquals(mp,test);
     }
@@ -34,7 +34,7 @@ public class ITFamilyTest {
     @Test
     public void testMaximumDepth() throws Exception
     {
-        String fileName =dir +"ValidProducts.prod";
+        String fileName = ITAutomatonTest.dir + "ValidProducts.prod";
         Family fam=new Family(dfc.importProducts(fileName));
         assertEquals(11,fam.getMaximumDepth());
     }
@@ -43,7 +43,7 @@ public class ITFamilyTest {
     public void testGetSuperProductsOfProduct() throws Exception
     {
 
-        String fileName =dir +"ValidProducts.prod";
+        String fileName = ITAutomatonTest.dir + "ValidProducts.prod";
         Family fam=new Family(dfc.importProducts(fileName));
         Set<Product> pr=fam.getProducts();
         List<Product> ar = new ArrayList<>(pr);
@@ -51,20 +51,20 @@ public class ITFamilyTest {
         int pIndex=100;
         Set<Product> products = fam.getSuperProductsOfProduct(ar.get(pIndex));
 
-        Set<Product> test = dfc.importProducts(dir +"superProductsOfProduct_test.prod");
+        Set<Product> test = dfc.importProducts(ITAutomatonTest.dir + "superProductsOfProduct_test.prod");
         assertEquals(products,test);
     }
 
     @Test
     public void testGetSubProductsOfProduct() throws Exception
     {
-        String fileName =dir +"ValidProducts.prod";
+        String fileName = ITAutomatonTest.dir + "ValidProducts.prod";
         Family fam=new Family(dfc.importProducts(fileName));
         Set<Product> pr=fam.getProducts();
         List<Product> ar = new ArrayList<>(pr);
         int pIndex=100;
         Set<Product> products = fam.getSubProductsOfProduct(ar.get(pIndex));
-        Set<Product> test = dfc.importProducts(dir +"subProductsOfProduct_test.prod");
+        Set<Product> test = dfc.importProducts(ITAutomatonTest.dir + "subProductsOfProduct_test.prod");
 
         assertEquals(products,test);
     }
@@ -72,13 +72,13 @@ public class ITFamilyTest {
     @Test
     public void testGetSubProductsNotClosedTransitively() throws Exception
     {
-        String fileName =dir +"ValidProducts.prod";
+        String fileName = ITAutomatonTest.dir + "ValidProducts.prod";
         Family fam=new Family(dfc.importProducts(fileName));
         Set<Product> pr=fam.getProducts();
         List<Product> ar = new ArrayList<>(pr);
         int pIndex=100;
         Set<Product> products = fam.getSubProductsNotClosedTransitively(ar.get(pIndex));
-        Set<Product> test = dfc.importProducts(dir +"subProductNotClosedTransitively_test.prod");
+        Set<Product> test = dfc.importProducts(ITAutomatonTest.dir + "subProductNotClosedTransitively_test.prod");
         assertEquals(products,test);
     }
 

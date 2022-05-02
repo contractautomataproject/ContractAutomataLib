@@ -10,7 +10,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Set;
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
+
+import static io.github.contractautomata.catlib.family.converters.DimacConverterTest.dir;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Strict.class)
 public class ProdFamilyConverterTest {
 	private  FamilyConverter dfc;
-	@Mock Family fam;
+	@Mock
+	Family fam;
 
 	@Before
 	public void setUp(){

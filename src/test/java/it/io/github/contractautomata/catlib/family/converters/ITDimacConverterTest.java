@@ -1,6 +1,7 @@
 package it.io.github.contractautomata.catlib.family.converters;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
@@ -19,7 +20,6 @@ import java.io.File;
 import java.util.Set;
 
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.assertEquals;
 
 public class ITDimacConverterTest {
@@ -31,21 +31,21 @@ public class ITDimacConverterTest {
 	@Test
 	public void testImport() throws Exception
 	{
-		Set<Product> prod= dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
-		Automaton<String,Action,State<String>,ModalTransition<String, Action,State<String>,CALabel>> aut =
-				bdc.importMSCA(dir+"(BusinessClientxHotelxEconomyClient).data");
+		Set<Product> prod= dfc.importProducts(ITAutomatonTest.dir+ "FeatureIDEmodel" +File.separator+"model.dimacs");
+		Automaton<String, Action, State<String>, ModalTransition<String, Action,State<String>,CALabel>> aut =
+				bdc.importMSCA(ITAutomatonTest.dir+ "(BusinessClientxHotelxEconomyClient).data");
 
 		FMCA fmca = new FMCA(aut,prod);
 
-		FMCA fmca_two = new FMCA(aut, ffc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.xml"));
+		FMCA fmca_two = new FMCA(aut, ffc.importProducts(ITAutomatonTest.dir+ "FeatureIDEmodel" +File.separator+"model.xml"));
 		assertEquals(fmca.getFamily(), fmca_two.getFamily());
 	}
 	
 	@Test
 	public void testPrimeImplicant() throws Exception
 	{
-		Set<Product> prod = dfc_pi.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");	
-		Set<Product> prodall = dfc.importProducts(dir+"FeatureIDEmodel"+File.separator+"model.dimacs");
+		Set<Product> prod = dfc_pi.importProducts(ITAutomatonTest.dir+ "FeatureIDEmodel" +File.separator+"model.dimacs");
+		Set<Product> prodall = dfc.importProducts(ITAutomatonTest.dir+ "FeatureIDEmodel" +File.separator+"model.dimacs");
 		PartialProductGenerator pg = new PartialProductGenerator();
 		Family f2 = new Family(pg.apply(prodall));
 		Set<Product> max = f2.getMaximalProducts();

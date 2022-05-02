@@ -29,7 +29,7 @@ public class OrchestrationSynthesisOperatorTest {
 
     @Mock(answer = Answers.RETURNS_SMART_NULLS)
     Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>, CALabel>> aut;
+                            ModalTransition<String, Action, State<String>, CALabel>> aut;
 
     @Mock CALabel lab;
 

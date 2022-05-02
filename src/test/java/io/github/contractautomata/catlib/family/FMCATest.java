@@ -8,6 +8,7 @@ import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,8 @@ public class FMCATest {
     @Mock ModalTransition<String,Action,State<String>,CALabel> t2;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t3;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t4;
-    @Mock Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a;
+    @Mock
+    Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a;
 
 
     @Before
@@ -210,7 +212,7 @@ public class FMCATest {
 
     @Test
     public void testGetAut() {
-        assertEquals(a,aut.getAut());
+        Assert.assertEquals(a,aut.getAut());
     }
 
     @Test

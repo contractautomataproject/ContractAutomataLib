@@ -30,7 +30,7 @@ public class UnionFunctionTest {
 
     @Mock
     Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>, CALabel>> aut;
+                            ModalTransition<String, Action, State<String>, CALabel>> aut;
 
     @Mock
     Automaton<String, Action, State<String>,

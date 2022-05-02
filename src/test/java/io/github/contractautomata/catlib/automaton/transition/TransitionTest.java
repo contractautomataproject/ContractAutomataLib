@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.state.State;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,15 +16,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.state.State;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransitionTest {
 	
-	@Mock State<String> bs0;
-	@Mock Label<String> lab;
+	@Mock
+	State<String> bs0;
+	@Mock
+	Label<String> lab;
 	@Mock State<String> bs1;
 	@Mock Label<String> lab2;
 	

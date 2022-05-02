@@ -29,7 +29,8 @@ public class SynthesisOperatorTest {
     @Mock State<String> cs13;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t11;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t12;
-    @Mock Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a1;
+    @Mock
+    Automaton<String, Action, State<String>, ModalTransition<String,Action,State<String>, CALabel>> a1;
 
     @Mock Predicate<CALabel> req;
     @Mock Function<Set<ModalTransition<String,Action,State<String>,CALabel>>,

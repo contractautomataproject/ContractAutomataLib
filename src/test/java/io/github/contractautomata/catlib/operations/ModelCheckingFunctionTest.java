@@ -41,8 +41,9 @@ public class ModelCheckingFunctionTest {
     @Mock Label<Action> labcomp;
     @Mock Label<Action> labCompNoMatch;
 
-    @Mock Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>,Label<Action>>> aut;
+    @Mock
+    Automaton<String, Action, State<String>,
+                            ModalTransition<String, Action, State<String>,Label<Action>>> aut;
 
     @Mock Automaton<String, Action, State<String>,
             ModalTransition<String, Action, State<String>,Label<Action>>> prop;

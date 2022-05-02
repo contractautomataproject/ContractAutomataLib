@@ -6,19 +6,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
+import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.transition.Transition;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import io.github.contractautomata.catlib.automaton.label.CALabel;
-import io.github.contractautomata.catlib.automaton.state.BasicState;
-import io.github.contractautomata.catlib.automaton.state.State;
 
 public class ITModalTransitionTest {
 	

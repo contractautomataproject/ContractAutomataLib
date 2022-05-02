@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
+
+import static  io.github.contractautomata.catlib.family.converters.DimacConverterTest.dir;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +42,7 @@ public class AutDataConverterTest {
 
     private AutDataConverter<Label<Action>> adc;
 
-    private static  Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> axb;
+    private static Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> axb;
 
     @BeforeClass
     public static void setup() throws IOException {

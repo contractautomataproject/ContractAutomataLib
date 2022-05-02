@@ -52,7 +52,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 	}
 
 	/**
-	 * Impor an automaton from a textual representation
+	 * Import an automaton from a textual representation
 	 * @param filename   the name of the file containing the automaton
 	 * @return the imported automaton, where the content of each state and action is a String, labels are of type L, and transitions can have modalities
 	 * @throws IOException

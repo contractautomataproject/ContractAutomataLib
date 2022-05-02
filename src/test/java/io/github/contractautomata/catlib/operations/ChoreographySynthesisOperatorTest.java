@@ -34,8 +34,9 @@ public class ChoreographySynthesisOperatorTest {
     @Mock Set<ModalTransition<String,Action,State<String>,CALabel>> trans;
     @Mock Set<State<String>> bad;
 
-    @Mock Automaton<String, Action, State<String>,
-            ModalTransition<String, Action, State<String>, CALabel>> aut;
+    @Mock
+    Automaton<String, Action, State<String>,
+                            ModalTransition<String, Action, State<String>, CALabel>> aut;
 
     @Mock CALabel lab;
     @Mock CALabel lab2;

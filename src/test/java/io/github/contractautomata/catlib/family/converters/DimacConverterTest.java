@@ -9,10 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-import static  it.io.github.contractautomata.catlib.automaton.ITAutomatonTest.dir;
 import static org.junit.Assert.*;
 
 public class DimacConverterTest {
+	public static final String dir = System.getProperty("user.dir")+File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator;
 
 	private FamilyConverter dfc;
 	private FamilyConverter dfc_pi;
