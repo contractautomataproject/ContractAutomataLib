@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Comparator;
@@ -33,9 +34,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class AutDataConverterTest {
 
-	@SuppressWarnings("unchecked")
-	static Label<Action> l = mock(Label.class);
-	
+    @SuppressWarnings("unchecked")
+    final static Label<Action> l = mock(Label.class);
+
     @Mock Label<Action> lab;
 
     @Spy Function<List<Action>,Label<Action>> createLabel;
@@ -100,11 +101,11 @@ public class AutDataConverterTest {
 
     @Test
     public void testTransitions() {
-       assertEquals("[([0, 0],mock,[1, 1]), ([1, 1],mock,[1, 2]), ([1, 1],mock,[2, 1]), ([1, 2],mock,[2, 2]), ([2, 1],mock,[2, 2])]",
-               axb.getTransition()
-                       .stream()
-                       .sorted(Comparator.comparing(Transition::toString))
-                       .collect(Collectors.toList()).toString());
+        assertEquals("[([0, 0],mock,[1, 1]), ([1, 1],mock,[1, 2]), ([1, 1],mock,[2, 1]), ([1, 2],mock,[2, 2]), ([2, 1],mock,[2, 2])]",
+                axb.getTransition()
+                        .stream()
+                        .sorted(Comparator.comparing(Transition::toString))
+                        .collect(Collectors.toList()).toString());
     }
 
 
@@ -149,7 +150,7 @@ public class AutDataConverterTest {
         assertThrows(IllegalArgumentException.class,
                 ()->adc.importMSCA(dir+"emptyfile.data"));
     }
-    
+
     @Test
     public void testImportMSCANoDataFormat()  {
         assertThrows("Not a .data format",IllegalArgumentException.class,()->adc.importMSCA(dir+"test"));
@@ -167,8 +168,8 @@ public class AutDataConverterTest {
 
     @Test
     public void testEmptyFileName_exception() throws NumberFormatException {
-        assertThrows("Empty file name",IllegalArgumentException.class,() -> 
-            adc.exportMSCA("", null));
+        assertThrows("Empty file name",IllegalArgumentException.class,() ->
+                adc.exportMSCA("", null));
     }
 
 
@@ -180,7 +181,7 @@ public class AutDataConverterTest {
     @Test
     public void testImportIllRankStatesHigher_exception() throws NumberFormatException {
         assertThrows("Ill-formed transitions, different ranks",IOException.class,() -> adc.importMSCA(dir+"illformed2.data"));
-                
+
     }
 
 
@@ -192,7 +193,7 @@ public class AutDataConverterTest {
     @Test
     public void testImportIllRankStatesLower_exception() throws NumberFormatException {
         assertThrows("Ill-formed transitions, different ranks",IOException.class,() -> adc.importMSCA(dir+"illformed3.data"));
-                
+
     }
 
     @Test
@@ -203,7 +204,7 @@ public class AutDataConverterTest {
     @Test
     public void testImportIllRankFinalStatesLower_exception() throws NumberFormatException {
         assertThrows("Final states with different rank",IllegalArgumentException.class,() -> adc.importMSCA(dir+"illformed5.data"));
-                
+
     }
 
     @Test
@@ -211,26 +212,32 @@ public class AutDataConverterTest {
         Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
                 adc.importMSCA(dir+"(AxB).data");
 
-        adc.exportMSCA(dir+"(AxB)_export",aut);
+        adc.exportMSCA(dir+"(AxB)_exportWithoutSuffix",aut);
 
-        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_export.data")));
+        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_exportWithoutSuffix.data")));
     }
 
 
     @Test
     public void testExportMSCAWithSuffix() throws IOException {
+        File file = new File(dir + "(AxB)_exportWithSuffix.data");
+        file.delete();
+
         Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>> aut =
                 adc.importMSCA(dir+"(AxB).data");
 
-        adc.exportMSCA(dir+"(AxB)_export.data",aut);
+        adc.exportMSCA(dir+"(AxB)_exportWithSuffix.data",aut);
 
-        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_export.data")));
+        assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_exportWithSuffix.data")));
     }
+
+
+
 
     @Test
     public void testExportException() {
         assertThrows(IllegalArgumentException.class, ()->
-        adc.exportMSCA("",null)); //without extension
+                adc.exportMSCA("",null)); //without extension
 
     }
 }
