@@ -1,8 +1,8 @@
-![Build and Testing](https://github.com/ContractAutomataProject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FContractAutomataProject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/ContractAutomataProject/ContractAutomataLib/main)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f7dcd94be9141b1b64ef615edbb3991)](https://www.codacy.com/gh/contractautomataproject/ContractAutomataLib/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ContractAutomataProject/ContractAutomataLib&amp;utm_campaign=Badge_Grade)
+![Build and Testing](https://github.com/contractautomataproject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/contractautomataproject/ContractAutomataLib?branch=main)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcontractautomataproject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=contractautomataproject_ContractAutomataLib)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f7dcd94be9141b1b64ef615edbb3991)](https://www.codacy.com/gh/contractautomataproject/ContractAutomataLib/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=contractautomataproject/ContractAutomataLib&amp;utm_campaign=Badge_Grade)
 [![Code Quality Score](https://api.codiga.io/project/32018/score/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.contractautomataproject/catlib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/contractautomataproject/catlib/)
@@ -32,7 +32,7 @@ For  information on the usage and installation of the library, check the User Do
 
 For the API documentation, check the links below.
 
-This documentation is up-to-date to the commit <a href="https://github.com/ContractAutomataProject/ContractAutomataLib/tree/4e1044e4d4f0daf192f7e040d386a01153a4349e">4e1044e</a> of 29 April 2022.
+This documentation is up-to-date to the commit <a href="https://github.com/contractautomataproject/ContractAutomataLib/tree/4e1044e4d4f0daf192f7e040d386a01153a4349e">4e1044e</a> of 29 April 2022.
 
 
 The following documentation has  been created using the Model-based Software Engineering tool Sparx Enterprise Architect:
@@ -60,7 +60,7 @@ Davide Basile - davide.basile@isti.cnr.it.
 
 The source code has been redesigned and refactored during 2020, using the new functionalities introduced with Java 8 (streams, lambda).
 If you are reaching this repository from some previous paper on contract automata (e.g., <tt>JSCP2020</tt>, <tt>LMCS2020</tt>), you may be interested in checking an old version of the repository, before its refactoring. 
-The latest version of this repository before its refactoring started is available at  https://github.com/ContractAutomataProject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
+The latest version of this repository before its refactoring started is available at  https://github.com/contractautomataproject/ContractAutomataLib/tree/1b18cd127adc0e535595468c6faae851df3e7177. 
 The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>.
 
-<img src="https://raw.githubusercontent.com/ContractAutomataProject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>
+<img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>
