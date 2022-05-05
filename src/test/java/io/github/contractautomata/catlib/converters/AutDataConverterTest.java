@@ -228,6 +228,7 @@ public class AutDataConverterTest {
 
         adc.exportMSCA(dir+"(AxB)_exportWithSuffix.data",aut);
 
+        assertThrows(FileNotFoundException.class, ()->AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_exportWithSuffix.data.data")));
         assertTrue(AutomatonTest.autEquals(aut,adc.importMSCA(dir+"(AxB)_exportWithSuffix.data")));
     }
 
