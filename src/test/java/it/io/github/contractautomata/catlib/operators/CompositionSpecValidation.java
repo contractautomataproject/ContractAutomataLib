@@ -98,7 +98,7 @@ public class CompositionSpecValidation<S1> implements BooleanSupplier {
 
 	/**
 	 * predicates for match transitions
-	 * 
+	 *
 	 */
 	private boolean match(List<Set<ModalTransition<S1,Action,State<S1>,CALabel>>> autTr,
 						  ModalTransition<S1,Action,State<S1>,CALabel> t){

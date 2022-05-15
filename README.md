@@ -3,7 +3,6 @@
 <a href="https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main">
 <img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/mutation_badge.svg" />
  </a>
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcontractautomataproject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=contractautomataproject_ContractAutomataLib)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f7dcd94be9141b1b64ef615edbb3991)](https://www.codacy.com/gh/contractautomataproject/ContractAutomataLib/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=contractautomataproject/ContractAutomataLib&amp;utm_campaign=Badge_Grade)
 [![Code Quality Score](https://api.codiga.io/project/32018/score/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)
@@ -48,11 +47,17 @@ The following documentation has  been created using the Model-based Software Eng
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomataproject/catlib">https://javadoc.io/doc/io.github.contractautomataproject/catlib</a>.
 
-
-
 <h2>License</h2>
 The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
+
+<h2>Branches</h2>
+This is the main branch of the repository. 
+The branch `gh-pages` contains the GitHub page of this repository. 
+This software is currently submitted  as an Original Software Publication for the journal Science of Computer 
+Programming. 
+Possible new updates will be implemented on a branch called `development`, whilst waiting for 
+the response to our submission. 
 
 <h2>Contacts</h2>
 
