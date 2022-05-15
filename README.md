@@ -53,10 +53,10 @@ The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3
 
 <h2>Branches</h2>
 This is the main branch of the repository. 
-The branch `gh-pages` contains the GitHub page of this repository. 
+The branch <tt>gh-pages</tt> contains the GitHub page of this repository. 
 This software is currently submitted  as an Original Software Publication for the journal Science of Computer 
 Programming. 
-Possible new updates will be implemented on a branch called `development`, whilst waiting for 
+Possible new updates will be implemented on a branch called <tt>development</tt>, whilst waiting for 
 the response to our submission. 
 
 <h2>Contacts</h2>
