@@ -1,5 +1,5 @@
 ![Build and Testing](https://github.com/contractautomataproject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/contractautomataproject/ContractAutomataLib?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
 <a href="https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main">
 <img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/mutation_badge.svg" />
  </a>
