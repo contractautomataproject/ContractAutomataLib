@@ -8,6 +8,7 @@
 [![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.contractautomataproject/catlib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/contractautomataproject/catlib/)
 [![Maven Central Repository](https://img.shields.io/maven-central/v/io.github.contractautomataproject/catlib)](https://repo1.maven.org/maven2/io/github/contractautomataproject/catlib/)
 [![javadoc](https://javadoc.io/badge2/io.github.contractautomataproject/catlib/javadoc.svg)](https://javadoc.io/doc/io.github.contractautomataproject/catlib)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6704434.svg)](https://doi.org/10.5281/zenodo.6704434)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 <!--[![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)-->
