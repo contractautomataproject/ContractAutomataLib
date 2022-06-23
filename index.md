@@ -36,15 +36,18 @@ and synthesis operations to compute the strategy for a player to never lose a ga
 The example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
 flow of the application. We refer to the above repository for more information.
 
-The following examples are applying the library to the Hotel Reservation case study published in [SCICO20] and [LMCS20] (see references below).
-This is a common example in service-oriented computing, and features clients booking reservations from hotels with intermediary brokers. 
-The examples are thoroughly described in Section 2 of [SCICO20] (the whole section is devoted to describing the example) and 
-the Example 2.2 of [LMCS20]. This last example is only used when showing how to synthesise a choreography.
+In the following examples, we apply {\tt CATLib} to the Hotel Reservation case study, which is thoroughly described in [SCICO20] (see references below).
+The specific example showing the choreography synthesis is taken from  Example 2.2 of [LMCS20]. 
 Both these journal articles are Open Access and can be freely downloaded. 
+The hotel reservation system is one of the classical service booking examples that can be found in publications about formal methods for service-oriented comput computing. 
+ It features clients booking reservations from hotels with intermediary brokers. 
 The following code is available in the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
-The used files are stored under the folder `src/test/resources` of the repository. 
+When launching the class, it will print to the console output the `.data` descriptions of the computed automata. 
+It is possible to crosscheck this output with the figures depicting these automata in [SCICO20][LMCS20] (more below). 
+This check is also performed automatically by the tests of the library.
+The files used are stored under the folder {\tt /src/test/resources} of the repository.
 
-The first  example shows how to load automata, compute their composition and compute the synthesis of the orchestration.
+The first  example, whose code is reported below,  shows how to load automata, compute their composition and compute the synthesis of the orchestration.
 It starts by loading the `BusinessClient` and `Hotel` automata that are depicted in Figure 2 and Figure 3 in [SCICO20]. 
 These automata have been stored in `.data` textual format, and are imported using `AutDataConverter` (for more information 
 on the textual format check the Editing section below).
@@ -59,8 +62,8 @@ The predicate is the property of agreement: each request of either the client
 or the hotel must be matched by an offer of the other partner. 
 Transitions whose labels have a request but no offer are pruned.
 When applying the composition, a bound to the maximum length of a path in the composition is passed as argument. 
-This allows to implement a `bounded` composition.
-After the composition is computed, this will be refined to an orchestration. 
+This allows to implement a bounded composition.
+After the composition is computed, it is refined to an orchestration.
 This is done with the `OrchestrationSynthesisOperator`, which takes as argument the aforementioned agreement property.
 This composition is depicted in Figure 6 in [SCICO20].
 
@@ -73,11 +76,12 @@ Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String
 Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(comp);
 ```
 
-The example below shows how to synthesise a choreography and store the result. 
+
+The second example, reported below, shows how to synthesise a choreography and store the result. 
 It loads a precomputed composition stored in a `.data` format. 
 The automata in the composition are depicted in Figure 1, Figure 2 and Figure 3 in [LMCS20].
-Afterwards,  the choreography is synthesised using
- the class `ChoreographySynthesisOperator` that takes as argument a property invariant on the 
+Subsequently, the class `ChoreographySynthesisOperator` is used to synthesise the choreography. 
+ The constructor takes as argument a property invariant on the 
 synthesised labels. In this case the property is strong agreement: all labels must be matches 
 between an offer and a request. 
 The choreography is stored again in a `.data` format. 
@@ -89,14 +93,14 @@ Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String
 bdc.exportMSCA(dir+"Chor_(ClientxPriviledgedClientxBrokerxHotelxHotel)_example.data",cor);
 ```
 
-The following example  shows how to instantiate a single product, and how to synthesise an orchestration for that 
+The third example, reported below, shows how to instantiate a single product and synthesise an orchestration for that 
 specific product. 
 The loaded automaton is the composition of the example in [SCICO20]. 
 The `EconomyClient` automaton is depicted in Figure 4 in [SCICO20].
 The product is instantiated using the class `Product`, taking as argument the required and forbidden features. 
-The product is  requiring features `card` and `sharedBathroom` to be reachable as labels in the automaton, and forbidding feature `cash`.
+The product requires features `card` and `sharedBathroom` to be reachable as labels in the automaton, and forbidding feature `cash`.
 The class `ProductOrchestrationSynthesisOperator` takes as argument the property to enforce (agreement) and the 
-product, and is applied on the loaded automaton.  
+product, and it is applied on the loaded automaton.  
 The orchestration for this product is depicted in Figure 5 in [SCICO20].
 
 ```java
