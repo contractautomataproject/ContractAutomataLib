@@ -45,6 +45,7 @@ The following documentation has  been created using the Model-based Software Eng
 </li>
   <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_diagrams.pdf">Diagram report (pdf)</a>. Contains all the diagrams of the project. </li>
   <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CAT_Lib_doc.pdf">Library report (pdf)</a>. Contains information on all classes and their members (similar to javadoc).</li>
+  <li><a href="https://contractautomataproject.github.io/ContractAutomataLib/doc/CATLib_Packages.pdf">Packages report (pdf)</a>. Document containing a description of the packages and the classes.</li>
 </ul> 
 
 The javadoc documentation for the release to the Maven Central Repository is available at <a href="https://javadoc.io/doc/io.github.contractautomataproject/catlib">https://javadoc.io/doc/io.github.contractautomataproject/catlib</a>.
