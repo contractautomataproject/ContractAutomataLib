@@ -10,6 +10,7 @@
 [![javadoc](https://javadoc.io/badge2/io.github.contractautomataproject/catlib/javadoc.svg)](https://javadoc.io/doc/io.github.contractautomataproject/catlib)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6704434.svg)](https://doi.org/10.5281/zenodo.6704434)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/davidebasile/ContractAutomataLib)
+[![Open in Code Ocean](https://codeocean.com/codeocean-assets/badge/open-in-code-ocean.svg)](https://codeocean.com/capsule/3787263/tree)
 <!--[![GitHub issues](https://img.shields.io/github/issues/davidebasile/ContractAutomataLib)](https://github.com/davidebasile/ContractAutomataLib/issues)-->
 <!--[![Code Grade](https://api.codiga.io/project/32018/status/svg)](https://app.codiga.io/public/project/32018/ContractAutomataLib/dashboard)-->
 <!--a href="https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main">
