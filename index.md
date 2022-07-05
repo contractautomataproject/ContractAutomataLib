@@ -36,16 +36,17 @@ and synthesis operations to compute the strategy for a player to never lose a ga
 The example also shows how to realize the final application (the game) using the synthesised automata to orchestrate the control 
 flow of the application. We refer to the above repository for more information.
 
-In the following examples, we apply {\tt CATLib} to the Hotel Reservation case study, which is thoroughly described in [SCICO20] (see references below).
+In the following examples, we apply CATLib to the Hotel Reservation case study, which is thoroughly described in [SCICO20] (see references below).
 The specific example showing the choreography synthesis is taken from  Example 2.2 of [LMCS20]. 
 Both these journal articles are Open Access and can be freely downloaded. 
 The hotel reservation system is one of the classical service booking examples that can be found in publications about formal methods for service-oriented comput computing. 
  It features clients booking reservations from hotels with intermediary brokers. 
 The following code is available in the executable class `/src/test/java/examples/Examples.java` of the GitHub repository.
+These examples are available in a reproducible capsule at <a href="https://doi.org/10.24433/CO.1575879.v1">https://doi.org/10.24433/CO.1575879.v1</a>.
 When launching the class, it will print to the console output the `.data` descriptions of the computed automata. 
 It is possible to crosscheck this output with the figures depicting these automata in [SCICO20][LMCS20] (more below). 
 This check is also performed automatically by the tests of the library.
-The files used are stored under the folder {\tt /src/test/resources} of the repository.
+The files used are stored under the folder `/src/test/resources` of the repository.
 
 The first  example, whose code is reported below,  shows how to load automata, compute their composition and compute the synthesis of the orchestration.
 It starts by loading the `BusinessClient` and `Hotel` automata that are depicted in Figure 2 and Figure 3 in [SCICO20]. 
