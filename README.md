@@ -17,7 +17,7 @@
 <img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/mutation_badge.svg" />
  </a-->
 
-<h1 align=center>Contract Automata Lib </h1>
+<h1 align=center>Contract Automata Library </h1>
 
 <h2>About</h2>
 This repository contains the Contract Automata Library (CATLib), which is the main repository of the Contract Automata Toolkit. 
