@@ -7,6 +7,8 @@ They are used for specifying services' interface, called behavioral contracts, a
 and generating the orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product lines (FMCA).
 The source code has been redesigned and refactored using the new functionalities introduced with Java 8 (streams, lambda).
 
+An article in Science of Computer Programming ([SCICO22]) has been recently published that describes this software. Check the references below.
+
 <h2>License</h2>
 The tool is available under <a href="https://www.gnu.org/licenses/gpl-3.0">GPL-3.0 license</a>.
 
@@ -268,6 +270,8 @@ Contact me on davide.basile@isti.cnr.it if you have questions.
 
 
 <h2>References</h2>
+
+[SCICO22]  Basile, D. and ter Beek, M.H., 2022. Contract Automata Library. Science of Computer Programming. https://doi.org/10.1016/j.scico.2022.102841
 
 [COORD21] Basile, D., ter Beek, M.H., 2021, June. A Clean and Efficient Implementation of Choreography Synthesis for Behavioural Contracts.
 In Proceedings of the 23rd IFIP WG 6.1 International Conference, COORDINATION 2021, pages 225-238,
