@@ -34,7 +34,7 @@ They are used for specifying services' interface, called behavioral contracts,
 
 The article "Contract Automata Library" has been published in  Science of Computer Programming:
 
-Basile, D. and ter Beek, M.H., 2022. Contract Automata Library. Science of Computer Programming, p.102841. https://doi.org/10.1016/j.scico.2022.102841
+Basile, D. and ter Beek, M.H., 2022. Contract Automata Library. Science of Computer Programming. https://doi.org/10.1016/j.scico.2022.102841
 
 <h2>Getting Started</h2>
 
