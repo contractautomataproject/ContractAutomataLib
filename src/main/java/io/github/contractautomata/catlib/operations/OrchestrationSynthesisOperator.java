@@ -88,5 +88,8 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 						&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
 						tt.getLabel().isMatch()
 								&&t.getLabel().getAction().equals(tt.getLabel().getAction())));//doing the same request
+
+		 //add that the source state of t must be reachable from tt using only transitions in str whose states are not in bad and
+		 //in all those states the source state of the requester must not change
 	}
 }
