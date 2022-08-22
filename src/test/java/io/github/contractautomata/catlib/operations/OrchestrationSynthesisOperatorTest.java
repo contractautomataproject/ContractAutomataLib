@@ -141,7 +141,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                         ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -160,7 +160,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -180,7 +180,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -200,7 +200,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -228,7 +228,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -256,7 +256,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
@@ -276,7 +276,7 @@ public class OrchestrationSynthesisOperatorTest {
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
 
-        verify(t11).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
+        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
         BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();

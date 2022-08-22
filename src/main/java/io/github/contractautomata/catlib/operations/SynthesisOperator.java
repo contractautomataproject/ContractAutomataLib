@@ -70,6 +70,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 
 	private Map<S,Boolean> reachable;
 	private Map<S,Boolean> successful;
+	private int lastCallDanglingStates;
 	private final TriPredicate<T, Set<T>, Set<S>> pruningPred;
 	private final TriPredicate<T, Set<T>, Set<S>> forbiddenPred;
 	private final Predicate<L> req;
@@ -96,6 +97,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 				&&  forbiddenPredicate.test(x, t, bad);
 		this.req=req;
 		this.createAut=createAut;
+		this.lastCallDanglingStates=-1;
 	}
 
 	/**
@@ -156,18 +158,19 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 					Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
 
 					//next function embedded into hasnext
-					if (pair.tr.removeAll(pre.tr.parallelStream()
+					pair.tr.removeAll(pre.tr.parallelStream()
 							.filter(x->pruningPred.test(x,pre.tr, pre.s))
-							.collect(Collectors.toSet()))) //Ki
-						pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
+							.collect(Collectors.toSet()));//Ki
 
 					pair.s.addAll(trbackup.parallelStream()
 							.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
 							.map(Transition::getSource)
 							.collect(Collectors.toSet())); //Ri
 
+					//dangling states are computed only when no further updates are possible on pair.tr and pair.s
 					return (pre.tr.size()!=pair.tr.size()
-							|| pre.s.size() != pair.s.size());//hasnext
+							|| pre.s.size() != pair.s.size())
+								|| pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));//hasnext
 				},p->p)
 				.reduce((first,second)->new Pair(second.tr,second.s))
 				.orElse(seed);
@@ -189,20 +192,24 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 	 */
 	private Set<S> getDanglingStates(Set<T> tr, Set<S> states, S initial)
 	{
-		//all states' flags are reset
-		this.reachable=states.parallelStream()
-				.collect(Collectors.toMap(x->x, x->false));
-		this.successful=states.parallelStream()
-				.collect(Collectors.toMap(x->x, x->false));
+		//if the number of transitions has not changed since the last call then there is no need to update the info on the states
+		if (lastCallDanglingStates!=tr.size()) {
+			lastCallDanglingStates=tr.size();
+			//all states' flags are reset
+			this.reachable = states.parallelStream()
+					.collect(Collectors.toMap(x -> x, x -> false));
+			this.successful = states.parallelStream()
+					.collect(Collectors.toMap(x -> x, x -> false));
 
-		//set reachable
-		visit(tr, initial,true); //forward
+			//set reachable
+			visit(tr, initial, true); //forward
 
-		//set successful
-		states.forEach(x-> {
-			if (x.isFinalState()&& Boolean.TRUE.equals(this.reachable.get(x)))
-				visit(tr,x,false); //backward
-		});
+			//set successful
+			states.forEach(x -> {
+				if (x.isFinalState() && Boolean.TRUE.equals(this.reachable.get(x)))
+					visit(tr, x, false); //backward
+			});
+		}
 
 		return states.parallelStream()
 				.filter(x->!(reachable.get(x)&&this.successful.get(x)))
