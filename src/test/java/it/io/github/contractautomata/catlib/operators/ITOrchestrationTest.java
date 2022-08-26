@@ -63,9 +63,22 @@ public class ITOrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
-		assertTrue(AutomatonTest.autEquals(new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut),test));
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
+		assertTrue(AutomatonTest.autEquals(orc,test));
 	}
-	
+
+
+	@Test
+	public void orcTestLMCS2020TransitionsLazyPP() throws Exception
+	{
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel)_LazyPP.data");
+		OrchestrationSynthesisOperator.setReachabilityLazy();
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
+		assertTrue(AutomatonTest.autEquals(orc,test));
+	}
+
+
 	@Test
 	public void orcEmptyTestNoDangling() throws Exception
 	{
@@ -142,23 +155,3 @@ public class ITOrchestrationTest {
 		assertThrows(UnsupportedOperationException.class, () -> os.apply(orc));
 	}
 }
-
-
-
-
-//@Test
-//public void orcTest_nonempty() throws Exception
-//{
-//
-//	MSCA orc = bdc.importMSCA(dir+"test_empty_orc_lazy.data");
-//	assertEquals(new OrchestrationSynthesisOperator<>(new Agreement()).apply(orc),null);
-//}
-
-//@Test
-//public void orcTestLMCS2020Transitions_new() throws Exception
-//{
-//	MSCA aut = bmc.importMSCA(dir+"(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
-//	MSCA test = bmc.importMSCA(dir+"Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel).mxe");
-//	assertEquals(MSCATest.checkTransitions(new OrchestrationSynthesisOperator<>(new Agreement()).apply(aut),test),true);
-//}
-//

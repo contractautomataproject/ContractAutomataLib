@@ -127,7 +127,7 @@ public class OrchestrationSynthesisOperatorTest {
 
     @Test
     public void testChangeLabel() {
-        oso = new OrchestrationSynthesisOperator<>(l->true,null);
+        oso = new OrchestrationSynthesisOperator<>(l->true,(Automaton)null);
         when(lab.getRank()).thenReturn(1);
         when(lab.getRequester()).thenReturn(0);
         when(lab.getCoAction()).thenReturn(mock(OfferAction.class));
