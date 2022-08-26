@@ -36,7 +36,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		ModalTransition<S1,Action,State<S1>,Label<Action>>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
-	private static boolean reachabilityLazy =false;
+	private static boolean reachabilityLazy=false;
 
 	/**
 	 * Constructor for the orchestration synthesis operator enforcing the requirement req.
@@ -131,6 +131,11 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	}
 
 	public static void setReachabilityLazy(){
-		OrchestrationSynthesisOperator.reachabilityLazy =true;
+		OrchestrationSynthesisOperator.reachabilityLazy = true;
+	}
+
+
+	public static void resetReachabilityLazy(){
+		OrchestrationSynthesisOperator.reachabilityLazy = false;
 	}
 }

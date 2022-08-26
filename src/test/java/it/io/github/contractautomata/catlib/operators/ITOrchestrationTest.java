@@ -76,6 +76,7 @@ public class ITOrchestrationTest {
 		OrchestrationSynthesisOperator.setReachabilityLazy();
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
 		assertTrue(AutomatonTest.autEquals(orc,test));
+		OrchestrationSynthesisOperator.resetReachabilityLazy();
 	}
 
 
