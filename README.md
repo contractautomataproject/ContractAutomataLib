@@ -82,7 +82,7 @@ Davide Basile - davide.basile@isti.cnr.it.
 of product lines support, the software name was extended to <b>FMCAT</b> (Featured Modal Contract Automata Tool).
 It was a monolithic software comprehending both a prototypical implementation of the library and a front-end. 
 The front-end was available both as command line or as a GUI. The command line front-end has been discontinued.
-The GUI front-end was later factorised out to another repository (<b>CAT_App</b>), whilst the remaining lirary is now called <b>CATLib</b>. 
+The GUI front-end was later factorised out to another repository (<b>CAT_App</b>), whilst the remaining library is now called <b>CATLib</b>. 
 The set of softwares supporting contract automata are now called "Contract Automata Toolkit", for continuity with its previous iteration.
 </p>
 <p>
