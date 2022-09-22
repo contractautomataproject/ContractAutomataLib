@@ -91,6 +91,7 @@ If you are reaching this repository from some previous paper on contract automat
 The latest version of this repository before its refactoring started is available at  <a href="https://github.com/contractautomataproject/ContractAutomataLib/tree/06c5c32519bb5b67a2e7d331b512cae0aa37a2e1">06c5c32519bb5b67a2e7d331b512cae0aa37a2e1</a>. 
 The case studies of these papers can be found in this previous version under the folders <tt>demoJSCP</tt> and <tt>demoLMCS2020</tt>. 
 The repository at <a href="https://github.com/davidebasile/experimentsReproducibilityCoordination2021">https://github.com/davidebasile/experimentsReproducibilityCoordination2021</a> contains a comparison of the two versions of the library (before and after the refactoring). 
+</p>
 
 <img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>
-</p>
+
