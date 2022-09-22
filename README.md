@@ -78,7 +78,9 @@ Davide Basile - davide.basile@isti.cnr.it.
 
 
 <h2>Legacy</h2> 
-
+In previous iterations this software was called "Contract Automata Tool". 
+It was a monolithic software comprehending both a prototypical implementation of the library and a front-end. 
+The GUI front-end was later factorised out to another repository (CAT_App).
 The source code has been redesigned and refactored during 2020, using the new functionalities introduced with Java 8 (streams, lambda).
 If you are reaching this repository from some previous paper on contract automata (e.g., <tt>JSCP2020</tt>, <tt>LMCS2020</tt>), you may be interested in checking an old version of the repository, before its refactoring. 
 The latest version of this repository before its refactoring started is available at  <a href="https://github.com/contractautomataproject/ContractAutomataLib/tree/06c5c32519bb5b67a2e7d331b512cae0aa37a2e1">06c5c32519bb5b67a2e7d331b512cae0aa37a2e1</a>. 
