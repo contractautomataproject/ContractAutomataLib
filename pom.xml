@@ -354,7 +354,7 @@
 					</dependencies>
 					<configuration>
 						<targetClasses>
-							<param>io.github.contractautomata.catlib.automaton*</param>
+							<!--param>io.github.contractautomata.catlib.automaton*</param>
 							<param>io.github.contractautomata.catlib.automaton.label*</param>
 							<param>io.github.contractautomata.catlib.automaton.label.action*</param>
 							<param>io.github.contractautomata.catlib.automaton.state*</param>
@@ -363,10 +363,11 @@
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
 							<param>io.github.contractautomata.catlib.family.requirements*</param>
-							<param>io.github.contractautomata.catlib.operations*</param>
+							<param>io.github.contractautomata.catlib.operations*</param-->
+							<param>io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator</param>
 						</targetClasses>
 						<targetTests>
-							<param>io.github.contractautomata.catlib.automaton*</param>
+							<!--param>io.github.contractautomata.catlib.automaton*</param>
 							<param>io.github.contractautomata.catlib.automaton.label*</param>
 							<param>io.github.contractautomata.catlib.automaton.label.action*</param>
 							<param>io.github.contractautomata.catlib.automaton.state*</param>
@@ -375,7 +376,8 @@
 							<param>io.github.contractautomata.catlib.family*</param>
 							<param>io.github.contractautomata.catlib.family.converters*</param>
 							<param>io.github.contractautomata.catlib.family.requirements*</param>
-							<param>io.github.contractautomata.catlib.operations*</param>
+							<param>io.github.contractautomata.catlib.operations*</param-->
+							<param>io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperatorTest</param>
 						</targetTests>
 						<outputFormats>
 							<format>HTML2</format>

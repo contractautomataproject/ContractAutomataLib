@@ -1,25 +1,25 @@
 package io.github.contractautomata.catlib.automaton.transition;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiPredicate;
-
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModalTransitionTest {
@@ -45,7 +45,8 @@ public class ModalTransitionTest {
 	
 	Set<ModalTransition<String,Action,State<String>,CALabel>> setTr;
 	Set<State<String>> badStates;
-	BiPredicate<ModalTransition<String,Action,State<String>,CALabel>,ModalTransition<String,Action,State<String>,Label<Action>>> controllabilityPred;
+	TetraPredicate<ModalTransition<String,Action,State<String>,CALabel>,ModalTransition<String,Action,State<String>,Label<Action>>,
+				Set<ModalTransition<String,Action,State<String>,CALabel>>,Set<State<String>>> controllabilityPred;
 	
 	@Before
 	public void setup()
@@ -210,7 +211,7 @@ public class ModalTransitionTest {
 	@Test
 	public void testIsUncontrollableLazyTrueFalsePred() {
 		when(calab.isMatch()).thenReturn(true);
-		controllabilityPred = (a1,a2)->false;
+		controllabilityPred = (a1,a2,str,sst)->false;
 		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
@@ -221,7 +222,7 @@ public class ModalTransitionTest {
 		ModalTransition<String,Action,State<String>,CALabel> catl2 =
 				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
-		controllabilityPred = (a1,a2)->a1.getTarget().equals(cs0);
+		controllabilityPred = (a1,a2,str,sst)->a1.getTarget().equals(cs0);
 		Assert.assertFalse(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
@@ -232,7 +233,7 @@ public class ModalTransitionTest {
 		ModalTransition<String,Action,State<String>,CALabel> catl2 =
 				new ModalTransition<>(cs1,calab,cs0, ModalTransition.Modality.LAZY);
 		setTr = Set.of(catl,catl2);
-		controllabilityPred = (a1,a2)->a1.getSource().equals(cs0);
+		controllabilityPred = (a1,a2,str,sst)->a1.getSource().equals(cs0);
 		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}	
 	

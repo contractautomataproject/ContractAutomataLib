@@ -2,12 +2,12 @@ package io.github.contractautomata.catlib.automaton.transition;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiPredicate;
 
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 
 /**
  * Class implementing a Modal Transition of an Automaton. <br>
@@ -182,8 +182,8 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	 * @param controllabilityPred the controllability predicate
 	 * @return true if the transition is uncontrollable
 	 */
-	public boolean isUncontrollable(Set<? extends ModalTransition<S1, Action,S, CALabel>> tr, Set<State<S1>> badStates,
-									BiPredicate<ModalTransition<S1,Action,S,CALabel>,ModalTransition<S1,L1,S,L>> controllabilityPred)
+	public boolean isUncontrollable(Set<ModalTransition<S1, Action,S, CALabel>> tr, Set<State<S1>> badStates,
+									TetraPredicate<ModalTransition<S1,Action,S,CALabel>,ModalTransition<S1,L1,S,L>, Set<ModalTransition<S1,Action,S,CALabel>>, Set<State<S1>>> controllabilityPred)
 	{
 		if (this.isUrgent())
 			return true;
@@ -194,6 +194,7 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 						&& !badStates.contains(t.getSource()))
 				//	badStates does not contains target of t, 
 				//  guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
-				.noneMatch(t->controllabilityPred.test(t,this));
+				.noneMatch(t->controllabilityPred.test(t,this,tr,badStates));
 	}
 }
+

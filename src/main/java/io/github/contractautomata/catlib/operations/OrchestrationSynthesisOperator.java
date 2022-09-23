@@ -44,7 +44,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	 * @param req the invariant requirement (e.g. agreement)
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req){
-		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req,
+		super((t,str,sst)->t.isUncontrollable(str,sst,OrchestrationSynthesisOperator::controllabilityPredicate),req,
 				Automaton::new,CALabel::new,ModalTransition::new,State::new);
 	}
 
@@ -57,7 +57,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	 */
 	public OrchestrationSynthesisOperator(Predicate<CALabel> req,
 										  Automaton<S1,Action,State<S1>, ModalTransition<S1,Action,State<S1>,Label<Action>>> prop){
-		super(OrchestrationSynthesisOperator::isUncontrollableOrchestration,req, prop,
+		super((t,str,sst)->t.isUncontrollable(str,sst,OrchestrationSynthesisOperator::controllabilityPredicate),req, prop,
 				l->new CALabel(l.getRank(),l.getRequester(),l.getCoAction()),
 				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
 	}
@@ -79,31 +79,23 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		return super.apply(aut);
 	}
 
-	private static <S1> boolean isUncontrollableOrchestration(ModalTransition<S1,Action,State<S1>,CALabel> tra,
-															  Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str,
-															  Set<State<S1>> badStates)
-	{
-		return tra.isUncontrollable(str,badStates,
-				(t,tt) -> (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
-						&&(t.getSource().getState().get(t.getLabel().getRequester())
-						.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state
-						&&(tt.getLabel().isRequest()
-						&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
-						tt.getLabel().isMatch()
-								&&t.getLabel().getAction().equals(tt.getLabel().getAction()))//doing the same request
-						&& (!reachabilityLazy||isReachableWithoutMoving(tt.getSource(),t.getSource(),t.getLabel().getRequester(),str,badStates)));
+	private static <S1> boolean controllabilityPredicate(ModalTransition<S1,Action,State<S1>,CALabel> t,
+														 ModalTransition<S1,Action,State<S1>,CALabel> tt,
+														 Set<ModalTransition<S1,Action,State<S1>,CALabel>> str,
+														 Set<State<S1>> sst){
+		return (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
+				&&(t.getSource().getState().get(t.getLabel().getRequester())
+				.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state
+				&&(tt.getLabel().isRequest()
+				&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
+				tt.getLabel().isMatch()
+						&&t.getLabel().getAction().equals(tt.getLabel().getAction()))//doing the same request
+				&& (!reachabilityLazy||isReachableWithoutMoving(tt.getSource(),t.getSource(),t.getLabel().getRequester(),str,sst));
+
 	}
 
 	/**
-	 *
-	 * @param from
-	 * @param to
-	 * @param principal
-	 * @param str
-	 * @param badStates
-	 * @param <S1>
-	 * @return  true iff
-	 * 	  the source state of "to" is reachable from the source state of "from" by only using transitions in
+	 *	  true iff the source state of "to" is reachable from the source state of "from" by only using transitions in
 	 * 	  "str" whose states are not in "badStates" and in all those states the source state of "principal" does not change
 	 */
 	private static <S1> boolean isReachableWithoutMoving(State<S1> from, State<S1> to,
@@ -138,4 +130,6 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	public static void resetReachabilityLazy(){
 		OrchestrationSynthesisOperator.reachabilityLazy = false;
 	}
+
+	public static boolean getReachabilityLazy() { return OrchestrationSynthesisOperator.reachabilityLazy; }
 }

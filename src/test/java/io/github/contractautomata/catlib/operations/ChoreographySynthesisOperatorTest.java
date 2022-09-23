@@ -9,6 +9,7 @@ import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +53,11 @@ public class ChoreographySynthesisOperatorTest {
     @Mock ModalTransition<String,Action,State<String>,CALabel> t14;
 
     @Captor
-    ArgumentCaptor<BiPredicate
+    ArgumentCaptor<TetraPredicate
             <ModalTransition<String, Action, State<String>, CALabel>,
-                    ModalTransition<String, Action, State<String>, CALabel>>> predicateCaptor;
+                    ModalTransition<String, Action, State<String>, CALabel>,
+                    Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                    Set<State<String>>>> predicateCaptor;
 
     ChoreographySynthesisOperator<String> cso;
 
@@ -175,38 +178,41 @@ public class ChoreographySynthesisOperatorTest {
         assertNotNull(cso.getChangeLabel().apply(lab));
     }
 
-    @Test
-    public void applyUncontrollablePredicateFalseDifferentRequester() {
-
+    private TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+            ModalTransition<String, Action, State<String>, CALabel>,
+            Set<ModalTransition<String, Action, State<String>, CALabel>>,
+            Set<State<String>>>  getPredicate(){
         when(t11.isPermitted()).thenReturn(false);
         cso = new ChoreographySynthesisOperator<>(l->false);
         assertNull(cso.apply(aut));
-
         verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
 
-        BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
+        return predicateCaptor.getValue();
+    }
+
+    @Test
+    public void applyUncontrollablePredicateFalseDifferentRequester() {
+        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                        ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
 
         CALabel lab2 = mock(CALabel.class);
 
         when(lab.getOfferer()).thenReturn(1);
         when(lab2.getOfferer()).thenReturn(2);
         when(t12.getLabel()).thenReturn(lab2);
-        assertFalse(pred.test(t11,t12));
+        assertFalse(pred.test(t11,t12,Collections.emptySet(),Collections.emptySet()));
     }
 
 
     @Test
     public void applyUncontrollablePredicateFalseDifferentAction() {
+        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
 
-        when(t11.isPermitted()).thenReturn(false);
-        cso = new ChoreographySynthesisOperator<>(l->false);
-        assertNull(cso.apply(aut));
-
-        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
-
-        BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
 
         when(lab.getAction()).thenReturn(oa);
 
@@ -216,20 +222,16 @@ public class ChoreographySynthesisOperatorTest {
         when(lab.getOfferer()).thenReturn(1);
         when(lab2.getOfferer()).thenReturn(1);
         when(t12.getLabel()).thenReturn(lab2);
-        assertFalse(pred.test(t11,t12));
+        assertFalse(pred.test(t11,t12,Collections.emptySet(),Collections.emptySet()));
     }
 
     @Test
     public void applyUncontrollablePredicateFalseDifferentSources() {
+        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
 
-        when(t11.isPermitted()).thenReturn(false);
-        cso = new ChoreographySynthesisOperator<>(l->false);
-        assertNull(cso.apply(aut));
-
-        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
-
-        BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
 
         when(lab.getAction()).thenReturn(oa);
 
@@ -239,22 +241,20 @@ public class ChoreographySynthesisOperatorTest {
         when(lab.getOfferer()).thenReturn(1);
         when(lab2.getOfferer()).thenReturn(1);
         when(t12.getLabel()).thenReturn(lab2);
-        assertFalse(pred.test(t11,t12));
+        assertFalse(pred.test(t11,t12,Collections.emptySet(),Collections.emptySet()));
     }
 
     @Test
     public void applyUncontrollablePredicateTrue() {
 
-        when(t11.isPermitted()).thenReturn(false);
         when(t12.isPermitted()).thenReturn(false);
         when(t13.isPermitted()).thenReturn(false);
         cso = new ChoreographySynthesisOperator<>(l->false);
-        assertNull(cso.apply(aut));
 
-        verify(t11,times(2)).isUncontrollable(anySet(),anySet(),predicateCaptor.capture());
-
-        BiPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>> pred = predicateCaptor.getValue();
+        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
 
         when(lab.getAction()).thenReturn(oa);
 
@@ -265,7 +265,7 @@ public class ChoreographySynthesisOperatorTest {
         when(lab2.getOfferer()).thenReturn(1);
         when(t12.getLabel()).thenReturn(lab2);
         when(t12.getSource()).thenReturn(cs1);
-        assertTrue(pred.test(t11,t12));
+        assertTrue(pred.test(t11,t12,Collections.emptySet(),Collections.emptySet()));
     }
 
     @Test

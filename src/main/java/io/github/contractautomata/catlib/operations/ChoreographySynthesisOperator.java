@@ -123,10 +123,10 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 		}
 	}
 
-	private static <S1> boolean isUncontrollableChoreography(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<? extends ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
+	private static <S1> boolean isUncontrollableChoreography(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
 	{
 		return tra.isUncontrollable(str,badStates,
-				(t,tt) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
+				(t,tt,stran,sst) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
 				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer
 				&&t.getSource().equals(tt.getSource()));//the same global source state
 	}
