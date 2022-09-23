@@ -1,20 +1,18 @@
 package io.github.contractautomata.catlib.operations;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import io.github.contractautomata.catlib.automaton.Automaton;
+import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.state.State;
+import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
+import io.github.contractautomata.catlib.automaton.transition.Transition;
+import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.automaton.transition.Transition;
-import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
 
 /**
  * Class implementing the abstract synthesis operator.<br>
@@ -72,6 +70,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 
 	private Map<S,Boolean> reachable;
 	private Map<S,Boolean> successful;
+	private int lastCallDanglingStates;
 	private final TriPredicate<T, Set<T>, Set<S>> pruningPred;
 	private final TriPredicate<T, Set<T>, Set<S>> forbiddenPred;
 	private final Predicate<L> req;
@@ -98,6 +97,7 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 				&&  forbiddenPredicate.test(x, t, bad);
 		this.req=req;
 		this.createAut=createAut;
+		this.lastCallDanglingStates=-1;
 	}
 
 	/**
@@ -158,18 +158,19 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 					Pair pre = new Pair(new HashSet<>(pair.tr),new HashSet<>(pair.s));
 
 					//next function embedded into hasnext
-					if (pair.tr.removeAll(pre.tr.parallelStream()
+					pair.tr.removeAll(pre.tr.parallelStream()
 							.filter(x->pruningPred.test(x,pre.tr, pre.s))
-							.collect(Collectors.toSet()))) //Ki
-						pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));
+							.collect(Collectors.toSet()));//Ki
 
 					pair.s.addAll(trbackup.parallelStream()
 							.filter(x->forbiddenPred.test(x,pre.tr, pre.s))
 							.map(Transition::getSource)
 							.collect(Collectors.toSet())); //Ri
 
+					//dangling states are computed only when no further updates are possible on pair.tr and pair.s
 					return (pre.tr.size()!=pair.tr.size()
-							|| pre.s.size() != pair.s.size());//hasnext
+							|| pre.s.size() != pair.s.size())
+								|| pair.s.addAll(getDanglingStates(pair.tr, statesbackup,init));//hasnext
 				},p->p)
 				.reduce((first,second)->new Pair(second.tr,second.s))
 				.orElse(seed);
@@ -191,47 +192,48 @@ public class SynthesisOperator<S1,L1,S extends State<S1>,
 	 */
 	private Set<S> getDanglingStates(Set<T> tr, Set<S> states, S initial)
 	{
-		//all states' flags are reset
-		this.reachable=states.parallelStream()
-				.collect(Collectors.toMap(x->x, x->false));
-		this.successful=states.parallelStream()
-				.collect(Collectors.toMap(x->x, x->false));
+		//if the number of transitions has not changed since the last call then there is no need to update the info on the states
+		if (lastCallDanglingStates!=tr.size()) {
+			lastCallDanglingStates=tr.size();
+			//all states' flags are reset
+			this.reachable = states.parallelStream()
+					.collect(Collectors.toMap(x -> x, x -> false));
+			this.successful = states.parallelStream()
+					.collect(Collectors.toMap(x -> x, x -> false));
 
-		//set reachable
-		forwardVisit(tr, initial);
+			//set reachable
+			visit(tr, initial, true); //forward
 
-		//set successful
-		states.forEach(x-> {
-			if (x.isFinalState()&& Boolean.TRUE.equals(this.reachable.get(x)))
-				backwardVisit(tr,x);});
+			//set successful
+			states.forEach(x -> {
+				if (x.isFinalState() && Boolean.TRUE.equals(this.reachable.get(x)))
+					visit(tr, x, false); //backward
+			});
+		}
 
 		return states.parallelStream()
 				.filter(x->!(reachable.get(x)&&this.successful.get(x)))
 				.collect(Collectors.toSet());
 	}
 
-	private void forwardVisit(Set<T> tr, S currentstate)
+	private void visit(Set<T> tr, S start, boolean forward)
 	{
-		this.reachable.put(currentstate, true);
-		tr.parallelStream()
-				.filter(x->x.getSource().equals(currentstate)) //forward star
-				.forEach(x->{
-					if (Boolean.FALSE.equals(this.reachable.get(x.getTarget())))
-						forwardVisit(tr,x.getTarget());
-				});
-	}
+		Map<S,Boolean> map = forward?reachable:successful;
+		Function<T,S> current = forward?T::getSource:T::getTarget;
+		Function<T,S> next = forward?T::getTarget:T::getSource;
 
-
-
-	private void backwardVisit(Set<T> tr, S currentstate)
-	{
-		this.successful.put(currentstate, true);
-
-		tr.stream()
-				.filter(x->x.getTarget().equals(currentstate))// backward star
-				.forEach(x->{
-					if (Boolean.FALSE.equals(this.successful.get(x.getSource())))
-						backwardVisit(tr, x.getSource());
-				});
+		map.put(start, true);
+		Queue<S> toVisit = new LinkedList<>(List.of(start));
+		while(!toVisit.isEmpty()) {
+			S currentstate = toVisit.remove();
+			Map<S, Boolean> toAdd = tr.parallelStream()
+					.filter(x -> current.apply(x).equals(currentstate) &&
+							Boolean.FALSE.equals(map.get(next.apply(x))))
+					.map(next)
+					.distinct()
+					.collect(Collectors.toMap(x -> x, x -> true));
+			map.putAll(toAdd);
+			toVisit.addAll(toAdd.keySet());
+		}
 	}
 }

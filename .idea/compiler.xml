@@ -9,5 +9,8 @@
         <module name="catlib" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="maze" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
