@@ -107,6 +107,17 @@ public class OrchestrationSynthesisOperatorTest {
         assertEquals(1, oso.apply(aut).getTransition().size());
     }
 
+
+    @Test
+    public void applyCoverReturnTrueMutationUncontrollableSecondConstructor(){
+
+        when(cs12.isFinalState()).thenReturn(true);
+        when(t12.getLabel()).thenReturn(lab2);
+        oso = new OrchestrationSynthesisOperator<>(l->!l.equals(lab2),null);
+
+        assertEquals(1, oso.apply(aut).getTransition().size());
+    }
+
     @Test
     public void applyCoverReturnFalseMutationUncontrollable(){
         when(cs12.isFinalState()).thenReturn(true);
@@ -126,6 +137,22 @@ public class OrchestrationSynthesisOperatorTest {
 
         assertNull(oso.apply(aut));
        // assertEquals(Set.of(t11,t13), oso.apply(aut).getTransition());
+    }
+
+
+    @Test
+    public void applyCoverReturnFalseMutationUncontrollableSecondConstructor(){
+        when(cs12.isFinalState()).thenReturn(true);
+        when(t12.isUncontrollable(any(),any(),any())).thenReturn(true);
+        when(t12.getLabel()).thenReturn(lab2);
+        oso = new OrchestrationSynthesisOperator<>(l->!l.equals(lab2),null);
+        when(t13.getLabel()).thenReturn(lab);
+        when(t13.getSource()).thenReturn(cs12);
+        when(t13.getTarget()).thenReturn(cs13);
+        when(t13.isPermitted()).thenReturn(true);
+        when(aut.getTransition()).then(args -> new HashSet<>(Arrays.asList(t11, t12, t13)));
+
+        assertNull(oso.apply(aut));
     }
 
     @Test
