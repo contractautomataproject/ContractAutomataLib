@@ -74,12 +74,7 @@ Davide Basile - davide.basile@isti.cnr.it.
 
 
 <h2>Legacy</h2> 
-<p>In previous iterations this software was called <b>CAT</b> (Contract Automata Tool). Later on, with the addition 
-of product lines support, the software name was extended to <b>FMCAT</b> (Featured Modal Contract Automata Tool).
-It was a monolithic software comprehending both a prototypical implementation of the library and a front-end. 
-The front-end was available both as command line or as a GUI. The command line front-end has been discontinued.
-The GUI front-end was later factorised out to another repository (<b>CAT_App</b>), whilst the remaining library is now called <b>CATLib</b>. 
-The set of tools supporting contract automata are now called "Contract Automata Toolkit", for continuity with its previous iteration.
+<p>In previous iterations this software was called <b>CAT</b> (Contract Automata Tool). Later on, with the addition of support for product lines, the software's name was extended to <b>FMCAT</b> (Featured Modal Contract Automata Tool). It was a monolithic piece of software comprehending both a prototypical implementation of the library and a front-end. The front-end was available both as command line or as a GUI. The command-line front-end has been discontinued. The GUI front-end was later factorised out to another repository (<b>CAT_App</b>), whilst the remaining library is now called <b>CATLib</b>. The set of software supporting contract automata is now called "Contract Automata Toolkit", for continuity with its previous iteration.
 </p>
 <p>
 The source code has been completely rewritten in 2020. It was redesigned using the new functionalities introduced with Java 8 (streams, lambda).
