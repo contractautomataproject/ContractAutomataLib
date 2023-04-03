@@ -32,11 +32,11 @@ import io.github.contractautomata.catlib.automaton.state.State;
  *
  */
 public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOperator<S1,State<S1>,CALabel,
-        ModalTransition<S1,Action,State<S1>,CALabel>,
+		ModalTransition<S1,Action,State<S1>,CALabel>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>>,
-        Label<Action>,
-        ModalTransition<S1,Action,State<S1>,Label<Action>>,
-        Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
+		Label<Action>,
+		ModalTransition<S1,Action,State<S1>,Label<Action>>,
+		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
 
 	private final Predicate<CALabel> req;
@@ -48,7 +48,7 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 	 * @param req the invariant requirement to be enforced on labels.
 	 */
 	public ChoreographySynthesisOperator(Predicate<CALabel> req){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req,
+		super((t,str,sst)->t.isUncontrollable(str,sst,ChoreographySynthesisOperator::controllabilityPredicate),req,
 				Automaton::new,CALabel::new,ModalTransition::new,State::new);
 
 		this.req=req;
@@ -61,12 +61,12 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 	 * @param prop the property automaton to be enforced
 	 */
 	public ChoreographySynthesisOperator(Predicate<CALabel> req,
-			Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req, prop,
+										 Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>  prop){
+		super((t,str,sst)->t.isUncontrollable(str,sst,ChoreographySynthesisOperator::controllabilityPredicate),req, prop,
 				lab->new CALabel(lab.getRank(),lab.getOfferer(),lab.getAction()), //offers are necessary
-                Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
+				Automaton::new,CALabel::new,ModalTransition::new,State::new,Label::new,ModalTransition::new,Automaton::new);
 
-        this.req=req;
+		this.req=req;
 	}
 
 	/**
@@ -78,13 +78,13 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 	 * @param req   the invariant requirement to be enforced on labels
 	 * @param choice   the strategy for selecting a transition (not satisfying the branching condition) to be pruned
 	 */
-	public ChoreographySynthesisOperator(Predicate<CALabel> req, 
-			Function<Stream<ModalTransition<S1,Action,State<S1>,CALabel>>,
-				Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice){
-		super(ChoreographySynthesisOperator::isUncontrollableChoreography,req, null,null,
-                Automaton::new,CALabel::new,ModalTransition::new,State::new,null,null,null);
+	public ChoreographySynthesisOperator(Predicate<CALabel> req,
+										 Function<Stream<ModalTransition<S1,Action,State<S1>,CALabel>>,
+												 Optional<ModalTransition<S1,Action,State<S1>,CALabel>>> choice){
+		super((t,str,sst)->t.isUncontrollable(str,sst,ChoreographySynthesisOperator::controllabilityPredicate),req, null,null,
+				Automaton::new,CALabel::new,ModalTransition::new,State::new,null,null,null);
 
-        this.req=req;
+		this.req=req;
 		this.choice=choice;
 	}
 
@@ -95,7 +95,7 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 	 * @return the synthesised choreography, removing only one transition violating the branching condition 
 	 * each time no further updates are possible. The transition to remove is chosen non-deterministically in
 	 * case a specific strategy was not provided in the constructor.
-	 * 
+	 *
 	 */
 	@Override
 	public Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> apply(Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,CALabel>> arg)
@@ -113,7 +113,7 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 				return null;
 			final Set<ModalTransition<S1,Action,State<S1>,CALabel>> trf = chor.getTransition();
 			ModalTransition<S1,Action,State<S1>,CALabel> violatingBC = choice.apply(chor.getTransition().parallelStream()
-					.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
+							.filter(x->!satisfiesBranchingCondition(x,trf, new HashSet<>())))
 					.orElse(null);
 			if (violatingBC==null)
 				return chor;
@@ -123,12 +123,15 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 		}
 	}
 
-	private static <S1> boolean isUncontrollableChoreography(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
+	private static <S1> boolean controllabilityPredicate(ModalTransition<S1,Action,State<S1>,CALabel> tra, Set<ModalTransition<S1,Action,State<S1>,CALabel>> str, Set<State<S1>> badStates)
 	{
-		return tra.isUncontrollable(str,badStates,
-				(t,tt,stran,sst) -> t.getLabel().getOfferer().equals(tt.getLabel().getOfferer())//the same offerer
-				&&t.getLabel().getAction().equals(tt.getLabel().getAction()) //the same offer
-				&&t.getSource().equals(tt.getSource()));//the same global source state
+		return	str.parallelStream()
+				.filter(t->t.getLabel().isMatch()
+						&& !badStates.contains(t.getSource())) 	//badStates does not contain target of t,
+				//guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
+				.noneMatch(t->t.getLabel().getOfferer().equals(tra.getLabel().getOfferer())//the same offerer
+						&&t.getLabel().getAction().equals(tra.getLabel().getAction()) //the same offer
+						&&t.getSource().equals(tra.getSource()));//the same global source state
 	}
 
 	/**
@@ -160,14 +163,14 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 		return ftr.parallelStream()
 				.map(Transition::getSource)
 				.filter(x->x!=tra.getSource()&&
-				tra.getSource().getState().get(tra.getLabel().getOfferer()).getState()
-				.equals(x.getState().get(tra.getLabel().getOfferer()).getState()))
+						tra.getSource().getState().get(tra.getLabel().getOfferer()).getState()
+								.equals(x.getState().get(tra.getLabel().getOfferer()).getState()))
 				//it's not the same state of tra but sender is in the same state of this
 
 				.allMatch(s -> ftr.parallelStream()
-						.anyMatch(x->x.getSource()==s
-								&& tra.getLabel().equals(x.getLabel()))
+								.anyMatch(x->x.getSource()==s
+										&& tra.getLabel().equals(x.getLabel()))
 						//for all such states there exists an outgoing transition with the same label of tra
-						);
+				);
 	}
 }

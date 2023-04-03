@@ -73,10 +73,10 @@ public class ITOrchestrationTest {
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "(ClientxClientxBrokerxHotelxPriviledgedHotel).data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(ClientxClientxBrokerxHotelxPriviledgedHotel)_LazyPP.data");
-		OrchestrationSynthesisOperator.setReachabilityLazy();
+		OrchestrationSynthesisOperator.setRefinedLazy();
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
 		assertTrue(AutomatonTest.autEquals(orc,test));
-		OrchestrationSynthesisOperator.resetReachabilityLazy();
+		OrchestrationSynthesisOperator.resetRefinedLazy();
 	}
 
 

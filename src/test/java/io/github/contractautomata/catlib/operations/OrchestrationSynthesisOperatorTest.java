@@ -8,7 +8,7 @@ import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
+import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +48,11 @@ public class OrchestrationSynthesisOperatorTest {
     @Mock ModalTransition<String,Action,State<String>,CALabel> t12;
     @Mock ModalTransition<String,Action,State<String>,CALabel> t13;
 
-    @Captor ArgumentCaptor<TetraPredicate
+
+    @Captor ArgumentCaptor<TriPredicate
             <ModalTransition<String, Action, State<String>, CALabel>,
-                        ModalTransition<String, Action, State<String>, CALabel>,
-        Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>>> predicateCaptor;
+                    Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                    Set<State<String>>>> predicateCaptor;
 
     OrchestrationSynthesisOperator<String> oso;
 
@@ -87,6 +87,8 @@ public class OrchestrationSynthesisOperatorTest {
         when(aut.getInitial()).thenReturn(cs11);
 
         oso = new OrchestrationSynthesisOperator<>(l->true);
+        OrchestrationSynthesisOperator.resetRefinedLazy();
+
     }
 
     @Test
@@ -164,10 +166,9 @@ public class OrchestrationSynthesisOperatorTest {
         assertNotNull(oso.getChangeLabel().apply(lab));
     }
 
-    private TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                    ModalTransition<String, Action, State<String>, CALabel>,
-                    Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                    Set<State<String>>> beforeUncontrollablePredicateTest(){
+    private TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                        Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                        Set<State<String>>> getPredicate(){
         when(t11.isPermitted()).thenReturn(false);
         oso = new OrchestrationSynthesisOperator<>(l->false);
         assertNull(oso.apply(aut));
@@ -176,85 +177,108 @@ public class OrchestrationSynthesisOperatorTest {
     }
 
     @Test
-    public void applyUncontrollablePredicateFalseDifferentRequester() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                    ModalTransition<String, Action, State<String>, CALabel>,
+    public void applyControllabilityPredicateNoMatchTransitions() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
+
+
+        when(lab.getOfferer()).thenReturn(1);
+        when(lab2.getOfferer()).thenReturn(2);
+        when(t12.getLabel()).thenReturn(lab2);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
+    }
+
+    @Test
+    public void applyControllabilityPredicateContainsBadState() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
+
+
+        when(lab.getOfferer()).thenReturn(1);
+        when(lab2.getOfferer()).thenReturn(2);
+        when(t12.getLabel()).thenReturn(lab2);
+        when(lab2.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t11,Set.of(t12),Set.of(cs12)));
+    }
+
+    @Test
+    public void applyControllabilityPredicateDifferentRequester() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                     Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                    Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                    Set<State<String>>> pred = getPredicate();
 
         when(lab.getRequester()).thenReturn(1);
         when(lab2.getRequester()).thenReturn(2);
         when(t12.getLabel()).thenReturn(lab2);
-        assertFalse(pred.test(t11,t12, Collections.emptySet(),Collections.emptySet()));
+
+        when(lab2.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
     }
 
     @Test
-    public void applyUncontrollablePredicateFalseDifferentState() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+    public void applyControllabilityPredicateDifferentState() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
-
-        CALabel lab2 = mock(CALabel.class);
-        when(lab.getRequester()).thenReturn(0);
-        when(lab2.getRequester()).thenReturn(0);
-        when(t12.getLabel()).thenReturn(lab2);
-        assertFalse(pred.test(t11,t12, Collections.emptySet(),Collections.emptySet()));
-    }
-
-
-    @Test
-    public void applyUncontrollablePredicateFalseNoRequestNoMatch() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
-                Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
+                Set<State<String>>> pred = getPredicate();
 
         when(lab.getRequester()).thenReturn(0);
         when(lab2.getRequester()).thenReturn(0);
         when(t12.getLabel()).thenReturn(lab2);
-        when(cs12.getState()).thenReturn(List.of(bs1));
-        assertFalse(pred.test(t11,t12, Collections.emptySet(),Collections.emptySet()));
+        when(lab2.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
     }
 
     @Test
-    public void applyUncontrollablePredicateFalseRequestDifferentAction() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+    public void applyControllabilityPredicateNoRequestNoMatch() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
-
-        when(lab.getRequester()).thenReturn(0);
-        when(lab2.getRequester()).thenReturn(0);
-        when(t12.getLabel()).thenReturn(lab2);
-        when(cs12.getState()).thenReturn(List.of(bs1));
-        when(lab2.isRequest()).thenReturn(true);
-
-        Action a = mock(Action.class);
-        Action b = mock(Action.class);
-
-        when(lab.getAction()).thenReturn(a);
-        when(lab2.getCoAction()).thenReturn(b);
-
-        assertFalse(pred.test(t11,t12, Collections.emptySet(),Collections.emptySet()));
-    }
-
-    @Test
-    public void applyUncontrollablePredicateFalseMatchDifferentAction() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
-                Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
+                Set<State<String>>> pred = getPredicate();
 
         when(lab.getRequester()).thenReturn(0);
         when(lab2.getRequester()).thenReturn(0);
         when(t12.getLabel()).thenReturn(lab2);
         when(cs12.getState()).thenReturn(List.of(bs1));
         when(lab2.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
+    }
+
+    @Test
+    public void applyControllabilityPredicateControllableRequestDifferentAction() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
+
+
+        when(lab.getRequester()).thenReturn(0);
+        when(lab2.getRequester()).thenReturn(0);
+        when(t12.getLabel()).thenReturn(lab2);
+        when(cs12.getState()).thenReturn(List.of(bs1));
+        when(lab.isRequest()).thenReturn(true);
+
+        Action a = mock(Action.class);
+        Action b = mock(Action.class);
+
+        when(lab.getCoAction()).thenReturn(a);
+        when(lab2.getAction()).thenReturn(b);
+
+        when(lab2.isMatch()).thenReturn(true);
+
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
+    }
+
+    @Test
+    public void applyControllabilityPredicateControllableMatchDifferentAction() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
+
+        when(lab.getRequester()).thenReturn(0);
+        when(lab2.getRequester()).thenReturn(0);
+        when(t12.getLabel()).thenReturn(lab2);
+        when(cs12.getState()).thenReturn(List.of(bs1));
+        when(lab.isMatch()).thenReturn(true);
 
         Action a = mock(Action.class);
         Action b = mock(Action.class);
@@ -262,101 +286,107 @@ public class OrchestrationSynthesisOperatorTest {
         when(lab.getAction()).thenReturn(a);
         when(lab2.getAction()).thenReturn(b);
 
-        assertFalse(pred.test(t11,t12, Collections.emptySet(),Collections.emptySet()));
+        when(lab2.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
     }
 
     @Test
-    public void applyUncontrollablePredicateTrueMatch() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+    public void applyControllabilityPredicateUncontrollableMatch() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
         when(lab.getRequester()).thenReturn(0);
         when(lab.isMatch()).thenReturn(true);
         when(lab.getAction()).thenReturn(a);
-        assertTrue(pred.test(t11,t11, Collections.emptySet(),Collections.emptySet()));
+
+        assertFalse(pred.test(t11,Set.of(t11),Collections.emptySet()));
     }
 
 
     @Test
-    public void applyUncontrollablePredicateTrueRequest() {
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+    public void applyControllabilityPredicateUncontrollableRequest() {
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                Set<State<String>>> pred = getPredicate();
 
+        Action a = mock(Action.class);
+        when(lab.getRequester()).thenReturn(0);
+        when(lab.isRequest()).thenReturn(true);
+        when(lab.getCoAction()).thenReturn(a);
+        when(lab2.isMatch()).thenReturn(true);
+        when(t12.getLabel()).thenReturn(lab2);
+        when(lab2.getAction()).thenReturn(a);
+        when(cs12.getState()).thenReturn(List.of(bs1));
+
+        assertFalse(pred.test(t11,Set.of(t12),Collections.emptySet()));
+    }
+
+    @Test
+    public void testReachableWithoutMovingFromEqualsToSameTransition() {
+        OrchestrationSynthesisOperator.setRefinedLazy();
+
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
+                Set<ModalTransition<String, Action, State<String>, CALabel>>,
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
         when(lab.getRequester()).thenReturn(0);
         when(lab.isRequest()).thenReturn(true);
         when(lab.getAction()).thenReturn(a);
         when(lab.getCoAction()).thenReturn(a);
-        assertTrue(pred.test(t11,t11, Collections.emptySet(),Collections.emptySet()));
-    }
-
-
-    @Test
-    public void testReachableWithoutMovingFromEqualsToTrueSameTransition() {
-        OrchestrationSynthesisOperator.setReachabilityLazy();
-
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
-                Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
-
-
-        Action a = mock(Action.class);
-        when(lab.getRequester()).thenReturn(0);
-        when(lab.isRequest()).thenReturn(true);
-        when(lab.getAction()).thenReturn(a);
-        when(lab.getCoAction()).thenReturn(a);
-        assertTrue(pred.test(t11,t11, Collections.emptySet(),Collections.emptySet()));
+        when(lab.isMatch()).thenReturn(true);
+        assertFalse(pred.test(t11,Set.of(t11),Collections.emptySet()));
     }
 
     @Test
     public void testReachableWithoutMovingFromEqualsTrue() {
-        OrchestrationSynthesisOperator.setReachabilityLazy();
+        OrchestrationSynthesisOperator.setRefinedLazy();
 
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
         CALabel lab3 = mock(CALabel.class);
 
+        when(t11.getLabel()).thenReturn(lab3);
         when(t13.getLabel()).thenReturn(lab2);
 
         when(cs12.getState()).thenReturn(List.of(bs1));
-        when(t11.getLabel()).thenReturn(lab3);
 
         when(lab2.getRequester()).thenReturn(0);
         when(lab.getRequester()).thenReturn(0);
 
-        when(lab2.isRequest()).thenReturn(true);
-        when(lab.getAction()).thenReturn(a);
+      //  when(lab2.isRequest()).thenReturn(true);
         when(lab2.getCoAction()).thenReturn(a);
+        when(lab.getAction()).thenReturn(a);
 
         when(lab2.getContent()).thenReturn(List.of(a));
         when(lab.getContent()).thenReturn(List.of(a));
         when(lab3.getContent()).thenReturn(List.of(new IdleAction()));
 
-        assertTrue(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+     //   assertTrue(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+
+        when(lab2.isRequest()).thenReturn(true);
+        when(lab.isMatch()).thenReturn(true);
+        assertFalse(pred.test(t13,Set.of(t13,t11,t12),Collections.emptySet()));
     }
 
     @Test
-    public void testReachableWithoutMovingFromEqualsFalseNotIdle() {
-        OrchestrationSynthesisOperator.setReachabilityLazy();
+    public void testReachableWithoutMovingFromEqualsNotIdle() {
+        OrchestrationSynthesisOperator.setRefinedLazy();
 
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
+        CALabel lab3 = mock(CALabel.class);
+        when(t11.getLabel()).thenReturn(lab3);
+        when(lab3.getContent()).thenReturn(List.of(a));
+
         when(t13.getLabel()).thenReturn(lab2);
 
         when(cs12.getState()).thenReturn(List.of(bs1));
@@ -371,18 +401,21 @@ public class OrchestrationSynthesisOperatorTest {
         when(lab2.getContent()).thenReturn(List.of(a));
         when(lab.getContent()).thenReturn(List.of(a));
 
-        assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+    //    assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+
+
+        when(lab.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t13,Set.of(t11,t12,t13),Collections.emptySet()));
     }
 
 
     @Test
-    public void testReachableWithoutMovingFromEqualsFalseAlreadyVisited() {
-        OrchestrationSynthesisOperator.setReachabilityLazy();
+    public void testReachableWithoutMovingFromEqualsAlreadyVisited() {
+        OrchestrationSynthesisOperator.setRefinedLazy();
 
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
         CALabel lab3 = mock(CALabel.class);
@@ -404,26 +437,37 @@ public class OrchestrationSynthesisOperatorTest {
         when(lab.getContent()).thenReturn(List.of(a));
         when(lab3.getContent()).thenReturn(List.of(new IdleAction()));
 
-        assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+    //    assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.emptySet()));
+
+        when(lab.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t13,Set.of(t11,t12,t13),Collections.emptySet()));
     }
 
 
     @Test
-    public void testReachableWithoutMovingFromEqualsFalseBadState() {
-        OrchestrationSynthesisOperator.setReachabilityLazy();
+    public void testReachableWithoutMovingFromEqualsBadState() {
+        OrchestrationSynthesisOperator.setRefinedLazy();
 
-        TetraPredicate<ModalTransition<String, Action, State<String>, CALabel>,
-                ModalTransition<String, Action, State<String>, CALabel>,
+        TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
-                Set<State<String>>> pred = beforeUncontrollablePredicateTest();
+                Set<State<String>>> pred = getPredicate();
 
         Action a = mock(Action.class);
         CALabel lab3 = mock(CALabel.class);
+        when(t11.getLabel()).thenReturn(lab3);
+        when(lab3.getContent()).thenReturn(List.of(new IdleAction()));
+
+        //t14 is used to pass the first filtering of the controllability predicate to reach
+        //the method isReachableWithoutMoving
+        ModalTransition<String,Action,State<String>,CALabel> t14 = mock(ModalTransition.class);
+        when(t14.getLabel()).thenReturn(lab);
+        when(t14.getSource()).thenReturn(cs13);
+        when(t14.getTarget()).thenReturn(cs14);
+        when(cs13.getState()).thenReturn(List.of(bs1));
 
         when(t13.getLabel()).thenReturn(lab2);
 
         when(cs12.getState()).thenReturn(List.of(bs1));
-        when(t11.getLabel()).thenReturn(lab3);
 
         when(lab2.getRequester()).thenReturn(0);
         when(lab.getRequester()).thenReturn(0);
@@ -434,21 +478,24 @@ public class OrchestrationSynthesisOperatorTest {
 
         when(lab2.getContent()).thenReturn(List.of(a));
         when(lab.getContent()).thenReturn(List.of(a));
-        when(lab3.getContent()).thenReturn(List.of(new IdleAction()));
 
-        assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.singleton(cs12)));
+    //    assertFalse(pred.test(t12,t13, aut.getTransition(),Collections.singleton(cs12)));
+
+
+        when(lab.isMatch()).thenReturn(true);
+        assertTrue(pred.test(t13,Set.of(t11,t12,t13,t14),Collections.singleton(cs12)));
     }
 
     @Test
     public void testSetReachabilityLazy(){
-        OrchestrationSynthesisOperator.setReachabilityLazy();
-        assertTrue(OrchestrationSynthesisOperator.getReachabilityLazy());
+        OrchestrationSynthesisOperator.setRefinedLazy();
+        assertTrue(OrchestrationSynthesisOperator.getRefinedLazy());
     }
 
     @Test
     public void testResetReachabilityLazy(){
-        OrchestrationSynthesisOperator.resetReachabilityLazy();
-        assertFalse(OrchestrationSynthesisOperator.getReachabilityLazy());
+        OrchestrationSynthesisOperator.resetRefinedLazy();
+        assertFalse(OrchestrationSynthesisOperator.getRefinedLazy());
     }
 
     @Test

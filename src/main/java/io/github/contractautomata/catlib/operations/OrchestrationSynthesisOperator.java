@@ -36,7 +36,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		ModalTransition<S1,Action,State<S1>,Label<Action>>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
-	private static boolean reachabilityLazy=false;
+	private static boolean refinedLazy =false;
 
 	/**
 	 * Constructor for the orchestration synthesis operator enforcing the requirement req.
@@ -79,18 +79,22 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		return super.apply(aut);
 	}
 
-	private static <S1> boolean controllabilityPredicate(ModalTransition<S1,Action,State<S1>,CALabel> t,
-														 ModalTransition<S1,Action,State<S1>,CALabel> tt,
+	private static <S1> boolean controllabilityPredicate(ModalTransition<S1,Action,State<S1>,CALabel> tra,
 														 Set<ModalTransition<S1,Action,State<S1>,CALabel>> str,
-														 Set<State<S1>> sst){
-		return (t.getLabel().getRequester().equals(tt.getLabel().getRequester()))//the same requesting principal
-				&&(t.getSource().getState().get(t.getLabel().getRequester())
-				.equals(tt.getSource().getState().get(tt.getLabel().getRequester())))//in the same local source state
-				&&(tt.getLabel().isRequest()
-				&&t.getLabel().getAction().equals(tt.getLabel().getCoAction())||
-				tt.getLabel().isMatch()
-						&&t.getLabel().getAction().equals(tt.getLabel().getAction()))//doing the same request
-				&& (!reachabilityLazy||isReachableWithoutMoving(tt.getSource(),t.getSource(),t.getLabel().getRequester(),str,sst));
+														 Set<State<S1>> badStates){
+			return str.parallelStream()
+					.filter(t->t.getLabel().isMatch()
+							&& !badStates.contains(t.getSource()))//	badStates does not contain target of t,
+						//  guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
+					.noneMatch(t->
+							(t.getLabel().getRequester().equals(tra.getLabel().getRequester()))//the same requesting principal
+									&&(t.getSource().getState().get(t.getLabel().getRequester())
+									.equals(tra.getSource().getState().get(tra.getLabel().getRequester())))//in the same local source state
+									&&(tra.getLabel().isRequest()
+									&&t.getLabel().getAction().equals(tra.getLabel().getCoAction())||
+									tra.getLabel().isMatch()
+											&&t.getLabel().getAction().equals(tra.getLabel().getAction()))//doing the same request
+						&& (!refinedLazy||isReachableWithoutMoving(tra.getSource(),t.getSource(),t.getLabel().getRequester(),str,badStates)));
 
 	}
 
@@ -122,14 +126,13 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		return false;
 	}
 
-	public static void setReachabilityLazy(){
-		OrchestrationSynthesisOperator.reachabilityLazy = true;
+	public static void setRefinedLazy(){
+		OrchestrationSynthesisOperator.refinedLazy = true;
 	}
 
-
-	public static void resetReachabilityLazy(){
-		OrchestrationSynthesisOperator.reachabilityLazy = false;
+	public static void resetRefinedLazy(){
+		OrchestrationSynthesisOperator.refinedLazy = false;
 	}
 
-	public static boolean getReachabilityLazy() { return OrchestrationSynthesisOperator.reachabilityLazy; }
+	public static boolean getRefinedLazy() { return OrchestrationSynthesisOperator.refinedLazy; }
 }
