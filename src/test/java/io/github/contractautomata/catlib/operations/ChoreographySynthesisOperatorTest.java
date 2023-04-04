@@ -9,7 +9,6 @@ import io.github.contractautomata.catlib.automaton.label.action.RequestAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -98,7 +96,6 @@ public class ChoreographySynthesisOperatorTest {
         when(t13.getTarget()).thenReturn(cs21);
         when(t13.isPermitted()).thenReturn(true);
 
-
         when(t14.getLabel()).thenReturn(lab2);
         when(t14.getSource()).thenReturn(cs21);
         when(t14.getTarget()).thenReturn(cs3);
@@ -106,7 +103,6 @@ public class ChoreographySynthesisOperatorTest {
         when(aut.getTransition()).then(args -> new HashSet<>(Arrays.asList(t11, t12, t13, t14)));
         when(aut.getStates()).thenReturn(Set.of(cs1, cs2, cs3, cs21));
         when(aut.getInitial()).thenReturn(cs1);
-
 
         cso = new ChoreographySynthesisOperator<String>(l->true);
     }

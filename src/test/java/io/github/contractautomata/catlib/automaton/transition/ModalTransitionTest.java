@@ -6,7 +6,6 @@ import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
 import org.junit.Assert;
 import org.junit.Before;
@@ -204,14 +203,12 @@ public class ModalTransitionTest {
 
 	@Test
 	public void testIsUncontrollableLazyTrueNoBadStateSource() {
-//		when(calab.isMatch()).thenReturn(true);
 		badStates = Set.of(cs1);
 		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
 	@Test
 	public void testIsUncontrollableLazyFalsePred() {
-		when(calab.isMatch()).thenReturn(true);
 		controllabilityPred = (a1,str,sst)->false;
 		Assert.assertFalse(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
