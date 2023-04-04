@@ -473,3 +473,4 @@
 		<!-- for deploying to sonatype: clean source:jar javadoc:jar verify gpg:sign
             install:install deploy:deploy -DskipTests then login to https://s01.oss.sonatype.org/
             and close the staging repository to release it to the central repository -->
+<!-- for mutation testing: mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage -->

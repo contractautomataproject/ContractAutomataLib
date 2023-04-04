@@ -209,12 +209,12 @@ public class ModalTransitionTest {
 		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
 	}
 	
-//	@Test
-//	public void testIsUncontrollableLazyTrueFalsePred() {
-//		when(calab.isMatch()).thenReturn(true);
-//		controllabilityPred = (a1,a2,str,sst)->false;
-//		Assert.assertTrue(tl.isUncontrollable(setTr, badStates, controllabilityPred));
-//	}
+	@Test
+	public void testIsUncontrollableLazyFalsePred() {
+		when(calab.isMatch()).thenReturn(true);
+		controllabilityPred = (a1,str,sst)->false;
+		Assert.assertFalse(tl.isUncontrollable(setTr, badStates, controllabilityPred));
+	}
 //
 //	@Test
 //	public void testIsUncontrollableLazyFalseTruePred() {

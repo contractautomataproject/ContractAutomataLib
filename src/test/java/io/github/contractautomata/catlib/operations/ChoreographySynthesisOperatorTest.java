@@ -121,10 +121,9 @@ public class ChoreographySynthesisOperatorTest {
         assertEquals(2, chor.getTransition().size());
     }
 
-
     @Test
     public void applyNull() {
-        cso = new ChoreographySynthesisOperator<String>(l->false);
+        cso = new ChoreographySynthesisOperator<>(l->false);
         assertNull(cso.apply(aut));
     }
 
@@ -136,13 +135,35 @@ public class ChoreographySynthesisOperatorTest {
         CALabel lab3 = mock(CALabel.class);
         when(t11.getLabel()).thenReturn(lab3);
         when(t11.isUncontrollable(any(),any(),any())).thenReturn(true);
-        cso = new ChoreographySynthesisOperator<String>(l->!l.equals(lab3));
+        cso = new ChoreographySynthesisOperator<>(l->!l.equals(lab3));
+        assertNull(cso.apply(aut));
+    }
+
+    @Test
+    public void applyNullKillMutantSecondConstructor() {
+        when(t11.isPermitted()).thenReturn(false);
+        when(t13.isPermitted()).thenReturn(false);
+        CALabel lab3 = mock(CALabel.class);
+        when(t11.getLabel()).thenReturn(lab3);
+        when(t11.isUncontrollable(any(),any(),any())).thenReturn(true);
+        cso = new ChoreographySynthesisOperator<String>(l->!l.equals(lab3),(Automaton) null);
+        assertNull(cso.apply(aut));
+    }
+
+    @Test
+    public void applyNullKillMutantThirdConstructor() {
+        when(t11.isPermitted()).thenReturn(false);
+        when(t13.isPermitted()).thenReturn(false);
+        CALabel lab3 = mock(CALabel.class);
+        when(t11.getLabel()).thenReturn(lab3);
+        when(t11.isUncontrollable(any(),any(),any())).thenReturn(true);
+        cso = new ChoreographySynthesisOperator<String>(l->!l.equals(lab3),Stream::findAny);
         assertNull(cso.apply(aut));
     }
 
     @Test
     public void applyConstructor() {
-        cso = new ChoreographySynthesisOperator<String>(l->true,(Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>>)
+        cso = new ChoreographySynthesisOperator<>(l->true,(Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, Label<Action>>>)
                 null);
         assertNotNull(cso.apply(aut));
     }
@@ -152,7 +173,7 @@ public class ChoreographySynthesisOperatorTest {
         Function<Stream<ModalTransition<String, Action,State<String>,CALabel>>,Optional<ModalTransition<String,Action,State<String>,CALabel>>>
                 choice=Stream::findAny;
 
-        cso = new ChoreographySynthesisOperator<String>(l->true,choice);
+        cso = new ChoreographySynthesisOperator<>(l->true,choice);
         assertNotNull(cso.apply(aut));
     }
 
@@ -197,11 +218,13 @@ public class ChoreographySynthesisOperatorTest {
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
                 Set<State<String>>> pred = getPredicate();
 
-
         when(lab.getOfferer()).thenReturn(1);
-        when(lab2.getOfferer()).thenReturn(2);
+        when(lab2.getOfferer()).thenReturn(1);
         when(t12.getLabel()).thenReturn(lab2);
-        assertTrue(pred.test(t11,Set.of(t12),Set.of(cs2)));
+        when(lab.getAction()).thenReturn(oa);
+        when(lab2.getAction()).thenReturn(oa);
+        when(t12.getSource()).thenReturn(cs1);
+        assertTrue(pred.test(t11,Set.of(t12),Collections.emptySet()));
     }
 
     @Test
@@ -209,7 +232,6 @@ public class ChoreographySynthesisOperatorTest {
         TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
                 Set<State<String>>> pred = getPredicate();
-
 
         when(lab.getOfferer()).thenReturn(1);
         when(lab2.getOfferer()).thenReturn(2);
@@ -223,7 +245,6 @@ public class ChoreographySynthesisOperatorTest {
         TriPredicate<ModalTransition<String, Action, State<String>, CALabel>,
                 Set<ModalTransition<String, Action, State<String>, CALabel>>,
                 Set<State<String>>> pred = getPredicate();
-
 
         when(lab.getOfferer()).thenReturn(1);
         when(lab2.getOfferer()).thenReturn(2);

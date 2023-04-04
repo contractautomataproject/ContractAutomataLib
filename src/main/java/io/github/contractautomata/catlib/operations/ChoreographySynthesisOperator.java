@@ -130,8 +130,8 @@ public class ChoreographySynthesisOperator<S1>  extends ModelCheckingSynthesisOp
 						&& !badStates.contains(t.getSource())) 	//badStates does not contain target of t,
 				//guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
 				.noneMatch(t->t.getLabel().getOfferer().equals(tra.getLabel().getOfferer())//the same offerer
-						&&t.getLabel().getAction().equals(tra.getLabel().getAction()) //the same offer
-						&&t.getSource().equals(tra.getSource()));//the same global source state
+						&& t.getLabel().getAction().equals(tra.getLabel().getAction()) //the same offer
+						&& t.getSource().equals(tra.getSource()));//the same global source state
 	}
 
 	/**
