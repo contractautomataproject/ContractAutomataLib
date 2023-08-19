@@ -23,7 +23,7 @@
 <h2>About</h2>
 This repository contains the Contract Automata Library (CATLib), which is the main repository of the Contract Automata Toolkit. 
 Contract automata are a formalism developed in the research area of foundations for services and distributed computing.
-They are used for specifying services' interface, called behavioral contracts, 
+They are used for specifying the interfaces of services, called behavioural contracts, 
  as finite state automata, with functionalities for composing contracts and generating the 
  orchestration or choreography of a composition of services, and with extensions to modalities (MSCA) and product 
  lines (FMCA). 
