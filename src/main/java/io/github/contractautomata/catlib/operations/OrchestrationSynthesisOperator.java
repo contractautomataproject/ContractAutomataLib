@@ -37,6 +37,7 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
 	private static boolean refinedLazy =false;
+	private int version=3;
 
 	/**
 	 * Constructor for the orchestration synthesis operator enforcing the requirement req.
