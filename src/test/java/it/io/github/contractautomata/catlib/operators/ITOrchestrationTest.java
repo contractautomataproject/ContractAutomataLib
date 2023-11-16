@@ -1,5 +1,6 @@
 package it.io.github.contractautomata.catlib.operators;
 
+import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
@@ -76,7 +77,7 @@ public class ITOrchestrationTest {
 		OrchestrationSynthesisOperator.setRefinedLazy();
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
 		assertTrue(AutomatonTest.autEquals(orc,test));
-		OrchestrationSynthesisOperator.resetRefinedLazy();
+		OrchestrationSynthesisOperator.setOriginalLazy();
 	}
 
 
@@ -145,7 +146,7 @@ public class ITOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(AlicexBob)_forte2021.data");
 		assertTrue(AutomatonTest.autEquals(orc, test));
 	}
-	
+
 	//---------------------------
 
 	@Test

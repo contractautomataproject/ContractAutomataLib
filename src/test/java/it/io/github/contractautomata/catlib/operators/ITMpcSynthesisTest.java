@@ -3,9 +3,12 @@ package it.io.github.contractautomata.catlib.operators;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import io.github.contractautomata.catlib.operations.NewOrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
@@ -85,6 +88,13 @@ public class ITMpcSynthesisTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<>(new Agreement(), prop).apply(aut);
 		Assert.assertNull(mpc);
+	}
+
+	@Test
+	public void testOrcCardsGameICE2023() throws IOException {
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir + "(DealerxPlayerEncodedxPlayerEncoded).data");
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc = new MpcSynthesisOperator<String>(new Agreement()).apply(aut);
+		bdc.exportMSCA(ITAutomatonTest.dir+"strategyCardGameEncoded",mpc);
 	}
 
 }

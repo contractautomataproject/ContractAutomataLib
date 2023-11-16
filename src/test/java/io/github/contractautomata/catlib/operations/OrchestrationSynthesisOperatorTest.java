@@ -87,7 +87,7 @@ public class OrchestrationSynthesisOperatorTest {
         when(aut.getInitial()).thenReturn(cs11);
 
         oso = new OrchestrationSynthesisOperator<>(l->true);
-        OrchestrationSynthesisOperator.resetRefinedLazy();
+        OrchestrationSynthesisOperator.setOriginalLazy();
 
     }
 
@@ -487,15 +487,15 @@ public class OrchestrationSynthesisOperatorTest {
     }
 
     @Test
-    public void testSetReachabilityLazy(){
+    public void testSetRefinedLazy(){
         OrchestrationSynthesisOperator.setRefinedLazy();
-        assertTrue(OrchestrationSynthesisOperator.getRefinedLazy());
+        assertTrue(OrchestrationSynthesisOperator.getVersion()==OrchestrationSynthesisOperator.REFINED_LAZY);
     }
 
     @Test
-    public void testResetReachabilityLazy(){
-        OrchestrationSynthesisOperator.resetRefinedLazy();
-        assertFalse(OrchestrationSynthesisOperator.getRefinedLazy());
+    public void testSetOriginalLazy(){
+        OrchestrationSynthesisOperator.setOriginalLazy();
+        assertTrue(OrchestrationSynthesisOperator.getVersion()==OrchestrationSynthesisOperator.ORIGINAL_LAZY);
     }
 
     @Test

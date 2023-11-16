@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class implements a model checking operation followed by a synthesis operation. <br>
- * In case the property to model-check is not given, the synthesis operation is applied straightforward. <br>
+ * In case the property to model-check is not provided, the synthesis operation is applied straightforward. <br>
  * Otherwise, the synthesis operation is applied on the result of the application of the model checking function. <br>
  *
  *     @param <S1> the generic type of the content of states
@@ -40,6 +40,7 @@ public class ModelCheckingSynthesisOperator<S1,
 		L2 extends Label<Action>,
 		T2 extends ModalTransition<S1,Action,S,L2>,
 		A2 extends Automaton<S1,Action,S,T2>>  extends SynthesisOperator<S1,Action,S,L,T,A> {
+
 
 	private final A2 prop;
 	private final UnaryOperator<L> changeLabel;
@@ -205,6 +206,10 @@ public class ModelCheckingSynthesisOperator<S1,
 			//computing the synthesis
 			return  super.apply(deletingPropAction);
 		}
+	}
+
+	public A2 getProp() {
+		return prop;
 	}
 
 	/**

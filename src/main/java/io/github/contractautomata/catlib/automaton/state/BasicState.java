@@ -68,7 +68,6 @@ public class BasicState<T> extends AbstractState<T>{
 		return init;
 	}
 
-
 	/**
 	 * Print a String representing this object
 	 * @return a String representing this object
