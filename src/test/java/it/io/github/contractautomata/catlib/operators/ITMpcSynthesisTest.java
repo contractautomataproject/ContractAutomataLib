@@ -1,28 +1,26 @@
 package it.io.github.contractautomata.catlib.operators;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import io.github.contractautomata.catlib.operations.NewOrchestrationSynthesisOperator;
-import io.github.contractautomata.catlib.requirements.StrongAgreement;
-import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.operations.MpcSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class ITMpcSynthesisTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -88,13 +86,6 @@ public class ITMpcSynthesisTest {
 		
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc=new MpcSynthesisOperator<>(new Agreement(), prop).apply(aut);
 		Assert.assertNull(mpc);
-	}
-
-	@Test
-	public void testOrcCardsGameICE2023() throws IOException {
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir + "(DealerxPlayerEncodedxPlayerEncoded).data");
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> mpc = new MpcSynthesisOperator<String>(new Agreement()).apply(aut);
-		bdc.exportMSCA(ITAutomatonTest.dir+"strategyCardGameEncoded",mpc);
 	}
 
 }
