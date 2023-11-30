@@ -64,6 +64,8 @@ public interface AutConverter<A1 extends Automaton<?,?,?,?>,A2 extends Automaton
 			return new OfferAction(action.substring(1));
 		if (isAction.test(action, RequestAction.REQUEST))
 			return new RequestAction(action.substring(1));
+		if (isAction.test(action, TauAction.TAU))
+			return new TauAction(action.substring(4));
 
 		String[] f = action.split(Address.ACTION_SEPARATOR);
 		String[] p = f[0].split(Address.ID_SEPARATOR);

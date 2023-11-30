@@ -18,6 +18,7 @@ public abstract class AbstractState<T> implements Ranked {
 	 */
 	private final T label;
 
+
 	/**
 	 * Constructs an abstract state from its label (content).
 	 * Label must be non-null

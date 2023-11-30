@@ -46,6 +46,7 @@ public class ITAutomatonTest {
         String test = "Rank: 1"+System.lineSeparator() +
                 "Initial state: [0]"+System.lineSeparator() +
                 "Final states: [[1, 2]]"+System.lineSeparator() +
+                "Committed states: [[]]" + System.lineSeparator() +
                 "Transitions: "+System.lineSeparator() +
                 "([0],[m],[1])"+System.lineSeparator() +
                 "([0],[m],[2])"+System.lineSeparator();
@@ -160,6 +161,7 @@ public class ITAutomatonTest {
         String test ="Rank: 3"+System.lineSeparator()+
                 "Initial state: [0, 0, 0]"+System.lineSeparator()+
                 "Final states: [[3][3][3]]"+System.lineSeparator()+
+                "Committed states: [[][][]]" + System.lineSeparator() +
                 "Transitions: "+System.lineSeparator()+
                 "!L([2, 9, 0],[?invoice, !invoice, -],[3, 3, 0])"+System.lineSeparator()+
                 "!L([3, 3, 0],[-, !singleRoom, ?singleRoom],[3, 6, 7])"+System.lineSeparator()+

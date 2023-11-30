@@ -75,6 +75,8 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 	private final Queue<S> dontvisit;
 	private final Predicate<T> pruningPred;
 
+	private boolean ignoreModality;
+
 	//each transition of each MSCA in aut is associated with the corresponding index in aut
 	final class TIndex {//more readable than Entry
 		final T tra;
@@ -129,6 +131,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		this.createTransition=createTransition;
 		this.createAutomaton=createAutomaton;
 		this.pruningPred=pruningPred;
+		this.ignoreModality=false;
 	}
 
 	/**
@@ -171,41 +174,47 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 				//						.filter(e -> e.tra.getRank() != aut.get(e.ind).rank)
 				//						.count()==0);
 
-				Set<SimpleEntry<T,List<S>>> trmap = computeComposedForwardStar(trans2index,source,sourcestate);
+				//if source state is bad (more than one committed state) then don't visit target states
+				boolean badsourcestatecommitted  = sourcestate.getState().stream().filter(BasicState::isCommitted).count()>1;
 
-				//if source state is bad then don't visit target states
-				boolean badsourcestate = pruningPred!=null && trmap.parallelStream()
-						.anyMatch(x->pruningPred.test(x.getKey())&&x.getKey().isUrgent());
-
-				if (badsourcestate && sourcestate.equals(initialState))
+				if (badsourcestatecommitted && sourcestate.equals(initialState))
 					return null;
-				else if (!badsourcestate) {//adding transitions, updating states
-					Set<T> trans= trmap.parallelStream()
-							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey()))
-							.map(Entry::getKey).collect(toSet());
-					tr.addAll(trans);
+				else if (!badsourcestatecommitted) {
+					Set<SimpleEntry<T, List<S>>> trmap = computeComposedForwardStar(trans2index, source, sourcestate);
 
-					if (pruningPred!=null)//avoid visiting targets of semicontrollable bad transitions
-						dontvisit.addAll(trans.parallelStream()
-								.filter(x->x.isLazy() && pruningPred.test(x))
-								.map(T::getTarget)
-								.collect(toList()));
+					//if source state is bad (outgoing urgent transition violating pruning pred) then don't visit target states
+					boolean badsourcestateurgent = (pruningPred != null && !ignoreModality
+							&& trmap.parallelStream().anyMatch(x -> pruningPred.test(x.getKey()) && x.getKey().isUrgent()));
 
-					toVisit.addAll(trmap.parallelStream()
-							.filter(x -> pruningPred == null || x.getKey().isNecessary() || pruningPred.negate().test(x.getKey()))
-							.map(Entry::getValue).collect(toSet())
-							.parallelStream()
-							.map(s->new AbstractMap.SimpleEntry<>(s,sourceEntry.getValue()+1))
-							.collect(toSet()));
+					if (badsourcestateurgent && sourcestate.equals(initialState))
+						return null;
+					else if (!badsourcestateurgent) {//adding transitions, updating states
+						Set<T> trans = trmap.parallelStream()
+								.filter(x -> pruningPred == null ||(!ignoreModality && x.getKey().isNecessary()) || pruningPred.negate().test(x.getKey()))
+								.map(Entry::getKey).collect(toSet());
+						tr.addAll(trans);
+
+						if (pruningPred != null)//avoid visiting targets of semicontrollable bad transitions
+							dontvisit.addAll(trans.parallelStream()
+									.filter(x -> !ignoreModality && x.isLazy() && pruningPred.test(x))
+									.map(T::getTarget)
+									.collect(toList()));
+
+						toVisit.addAll(trmap.parallelStream()
+								.filter(x -> pruningPred == null || (!ignoreModality && x.getKey().isNecessary()) || pruningPred.negate().test(x.getKey()))
+								.map(Entry::getValue).collect(toSet())
+								.parallelStream()
+								.map(s -> new AbstractMap.SimpleEntry<>(s, sourceEntry.getValue() + 1))
+								.collect(toSet()));
+					}
 				}
 			}
-
 		} while (!toVisit.isEmpty());
 
 		//if (pruningPred==null) assert(new CompositionSpecCheck().test(aut, new MSCA(tr)));   post-condition
 
 		//in case of pruning if no final states are reachable return null
-		if (pruningPred!=null&& tr.parallelStream()
+		if (pruningPred!=null && tr.parallelStream()
 				.flatMap(t->Stream.of(t.getSource(),t.getTarget()))
 				.distinct().noneMatch(State::isFinalState))
 			return null;
@@ -213,20 +222,25 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 			return this.createAutomaton.apply(tr);
 	}
 
-	private Set<SimpleEntry<T,List<S>>> computeComposedForwardStar(List<TIndex> trans2index,List<S> source, S sourcestate){
+	private Set<SimpleEntry<T,List<S>>> computeComposedForwardStar(List<TIndex> trans2index,List<S> source, S sourceState){
+		int committed = IntStream.range(0,sourceState.getRank())
+						.filter(i->sourceState.getState().get(i).isCommitted())
+						.findFirst().orElse(-1);
+
 		List<S> emptyList = new ArrayList<>();
 
 		//firstly match transitions are generated
 		Map<T, List<SimpleEntry<T,List<S>>>> matchTransitions=
 				trans2index.parallelStream()
 						.flatMap(e -> trans2index.parallelStream()
+								.filter(ee->(committed==-1)||(e.ind==committed)||(ee.ind==committed))
 								.filter(ee->(e.ind<ee.ind) && match.test(e.tra.getLabel(), ee.tra.getLabel()))
 								.flatMap(ee->{
 									List<S> targetlist =  new ArrayList<>(source);
 									targetlist.set(e.ind, e.tra.getTarget());
 									targetlist.set(ee.ind, ee.tra.getTarget());
 
-									T tradd=createTransition.apply(sourcestate,
+									T tradd=createTransition.apply(sourceState,
 											this.createLabel(e, ee),
 											operandstat2compstat.computeIfAbsent(targetlist, s->createState.apply(flattenState(s))),
 											e.tra.isNecessary()?
@@ -244,12 +258,13 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 
 		//collecting match transitions and adding unmatched transitions
 		Set<SimpleEntry<T,List<S>>> trmap = trans2index.parallelStream()
+				.filter(e->(committed==-1)||(e.ind==committed))
 				.filter(e -> !matchTransitions.containsKey(e.tra))
 				.map(e -> {
 					List<S> targetlist = new ArrayList<>(source);
 					targetlist.set(e.ind, e.tra.getTarget());
 					return new SimpleEntry<>
-							(createTransition.apply(sourcestate,
+							(createTransition.apply(sourceState,
 									this.shiftLabel(e.tra.getLabel(), rank,
 											IntStream.range(0, e.ind)
 													.map(i -> aut.get(i).getRank())
@@ -312,5 +327,11 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 		l.addAll(Collections.nCopies((int)rank.longValue()-l.size(), new IdleAction()));
 		return createLabel.apply(l);
 	}
+
+
+	public void setIgnoreModality(){
+		this.ignoreModality=true;
+	}
+
 
 }

@@ -1,6 +1,7 @@
 Rank: 3
 Initial state: [0, 0, 0]
 Final states: [[0, 1, 2, 3][0, 1, 2][0, 1, 2]]
+Committed states: [[][][]]
 Transitions: 
 ([0, 0, 0],[-, 2_1@?m, 2_1@!m],[0, 1, 1])
 ([0, 0, 0],[0_1@!m, 0_1@?m, -],[3, 1, 0])

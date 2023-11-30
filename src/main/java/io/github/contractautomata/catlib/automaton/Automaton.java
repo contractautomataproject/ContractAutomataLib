@@ -176,10 +176,31 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 					.sorted()
 					.toArray()));
 		pr.append("]").append(System.lineSeparator());
+		pr.append("Committed states: [");
+		for (int i=0;i<this.getRank();i++)
+			pr.append(Arrays.toString(
+					this.getBasicStates().get(i).stream()
+							.filter(BasicState::isCommitted)
+							.map(BasicState::getState)
+							.sorted()
+							.toArray()));
+		pr.append("]").append(System.lineSeparator());
 		pr.append("Transitions: ").append(System.lineSeparator());
 		this.getTransition().stream()
 				.sorted(Comparator.comparing(T::toString))
 				.forEach(t-> pr.append(t).append(System.lineSeparator()));
 		return pr.toString();
+	}
+
+	/**
+	 * true if the automaton is determistic, false otherwise
+	 *
+	 * @return true if the automaton is determistic, false otherwise
+	 */
+	public boolean isDeterministic(){
+		return this.getTransition().parallelStream()
+				.noneMatch(t->this.getTransition().parallelStream()
+						.filter(tt->tt!=t)
+						.noneMatch(tt->t.getSource().equals(tt.getSource()) && t.getLabel().equals(tt.getLabel())));
 	}
 }

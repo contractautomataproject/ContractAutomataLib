@@ -1,6 +1,7 @@
 Rank: 3
 Initial state: [0, 0, 0]
 Final states: [[3][3][3]]
+Committed states: [[][][]]
 Transitions: 
 !L([0, 0, 0],[-, !singleRoom, ?singleRoom],[0, 6, 7])
 !L([0, 1, 2],[-, -, ?invoice],[0, 1, 3])

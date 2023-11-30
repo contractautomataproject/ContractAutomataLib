@@ -1,6 +1,7 @@
 Rank: 2
 Initial state: [0, 0]
 Final states: [[2][2]]
+Committed states: [[][]]
 Transitions: 
 ([0, 0],[!pippo, ?pippo],[1, 1])
 ([1, 1],[-, !pluto],[1, 2])

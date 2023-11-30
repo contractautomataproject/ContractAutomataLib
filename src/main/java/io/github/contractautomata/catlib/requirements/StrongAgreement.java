@@ -14,13 +14,13 @@ import java.util.function.Predicate;
 public class StrongAgreement implements Predicate<CALabel> {
 
 	/**
-	 * Returns true if l is a match.
+	 * Returns true if l is a match, ignore tau moves.
 	 * @param l  the label to test.
-	 * @return true if l is a match.
+	 * @return true if l is a match, ignore tau moves.
 	 */
 	@Override
 	public boolean test(CALabel l) {
-		return l.isMatch();
+		return l.isMatch() || l.isTau();
 	}
 
 }

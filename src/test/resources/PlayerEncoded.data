@@ -1,0 +1,19 @@
+Rank: 1
+Initial state: [Waiting]
+Final states: [[Pair1Card1, Pair1Card3, Pair2Card2, Pair2Card4, Pair3Card2, Pair3Card3]]
+Transitions: 
+!U([Pair1],[!tau1],[Pair1_1_Pair1Card1])
+!U([Pair1],[!tau3],[Pair1_3_Pair1Card3])
+!U([Pair2],[!tau2],[Pair2_2_Pair2Card2])
+!U([Pair2],[!tau4],[Pair2_4_Pair2Card4])
+!U([Pair3],[!tau2],[Pair3_2_Pair3Card2])
+!U([Pair3],[!tau3],[Pair3_3_Pair3Card3])
+([Pair1_1_Pair1Card1],[?1],[Pair1Card1])
+([Pair1_3_Pair1Card3],[?3],[Pair1Card3])
+([Pair2_2_Pair2Card2],[?2],[Pair2Card2])
+([Pair2_4_Pair2Card4],[?4],[Pair2Card4])
+([Pair3_2_Pair3Card2],[?2],[Pair3Card2])
+([Pair3_3_Pair3Card3],[?3],[Pair3Card3])
+([Waiting],[!pair1],[Pair1])
+([Waiting],[!pair2],[Pair2])
+([Waiting],[!pair3],[Pair3])

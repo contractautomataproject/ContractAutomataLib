@@ -73,6 +73,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			int rank=0;
 			String[] initial = new String[1];
 			String[][] fin = new String[1][];
+			String[][] comm = new String[1][];
 			tr = new HashSet<>();
 			Set<State<String>> states = new HashSet<>();
 			Map<Integer,Set<BasicState<String>>> mapBasicStates = new HashMap<>();
@@ -97,17 +98,22 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 						}
 						case "F": //Final state
 						{
-							fin=readFinalState(strLine,rank);
+							fin= readCommittedOrFinalState(strLine,rank,"Final states");
+							break;
+						}
+						case "C": //Committed state
+						{
+							comm= readCommittedOrFinalState(strLine,rank,"Committed states");
 							break;
 						}
 						case "(": //a permitted transition
 						{
-							tr.add(loadTransition(strLine,rank, ModalTransition.Modality.PERMITTED, states,mapBasicStates,initial,fin));
+							tr.add(loadTransition(strLine,rank, ModalTransition.Modality.PERMITTED, states,mapBasicStates,initial,fin,comm));
 							break;
 						}
 						case ModalTransition.NECESSARY: //a necessary transition
 						{
-							tr.add(loadTransition(strLine,rank,readModality(strLine),states,mapBasicStates,initial,fin));
+							tr.add(loadTransition(strLine,rank,readModality(strLine),states,mapBasicStates,initial,fin,comm));
 							break;
 						}
 						default :
@@ -130,18 +136,18 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 		return initial;
 	}
 
-	private String[][] readFinalState(String strLine, int rank){
-		String[][] fin=Arrays.stream(strLine.split("]"))
+	private String[][] readCommittedOrFinalState(String strLine, int rank, String commOrFin){
+		String[][] states=Arrays.stream(strLine.split("]"))
 				.map(sar->Arrays.stream(sar.split("[,|\\[]"))
-						.filter(s->!s.contains("Final states"))
+						.filter(s->!s.contains(commOrFin))
 						.map(String::trim)
 						.filter(s->!s.isEmpty())
 						.toArray(String[]::new))
 				.toArray(String[][]::new);
 
-		if (fin.length!=rank)
-			throw new IllegalArgumentException("Final states with different rank");
-		return fin;
+		if (states.length!=rank)
+			throw new IllegalArgumentException(commOrFin+" with different rank");
+		return states;
 	}
 
 	private ModalTransition.Modality readModality(String strLine) {
@@ -154,7 +160,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 			throw new IllegalArgumentException("Invalid modality");
 	}
 
-	private ModalTransition<String,Action,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin) throws IOException
+	private ModalTransition<String,Action,State<String>,L> loadTransition(String str, int rank, ModalTransition.Modality type, Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates,String[] initial, String[][] fin, String[][] comm) throws IOException
 	{
 		String regex = "\\(\\["+"(.+)"+"\\],\\["+"(.+)"+"\\],\\["+"(.+)"+"\\]\\)";
 		Pattern pattern = Pattern.compile(regex);
@@ -172,8 +178,8 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 				tr[2].length!=rank)
 			throw new IOException("Ill-formed transitions, different ranks");
 
-		State<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin);//source
-		State<String> target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin);//target
+		State<String> source = createOrLoadState(states,mapBasicStates,tr[0],initial, fin, comm);//source
+		State<String> target = createOrLoadState(states,mapBasicStates,tr[2],initial, fin, comm);//target
 		return new ModalTransition<>(source,createLabel(tr),target,type);
 	}
 
@@ -188,7 +194,7 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 
 	}
 
-	private State<String> createOrLoadState(Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin)  {
+	private State<String> createOrLoadState(Set<State<String>> states,Map<Integer,Set<BasicState<String>>> mapBasicStates, String[] state,String[] initial, String[][] fin, String[][] comm)  {
 
 		return states.stream()
 				.filter(cs->IntStream.range(0, cs.getState().size())
@@ -203,7 +209,9 @@ public class AutDataConverter<L extends Label<Action>>  implements AutConverter<
 										{
 											BasicState<String> bs=new BasicState<>(state[i]+"",
 													state[i].equals(initial[i]),
-													Arrays.stream(fin[i]).anyMatch(id->id.equals(state[i])));
+													Arrays.stream(fin[i]).anyMatch(id->id.equals(state[i])),
+													i<comm.length&&!Objects.isNull(comm[i])&& //for retrocompatibility
+															Arrays.stream(comm[i]).anyMatch(id->id.equals(state[i])));
 											if (l==null)
 												mapBasicStates.put(i, new HashSet<>(List.of(bs)));
 											else

@@ -1,7 +1,7 @@
 Rank: 1
 Initial state: [Dealing]
 Final states: [[Cards21, Cards31, Cards32, Cards41, Cards42, Cards43]]
-Committed states: [[P1,P2,P3]]
+Committed states: [[]]
 Transitions: 
 ([3],[!2],[Card2])
 ([3],[!3],[Card3])

@@ -22,6 +22,8 @@ public class BasicState<T> extends AbstractState<T>{
 	 */
 	private final boolean fin;
 
+	private boolean committed;
+
 	/**
 	 * Constructor for a BasicState.
 	 * Label must not be a list of elements, and elements
@@ -38,6 +40,18 @@ public class BasicState<T> extends AbstractState<T>{
 			throw new UnsupportedOperationException();
 		this.init=init;
 		this.fin=fin;
+		this.committed=false;
+	}
+
+	public BasicState(T label, Boolean init, Boolean fin, boolean committed) {
+		super(label);
+		if (label instanceof List<?> && ((List<?>)label).get(0) instanceof AbstractState)
+			throw new UnsupportedOperationException();
+		if (fin && committed)
+			throw new IllegalArgumentException(" A basic state cannot be both final and committed");
+		this.init=init;
+		this.fin=fin;
+		this.committed=committed;
 	}
 
 	/**
@@ -67,6 +81,11 @@ public class BasicState<T> extends AbstractState<T>{
 	public boolean isInitial() {
 		return init;
 	}
+
+	public boolean isCommitted() {return committed;}
+
+
+	public void setCommitted() {committed=true;}
 
 	/**
 	 * Print a String representing this object
