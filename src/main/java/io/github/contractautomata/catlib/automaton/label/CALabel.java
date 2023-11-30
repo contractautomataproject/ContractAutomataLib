@@ -144,7 +144,6 @@ public class CALabel extends Label<Action> {
 	}
 
 
-
 	/**
 	 * Returns true if the action is a match
 	 * @return true if the action is a match

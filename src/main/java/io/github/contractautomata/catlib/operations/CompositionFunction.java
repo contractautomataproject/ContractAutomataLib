@@ -154,7 +154,7 @@ public class CompositionFunction<S1,S extends State<S1>,L extends Label<Action>,
 			Entry<List<S>,Integer> sourceEntry=toVisit.remove(); //pop state to visit
 			if (sourceEntry.getValue()>=bound)  //if bound is reached store the frontier for a next call
 				frontier.add(sourceEntry);
-			else if (visited.add(sourceEntry.getKey())) //if the state has not been visited so far and it is within bound
+			else if (visited.add(sourceEntry.getKey())) //if the state has not been visited so far, and it is within bound
 			{
 				List<S> source =sourceEntry.getKey();
 				S sourcestate= operandstat2compstat.get(source);

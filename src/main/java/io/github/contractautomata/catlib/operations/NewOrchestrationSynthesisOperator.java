@@ -3,16 +3,17 @@ package io.github.contractautomata.catlib.operations;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
-import io.github.contractautomata.catlib.automaton.label.action.*;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
+import io.github.contractautomata.catlib.automaton.label.action.TauAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
-import io.github.contractautomata.catlib.automaton.transition.Transition;
-import io.github.contractautomata.catlib.converters.AutDataConverter;
-import jdk.jfr.Percentage;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -120,6 +121,10 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 									.collect(Collectors.toSet()));
 				}).collect(Collectors.toList());
 	}
+}
+//END OF CLASS
+
+
 
 //	/**
 //	 * remove the tau moves. However, it introduces non-determinism
@@ -186,9 +191,6 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 //		//remove dangling states and transitions (the synthesis is reused)
 //		return new OrchestrationSynthesisOperator<String>(this.getReq()).apply(new Automaton<>(str));
 //	}
-
-}
-//END OF CLASS
 
 
 //
@@ -280,9 +282,9 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 //		return new Automaton<>(ts);
 //	}
 //
-/**
+
  //	 * the property accepts also all tau moves of the automaton comp
- //	 */
+
 //	private Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>, Label<Action>>> addTaus(Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>, Label<Action>>> prop,
 //																													   Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> comp){
 //		if (Objects.isNull(prop))
