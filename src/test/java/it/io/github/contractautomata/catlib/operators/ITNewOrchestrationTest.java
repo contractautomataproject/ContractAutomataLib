@@ -28,9 +28,9 @@ public class ITNewOrchestrationTest {
 	private Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop;
 	@Before
 	public void setup() {
-		BasicState<String> s0 = new BasicState<>("WaitFirstCard", true, false);
-		BasicState<String> s1 = new BasicState<>("WaitSecondCard", false, false);
-		BasicState<String> s2 = new BasicState<>("Go", false, true);
+		BasicState<String> s0 = new BasicState<>("WaitFirstCard", true, false, false);
+		BasicState<String> s1 = new BasicState<>("WaitSecondCard", false, false, false);
+		BasicState<String> s2 = new BasicState<>("Go", false, true, false);
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));

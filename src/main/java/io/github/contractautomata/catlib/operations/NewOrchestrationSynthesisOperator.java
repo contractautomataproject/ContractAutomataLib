@@ -105,7 +105,7 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 											if (t.getLabel().isRequest()) {
 												label.set(t.getLabel().getRequester(), new TauAction(t.getLabel().getAction().getLabel()));//the label cannot be a request
 												String stateLabel = t.getSource().getState().get(t.getLabel().getRequester()).getState() + "_" + t.getLabel().getAction().getLabel() + "_" + t.getTarget().getState().get(t.getLabel().getRequester()).getState();
-												intermediate.set(t.getLabel().getRequester(), new BasicState<>(stateLabel, false, false));
+												intermediate.set(t.getLabel().getRequester(), new BasicState<>(stateLabel, false, false, false));
 											}
 
 											State<String> intermediateState = new State<>(intermediate);

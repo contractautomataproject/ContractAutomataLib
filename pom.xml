@@ -275,6 +275,7 @@
 					<configuration>
 						<excludes>
 							<exclude>test/*</exclude>
+							<exclude>src/main/java/io/github/contractautomata/catlib/unused</exclude>
 						</excludes>
 					</configuration>
 					<executions>

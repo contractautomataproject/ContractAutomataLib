@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.toignore;
+package io.github.contractautomata.catlib.unused;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.Label;
@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
  * transitions can be pruned. Therefore, first necessary transitions are hidden,
  * model checking is applied, and the transitions are reverted to necessary
  * on the automaton result of the model checking.
- *
  * This has been later changed so that the composition already can ignore modalities.
  *
  * @param <S1>
@@ -72,6 +71,7 @@ public class HideNecessaryModality<S1,
                 .map(t->tr2modtr.get(string2tr.get(new Transition<>(t.getSource(),t.getLabel(),t.getTarget()).toString())))
                 .collect(Collectors.toSet()));
     }
+}
 
 
 //    public Automaton<S1, Action, S, Transition<S1, Action, S, L>> getEncoded(){
@@ -83,5 +83,3 @@ public class HideNecessaryModality<S1,
 //                .map(t->tr2modtr.get(string2tr.get(t.toString())))
 //                .collect(Collectors.toSet()));
 //    }
-
-}

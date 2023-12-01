@@ -71,7 +71,7 @@ public class RelabelingOperator<S1, L extends Label<Action>> implements
 				.distinct()
 				.collect(Collectors.toMap(Function.identity(), 
 						s-> new BasicState<>(relabel.apply(s.getState()),
-                                initialStatePred.test(s), finalStatePred.test(s))));
+                                initialStatePred.test(s), finalStatePred.test(s),s.isCommitted())));
 
 		Map<State<S1>,State<S1>> clonedcastates  = aut.getStates().stream()
 				.collect(Collectors.toMap(Function.identity(), 

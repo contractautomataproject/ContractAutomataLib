@@ -1,4 +1,4 @@
-package io.github.contractautomata.catlib.toignore;
+package io.github.contractautomata.catlib.unused;
 
 /**
  * THIS CLASS IS NOT WORKING.

@@ -16,10 +16,10 @@ public class BasicStateTest {
 	
 	@Before
 	public void setup() {
-		b0 = new BasicState<>("0", true, false);
-		b1 = new BasicState<>("1", false, true);
-		b2 = new BasicState<>("2", true, true);
-		b3 = new BasicState<>("3", false, false);
+		b0 = new BasicState<>("0", true, false, false);
+		b1 = new BasicState<>("1", false, true, false);
+		b2 = new BasicState<>("2", true, true, false);
+		b3 = new BasicState<>("3", false, false, false);
 	}
 	
 	@Test
@@ -54,18 +54,18 @@ public class BasicStateTest {
 	
 	@Test
 	public void testExceptionConstructorNull() {
-		Assert.assertThrows(IllegalArgumentException.class, ()->new BasicState<String>(null,true,false));
+		Assert.assertThrows(IllegalArgumentException.class, ()->new BasicState<String>(null,true,false, false));
 	}
 	
 	@Test
 	public void testExceptionConstructorListBasicState() {
 		List<BasicState<String>> list = List.of(b1);
-		Assert.assertThrows(UnsupportedOperationException.class, ()-> new BasicState<>(list, true, false));
+		Assert.assertThrows(UnsupportedOperationException.class, ()-> new BasicState<>(list, true, false, false));
 	}
 	
 	@Test
 	public void testExceptionConstructorListString() {
 		
-		assertEquals(1, new BasicState<>(List.of("test", "test"), true, false).getRank().intValue());
+		assertEquals(1, new BasicState<>(List.of("test", "test"), true, false, false).getRank().intValue());
 	}
 }

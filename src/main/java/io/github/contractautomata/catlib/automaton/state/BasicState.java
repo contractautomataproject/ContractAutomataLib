@@ -22,7 +22,11 @@ public class BasicState<T> extends AbstractState<T>{
 	 */
 	private final boolean fin;
 
-	private boolean committed;
+	/**
+	 * the flag signalling if the state is committed
+	 */
+	private final boolean committed;
+
 
 	/**
 	 * Constructor for a BasicState.
@@ -33,17 +37,9 @@ public class BasicState<T> extends AbstractState<T>{
 	 * @param label the content of the state
 	 * @param init  true if it is initial
 	 * @param fin true if it is final
+	 * @param committed true if the state is committed
 	 */
-	public BasicState(T label, Boolean init, Boolean fin) {
-		super(label);
-		if (label instanceof List<?> && ((List<?>)label).get(0) instanceof AbstractState)
-			throw new UnsupportedOperationException();
-		this.init=init;
-		this.fin=fin;
-		this.committed=false;
-	}
-
-	public BasicState(T label, Boolean init, Boolean fin, boolean committed) {
+	public BasicState(T label, Boolean init, Boolean fin, Boolean committed) {
 		super(label);
 		if (label instanceof List<?> && ((List<?>)label).get(0) instanceof AbstractState)
 			throw new UnsupportedOperationException();
@@ -84,8 +80,6 @@ public class BasicState<T> extends AbstractState<T>{
 
 	public boolean isCommitted() {return committed;}
 
-
-	public void setCommitted() {committed=true;}
 
 	/**
 	 * Print a String representing this object

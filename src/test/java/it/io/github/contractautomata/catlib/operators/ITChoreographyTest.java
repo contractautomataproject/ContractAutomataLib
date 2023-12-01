@@ -134,9 +134,9 @@ public class ITChoreographyTest {
 
 	@Test
 	public void testCorSynthesis2021() throws IOException {
-		BasicState<String> s0 = new BasicState<>("0", true, false);
-		BasicState<String> s1 = new BasicState<>("1", false, true);
-		BasicState<String> s2 = new BasicState<>("2", false, true);
+		BasicState<String> s0 = new BasicState<>("0", true, false, false);
+		BasicState<String> s1 = new BasicState<>("1", false, true, false);
+		BasicState<String> s2 = new BasicState<>("2", false, true, false);
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));

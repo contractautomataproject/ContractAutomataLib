@@ -1,7 +1,6 @@
-package io.github.contractautomata.catlib.operations;
+package io.github.contractautomata.catlib.unused;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
-import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
@@ -12,7 +11,6 @@ import io.github.contractautomata.catlib.operations.interfaces.TetraFunction;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;

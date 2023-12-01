@@ -17,9 +17,9 @@ public class ITStateTest {
 	
 	@Before
 	public void setup() {		
-		BasicState<String> bs0 = new BasicState<>("0",true,false);
-		BasicState<String> bs1 = new BasicState<>("1",true,false);
-		BasicState<String> bs2 = new BasicState<>("2",true,false);
+		BasicState<String> bs0 = new BasicState<>("0",true,false, false);
+		BasicState<String> bs1 = new BasicState<>("1",true,false, false);
+		BasicState<String> bs2 = new BasicState<>("2",true,false, false);
 		
 		test = new State<>(List.of(bs0,bs1,bs2));
 	}
