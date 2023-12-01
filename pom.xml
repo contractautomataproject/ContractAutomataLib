@@ -56,6 +56,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.organization>contractautomataproject</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.coverage.exclusions>test/*,src/main/java/io/github/contractautomata/catlib/unused</sonar.coverage.exclusions>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/io.stryker-mutator/mutation-testing-elements -->
