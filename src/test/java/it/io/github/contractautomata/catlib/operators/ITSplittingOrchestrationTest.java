@@ -23,7 +23,7 @@ import java.util.*;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-public class ITNewOrchestrationTest {
+public class ITSplittingOrchestrationTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
 	private Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop;
 	@Before
