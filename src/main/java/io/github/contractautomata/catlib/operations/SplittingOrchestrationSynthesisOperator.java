@@ -28,16 +28,24 @@ import static io.github.contractautomata.catlib.automaton.transition.ModalTransi
  * @author Davide Basile
  *
  */
-public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<String>
+public class SplittingOrchestrationSynthesisOperator extends MpcSynthesisOperator<String>
 {
+	private final Predicate<ModalTransition<String,Action,State<String>,CALabel>> pruningPred;
 
-	public NewOrchestrationSynthesisOperator(Predicate<CALabel> req){
+	public SplittingOrchestrationSynthesisOperator(Predicate<CALabel> req){
 		super(req);
+		this.pruningPred=t->false;
 
 	}
 
-	public NewOrchestrationSynthesisOperator(Predicate<CALabel> req,  Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop){
+	public SplittingOrchestrationSynthesisOperator(Predicate<CALabel> req,  Predicate<ModalTransition<String,Action,State<String>,CALabel>> pruningPred){
+		super(req);
+		this.pruningPred=pruningPred;
+	}
+
+	public SplittingOrchestrationSynthesisOperator(Predicate<CALabel> req, Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,Label<Action>>> prop){
 		super(req,prop);
+		this.pruningPred=t->false;
 	}
 
 	@Override
@@ -67,7 +75,7 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 
 		//compose encoded principals
 		Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> comp =
-				new MSCACompositionFunction<>(encodePrincipals(laut), t->this.getReq().negate().test(t.getLabel())).apply(Integer.MAX_VALUE);
+				new MSCACompositionFunction<>(encodePrincipals(laut), t->this.getReq().negate().test(t.getLabel()) || pruningPred.test(t)).apply(Integer.MAX_VALUE);
 
 		//apply mpc synthesis to the encoded automata
 		Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> mpc = super.apply(comp);
@@ -123,6 +131,13 @@ public class NewOrchestrationSynthesisOperator extends MpcSynthesisOperator<Stri
 	}
 }
 //END OF CLASS
+
+
+
+
+
+
+
 
 
 

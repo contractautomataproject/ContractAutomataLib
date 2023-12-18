@@ -10,7 +10,7 @@ import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.operations.MSCACompositionFunction;
-import io.github.contractautomata.catlib.operations.NewOrchestrationSynthesisOperator;
+import io.github.contractautomata.catlib.operations.SplittingOrchestrationSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
 import io.github.contractautomata.catlib.requirements.StrongAgreement;
 import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
@@ -58,7 +58,7 @@ public class ITNewOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> dealer = bdc.importMSCA(ITAutomatonTest.dir + "DealerNoCommitted.data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> player = bdc.importMSCA(ITAutomatonTest.dir + "Player.data");
 
-		NewOrchestrationSynthesisOperator os = new NewOrchestrationSynthesisOperator(new StrongAgreement(),prop);
+		SplittingOrchestrationSynthesisOperator os = new SplittingOrchestrationSynthesisOperator(new StrongAgreement(),prop);
 		os.setIgnoreModality();
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = os.apply(List.of(dealer,player,player));
 
@@ -74,7 +74,7 @@ public class ITNewOrchestrationTest {
 
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> comp =
 			new MSCACompositionFunction<>(List.of(dealer,player,player), t->new StrongAgreement().negate().test(t.getLabel()) ).apply(Integer.MAX_VALUE);
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new NewOrchestrationSynthesisOperator(new StrongAgreement()).apply(comp);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new SplittingOrchestrationSynthesisOperator(new StrongAgreement()).apply(comp);
 
 		//bdc.exportMSCA(ITAutomatonTest.dir+ "NewOrc_(DealerxPlayerxPlayer).data",orc);
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "NewOrc_(DealerxPlayerxPlayer).data");
@@ -87,7 +87,7 @@ public class ITNewOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> dealer = bdc.importMSCA(ITAutomatonTest.dir + "Dealer.data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> player = bdc.importMSCA(ITAutomatonTest.dir + "Player.data");
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new NewOrchestrationSynthesisOperator(new StrongAgreement()).apply(List.of(dealer,player,player));
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new SplittingOrchestrationSynthesisOperator(new StrongAgreement()).apply(List.of(dealer,player,player));
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "NewOrc_(DealerxPlayerxPlayer).data");
 		assertTrue(AutomatonTest.autEquals(orc, test));
 	}
@@ -99,21 +99,21 @@ public class ITNewOrchestrationTest {
 	public void test_necessaryoffer_exception() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "PriviledgedClient.data");
-		assertThrows("Some automaton contains necessary offers that are not allowed in the orchestration synthesis or some action is labelled with tau_", IllegalArgumentException.class, () ->  new NewOrchestrationSynthesisOperator(new Agreement()).apply(List.of(aut)));
+		assertThrows("Some automaton contains necessary offers that are not allowed in the orchestration synthesis or some action is labelled with tau_", IllegalArgumentException.class, () ->  new SplittingOrchestrationSynthesisOperator(new Agreement()).apply(List.of(aut)));
 	}
 
 	@Test
 	public void test_onlyprincipals_exception() throws Exception
 	{
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = bdc.importMSCA(ITAutomatonTest.dir+ "(AxB).data");
-		assertThrows("Only principals are allowed", IllegalArgumentException.class, () ->  new NewOrchestrationSynthesisOperator(new Agreement()).apply(List.of(aut)));
+		assertThrows("Only principals are allowed", IllegalArgumentException.class, () ->  new SplittingOrchestrationSynthesisOperator(new Agreement()).apply(List.of(aut)));
 	}
 
 
 	@Test
 	public void testExceptionTau() throws IOException {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> player = bdc.importMSCA(ITAutomatonTest.dir + "PlayerEncoded.data");
-		assertThrows("Some automaton contains necessary offers that are not allowed in the orchestration synthesis or some action is labelled with tau_",IllegalArgumentException.class,() -> new NewOrchestrationSynthesisOperator(new Agreement()).apply(List.of(player)));
+		assertThrows("Some automaton contains necessary offers that are not allowed in the orchestration synthesis or some action is labelled with tau_",IllegalArgumentException.class,() -> new SplittingOrchestrationSynthesisOperator(new Agreement()).apply(List.of(player)));
 
 	}
 
