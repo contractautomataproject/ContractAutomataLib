@@ -77,6 +77,9 @@ public class SplittingOrchestrationSynthesisOperator extends MpcSynthesisOperato
 		Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> comp =
 				new MSCACompositionFunction<>(encodePrincipals(laut), t->this.getReq().negate().test(t.getLabel()) || pruningPred.test(t)).apply(Integer.MAX_VALUE);
 
+		if (Objects.isNull(comp))
+			return null;
+
 		//apply mpc synthesis to the encoded automata
 		Automaton<String, Action, State<String>, ModalTransition<String, Action, State<String>, CALabel>> mpc = super.apply(comp);
 
