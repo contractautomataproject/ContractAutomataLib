@@ -258,6 +258,9 @@
 						<jacocoReports>
 							<jacocoReport>${project.reporting.outputDirectory}/jacoco/jacoco.xml</jacocoReport>
 						</jacocoReports>
+						<excludes>
+							<exclude>src/main/java/io/github/contractautomata/catlib/unused</exclude>
+						</excludes>
 					</configuration>
 					<dependencies>
 						<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
