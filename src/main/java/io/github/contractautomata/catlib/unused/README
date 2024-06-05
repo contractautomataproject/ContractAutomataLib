@@ -1,0 +1,7 @@
+version
+https://github.com/contractautomataproject/ContractAutomataLib/commit/5966bfaa1a04385993b030b15a2592c1db96d922
+
+contains the unused classes DkBricsEncoder, HideNecessaryModality and RemovePrincipalOperator, plus the test
+class for DkBricsEncoder.
+These classes have been removed because they were created whilst developing the SplittingOrchestration and
+ended up being unused, and because their presence worsen the various measures (coverage, analysis).
