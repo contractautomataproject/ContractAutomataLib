@@ -2,6 +2,7 @@ package io.github.contractautomata.catlib.operations;
 
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.TauAction;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
@@ -32,11 +33,14 @@ import java.util.stream.IntStream;
  * @author Davide Basile
  *
  */
-public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action>,
-		T extends ModalTransition<S1,Action,S,L>,A extends Automaton<S1,Action,S,T>>
-		extends CompositionFunction<S1,S,L,T,A>
+public class ModelCheckingFunction<S1,
+		S extends State<S1>,
+		L extends Label<Action>,
+		T extends ModalTransition<S1,Action,S,L>,
+		A extends Automaton<S1,Action,S,T>> extends CompositionFunction<S1,S,L,T,A>
 
 {
+
 	/**
 	 * The constructor of a model checking function.<br>
 	 * The match function of <code>CompositionFunction</code> is instantiated to match two labels with
@@ -58,19 +62,26 @@ public class ModelCheckingFunction<S1,S extends State<S1>,L extends Label<Action
 						  Function<List<Action>,L> createLabel,
 						  Function<Set<T>,A> createAutomaton) {
 		super(Arrays.asList(aut, prop),
-				(l1,l2)-> l1.getAction()
+				(l1,l2)->  l1.getContent().stream()
+						.noneMatch(TauAction.class::isInstance)//do not match taus
+				 		&& l1.getAction()
 						.getLabel()
 						.equals(l2.getContent().get(0).getLabel()),
 				createState, createTransition, createLabel,createAutomaton,
 				t->{	List<Action> listAct = t.getLabel().getContent();
-					return ((listAct.get(t.getRank()-1) instanceof IdleAction)||
+					return IntStream.range(0, t.getRank()-1)
+							.mapToObj(listAct::get)
+							.noneMatch(TauAction.class::isInstance) && //tau moves of aut are allowed
+							((listAct.get(t.getRank()-1) instanceof IdleAction)||
 							IntStream.range(0, t.getRank()-1)
 									.mapToObj(listAct::get)
-									.allMatch(IdleAction.class::isInstance));});
+									.allMatch(IdleAction.class::isInstance));});  //pruning pred: aut and prop cannot be interleaved,
 
 		if (prop.getRank()!=1)
 			throw new IllegalArgumentException();
 
 	}
+
+
 
 }

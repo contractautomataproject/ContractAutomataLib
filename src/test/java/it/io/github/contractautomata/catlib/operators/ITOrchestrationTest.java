@@ -1,17 +1,17 @@
 package it.io.github.contractautomata.catlib.operators;
 
-import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.operations.OrchestrationSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +29,9 @@ public class ITOrchestrationTest {
 	
 	@Before
 	public void setup() {
-		BasicState<String> s0 = new BasicState<>("0", true, false);
-		BasicState<String> s1 = new BasicState<>("1", false, false);
-		BasicState<String> s2 = new BasicState<>("2", false, true);
+		BasicState<String> s0 = new BasicState<>("0", true, false, false);
+		BasicState<String> s1 = new BasicState<>("1", false, false, false);
+		BasicState<String> s2 = new BasicState<>("2", false, true, false);
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));
@@ -76,7 +76,7 @@ public class ITOrchestrationTest {
 		OrchestrationSynthesisOperator.setRefinedLazy();
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new OrchestrationSynthesisOperator<String>(new Agreement()).apply(aut);
 		assertTrue(AutomatonTest.autEquals(orc,test));
-		OrchestrationSynthesisOperator.resetRefinedLazy();
+		OrchestrationSynthesisOperator.setOriginalLazy();
 	}
 
 
@@ -145,7 +145,7 @@ public class ITOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "Orc_(AlicexBob)_forte2021.data");
 		assertTrue(AutomatonTest.autEquals(orc, test));
 	}
-	
+
 	//---------------------------
 
 	@Test

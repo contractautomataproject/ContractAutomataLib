@@ -21,10 +21,10 @@ import org.junit.Test;
 
 public class ITModalTransitionTest {
 	
-	private final BasicState<String> bs0 = new BasicState<>("0", true, false);
-	private final BasicState<String> bs1 = new BasicState<>("1", true, false);
-	private final BasicState<String> bs2 = new BasicState<>("2", true, false);
-	private final BasicState<String> bs3 = new BasicState<>("3", false, false);
+	private final BasicState<String> bs0 = new BasicState<>("0", true, false, false);
+	private final BasicState<String> bs1 = new BasicState<>("1", true, false, false);
+	private final BasicState<String> bs2 = new BasicState<>("2", true, false, false);
+	private final BasicState<String> bs3 = new BasicState<>("3", false, false, false);
 	private final List<State<String>> l = new ArrayList<>();
 	private final List<Action> lab = new ArrayList<>();
 	private CALabel calab;

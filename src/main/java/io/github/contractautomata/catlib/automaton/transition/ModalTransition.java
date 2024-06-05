@@ -1,14 +1,14 @@
 package io.github.contractautomata.catlib.automaton.transition;
 
-import java.util.Objects;
-import java.util.Set;
-
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
 import io.github.contractautomata.catlib.automaton.label.action.Action;
+import io.github.contractautomata.catlib.automaton.label.action.TauAction;
 import io.github.contractautomata.catlib.automaton.state.State;
-import io.github.contractautomata.catlib.operations.interfaces.TetraPredicate;
 import io.github.contractautomata.catlib.operations.interfaces.TriPredicate;
+
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Class implementing a Modal Transition of an Automaton. <br>
@@ -81,10 +81,12 @@ public class ModalTransition<S1,L1, S extends State<S1>,L extends Label<L1>> ext
 	public ModalTransition(S source, L label, S target, Modality type)
 	{
 		super(source,label,target);
-		if (type==null)
+		if (type==null || label.getContent()
+				.stream()
+				.anyMatch(TauAction.class::isInstance)
+				&& type!=Modality.URGENT)
 			throw new IllegalArgumentException();
-		else		
-			this.mod=type;
+		this.mod=type;
 	}
 
 	/**

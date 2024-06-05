@@ -147,7 +147,8 @@ public class AutomatonTest {
 	public void testString() {
 		String test = "Rank: 1"+System.lineSeparator() + 
 				"Initial state: [0]"+System.lineSeparator() + 
-				"Final states: [[1, 2]]"+System.lineSeparator() + 
+				"Final states: [[1, 2]]"+System.lineSeparator() +
+				"Committed states: [[]]" + System.lineSeparator() +
 				"Transitions: "+System.lineSeparator() + 
 				"([0],[m],[1])"+System.lineSeparator() + 
 				"([0],[m],[2])"+System.lineSeparator();
@@ -244,7 +245,8 @@ public class AutomatonTest {
 	public void testPrintFinalStates() {
 		String test = "Rank: 2" + System.lineSeparator()+
 				"Initial state: [0, 0]" + System.lineSeparator()+ 
-				"Final states: [[1][2]]" + System.lineSeparator()+ 
+				"Final states: [[1][2]]" + System.lineSeparator()+
+				"Committed states: [[][]]" + System.lineSeparator() +
 				"Transitions: " + System.lineSeparator()+
 				"!L([1, 2],[!test,?test],[0, 0])" + System.lineSeparator()+
 				"!U([0, 0],[!test,?test],[1, 0])" + System.lineSeparator()+

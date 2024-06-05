@@ -1,0 +1,13 @@
+Rank: 1
+Initial state: [Waiting]
+Final states: [[Pair1Card1, Pair1Card3, Pair2Card2, Pair2Card4, Pair3Card2, Pair3Card3]]
+Transitions: 
+!L([Pair1],[?1],[Pair1Card1])
+!L([Pair1],[?3],[Pair1Card3])
+!L([Pair2],[?2],[Pair2Card2])
+!L([Pair2],[?4],[Pair2Card4])
+!L([Pair3],[?2],[Pair3Card2])
+!L([Pair3],[?3],[Pair3Card3])
+([Waiting],[!pair1],[Pair1])
+([Waiting],[!pair2],[Pair2])
+([Waiting],[!pair3],[Pair3])

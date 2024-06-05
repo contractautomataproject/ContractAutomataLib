@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ *
  * Class implementing a label of a Contract Automaton, by extending the super class <code>Label</code>. <br>
  * The content of each label is a list of actions. <br>
  * Contract automata labels can be of three types:<br>
@@ -52,10 +53,11 @@ public class CALabel extends Label<Action> {
 	{
 		super(label);
 
-		if (label.stream().anyMatch(l->!(l instanceof OfferAction)&&!(l instanceof RequestAction)&&!(l instanceof IdleAction)) ||
+		if (label.stream().anyMatch(l->!(l instanceof OfferAction)&&!(l instanceof RequestAction)&&!(l instanceof IdleAction)&&!(l instanceof TauAction)) ||
 				label.stream().allMatch(IdleAction.class::isInstance) ||
 				label.stream().filter(OfferAction.class::isInstance).count()>1 ||
-				label.stream().filter(RequestAction.class::isInstance).count()>1)
+				label.stream().filter(RequestAction.class::isInstance).count()>1 ||
+				label.stream().filter(TauAction.class::isInstance).count()>1)
 			throw new IllegalArgumentException("The label is not well-formed");
 	}
 
@@ -82,6 +84,20 @@ public class CALabel extends Label<Action> {
 		List<Action> label = this.getContent();
 		return IntStream.range(0, label.size())
 				.filter(i->label.get(i) instanceof RequestAction)
+				.findAny().orElse(-1);
+	}
+
+
+	/**
+	 * Returns the index of the principal performing the tau action, or -1 in
+	 * 	  	  case no principal is performing a tau move
+	 * @return the index of the principal performing the tau action, or -1 in
+	 * 	  case no principal is performing a tau move.
+	 */
+	private Integer getTauMoverIfAny() {
+		List<Action> label = this.getContent();
+		return IntStream.range(0, label.size())
+				.filter(i->label.get(i) instanceof TauAction)
 				.findAny().orElse(-1);
 	}
 
@@ -113,6 +129,21 @@ public class CALabel extends Label<Action> {
 		else return requester;
 	}
 
+
+	/**
+	 * Returns the index of the principal performing the tau action.
+	 * There must be a principal performing a tau action.
+	 *
+	 * @return the index of the principal performing the tau action.
+	 * 	      There must be a principal performing a tau action.
+	 */
+	public Integer getTauMover() {
+		Integer taumover = getTauMoverIfAny();
+		if (taumover ==-1) throw new UnsupportedOperationException();
+		else return taumover;
+	}
+
+
 	/**
 	 * Returns true if the action is a match
 	 * @return true if the action is a match
@@ -129,7 +160,7 @@ public class CALabel extends Label<Action> {
 	 */
 	public boolean isOffer()
 	{
-		return getRequesterIfAny() == -1;
+		return !this.isTau() &&  getRequesterIfAny() == -1;
 	}
 
 
@@ -139,7 +170,17 @@ public class CALabel extends Label<Action> {
 	 */
 	public boolean isRequest()
 	{
-		return getOffererIfAny() == -1;
+		return !this.isTau() && getOffererIfAny() == -1;
+	}
+
+
+	/**
+	 * Returns true if the action is a tau
+	 * @return true if the action is a tau
+	 */
+	public boolean isTau()
+	{
+		return  getTauMoverIfAny() != -1;
 	}
 	
 	/**
@@ -164,7 +205,13 @@ public class CALabel extends Label<Action> {
 	 */
 	@Override
 	public Action getAction() {
-		if (this.isRequest())
+		if (this.isTau())
+			return this.getContent()
+					.stream()
+					.filter(TauAction.class::isInstance)
+					.findAny()
+					.orElseThrow(RuntimeException::new);
+		else if (this.isRequest())
 			return this.getContent()
 					.stream()
 					.filter(RequestAction.class::isInstance)
@@ -188,7 +235,7 @@ public class CALabel extends Label<Action> {
 	public Action getCoAction()
 	{
 		Action action =  this.getContent().stream()
-				.filter(s->!(s instanceof IdleAction))
+				.filter(s->!(s instanceof IdleAction) && !(s instanceof  TauAction))
 				.findAny().orElseThrow(IllegalArgumentException::new);
 
 		if (this.isRequest()) {

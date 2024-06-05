@@ -292,6 +292,7 @@ public class FMCATest {
         String test1 = "[p2=Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[1][2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
                 "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +
@@ -299,6 +300,7 @@ public class FMCATest {
         String test2 = "=Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[1][2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
                 "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +
@@ -324,6 +326,7 @@ public class FMCATest {
         String test = "Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[0_1][0_2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
                 "([0_0, 0_0],[!f1, ?f1],[0_1, 0_0])" + System.lineSeparator() +
@@ -339,6 +342,7 @@ public class FMCATest {
         String test1 = "Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[0_1, 1_1][0_2, 1_2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
                 "([0, 0],[!dummy, -],[1_0, 1_0])" + System.lineSeparator() +
@@ -351,6 +355,7 @@ public class FMCATest {
         String test2 = "Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[0_1, 1_1][0_2, 1_2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!dummy, -],[0_0, 0_0])" + System.lineSeparator() +
                 "([0, 0],[!dummy, -],[1_0, 1_0])" + System.lineSeparator() +
@@ -370,6 +375,7 @@ public class FMCATest {
         String test = "{p4=Rank: 2" + System.lineSeparator() +
                 "Initial state: [0, 0]" + System.lineSeparator() +
                 "Final states: [[1][2]]" + System.lineSeparator() +
+                "Committed states: [[][]]" + System.lineSeparator() +
                 "Transitions: " + System.lineSeparator() +
                 "([0, 0],[!f1,?f1],[1, 0])" + System.lineSeparator() +
                 "([1, 0],[!f2,?f2],[1, 2])" + System.lineSeparator() +

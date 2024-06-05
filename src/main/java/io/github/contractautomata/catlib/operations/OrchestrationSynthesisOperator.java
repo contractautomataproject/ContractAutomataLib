@@ -1,9 +1,5 @@
 package io.github.contractautomata.catlib.operations;
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
@@ -12,6 +8,13 @@ import io.github.contractautomata.catlib.automaton.label.action.IdleAction;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.automaton.transition.Transition;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 /**
@@ -36,7 +39,11 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		ModalTransition<S1,Action,State<S1>,Label<Action>>,
 		Automaton<S1,Action,State<S1>,ModalTransition<S1,Action,State<S1>,Label<Action>>>>
 {
-	private static boolean refinedLazy =false;
+
+	public static final int ORIGINAL_LAZY = 1; //no reachability is required
+	public static final int REFINED_LAZY = 2; //published at ICE 2023, reachability is required
+
+	private static int version=ORIGINAL_LAZY;
 
 	/**
 	 * Constructor for the orchestration synthesis operator enforcing the requirement req.
@@ -82,19 +89,19 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 	private static <S1> boolean controllabilityPredicate(ModalTransition<S1,Action,State<S1>,CALabel> tra,
 														 Set<ModalTransition<S1,Action,State<S1>,CALabel>> str,
 														 Set<State<S1>> badStates){
-			return str.parallelStream()
-					.filter(t->t.getLabel().isMatch()
-							&& !badStates.contains(t.getSource()))//	badStates does not contain target of t,
-						//  guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
-					.noneMatch(t->
-							(t.getLabel().getRequester().equals(tra.getLabel().getRequester()))//the same requesting principal
-									&&(t.getSource().getState().get(t.getLabel().getRequester())
-									.equals(tra.getSource().getState().get(tra.getLabel().getRequester())))//in the same local source state
-									&&(tra.getLabel().isRequest()
-									&&t.getLabel().getAction().equals(tra.getLabel().getCoAction())||
-									tra.getLabel().isMatch()
-											&&t.getLabel().getAction().equals(tra.getLabel().getAction()))//doing the same request
-						&& (!refinedLazy||isReachableWithoutMoving(tra.getSource(),t.getSource(),t.getLabel().getRequester(),str,badStates)));
+		return str.parallelStream()
+				.filter(t->t.getLabel().isMatch()
+						&& !badStates.contains(t.getSource()))//	badStates does not contain target of t,
+				//  guaranteed to hold because the pruning predicate of the synthesis has bad.contains(x.getTarget())
+				.noneMatch(t->
+						(t.getLabel().getRequester().equals(tra.getLabel().getRequester()))//the same requesting principal
+								&&(t.getSource().getState().get(t.getLabel().getRequester())
+								.equals(tra.getSource().getState().get(tra.getLabel().getRequester())))//in the same local source state
+								&&(tra.getLabel().isRequest()
+								&&t.getLabel().getAction().equals(tra.getLabel().getCoAction())||
+								tra.getLabel().isMatch()
+										&&t.getLabel().getAction().equals(tra.getLabel().getAction()))//doing the same request
+								&& (version!=REFINED_LAZY||isReachableWithoutMoving(tra.getSource(),t.getSource(),t.getLabel().getRequester(),str,badStates)));
 
 	}
 
@@ -126,13 +133,14 @@ public class OrchestrationSynthesisOperator<S1> extends ModelCheckingSynthesisOp
 		return false;
 	}
 
+
 	public static void setRefinedLazy(){
-		OrchestrationSynthesisOperator.refinedLazy = true;
+		OrchestrationSynthesisOperator.version = REFINED_LAZY;
 	}
 
-	public static void resetRefinedLazy(){
-		OrchestrationSynthesisOperator.refinedLazy = false;
+	public static void setOriginalLazy(){
+		OrchestrationSynthesisOperator.version = ORIGINAL_LAZY;
 	}
 
-	public static boolean getRefinedLazy() { return OrchestrationSynthesisOperator.refinedLazy; }
+	public static int getVersion() { return OrchestrationSynthesisOperator.version; }
 }

@@ -1,25 +1,26 @@
 package it.io.github.contractautomata.catlib.operators;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
-import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
 import io.github.contractautomata.catlib.automaton.label.CALabel;
 import io.github.contractautomata.catlib.automaton.label.Label;
+import io.github.contractautomata.catlib.automaton.label.action.Action;
 import io.github.contractautomata.catlib.automaton.state.BasicState;
 import io.github.contractautomata.catlib.automaton.state.State;
 import io.github.contractautomata.catlib.automaton.transition.ModalTransition;
 import io.github.contractautomata.catlib.converters.AutDataConverter;
 import io.github.contractautomata.catlib.operations.MpcSynthesisOperator;
 import io.github.contractautomata.catlib.requirements.Agreement;
-import io.github.contractautomata.catlib.automaton.label.action.Action;
+import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class ITMpcSynthesisTest {
 	private final AutDataConverter<CALabel> bdc = new AutDataConverter<>(CALabel::new);
@@ -70,9 +71,9 @@ public class ITMpcSynthesisTest {
 	@Test
 	public void mpcEmptyTestNoDanglingWithProperty() throws Exception
 	{
-		BasicState<String> s0 = new BasicState<>("0", true, false);
-		BasicState<String> s1 = new BasicState<>("1", false, false);
-		BasicState<String> s2 = new BasicState<>("2", false, true);
+		BasicState<String> s0 = new BasicState<>("0", true, false, false);
+		BasicState<String> s1 = new BasicState<>("1", false, false, false);
+		BasicState<String> s2 = new BasicState<>("2", false, true, false);
 		State<String> cs0 = new State<>(List.of(s0));
 		State<String> cs1 = new State<>(List.of(s1));
 		State<String> cs2 = new State<>(List.of(s2));

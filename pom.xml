@@ -6,7 +6,7 @@
 	<!-- https://central.sonatype.org/publish/requirements/ -->
 	<groupId>io.github.contractautomataproject</groupId>
 	<artifactId>catlib</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
 	<name>ContractAutomataLib</name>
 	<description>Library for specifying and verifying contract automata.</description>
@@ -56,6 +56,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.organization>contractautomataproject</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.coverage.exclusions>**/test/**/*.*,**/src/main/java/io/github/contractautomata/catlib/unused/*.*</sonar.coverage.exclusions>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/io.stryker-mutator/mutation-testing-elements -->
@@ -257,6 +258,9 @@
 						<jacocoReports>
 							<jacocoReport>${project.reporting.outputDirectory}/jacoco/jacoco.xml</jacocoReport>
 						</jacocoReports>
+						<excludes>
+							<exclude>src/main/java/io/github/contractautomata/catlib/unused</exclude>
+						</excludes>
 					</configuration>
 					<dependencies>
 						<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
@@ -275,6 +279,7 @@
 					<configuration>
 						<excludes>
 							<exclude>test/*</exclude>
+							<exclude>src/main/java/io/github/contractautomata/catlib/unused</exclude>
 						</excludes>
 					</configuration>
 					<executions>

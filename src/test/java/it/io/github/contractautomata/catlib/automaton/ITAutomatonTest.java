@@ -34,9 +34,9 @@ public class ITAutomatonTest {
 
     @Test
     public void testString() {
-        BasicState<String> s0 = new BasicState<>("0",true,false);
-        BasicState<String> s1 = new BasicState<>("1",false,true);
-        BasicState<String> s2 = new BasicState<>("2",false,true);
+        BasicState<String> s0 = new BasicState<>("0",true,false, false);
+        BasicState<String> s1 = new BasicState<>("1",false,true, false);
+        BasicState<String> s2 = new BasicState<>("2",false,true, false);
         State<String> cs0 = new State<>(List.of(s0));
         Transition<String,String,State<String>, Label<String>> t1 = new Transition<>(cs0, new Label<>(List.of("m")), new State<>(List.of(s1)));
         Transition<String,String,State<String>, Label<String>> t2 = new Transition<>(cs0, new Label<>(List.of("m")), new State<>(List.of(s2)));
@@ -46,6 +46,7 @@ public class ITAutomatonTest {
         String test = "Rank: 1"+System.lineSeparator() +
                 "Initial state: [0]"+System.lineSeparator() +
                 "Final states: [[1, 2]]"+System.lineSeparator() +
+                "Committed states: [[]]" + System.lineSeparator() +
                 "Transitions: "+System.lineSeparator() +
                 "([0],[m],[1])"+System.lineSeparator() +
                 "([0],[m],[2])"+System.lineSeparator();
@@ -66,10 +67,10 @@ public class ITAutomatonTest {
         lab2.add(new RequestAction("a"));
 
 
-        BasicState<String> bs0 = new BasicState<>("0", true, false);
-        BasicState<String> bs1 = new BasicState<>("1", true, false);
-        BasicState<String> bs2 = new BasicState<>("2", true, false);
-        BasicState<String> bs3 = new BasicState<>("3", true, false);
+        BasicState<String> bs0 = new BasicState<>("0", true, false, false);
+        BasicState<String> bs1 = new BasicState<>("1", true, false, false);
+        BasicState<String> bs2 = new BasicState<>("2", true, false, false);
+        BasicState<String> bs3 = new BasicState<>("3", true, false, false);
 
         Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
         tr.add(new ModalTransition<>(new State<>(Arrays.asList(bs0, bs1, bs2)//,0,0
@@ -93,8 +94,8 @@ public class ITAutomatonTest {
         List<Action> lab = new ArrayList<>();
         lab.add(new OfferAction("a"));
 
-        BasicState<String> bs0 = new BasicState<>("0", false, true);
-        BasicState<String> bs1 = new BasicState<>("1", false, true);
+        BasicState<String> bs0 = new BasicState<>("0", false, true, false);
+        BasicState<String> bs1 = new BasicState<>("1", false, true, false);
 
 
         Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
@@ -114,8 +115,8 @@ public class ITAutomatonTest {
         List<Action> lab = new ArrayList<>();
         lab.add(new OfferAction("a"));
 
-        BasicState<String> bs0 = new BasicState<>("0", true, false);
-        BasicState<String> bs1 = new BasicState<>("1", false, false);
+        BasicState<String> bs0 = new BasicState<>("0", true, false, false);
+        BasicState<String> bs1 = new BasicState<>("1", false, false, false);
 
 
         Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
@@ -135,8 +136,8 @@ public class ITAutomatonTest {
         List<Action> lab = new ArrayList<>();
         lab.add(new OfferAction("a"));
 
-        BasicState<String> bs1 = new BasicState<>("0", true, false);
-        BasicState<String> bs2 = new BasicState<>("0", false, true);
+        BasicState<String> bs1 = new BasicState<>("0", true, false, false);
+        BasicState<String> bs2 = new BasicState<>("0", false, true, false);
 
         Set<ModalTransition<String,Action,State<String>,CALabel>> tr = new HashSet<>();
         tr.add(new ModalTransition<>(new State<>(List.of(bs1)),
@@ -160,6 +161,7 @@ public class ITAutomatonTest {
         String test ="Rank: 3"+System.lineSeparator()+
                 "Initial state: [0, 0, 0]"+System.lineSeparator()+
                 "Final states: [[3][3][3]]"+System.lineSeparator()+
+                "Committed states: [[][][]]" + System.lineSeparator() +
                 "Transitions: "+System.lineSeparator()+
                 "!L([2, 9, 0],[?invoice, !invoice, -],[3, 3, 0])"+System.lineSeparator()+
                 "!L([3, 3, 0],[-, !singleRoom, ?singleRoom],[3, 6, 7])"+System.lineSeparator()+
@@ -176,8 +178,7 @@ public class ITAutomatonTest {
                 "([3, 6, 7],[-, !noFreeCancellation, ?noFreeCancellation],[3, 5, 5])"+System.lineSeparator()+
                 "([3, 8, 8],[-, !noFreeCancellation, ?noFreeCancellation],[3, 5, 5])"+System.lineSeparator()+
                 "([6, 6, 0],[?noFreeCancellation, !noFreeCancellation, -],[9, 5, 0])"+System.lineSeparator()+
-                "([9, 5, 0],[?privateBathroom, !privateBathroom, -],[1, 1, 0])"+System.lineSeparator()+
-                "";
+                "([9, 5, 0],[?privateBathroom, !privateBathroom, -],[1, 1, 0])"+System.lineSeparator();
         Assert.assertEquals(test, aut.toString());
     }
 

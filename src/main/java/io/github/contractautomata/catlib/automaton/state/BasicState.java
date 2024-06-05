@@ -23,6 +23,12 @@ public class BasicState<T> extends AbstractState<T>{
 	private final boolean fin;
 
 	/**
+	 * the flag signalling if the state is committed
+	 */
+	private final boolean committed;
+
+
+	/**
 	 * Constructor for a BasicState.
 	 * Label must not be a list of elements, and elements
 	 * cannot be instances of abstract state.
@@ -31,13 +37,17 @@ public class BasicState<T> extends AbstractState<T>{
 	 * @param label the content of the state
 	 * @param init  true if it is initial
 	 * @param fin true if it is final
+	 * @param committed true if the state is committed
 	 */
-	public BasicState(T label, Boolean init, Boolean fin) {
+	public BasicState(T label, Boolean init, Boolean fin, Boolean committed) {
 		super(label);
 		if (label instanceof List<?> && ((List<?>)label).get(0) instanceof AbstractState)
 			throw new UnsupportedOperationException();
+		if (fin && committed)
+			throw new IllegalArgumentException(" A basic state cannot be both final and committed");
 		this.init=init;
 		this.fin=fin;
+		this.committed=committed;
 	}
 
 	/**
@@ -67,6 +77,8 @@ public class BasicState<T> extends AbstractState<T>{
 	public boolean isInitial() {
 		return init;
 	}
+
+	public boolean isCommitted() {return committed;}
 
 
 	/**

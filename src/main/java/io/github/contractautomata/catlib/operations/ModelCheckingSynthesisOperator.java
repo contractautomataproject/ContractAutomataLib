@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class implements a model checking operation followed by a synthesis operation. <br>
- * In case the property to model-check is not given, the synthesis operation is applied straightforward. <br>
+ * In case the property to model-check is not provided, the synthesis operation is applied straightforward. <br>
  * Otherwise, the synthesis operation is applied on the result of the application of the model checking function. <br>
  *
  *     @param <S1> the generic type of the content of states
@@ -41,6 +41,8 @@ public class ModelCheckingSynthesisOperator<S1,
 		T2 extends ModalTransition<S1,Action,S,L2>,
 		A2 extends Automaton<S1,Action,S,T2>>  extends SynthesisOperator<S1,Action,S,L,T,A> {
 
+
+
 	private final A2 prop;
 	private final UnaryOperator<L> changeLabel;
 	private final Function<List<Action>,L> createLabel;
@@ -49,6 +51,9 @@ public class ModelCheckingSynthesisOperator<S1,
 	private final Function<List<Action>,L2> createLabelProp;
 	private final TetraFunction<S,L2,S,ModalTransition.Modality, T2> createTransitionProp;
 	private final Function<Set<T2>,A2> createAutomatonProp;
+	private boolean ignoreModality;
+
+
 
 	/**
 	 * Constructor for a model checking synthesis operator, it requires also the constructors for the used generic types.
@@ -89,6 +94,7 @@ public class ModelCheckingSynthesisOperator<S1,
 		this.createLabelProp=createLabelProp;
 		this.createTransitionProp=createTransitionProp;
 		this.createAutomatonProp=createAutomatonProp;
+		this.ignoreModality=false;
 	}
 
 	/**
@@ -162,7 +168,6 @@ public class ModelCheckingSynthesisOperator<S1,
 			//model checking is performed on the type of the property (the resulting labels
 			//could not be calabels), whilst the synthesis is performed using the type of the automaton
 			//(generally requirements are expressed using calabels), thus conversions must be performed
-
 			A2 convertAut = createAutomatonProp.apply(  //converting A to A2
 						 arg1.getTransition()
 									.parallelStream()
@@ -172,35 +177,75 @@ public class ModelCheckingSynthesisOperator<S1,
 											t.getModality()))
 									.collect(Collectors.toSet()));
 
+//			//model checking may be performed on the automaton where modalities are ignored (i.e., all
+//			//necessary transitions are turned to optional for the model checking phase)
+//			HideModality<S1, S, L2, T2, A2> hm = new HideModality<>(convertAut, createTransitionProp, createAutomatonProp);
+//
+//			if (ignoreModality) {
+//				convertAut = hm.getAutAllPermitted();
+//			}
+
 			ModelCheckingFunction<S1,S,L2,T2,A2>
 					mcf = new ModelCheckingFunction<>(convertAut,prop,
 					createState, createTransitionProp, createLabelProp, createAutomatonProp);
+
+			if (ignoreModality) mcf.setIgnoreModality();
 
 			A2 comp = mcf.apply(Integer.MAX_VALUE);
 
 			if (comp==null)
 				return null;
 
-			//the following steps are necessary to reuse the synthesis, reverting A2 to A,
-			//silencing the prop action and treat lazy transitions satisfying the pruningPredicate:
-			//they must be detectable as "bad" also after reverting to A,
-			//lazy transitions are quantified existentially on the states: the states must not be modified
-			A deletingPropAction = this.getCreateAut().apply(comp.getTransition()
-					.parallelStream().map(t->{
-						List<Action> li = new ArrayList<>(t.getLabel().getContent());
-						li.set(t.getRank()-1, new IdleAction()); //silencing the prop moves
-						L lab = createLabel.apply(li);
-						if (mcf.getPruningPred().test(t)
-								&& t.isLazy()
-								&& this.getReq().test(lab)) //the transition was lazy and bad (satisfying pruning pred),
-							// but after removing the prop move it satisfies getReq: it must be changed.
-							lab=changeLabel.apply(lab); //change either to request or offer
-						return createTransition.apply(
-								t.getSource(),
-								lab,
-								t.getTarget(),
-								t.getModality());})
-					.collect(Collectors.toSet()));
+			A deletingPropAction;
+
+//			//in case necessary modalities were ignored, they will be restored on the model checked automaton
+//			if (ignoreModality) {
+//				//to restore the modalities, firstly we need to remove the principal corresponding to the property
+//				RemovePrincipalOperator<S1,S, L2, T2, A2>
+//						rp = new RemovePrincipalOperator<>(createState, createTransitionProp, createAutomatonProp, createLabelProp);
+//				comp = rp.apply(comp, comp.getRank()-1);
+//
+//				comp = hm.getAutWithMod(comp);
+//
+//				/*   it is not clear whether I have to use changeLabel also in this case,
+//				   as in the case where modalities have not been ignored.
+//				   Furthermore, for portability, the principal of the property is only removed
+//				   inside this branch.*/
+//				//reverting A2 to A
+//				deletingPropAction = this.getCreateAut().apply(comp.getTransition().parallelStream()
+//						.map(t->
+//							createTransition.apply(t.getSource(),createLabel.apply(t.getLabel().getContent()),t.getTarget(),t.getModality())
+//						).collect(Collectors.toSet()));
+//			}
+//			else
+			{
+				//the following steps are necessary to reuse the synthesis, reverting A2 to A,
+				//silencing the prop action and treat lazy transitions satisfying the pruningPredicate:
+				//they must be detectable as "bad" also after reverting to A.
+				//Transitions not satisfying the pruning predicate of mcf are basically moves of the automaton
+				//not allowed by the property. If they are lazy, the mcf does not prune them.
+				//To remind that they were violating the property, e.g., in case of an orchestration, it is
+				//transformed into a necessary not matched request. Note that this transformation is only
+				//necessary if the transition is not already detected as violating either agreement or strong agreement.
+				//lazy transitions are quantified existentially on the states: the states must not be modified
+				deletingPropAction = this.getCreateAut().apply(comp.getTransition()
+						.parallelStream().map(t -> {
+							List<Action> li = new ArrayList<>(t.getLabel().getContent());
+							li.set(t.getRank() - 1, new IdleAction()); //silencing the prop moves
+							L lab = createLabel.apply(li);
+							if (mcf.getPruningPred().test(t) //the pruning pred of mcf does not allow interleavings of the automaton and the property
+									&& t.isLazy()
+									&& this.getReq().test(lab)) //the transition was lazy and bad (satisfying pruning pred),
+								// but after removing the prop move it satisfies getReq: it must be changed.
+								lab = changeLabel.apply(lab); //change either to request or offer
+							return createTransition.apply(
+									t.getSource(),
+									lab,
+									t.getTarget(),
+									t.getModality());
+						})
+						.collect(Collectors.toSet()));
+			}
 
 			//computing the synthesis
 			return  super.apply(deletingPropAction);
@@ -214,5 +259,10 @@ public class ModelCheckingSynthesisOperator<S1,
 	 */
 	public UnaryOperator<L> getChangeLabel(){
 		return this.changeLabel;
+	}
+
+
+	public void setIgnoreModality() {
+		this.ignoreModality = true;
 	}
 }

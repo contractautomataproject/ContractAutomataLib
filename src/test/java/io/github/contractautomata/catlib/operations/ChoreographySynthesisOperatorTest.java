@@ -62,10 +62,10 @@ public class ChoreographySynthesisOperatorTest {
     @Before
     public void setUp() {
         //value objects
-        BasicState<String> bString = new BasicState<>("bString",true,false);
-        BasicState<String> bs2 = new BasicState<>("bs2",false,false);
-        BasicState<String> bs21 = new BasicState<>("bs2",false,false);
-        BasicState<String> bs3 = new BasicState<>("bs3",false,true);
+        BasicState<String> bString = new BasicState<>("bString",true,false, false);
+        BasicState<String> bs2 = new BasicState<>("bs2",false,false, false);
+        BasicState<String> bs21 = new BasicState<>("bs2",false,false, false);
+        BasicState<String> bs3 = new BasicState<>("bs3",false,true, false);
 
         when(cs1.isInitial()).thenReturn(true);
         when(cs3.isFinalState()).thenReturn(true);
@@ -104,7 +104,7 @@ public class ChoreographySynthesisOperatorTest {
         when(aut.getStates()).thenReturn(Set.of(cs1, cs2, cs3, cs21));
         when(aut.getInitial()).thenReturn(cs1);
 
-        cso = new ChoreographySynthesisOperator<String>(l->true);
+        cso = new ChoreographySynthesisOperator<>(l->true);
     }
 
 
@@ -153,7 +153,7 @@ public class ChoreographySynthesisOperatorTest {
         CALabel lab3 = mock(CALabel.class);
         when(t11.getLabel()).thenReturn(lab3);
         when(t11.isUncontrollable(any(),any(),any())).thenReturn(true);
-        cso = new ChoreographySynthesisOperator<String>(l->!l.equals(lab3),Stream::findAny);
+        cso = new ChoreographySynthesisOperator<>(l->!l.equals(lab3),Stream::findAny);
         assertNull(cso.apply(aut));
     }
 
@@ -310,7 +310,7 @@ public class ChoreographySynthesisOperatorTest {
 
     @Test
     public void testEmptyFTRreq(){
-        cso = new ChoreographySynthesisOperator<String>(l->false);
+        cso = new ChoreographySynthesisOperator<>(l->false);
         assertTrue(cso.satisfiesBranchingCondition(null, Collections.singleton(t11),null));
     }
 

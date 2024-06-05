@@ -1,0 +1,23 @@
+Rank: 1
+Initial state: [Dealing]
+Final states: [[Cards21, Cards31, Cards32, Cards41, Cards42, Cards43]]
+Committed states: [[P1,P2,P3]]
+Transitions: 
+([3],[!2],[Card2])
+([3],[!3],[Card3])
+([3],[!4],[Card4])
+([Card2],[!1],[Cards21])
+([Card3],[!1],[Cards31])
+([Card3],[!2],[Cards32])
+([Card4],[!1],[Cards41])
+([Card4],[!2],[Cards42])
+([Card4],[!3],[Cards43])
+([Dealing],[?pair1],[P1])
+([Dealing],[?pair2],[P2])
+([Dealing],[?pair3],[P3])
+([P1],[?pair2],[3])
+([P1],[?pair3],[3])
+([P2],[?pair1],[3])
+([P2],[?pair3],[3])
+([P3],[?pair1],[3])
+([P3],[?pair2],[3])
