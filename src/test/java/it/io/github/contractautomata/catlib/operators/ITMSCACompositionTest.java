@@ -1,5 +1,7 @@
 package it.io.github.contractautomata.catlib.operators;
 
+import io.github.contractautomata.catlib.automaton.label.action.OfferAction;
+import io.github.contractautomata.catlib.automaton.state.BasicState;
 import it.io.github.contractautomata.catlib.automaton.ITAutomatonTest;
 import io.github.contractautomata.catlib.automaton.Automaton;
 import io.github.contractautomata.catlib.automaton.AutomatonTest;
@@ -15,7 +17,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -172,6 +176,16 @@ public class ITMSCACompositionTest {
 
 		MSCACompositionFunction<String> mcf = new MSCACompositionFunction<>(aut, null);
 		assertThrows("No transitions",IllegalArgumentException.class,() -> mcf.apply(0));
+	}
+
+	@Test
+	public void badSourcestateCommittedAndSourcestateEqualsInitialState(){
+		BasicState<String> bs0 = new BasicState<>("0", true, false, true);
+		BasicState<String> bs1 = new BasicState<>("1", false, true, false);
+		ModalTransition<String, Action,State<String>,CALabel> tr = new ModalTransition<>(new State<>(List.of(bs0)),new CALabel(List.of(new OfferAction("a"))), new State<>(List.of(bs1)),ModalTransition.Modality.PERMITTED);
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> aut = new Automaton<>(Collections.singleton(tr));
+		MSCACompositionFunction<String> mcf = new MSCACompositionFunction<>(List.of(aut,aut), null);
+		Assert.assertNull(mcf.apply(100));
 	}
 
 }

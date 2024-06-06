@@ -68,4 +68,9 @@ public class BasicStateTest {
 		
 		assertEquals(1, new BasicState<>(List.of("test", "test"), true, false, false).getRank().intValue());
 	}
+
+	@Test
+	public void testExceptionConstructorFinalAndCommitted(){
+		Assert.assertThrows(IllegalArgumentException.class, ()-> new BasicState<>("", false, true, true));
+	}
 }

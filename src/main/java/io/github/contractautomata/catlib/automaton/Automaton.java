@@ -193,14 +193,7 @@ public class Automaton<S1,L1, S extends State<S1>,T extends Transition<S1,L1,S,?
 	}
 
 	/**
-	 * true if the automaton is determistic, false otherwise
-	 *
-	 * @return true if the automaton is determistic, false otherwise
+	 * unused method isDeterministic removed after version f5947304debf9639627701445a0fbd13b09ef12c
 	 */
-	public boolean isDeterministic(){
-		return this.getTransition().parallelStream()
-				.noneMatch(t->this.getTransition().parallelStream()
-						.filter(tt->tt!=t)
-						.noneMatch(tt->t.getSource().equals(tt.getSource()) && t.getLabel().equals(tt.getLabel())));
-	}
+
 }

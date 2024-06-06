@@ -131,20 +131,6 @@ public class CALabel extends Label<Action> {
 
 
 	/**
-	 * Returns the index of the principal performing the tau action.
-	 * There must be a principal performing a tau action.
-	 *
-	 * @return the index of the principal performing the tau action.
-	 * 	      There must be a principal performing a tau action.
-	 */
-	public Integer getTauMover() {
-		Integer taumover = getTauMoverIfAny();
-		if (taumover ==-1) throw new UnsupportedOperationException();
-		else return taumover;
-	}
-
-
-	/**
 	 * Returns true if the action is a match
 	 * @return true if the action is a match
 	 */

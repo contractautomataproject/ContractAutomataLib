@@ -87,7 +87,8 @@ public class ITSplittingOrchestrationTest {
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> dealer = bdc.importMSCA(ITAutomatonTest.dir + "Dealer.data");
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> player = bdc.importMSCA(ITAutomatonTest.dir + "Player.data");
 
-		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new SplittingOrchestrationSynthesisOperator(new StrongAgreement()).apply(List.of(dealer,player,player));
+		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> orc = new SplittingOrchestrationSynthesisOperator(new StrongAgreement(),t->false)//for covering the other constructor
+				.apply(List.of(dealer,player,player));
 		Automaton<String,Action,State<String>,ModalTransition<String,Action,State<String>,CALabel>> test = bdc.importMSCA(ITAutomatonTest.dir+ "NewOrc_(DealerxPlayerxPlayer).data");
 		assertTrue(AutomatonTest.autEquals(orc, test));
 	}

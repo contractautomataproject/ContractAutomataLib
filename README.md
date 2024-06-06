@@ -84,5 +84,5 @@ The case studies of these papers can be found in this previous version under the
 The repository at <a href="https://github.com/davidebasile/experimentsReproducibilityCoordination2021">https://github.com/davidebasile/experimentsReproducibilityCoordination2021</a> contains a comparison of the two versions of the library (before and after the refactoring). 
 </p>
 
-<img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/>
+<!--img src="https://raw.githubusercontent.com/contractautomataproject/ContractAutomataLib/gh-pages/doc/dog%20meme.jpg" width="400"/-->
 
