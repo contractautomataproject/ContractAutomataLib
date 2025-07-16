@@ -45,6 +45,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
+          name: Ensure .m2 directory exists
+          run: mkdir -p ~/.m2
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
@@ -90,6 +92,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
+          name: Ensure .m2 directory exists
+          run: mkdir -p ~/.m2
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
@@ -125,6 +129,8 @@ jobs:
       - name: Set up Cache Maven packages
         uses: actions/cache@v3
         with:
+          name: Ensure .m2 directory exists
+          run: mkdir -p ~/.m2
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
