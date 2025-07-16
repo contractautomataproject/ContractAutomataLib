@@ -1,7 +1,7 @@
 ![Build and Testing](https://github.com/contractautomataproject/ContractAutomataLib/actions/workflows/build.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ContractAutomataProject/ContractAutomataLib/badge.svg?branch=main)](https://coveralls.io/github/ContractAutomataProject/ContractAutomataLib?branch=main)
  [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcontractautomataproject%2FContractAutomataLib%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/contractautomataproject/ContractAutomataLib/main)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib)
+<!--[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ContractAutomataProject_ContractAutomataLib&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ContractAutomataProject_ContractAutomataLib-->
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f7dcd94be9141b1b64ef615edbb3991)](https://www.codacy.com/gh/contractautomataproject/ContractAutomataLib/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=contractautomataproject/ContractAutomataLib&amp;utm_campaign=Badge_Grade)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Sonatype Nexus](https://img.shields.io/nexus/r/io.github.contractautomataproject/catlib?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/releases/io/github/contractautomataproject/catlib/)
