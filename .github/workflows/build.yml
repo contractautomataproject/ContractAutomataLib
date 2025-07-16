@@ -49,12 +49,12 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Set up Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+#      - name: Set up Cache SonarCloud packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.sonar/cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
           
       - name: 📦 Build with Maven 
         run: mvn -B jacoco:prepare-agent verify jacoco:report
@@ -63,12 +63,12 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.java =='11'}}
         run: mvn coveralls:report --define repoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
         
-      - name: 🔎 SonarCloud Scan
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java =='17'}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib -Dsonar.c.file.suffixes=- -Dsonar.cpp.file.suffixes=- -Dsonar.objc.file.suffixes=-
+#      - name: 🔎 SonarCloud Scan
+#        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java =='17'}}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ContractAutomataProject_ContractAutomataLib -Dsonar.c.file.suffixes=- -Dsonar.cpp.file.suffixes=- -Dsonar.objc.file.suffixes=-
 
   
 
